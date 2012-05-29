@@ -1,6 +1,6 @@
-name := "My Project"
+name := "TAkka"
  
-version := "1.0"
+version := "snapshot"
  
 scalaVersion := "2.9.1"
  
