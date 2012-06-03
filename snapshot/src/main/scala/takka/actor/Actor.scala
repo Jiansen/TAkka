@@ -1,19 +1,21 @@
 package takka.actor
 
 /**
- * Actor base trait <a href="http://en.wikipedia.org/wiki/Actor_model">http://en.wikipedia.org/wiki/Actor_model</a>
- * that takes a type parameter (M) denoting the type of the actor's initial message loop (M => Unit).
+ * A stronger typed Actor trait based on akka.actor.Actor.
+ * 
+ * A typed actor definition takes a type parameter (M) denoting the type of the actor's initial message loop (M => Unit).
  *
- * An actor has a well-defined (non-cyclic) life-cycle.
- *  - ''RUNNING'' (created and started actor) - can receive messages
- *  - ''SHUTDOWN'' (when 'stop' or 'exit' is invoked) - can't do anything
+ * An actor is either alive or dead.
+ * -- an alive actor can receive and handle message of the right type.
+ * -- a dead actor cannot handle any message.  When an actor is dying, a death notafication will be sent to its supervisor and linked actors.
  *
  * The Actor's own [[takka.actor.ActorRef]] is available as `typedSelf`,
- *  [[takka.actor.ActorContext]] as `typedContext`. The only abstract method is `typedReceive` which shall return the
+ *  [[takka.actor.ActorContext]] as `typedContext`. 
+ * The only abstract method is `typedReceive` which shall return the
  * initial behavior of the actor as a partial function (behavior can be changed
  * using `typedContext.become`).
  *
- * Following example is adapted from ***
+ * Following example is adapted from akka documentation [[http://doc.akka.io/api/akka/2.0.1/#akka.actor.Actor]]
  *
  * {{{
  * sealed trait Message
@@ -116,16 +118,23 @@ trait Actor[M] extends akka.actor.Actor{
   
   /**
    * handler of untyped harmful features
-   */
-  //TODO: make it typed
-  def possiblyHarmfulHandler:akka.actor.PossiblyHarmful => Unit = {
-    case _ => 
-      /*
+   * 
+   * akka.actor.PossiblyHarmful [[[http://doc.akka.io/api/akka/2.0.1/#akka.actor.PossiblyHarmful]]]
+   * has five subclasses:
+   * 
+   * 
+   * {{{
 case class Failed(cause: Throwable) extends AutoReceivedMessage with PossiblyHarmful
 case object PoisonPill extends AutoReceivedMessage with PossiblyHarmful
 case object Kill extends AutoReceivedMessage with PossiblyHarmful
 case class Terminated(@BeanProperty actor: ActorRef) extends PossiblyHarmful
 case object ReceiveTimeout extends PossiblyHarmful      
-      */
+   * }}}
+   * 
+   * Notice that the field of the Terminated message is an untyped actor reference.
+   */
+  //TODO: make it typed
+  def possiblyHarmfulHandler:akka.actor.PossiblyHarmful => Unit = {
+    case _ => 
   }
 }

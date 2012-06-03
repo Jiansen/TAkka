@@ -12,9 +12,11 @@ import takka.nameserver.{NameServer, TSymbol}
 object ActorSystem {
   def apply():ActorSystem = new ActorSystem {
     val system = akka.actor.ActorSystem.apply()
+    system.actorOf(akka.actor.Props(new ActorTypeChecker), "ActorTypeChecker")
   }
   def apply(name: String): ActorSystem = new ActorSystem {
     val system = akka.actor.ActorSystem.apply(name)
+    system.actorOf(akka.actor.Props(new ActorTypeChecker), "ActorTypeChecker")
   }
   
   def create(name: String): ActorSystem = apply(name)
@@ -22,6 +24,7 @@ object ActorSystem {
   def apply(name: String, config: Config): ActorSystem = new ActorSystem {
 //    println(name + "  "+ config +"  ")
     val system = akka.actor.ActorSystem.apply(name, config)
+    system.actorOf(akka.actor.Props(new ActorTypeChecker), "ActorTypeChecker")
   }
 
 }
@@ -42,7 +45,7 @@ object ActorSystem {
 abstract class ActorSystem {
   val system:akka.actor.ActorSystem
 
-  system.actorOf(akka.actor.Props[ActorTypeChecker])
+//  system.actorOf(akka.actor.Props[ActorTypeChecker])
   // Abstract Value Members
   def / (name: Iterable[String]): ActorPath = {
     system / name

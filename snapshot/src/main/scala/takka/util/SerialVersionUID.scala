@@ -1,8 +1,15 @@
 package takka.util
 
-/*
- * String.hashCode in JAVA is consistent
- * However, it returns an Int rather than a Long
+/**
+ * Annotation for specifying the `static SerialVersionUID` field
+ * of a serializable class.
+ * 
+ * To help version management, users provide a string representation of version UID, e.g.
+ * 
+ * {{{
+ * @SerialVersionUID("HelloClass-v-0-1")
+ * class Hello 
+ * }}}
  */
 class SerialVersionUID(uidStr:String) extends scala.SerialVersionUID( uidStr.hashCode() )
 

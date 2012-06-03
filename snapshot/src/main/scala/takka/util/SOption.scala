@@ -1,8 +1,8 @@
 package takka.util
 
-/** Class `SSome[A]` represents existing values of type
- *  `A`.
- *   
+/** 
+ * Globally serializable optional value. Instance of SOption is either an instance of SSome or the object SNone.
+ *
  *  Copied and Modified from Scala Source Code
  *   
  *  @author  Jiansen HE
@@ -39,7 +39,7 @@ sealed abstract class SOption[+A] extends Product with Serializable {
    * Although the use of null is discouraged, code written to use 
    * $option must often interface with code that expects and returns nulls.
    * @example {{{
-   * val initalText: Option[String] = getInitialText
+   * val initalText: SOption[String] = getInitialText
    * val textField = new JComponent(initalText.orNull,20)
    * }}}
    */

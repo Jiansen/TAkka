@@ -1,5 +1,6 @@
 /**
- * Copyright (C) 2009-2012 Typesafe Inc. <http://www.typesafe.com>
+ * Code copy and modified from akka.pattern.package.scala written by
+ * Typesafe Inc. <http://www.typesafe.com>
  */
 
 

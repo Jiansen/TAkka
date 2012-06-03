@@ -1,5 +1,5 @@
 /**
- * Copyright (C) 2009-2012 Typesafe Inc. <http://www.typesafe.com>
+ * Copied and modified from akka.actor.FSM.scala writtern by Typesafe Inc. <http://www.typesafe.com>
  */
 package takka.actor
 
@@ -8,6 +8,7 @@ import akka.util._
 import scala.collection.mutable
 import akka.event.Logging
 import akka.routing.{ Deafen, Listen, Listeners }
+
 
 object FSM {
 

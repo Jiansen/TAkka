@@ -49,10 +49,12 @@ object Props{
  * Props is a ActorRef configuration object, that is thread safe and fully sharable.
  * Used when creating new actors through; <code>ActorSystem.actorOf</code> and <code>ActorContext.actorOf</code>.
  *
- * Examples on Scala API:
+ * Users should initialise a Props using one of the following APIs:
+ * 
  * {{{
  *  val props = Props[M, MyActor]
  *  val props = Props[M](new MyActor)
+ *  val props = Props[M](myActor.getClass)
  * }}}
  */
 case class Props[-T] (props: akka.actor.Props) {
