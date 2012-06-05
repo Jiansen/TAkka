@@ -3,9 +3,15 @@ name := "TAkka"
 version := "snapshot"
  
 scalaVersion := "2.9.1"
- 
-resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/"
 
-libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0"
+resolvers ++= Seq(
+  "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+  "snapshots" at "http://oss.sonatype.org/content/repositories/snapshots",
+  "releases"  at "http://oss.sonatype.org/content/repositories/releases"
+)
 
-libraryDependencies += "com.typesafe.akka" % "akka-remote" % "2.0"
+libraryDependencies ++= Seq(
+  "com.typesafe.akka" % "akka-actor" % "2.0",
+  "com.typesafe.akka" % "akka-remote" % "2.0",
+  "org.scalacheck" %% "scalacheck" % "1.9" % "test"
+)

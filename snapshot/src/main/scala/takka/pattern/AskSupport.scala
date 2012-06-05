@@ -1,4 +1,4 @@
-
+/*
 package takka.pattern
 
 
@@ -20,3 +20,4 @@ trait AskSupport {
     def ?(message: M)(implicit timeout: Timeout): Future[Any] = akka.pattern.ask(actorRef.untyped_ref, message)(timeout)
   }
 }
+*/
