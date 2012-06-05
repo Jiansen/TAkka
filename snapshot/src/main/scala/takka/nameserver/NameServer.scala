@@ -5,32 +5,32 @@ package takka.nameserver
   * 
   * 
   * {{{
-object NameServerTest extends App {
-  import NameServer._
-  
-  set(TSymbol[Int]('Int), 1)
-  val i = get(TSymbol[Int]('Int))
-  println(i)// Some(1)
-  val j = get(TSymbol[Int]('Intn))
-  println(j)// None
-  val k = get(TSymbol[Double]('Int))
-  println(k)// None  
-  
-  
-  class Top
-  class Super extends Top
-  class Middle extends Super
-  class Sub extends Middle
-  class Bot extends Sub
-  
-  
-  set[Middle](TSymbol[Middle]('symbol), new Middle)
-  // OR  set(TSymbol[Middle]('symbol), new Middle)
-  val b = get(TSymbol[Bot]('symbol))
-  val t = get(TSymbol[Top]('symbol))
-  println("bottom "+b) // bottom None
-  println("top "+ t)  // top Some(nameserver.NameServer2Test$Middle@785f8172)
-}
+  * object NameServerTest extends App {
+  *   import NameServer._
+  *   
+  *   set(TSymbol[Int]('Int), 1)
+  *  val i = get(TSymbol[Int]('Int))
+  *  println(i)// Some(1)
+  *  val j = get(TSymbol[Int]('Intn))
+  *  println(j)// None
+  *  val k = get(TSymbol[Double]('Int))
+  *  println(k)// None  
+  *  
+  *  
+  *  class Top
+  *  class Super extends Top
+  *  class Middle extends Super
+  *  class Sub extends Middle
+  *  class Bot extends Sub
+  *  
+  *  
+  *  set[Middle](TSymbol[Middle]('symbol), new Middle)
+  *  // OR  set(TSymbol[Middle]('symbol), new Middle)
+  *  val b = get(TSymbol[Bot]('symbol))
+  *  val t = get(TSymbol[Top]('symbol))
+  *  println("bottom "+b) // bottom None
+  *  println("top "+ t)  // top Some(nameserver.NameServer2Test$Middle@785f8172)
+  * }
   * }}}
   */  
 object NameServer {

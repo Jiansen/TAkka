@@ -20,7 +20,7 @@ import akka.util.Duration
  * context.actorOf(Props[M, MyActor]("name")
  * context.actorOf(Props[M, MyActor]
  * context.actorOf(Props[M](new MyActor(...))
- *
+ * }}}
  * Where no name is given explicitly, one will be automatically generated.
  */
 trait ActorContext[M] {
@@ -30,11 +30,11 @@ trait ActorContext[M] {
 
   val props:Props[M]
   
-  def actorOf[Msg](props:Props[Msg], name:String):ActorRef[Msg] = {
+  def actorOf[Msg](props:Props[Msg], name:String)(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
     new ActorRef[Msg] { val untyped_ref = untyped_context.actorOf(props.props, name) }
   }
   
-  def actorOf[Msg](props:Props[Msg]):ActorRef[Msg] = {
+  def actorOf[Msg](props:Props[Msg])(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
     new ActorRef[Msg] { val untyped_ref = untyped_context.actorOf(props.props) }
   }
   
@@ -80,12 +80,12 @@ trait ActorContext[M] {
     
   // actorFor  via nameserver !!!	
   // TODO: Msg is not checked
-  def actorFor[Msg](actorPath: String): ActorRef[Msg]= new ActorRef[Msg]{
+  def actorFor[Msg](actorPath: String)(implicit mt:Manifest[Msg]): ActorRef[Msg]= new ActorRef[Msg]{
     val untyped_ref = untyped_context.actorFor(actorPath)
   }
   
   //  new APIs to support remote ActorRef
-  def remoteActorOf[Msg](props:Props[Msg]):ActorRef[Msg] = {
+  def remoteActorOf[Msg](props:Props[Msg])(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
     val actor = actorOf[Msg](props:Props[Msg])
     val system = this.system;
     new ActorRef[Msg] {
@@ -97,7 +97,7 @@ trait ActorContext[M] {
     }
   }
   
-  def remoteActorOf[Msg](props:Props[Msg], name:String):ActorRef[Msg] = {
+  def remoteActorOf[Msg](props:Props[Msg], name:String)(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
     val actor = actorOf[Msg](props:Props[Msg], name:String)
     val system = this.system
     new ActorRef[Msg] {

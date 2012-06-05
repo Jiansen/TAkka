@@ -65,6 +65,7 @@ package takka.actor
 //trait Actor[Msg](implicit msgT:Manifest[Msg]) extends akka.actor.Actor {
 //trait Actor[Msg:Manifest] extends akka.actor.Actor {
 trait Actor[M] extends akka.actor.Actor{  
+  implicit val mt:Manifest[M] = manifest[M]
   /**
    * This defines the initial actor behavior, it must return a partial function
    * with the actor logic.

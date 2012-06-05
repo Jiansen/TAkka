@@ -39,7 +39,7 @@ object ActorSystem {
  * {{{
  * system.actorOf(props, "name")
  * system.actorOf(props)
- *
+ * }}}
  * Where no name is given explicitly, one will be automatically generated.
  */
 abstract class ActorSystem {
