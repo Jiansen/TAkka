@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workbench progressCount="12" version="2.0">
+<workbenchAdvisor/>
+<window height="744" maximized="true" width="1024" x="65" y="24">
+<fastViewData fastViewLocation="1024"/>
+<perspectiveBar>
+<itemSize x="160"/>
+</perspectiveBar>
+<coolbarLayout>
+<coolItem id="group.file" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.file" itemType="typeToolBarContribution" x="132" y="30"/>
+<coolItem id="additions" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="148" y="30"/>
+<coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="76" y="30"/>
+<coolItem id="org.eclipse.ui.edit.text.actionSet.presentation" itemType="typeToolBarContribution" x="68" y="30"/>
+<coolItem id="scala.texteditor.actionset" itemType="typeToolBarContribution" x="40" y="30"/>
+<coolItem id="group.nav" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="184" y="30"/>
+<coolItem id="group.editor" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.browser.editor" itemType="typePlaceholder" x="-1" y="-1"/>
+<coolItem id="scala.tools.eclipse.ScalaClassFileEditor" itemType="typePlaceholder" x="-1" y="-1"/>
+<coolItem id="org.eclipse.jdt.ui.ClassFileEditor" itemType="typePlaceholder" x="-1" y="-1"/>
+<coolItem id="org.eclipse.jdt.ui.CompilationUnitEditor" itemType="typePlaceholder" x="-1" y="-1"/>
+<coolItem id="org.eclipse.ui.DefaultTextEditor" itemType="typePlaceholder" x="-1" y="-1"/>
+<coolItem id="scala.tools.eclipse.ScalaSourceFileEditor" itemType="typeToolBarContribution" x="-1" y="-1"/>
+<coolItem id="group.help" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
+</coolbarLayout>
+<page aggregateWorkingSetId="Aggregate for window 1338332994088" focus="true" label="Workspace - Scala">
+<editors>
+<editorArea activeWorkbook="DefaultEditorWorkbook">
+<info part="DefaultEditorWorkbook">
+<folder appearance="1" expanded="2">
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+<part id="1"/>
+</presentation>
+</folder>
+</info>
+</editorArea>
+<editor activePart="true" focus="true" id="scala.tools.eclipse.ScalaSourceFileEditor" name="AkkaDiningHakkaerOnFsm.scala" partName="AkkaDiningHakkaerOnFsm.scala" path="/home/jiajia/TAkka/examples/src/main/scala/sample/takka/AkkaDiningHakkaerOnFsm.scala" title="AkkaDiningHakkaerOnFsm.scala" tooltip="examples/src/main/scala/sample/takka/AkkaDiningHakkaerOnFsm.scala" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/examples/src/main/scala/sample/takka/AkkaDiningHakkaerOnFsm.scala"/>
+<editorState selectionHorizontalPixel="0" selectionLength="8" selectionOffset="1735" selectionTopPixel="737"/>
+</editor>
+<editor id="scala.tools.eclipse.ScalaSourceFileEditor" name="AkkaDiningHakkaerOnFsm.scala" partName="AkkaDiningHakkaerOnFsm.scala" path="/home/jiajia/TAkka/examples/src/main/scala/sample/untyped/AkkaDiningHakkaerOnFsm.scala" title="AkkaDiningHakkaerOnFsm.scala" tooltip="examples/src/main/scala/sample/untyped/AkkaDiningHakkaerOnFsm.scala" workbook="DefaultEditorWorkbook">
+<input factoryID="org.eclipse.ui.part.FileEditorInputFactory" path="/examples/src/main/scala/sample/untyped/AkkaDiningHakkaerOnFsm.scala"/>
+<editorState selectionHorizontalPixel="0" selectionLength="0" selectionOffset="1579" selectionTopPixel="473"/>
+</editor>
+</editors>
+<views>
+<view id="org.eclipse.ui.navigator.ProjectExplorer" partName="Project Explorer">
+<viewState CommonNavigator.LINKING_ENABLED="0" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0"/>
+</view>
+<view id="org.eclipse.search.ui.views.SearchView" partName="Search">
+<viewState isPinned="false">
+<view IMemento.internal.id="" org.eclipse.search.lastActivation="0"/>
+<view IMemento.internal.id="org.eclipse.search.text.FileSearchResultPage" org.eclipse.search.lastActivation="1" org.eclipse.search.resultpage.layout="2" org.eclipse.search.resultpage.limit="1000" org.eclipse.search.resultpage.sorting="2"/>
+</viewState>
+</view>
+<view id="org.eclipse.ui.views.ProblemView" partName="Problems">
+<viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.severityAndDescriptionField" categoryGroup="org.eclipse.ui.ide.severity" markerContentGenerator="org.eclipse.ui.ide.problemsGenerator" partName="Problems">
+<expanded>
+<category IMemento.internal.id="Errors"/>
+</expanded>
+<columnWidths org.eclipse.ui.ide.locationField="105" org.eclipse.ui.ide.markerType="237" org.eclipse.ui.ide.pathField="140" org.eclipse.ui.ide.resourceField="105" org.eclipse.ui.ide.severityAndDescriptionField="734"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.severityAndDescriptionField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.pathField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.locationField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.markerType"/>
+</viewState>
+</view>
+<view id="org.eclipse.jdt.ui.PackageExplorer" partName="Package Explorer">
+<viewState group_libraries="1" layout="2" linkWithEditor="0" rootMode="1" workingSetName="">
+<customFilters userDefinedPatternsEnabled="false">
+<xmlDefinedFilters>
+<child filterId="scala.tools.eclipse.javaelements.ScalaElementFilter" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.LibraryFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.LocalTypesFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.StaticsFilter" isEnabled="false"/>
+<child filterId="org.eclipse.pde.ui.ExternalPluginLibrariesFilter1" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.ClosedProjectsFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.NonSharedProjectsFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.NonJavaElementFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.ContainedLibraryFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.CuAndClassFileFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.NonJavaProjectsFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.internal.ui.PackageExplorer.EmptyInnerPackageFilter" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.PackageDeclarationFilter" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.internal.ui.PackageExplorer.EmptyPackageFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.ImportDeclarationFilter" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.FieldsFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.internal.ui.PackageExplorer.HideInnerClassFilesFilter" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.NonPublicFilter" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer_patternFilterId_.*" isEnabled="true"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.EmptyLibraryContainerFilter" isEnabled="true"/>
+<child filterId="org.eclipse.pde.ui.BinaryProjectFilter1" isEnabled="false"/>
+<child filterId="org.eclipse.jdt.ui.PackageExplorer.SyntheticMembersFilter" isEnabled="true"/>
+</xmlDefinedFilters>
+</customFilters>
+</viewState>
+</view>
+<view id="org.eclipse.ui.console.ConsoleView" partName="Console">
+<viewState/>
+</view>
+<view id="org.eclipse.ui.views.TaskList" partName="Tasks">
+<viewState PRIMARY_SORT_FIELD="org.eclipse.ui.ide.completionField" categoryGroup="none" markerContentGenerator="org.eclipse.ui.ide.tasksGenerator" partName="Tasks">
+<columnWidths org.eclipse.ui.ide.completionField="40" org.eclipse.ui.ide.descriptionField="350" org.eclipse.ui.ide.locationField="105" org.eclipse.ui.ide.markerType="247" org.eclipse.ui.ide.pathField="140" org.eclipse.ui.ide.priorityField="35" org.eclipse.ui.ide.resourceField="105"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.completionField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.priorityField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.descriptionField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.resourceField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.pathField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.locationField"/>
+<visible IMemento.internal.id="org.eclipse.ui.ide.markerType"/>
+</viewState>
+</view>
+<view id="org.eclipse.ui.views.ContentOutline" partName="Outline">
+<viewState/>
+</view>
+</views>
+<perspectives activePart="org.eclipse.ui.console.ConsoleView" activePerspective="org.scala-ide.sdt.core.perspective">
+<perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
+<descriptor class="org.eclipse.ui.internal.ide.application.ResourcePerspective" id="org.eclipse.ui.resourcePerspective" label="Resource"/>
+<alwaysOnActionSet id="org.eclipse.ui.cheatsheets.actionSet"/>
+<alwaysOnActionSet id="org.eclipse.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.annotationNavigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.navigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo"/>
+<alwaysOnActionSet id="org.eclipse.ui.externaltools.ExternalToolsSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.keyBindings"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.openFiles"/>
+<alwaysOnActionSet id="scala.texteditor.actionset"/>
+<alwaysOnActionSet id="org.eclipse.ui.NavigateActionSet"/>
+<show_view_action id="org.eclipse.ui.navigator.ProjectExplorer"/>
+<show_view_action id="org.eclipse.ui.views.BookmarkView"/>
+<show_view_action id="org.eclipse.ui.views.ContentOutline"/>
+<show_view_action id="org.eclipse.ui.views.PropertySheet"/>
+<show_view_action id="org.eclipse.ui.views.ProblemView"/>
+<show_view_action id="org.eclipse.ui.views.ProgressView"/>
+<show_view_action id="org.eclipse.ui.views.TaskList"/>
+<show_view_action id="org.eclipse.ant.ui.views.AntView"/>
+<show_view_action id="org.eclipse.pde.runtime.LogView"/>
+<new_wizard_action id="org.eclipse.ui.wizards.new.folder"/>
+<new_wizard_action id="org.eclipse.ui.wizards.new.file"/>
+<new_wizard_action id="org.eclipse.ui.editors.wizards.UntitledTextFileWizard"/>
+<perspective_action id="org.eclipse.jdt.ui.JavaPerspective"/>
+<perspective_action id="org.eclipse.jdt.ui.JavaBrowsingPerspective"/>
+<perspective_action id="org.eclipse.team.cvs.ui.cvsPerspective"/>
+<perspective_action id="org.eclipse.team.ui.TeamSynchronizingPerspective"/>
+<perspective_action id="org.scala-ide.sdt.core.perspective"/>
+<hide_toolbar_item_id id="org.eclipse.jdt.ui.actions.OpenProjectWizard"/>
+<hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
+<view id="org.eclipse.ui.navigator.ProjectExplorer"/>
+<view id="org.eclipse.ui.views.ContentOutline"/>
+<view id="org.eclipse.ui.views.ProblemView"/>
+<view id="org.eclipse.ui.views.TaskList"/>
+<view id="org.eclipse.search.ui.views.SearchView"/>
+<view id="org.eclipse.ui.console.ConsoleView"/>
+<fastViewBars/>
+<layout>&#x0A;<mainWindow>&#x0A;<info folder="true" part="topLeft">&#x0A;<folder activePageID="org.eclipse.ui.navigator.ProjectExplorer" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.navigator.ProjectExplorer" label="Project Explorer"/>
+<page content="org.eclipse.ui.views.BookmarkView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.views.ResourceNavigator" label="LabelNotFound"/>
+<page content="org.eclipse.team.ccvs.ui.RepositoriesView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@1e9b67e" ratio="0.7495049" ratioLeft="757" ratioRight="253" relationship="2" relative="topLeft">&#x0A;<folder appearance="2" expanded="2">&#x0A;<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+<page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory"/>
+</folder>
+</info>
+<info part="org.eclipse.ui.editorss" ratio="0.25940594" ratioLeft="262" ratioRight="748" relationship="2" relative="topLeft"/>
+<info folder="true" part="bottomRight" ratio="0.6596434" ratioLeft="407" ratioRight="210" relationship="4" relative="org.eclipse.ui.editorss">&#x0A;<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
+<page content="org.eclipse.ui.views.TaskList" label="Tasks"/>
+<page content="org.eclipse.search.ui.views.SearchView" label="Search"/>
+<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<page content="org.scala-ide.sdt.core.consoleView:snapshot" label="LabelNotFound"/>
+<page content="org.eclipse.team.ui.GenericHistoryView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+<part id="3"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="bottomLeft" ratio="0.49918962" ratioLeft="308" ratioRight="309" relationship="4" relative="topLeft">&#x0A;<folder activePageID="org.eclipse.ui.views.ContentOutline" appearance="2" expanded="2">&#x0A;<page content="org.eclipse.ui.views.ContentOutline" label="Outline"/>
+<page content="org.eclipse.ant.ui.views.AntView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">&#x0A;<part id="0"/>
+</presentation>
+</folder>
+</info>
+</mainWindow>
+</layout>
+</perspective>
+<perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
+<descriptor class="scala.tools.eclipse.PerspectiveFactory" id="org.scala-ide.sdt.core.perspective" label="Scala"/>
+<alwaysOnActionSet id="org.eclipse.ui.cheatsheets.actionSet"/>
+<alwaysOnActionSet id="org.eclipse.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.annotationNavigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.navigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo"/>
+<alwaysOnActionSet id="org.eclipse.ui.externaltools.ExternalToolsSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.keyBindings"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.openFiles"/>
+<alwaysOnActionSet id="scala.texteditor.actionset"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.launchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.jdt.ui.JavaActionSet"/>
+<alwaysOnActionSet id="org.scala-ide.sdt.ui.scalaMenu.actionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
+<show_view_action id="org.eclipse.ui.views.ResourceNavigator"/>
+<show_view_action id="org.eclipse.ui.navigator.ProjectExplorer"/>
+<show_view_action id="org.eclipse.ui.views.ContentOutline"/>
+<show_view_action id="org.eclipse.pde.runtime.LogView"/>
+<show_view_action id="org.scala-ide.sdt.core.consoleView"/>
+<new_wizard_action id="org.scala-ide.sdt.core.wizards.newProject"/>
+<new_wizard_action id="org.scala-ide.sdt.core.wizards.newNetProject"/>
+<new_wizard_action id="org.eclipse.jdt.ui.wizards.NewPackageCreationWizard"/>
+<new_wizard_action id="org.scala-ide.sdt.core.wizards.newClass"/>
+<new_wizard_action id="org.scala-ide.sdt.core.wizards.newTrait"/>
+<new_wizard_action id="org.scala-ide.sdt.core.wizards.newObject"/>
+<new_wizard_action id="org.scala-ide.sdt.core.wizards.newPackageObject"/>
+<new_wizard_action id="org.scala-ide.sdt.core.wizards.newApplication"/>
+<new_wizard_action id="org.eclipse.ui.wizards.new.folder"/>
+<new_wizard_action id="org.eclipse.ui.wizards.new.file"/>
+<perspective_action id="org.eclipse.debug.ui.DebugPerspective"/>
+<hide_toolbar_item_id id="org.eclipse.jdt.ui.actions.OpenProjectWizard"/>
+<hide_toolbar_item_id id="org.eclipse.ui.edit.text.toggleShowSelectedElementOnly"/>
+<view id="org.eclipse.ui.views.ProblemView"/>
+<view id="org.eclipse.ui.views.TaskList"/>
+<view id="org.eclipse.ui.console.ConsoleView"/>
+<view id="org.eclipse.jdt.ui.PackageExplorer"/>
+<view id="org.eclipse.ui.views.ContentOutline"/>
+<fastViewBars/>
+<layout>
+<mainWindow>
+<info folder="true" part="explorer">
+<folder activePageID="org.eclipse.jdt.ui.PackageExplorer" appearance="2" expanded="2">
+<page content="org.eclipse.jdt.ui.PackageExplorer" label="Package Explorer"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="stickyFolderRight" ratio="0.7494199" ratioLeft="969" ratioRight="324" relationship="2" relative="explorer">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+<page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
+</folder>
+</info>
+<info part="org.eclipse.ui.editorss" ratio="0.24980666" ratioLeft="323" ratioRight="970" relationship="2" relative="explorer"/>
+<info folder="true" part="problems" ratio="0.74922603" ratioLeft="484" ratioRight="162" relationship="4" relative="org.eclipse.ui.editorss">
+<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
+<page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
+<page content="org.eclipse.ui.views.TaskList" label="Tasks"/>
+<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="right" ratio="0.74948454" ratioLeft="727" ratioRight="243" relationship="2" relative="org.eclipse.ui.editorss">
+<folder activePageID="org.eclipse.ui.views.ContentOutline" appearance="2" expanded="2">
+<page content="org.eclipse.ui.views.ContentOutline" label="Outline"/>
+<presentation id="org.eclipse.ui.presentations.WorkbenchPresentationFactory">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+</mainWindow>
+</layout>
+</perspective>
+</perspectives>
+<workingSets/>
+<navigationHistory>
+<editors>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" path="/snapshot/src/main/scala/takka/actor/FSM.scala"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" path="/examples/src/main/scala/sample/untyped/AkkaDiningHakkaerOnFsm.scala"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" path="/examples/src/main/scala/sample/takka/AkkaDiningHakkaerOnFsm.scala"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" path="/snapshot/src/main/scala/takka/actor/ActorRef.scala"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" path="/examples/src/main/scala/sample/barbershop/takka/Barber.scala"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" path="/examples/src/main/scala/sample/takka/SupervisionTreeDemo.scala"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" path="/snapshot/src/main/scala/takka/actor/Actor.scala"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" path="/snapshot/src/main/scala/takka/actor/ActorRef.scala"/>
+<editor factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" path="/snapshot/src/main/scala/takka/actor/FSM.scala"/>
+</editors>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="1">
+<position info="not_deleted" x="3029" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1560" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1468" y="0"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="2277" y="8"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="2323" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1500" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1735" y="8"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1907" y="0"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="2323" y="0"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="2350" y="0"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="2385" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1856" y="0"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="7978" y="4"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="8016" y="0"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="1714" y="5"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1873" y="0"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="2545" y="5"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1856" y="0"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="1859" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1856" y="0"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="16821" y="6"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1856" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1065" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="883" y="7"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="1">
+<position info="not_deleted" x="3029" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="883" y="7"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1427" y="28"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="1">
+<position info="not_deleted" x="1426" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1427" y="28"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="1">
+<position info="not_deleted" x="1426" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="3256" y="0"/>
+</item>
+<item historyLabel="ActorRef.scala" index="3">
+<position info="not_deleted" x="1500" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="3256" y="0"/>
+</item>
+<item historyLabel="Barber.scala" index="4">
+<position info="not_deleted" x="40" y="5"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="16821" y="6"/>
+</item>
+<item historyLabel="SupervisionTreeDemo.scala" index="5">
+<position info="not_deleted" x="1428" y="1"/>
+</item>
+<item historyLabel="SupervisionTreeDemo.scala" index="5">
+<position info="not_deleted" x="1394" y="0"/>
+</item>
+<item historyLabel="SupervisionTreeDemo.scala" index="5">
+<position info="not_deleted" x="1367" y="5"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="16821" y="6"/>
+</item>
+<item historyLabel="Actor.scala" index="6">
+<position info="not_deleted" x="0" y="0"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="16821" y="6"/>
+</item>
+<item historyLabel="ActorRef.scala" index="7">
+<position info="not_deleted" x="1449" y="0"/>
+</item>
+<item historyLabel="FSM.scala" index="0">
+<position info="not_deleted" x="16821" y="6"/>
+</item>
+<item historyLabel="ActorRef.scala" index="7">
+<position info="not_deleted" x="1452" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1526" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="1">
+<position info="not_deleted" x="1579" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1526" y="0"/>
+</item>
+<item historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1498" y="0"/>
+</item>
+<item historyLabel="FSM.scala" index="8">
+<position info="not_deleted" x="2301" y="0"/>
+</item>
+<item active="true" historyLabel="AkkaDiningHakkaerOnFsm.scala" index="2">
+<position info="not_deleted" x="1498" y="0"/>
+</item>
+</navigationHistory>
+<input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
+</page>
+<workbenchWindowAdvisor/>
+<actionBarAdvisor/>
+<trimLayout>
+<trimArea IMemento.internal.id="16384">
+<trimItem IMemento.internal.id="explorer"/>
+</trimArea>
+<trimArea IMemento.internal.id="131072">
+<trimItem IMemento.internal.id="org.eclipse.ui.editorss"/>
+<trimItem IMemento.internal.id="right"/>
+</trimArea>
+<trimArea IMemento.internal.id="128">
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.WorkbenchWindow.topBar"/>
+</trimArea>
+<trimArea IMemento.internal.id="1024">
+<trimItem IMemento.internal.id="org.eclise.ui.internal.FastViewBar"/>
+<trimItem IMemento.internal.id="org.eclipse.jface.action.StatusLineManager"/>
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.progress.ProgressRegion"/>
+<trimItem IMemento.internal.id="problems"/>
+</trimArea>
+</trimLayout>
+</window>
+<mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="FSM.scala" tooltip="snapshot/src/main/scala/takka/actor/FSM.scala">
+<persistable path="/snapshot/src/main/scala/takka/actor/FSM.scala"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="ActorRef.scala" tooltip="snapshot/src/main/scala/takka/actor/ActorRef.scala">
+<persistable path="/snapshot/src/main/scala/takka/actor/ActorRef.scala"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="Actor.scala" tooltip="snapshot/src/main/scala/takka/actor/Actor.scala">
+<persistable path="/snapshot/src/main/scala/takka/actor/Actor.scala"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="SupervisionTreeDemo.scala" tooltip="examples/src/main/scala/sample/takka/SupervisionTreeDemo.scala">
+<persistable path="/examples/src/main/scala/sample/takka/SupervisionTreeDemo.scala"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="Barber.scala" tooltip="examples/src/main/scala/sample/barbershop/takka/Barber.scala">
+<persistable path="/examples/src/main/scala/sample/barbershop/takka/Barber.scala"/>
+</file>
+<file factoryID="org.eclipse.jdt.ui.ClassFileEditorInputFactory" id="scala.tools.eclipse.ScalaClassFileEditor" name="FSM.class" tooltip="akka.actor.FSM">
+<persistable org.eclipse.jdt.ui.ClassFileIdentifier="=examples/\/home\/jiajia\/.ivy2\/cache\/com.typesafe.akka\/akka-actor\/jars\/akka-actor-2.0.2.jar&lt;akka.actor(FSM.class"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="AkkaDiningHakkaerOnFsm.scala" tooltip="examples/src/main/scala/sample/untyped/AkkaDiningHakkaerOnFsm.scala">
+<persistable path="/examples/src/main/scala/sample/untyped/AkkaDiningHakkaerOnFsm.scala"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="atm.scala" tooltip="examples/src/main/scala/sample/atm/takka/atm.scala">
+<persistable path="/examples/src/main/scala/sample/atm/takka/atm.scala"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="ActorContext.scala" tooltip="snapshot/src/main/scala/takka/actor/ActorContext.scala">
+<persistable path="/snapshot/src/main/scala/takka/actor/ActorContext.scala"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="ActorSystem.scala" tooltip="snapshot/src/main/scala/takka/actor/ActorSystem.scala">
+<persistable path="/snapshot/src/main/scala/takka/actor/ActorSystem.scala"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="e_graphic.scala" tooltip="examples/src/main/scala/sample/elevatorController/takka/e_graphic.scala">
+<persistable path="/examples/src/main/scala/sample/elevatorController/takka/e_graphic.scala"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="Elevator.scala" tooltip="examples/src/main/scala/sample/elevatorController/takka/Elevator.scala">
+<persistable path="/examples/src/main/scala/sample/elevatorController/takka/Elevator.scala"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="Barbershop.scala" tooltip="examples/src/main/scala/sample/barbershop/takka/Barbershop.scala">
+<persistable path="/examples/src/main/scala/sample/barbershop/takka/Barbershop.scala"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="Scheduler.scala" tooltip="examples/src/main/scala/sample/elevatorController/takka/Scheduler.scala">
+<persistable path="/examples/src/main/scala/sample/elevatorController/takka/Scheduler.scala"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="scala.tools.eclipse.ScalaSourceFileEditor" name="FaultHandlingDocSample.scala" tooltip="examples/src/main/scala/sample/takka/FaultHandlingDocSample.scala">
+<persistable path="/examples/src/main/scala/sample/takka/FaultHandlingDocSample.scala"/>
+</file>
+</mruList>
+</workbench>
