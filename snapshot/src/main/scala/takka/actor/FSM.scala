@@ -406,7 +406,7 @@ trait FSM[S, D, E] extends Listeners {
   /*
    * FSM State data and current timeout handling
    */
-  private var currentState: State = _
+  protected var currentState: State = _
   private var timeoutFuture: Option[akka.actor.Cancellable] = None //TODO
   private var nextState: State = _
   private var generation: Long = 0L

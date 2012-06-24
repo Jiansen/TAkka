@@ -13,5 +13,8 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "com.typesafe.akka" % "akka-actor" % "2.0",
   "com.typesafe.akka" % "akka-remote" % "2.0",
-  "org.scalacheck" %% "scalacheck" % "1.9" % "test"
+  "com.typesafe.akka" % "akka-kernel" % "2.0",
+  "org.scalacheck" %% "scalacheck" % "1.9"
 )
+
+libraryDependencies <+= scalaVersion { "org.scala-lang" % "scala-swing" % _ }
