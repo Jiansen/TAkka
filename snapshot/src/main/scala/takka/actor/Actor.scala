@@ -97,7 +97,7 @@ trait Actor[M] extends akka.actor.Actor{
    * </pre>
    */
   implicit final val typedSelf:ActorRef[M] = new ActorRef[M] {
-    val untyped_ref = self
+    val untypedRef = self
   } 
   
   /**
@@ -112,7 +112,7 @@ trait Actor[M] extends akka.actor.Actor{
       val sys_path = localPathStr.split("@")
       val remotePathStr = sys_path(0)+"@"+system.host+":"+system.port+sys_path(1)
 //akka://RemoteCreation@129.215.91.195:2554/user/creationActor    
-      val untyped_ref = context.actorFor(remotePathStr)
+      val untypedRef = context.actorFor(remotePathStr)
     } 
   } 
   // def receiveTimeout : () => Unit = () => {}

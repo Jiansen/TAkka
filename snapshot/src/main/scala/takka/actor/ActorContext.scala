@@ -31,11 +31,11 @@ trait ActorContext[M] {
   val props:Props[M]
   
   def actorOf[Msg](props:Props[Msg], name:String)(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
-    new ActorRef[Msg] { val untyped_ref = untyped_context.actorOf(props.props, name) }
+    new ActorRef[Msg] { val untypedRef = untyped_context.actorOf(props.props, name) }
   }
   
   def actorOf[Msg](props:Props[Msg])(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
-    new ActorRef[Msg] { val untyped_ref = untyped_context.actorOf(props.props) }
+    new ActorRef[Msg] { val untypedRef = untyped_context.actorOf(props.props) }
   }
   
   def receiveTimeout : Option[Duration] = {
@@ -47,7 +47,7 @@ trait ActorContext[M] {
   }
   
   lazy val typedSelf:ActorRef[M] = new ActorRef[M]{
-    val untyped_ref = untyped_context.self
+    val untypedRef = untyped_context.self
   }
   
   def setReceiveTimeout (timeout: Duration): Unit = {
@@ -55,7 +55,7 @@ trait ActorContext[M] {
   }
   
   def stop (actor: ActorRef[_]): Unit = {
-    untyped_context.stop(actor.untyped_ref)
+    untyped_context.stop(actor.untypedRef)
   }
   
   private var internalSystem:ActorSystem = null
@@ -69,19 +69,19 @@ trait ActorContext[M] {
   }
   
   def unwatch[Msg](subject: ActorRef[Msg]): ActorRef[Msg] = {
-    untyped_context.unwatch(subject.untyped_ref)
+    untyped_context.unwatch(subject.untypedRef)
     subject    
   }
   
   def watch[Msg](subject: ActorRef[Msg]): ActorRef[Msg] = {
-    untyped_context.watch(subject.untyped_ref)
+    untyped_context.watch(subject.untypedRef)
     subject    
   }
     
   // actorFor  via nameserver !!!	
   // TODO: Msg is not checked
   def actorFor[Msg](actorPath: String)(implicit mt:Manifest[Msg]): ActorRef[Msg]= new ActorRef[Msg]{
-    val untyped_ref = untyped_context.actorFor(actorPath)
+    val untypedRef = untyped_context.actorFor(actorPath)
   }
   
   //  new APIs to support remote ActorRef
@@ -93,7 +93,7 @@ trait ActorContext[M] {
       val sys_path = localPathStr.split("@")
       val remotePathStr = sys_path(0)+"@"+system.host+":"+system.port+sys_path(1)
 //akka://RemoteCreation@129.215.91.195:2554/user/...
-      val untyped_ref = system.system.actorFor(remotePathStr)
+      val untypedRef = system.system.actorFor(remotePathStr)
     }
   }
   
@@ -105,7 +105,7 @@ trait ActorContext[M] {
       val sys_path = localPathStr.split("@")
       val remotePathStr = sys_path(0)+"@"+system.host+":"+system.port+sys_path(1)
 //akka://RemoteCreation@129.215.91.195:2554/user/...
-      val untyped_ref = system.system.actorFor(remotePathStr)
+      val untypedRef = system.system.actorFor(remotePathStr)
     }
   }
   
@@ -119,7 +119,7 @@ trait ActorContext[M] {
       case x:akka.actor.PossiblyHarmful => possibleHamfulHandler(x)
     })
     new ActorRef[SupM] {
-      val untyped_ref = untyped_context.self
+      val untypedRef = untyped_context.self
     }
   }
 }

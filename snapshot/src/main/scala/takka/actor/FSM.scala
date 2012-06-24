@@ -9,7 +9,6 @@ import scala.collection.mutable
 import akka.event.Logging
 import akka.routing.{ Deafen, Listen, Listeners }
 
-
 object FSM {
 
   object NullFunction extends PartialFunction[Any, Nothing] {
@@ -27,18 +26,16 @@ object FSM {
   case object Shutdown extends Reason
   case class Failure(cause: Any) extends Reason
 
-  case object StateTimeout
   case class TimeoutMarker(generation: Long)
 
   case class Timer[E](name: String, msg: E, repeat: Boolean, generation: Int)(implicit system: ActorSystem) {
     private var ref: Option[akka.actor.Cancellable] = _ //TODO
 
-    //TODO: implement system.scheduler
     def schedule(actor: ActorRef[E], timeout: Duration) {
       if (repeat) {
-        ref = Some(system.system.scheduler.schedule(timeout, timeout, actor.untyped_ref, this))
+        ref = Some(system.scheduler.schedule(timeout, timeout, actor.untypedRef, this))
       } else {
-        ref = Some(system.system.scheduler.scheduleOnce(timeout, actor.untyped_ref, this))
+        ref = Some(system.scheduler.scheduleOnce(timeout, actor.untypedRef, this))
       }
     }
 
@@ -180,21 +177,7 @@ trait FSM[S, D, E] extends Listeners {
   import FSM._
 
   type State = FSM.State[S, D]
-  type StateFunction = scala.PartialFunction[Either[Event[E], StateTimeout.type], State]
-//  type StateFunction = scala.PartialFunction[Event[E], State]
-  type EventFunction = scala.PartialFunction[Event[E], State]
-  type TimeoutFunction = scala.PartialFunction[StateTimeout.type, State]
-  
-  implicit def event2Either(e:Event[E]): Either[Event[E], StateTimeout.type] = Left(e)
-  implicit def timeout2Either(stateTimeout:StateTimeout.type): Either[Event[E], StateTimeout.type] = Right(stateTimeout)
-  
-  implicit def eventFun2EitherFun(ef:PartialFunction[Event[E], State]):StateFunction = {
-    case Left(e) => ef(e)
-  }
-  implicit def timeoutFun2EitherFun(tf:TimeoutFunction):StateFunction = {
-    case Right(stateTimeout) => tf(stateTimeout)
-  }
-  
+  type StateFunction = scala.PartialFunction[FSMTransaction, State]
   
   type Timeout = Option[Duration]
   type TransitionHandler = PartialFunction[(S, S), Unit]
@@ -222,25 +205,13 @@ trait FSM[S, D, E] extends Listeners {
    * @param stateTimeout default state timeout for this state
    * @param stateFunction partial function describing response to input
    */
-  protected final def when(stateName: S, stateTimeout: Duration = null)(stateFunction: EventFunction): Unit =
+  protected final def when(stateName: S, stateTimeout: Duration = null)(stateFunction: StateFunction): Unit =
     register(stateName, stateFunction, Option(stateTimeout))
 
   @deprecated("use the more import-friendly variant taking a Duration", "2.0")
-  protected final def when(stateName: S, stateTimeout: Timeout)(stateFunction: EventFunction): Unit =
+  protected final def when(stateName: S, stateTimeout: Timeout)(stateFunction: StateFunction): Unit =
     register(stateName, stateFunction, stateTimeout)
 
-  protected final def whenStateTimeout(stateName: S, stateTimeout: Duration = null)(timeoutFunction: => State): Unit = {
-    val stateFunction:TimeoutFunction = {case StateTimeout => timeoutFunction}
-    register(stateName, stateFunction, Option(stateTimeout))
-  }
-
-  @deprecated("use the more import-friendly variant taking a Duration", "2.0")
-  protected final def whenStateTimeout(stateName: S, stateTimeout: Timeout)(timeoutFunction: => State): Unit = {
-    val stateFunction:TimeoutFunction = {case StateTimeout => timeoutFunction}
-    register(stateName, stateFunction, stateTimeout)
-  }
-
-    
   /**
    * Set initial state. Call this method from the constructor before the #initialize method.
    *
@@ -297,7 +268,7 @@ trait FSM[S, D, E] extends Listeners {
     if (timers contains name) {
       timers(name).cancel
     }
-    //TODO
+
     val timer = Timer[E](name, msg, repeat, timerGen.next)(typedContext.system)
     timer.schedule(typedSelf, timeout)
     timers(name) = timer
@@ -407,7 +378,7 @@ trait FSM[S, D, E] extends Listeners {
    * FSM State data and current timeout handling
    */
   protected var currentState: State = _
-  private var timeoutFuture: Option[akka.actor.Cancellable] = None //TODO
+  private var timeoutFuture: Option[akka.actor.Cancellable] = None
   private var nextState: State = _
   private var generation: Long = 0L
 
@@ -433,14 +404,15 @@ trait FSM[S, D, E] extends Listeners {
     }
   }
 
-  // add timeout function to stateFunctions and stateTimeouts
-  
   /*
    * unhandled event handler
    */
-  private val handleEventDefault: EventFunction = {
+  private val handleEventDefault: StateFunction = {
     case Event(value, stateData) =>
       log.warning("unhandled event " + value + " in state " + stateName)
+      stay
+    case StateTimeout(_) =>
+      log.warning("unhandled StateTimeout in state " + stateName)
       stay
   }
   private var handleEvent: StateFunction = handleEventDefault
@@ -472,9 +444,7 @@ trait FSM[S, D, E] extends Listeners {
   override final protected def receive: Receive = {
     case TimeoutMarker(gen) =>
       if (generation == gen) {
-        // TODO:
         processMsg(Right(StateTimeout), "state timeout") 
-//        throw new Error("TO BE Implemented:  state time out handler, FSM L441")
       }
     case t @ Timer(name, msg, repeat, gen) =>
       if ((timers contains name) && (timers(name).generation == gen)) {
@@ -483,14 +453,14 @@ trait FSM[S, D, E] extends Listeners {
           timeoutFuture = None
         }
         generation += 1
-        processMsg(msg.asInstanceOf[Either[E, StateTimeout.type]], t) //TODO:
         if (!repeat) {
           timers -= name
         }
+        processMsg(msg.asInstanceOf[Either[E, StateTimeout.type]], t)
       }
     case SubscribeTransitionCallBack(actorRef) =>
       // TODO use DeathWatch to clean up list
-      listeners.add(actorRef.untyped_ref) //TODO
+      listeners.add(actorRef.untypedRef)
       // send current state back as reference point
       actorRef ! CurrentState(typedSelf, currentState.stateName)
     case Listen(actorRef) =>
@@ -526,12 +496,12 @@ trait FSM[S, D, E] extends Listeners {
     if (msg.isLeft){
       val event = Event(msg.left.get, currentState.stateData)
       processEvent(event, source)      
-    }else{//is right
-      processEvent(Right(StateTimeout), source)
+    }else{//is timeout
+      processEvent(StateTimeout(currentState.stateData), source)
     }
   }
 
-  private[actor] def processEvent(event: Either[Event[E], StateTimeout.type], source: AnyRef): Unit = {
+  private[actor] def processEvent(event: FSMTransaction, source: AnyRef): Unit = {
     val stateFunc = stateFunctions(currentState.stateName)
     val nextState = if (stateFunc isDefinedAt event) {
       stateFunc(event)
@@ -590,7 +560,9 @@ trait FSM[S, D, E] extends Listeners {
     }
   }
 
-  case class Event[E](event: E, stateData: D)
+  sealed trait FSMTransaction
+  case class Event(event: E, stateData: D) extends FSMTransaction
+  case class StateTimeout(stateData: D) extends FSMTransaction
   
   case class StopEvent[S, D](reason: Reason, currentState: S, stateData: D)
 }
@@ -606,10 +578,9 @@ trait LoggingFSM[S, D, E] extends FSM[S, D, E] { this: Actor[E] =>
 
   def logDepth: Int = 0
 
-  //TODO: context -> actor_context
-  private val debugEvent = context.system.settings.FsmDebugEvent
+  private val debugEvent = typedContext.system.settings.FsmDebugEvent
 
-  private val events = new Array[Event[E]](logDepth)
+  private val events = new Array[Event](logDepth)
   private val states = new Array[AnyRef](logDepth)
   private var pos = 0
   private var full = false
@@ -636,7 +607,7 @@ trait LoggingFSM[S, D, E] extends FSM[S, D, E] { this: Actor[E] =>
     super.cancelTimer(name)
   }
 
-  private[actor] abstract override def processEvent(event: Either[Event[E], StateTimeout.type], source: AnyRef): Unit = {
+  private[actor] abstract override def processEvent(event: FSMTransaction, source: AnyRef): Unit = {
     if (debugEvent) {
       val srcstr = source match {
         case s: String            => s
@@ -649,8 +620,8 @@ trait LoggingFSM[S, D, E] extends FSM[S, D, E] { this: Actor[E] =>
 
     if (logDepth > 0) {
       states(pos) = stateName.asInstanceOf[AnyRef]
-      if (event.isLeft){
-        events(pos) = event.left.get        
+      if (event.isInstanceOf[Event]){
+        events(pos) = event.asInstanceOf[Event]   
       }
       advance()
     }

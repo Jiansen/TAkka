@@ -59,7 +59,7 @@ abstract class ActorSystem {
    * Create a top-level actor, with system generated name.
    */  
   def actorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg] = {
-    val actor = new ActorRef[Msg] { val untyped_ref = system.actorOf(props.props) }
+    val actor = new ActorRef[Msg] { val untypedRef = system.actorOf(props.props) }
     
     NameServer.set(TSymbol[ActorRef[Msg]](Symbol(actor.path.toString())), actor)
     
@@ -70,7 +70,7 @@ abstract class ActorSystem {
    * Create a top-level actor. with user specified name.
    */  
   def actorOf[Msg:Manifest](props:Props[Msg], name:String):ActorRef[Msg] = {
-    val actor = new ActorRef[Msg] { val untyped_ref = system.actorOf(props.props, name) }
+    val actor = new ActorRef[Msg] { val untypedRef = system.actorOf(props.props, name) }
     NameServer.set(TSymbol[ActorRef[Msg]](Symbol(actor.path.toString())), actor)
     actor
   }
@@ -123,9 +123,9 @@ abstract class ActorSystem {
   
   override def toString():String = system.toString()
   
-  // TODO: refine followings
+  // use publishas[T] when ActorRef[T] is required
   def deadLetters : ActorRef[Any] = new ActorRef[Any]{
-    val untyped_ref = system.deadLetters
+    val untypedRef = system.deadLetters
   }
 
   
@@ -137,7 +137,7 @@ abstract class ActorSystem {
     
     //val isRemotePath = ActorPath(actorPath)
     val tmp = new ActorRef[M]{
-      val untyped_ref = system.actorFor(actorPath)
+      val untypedRef = system.actorFor(actorPath)
     }
     actorFor[M](tmp.path)
   }
@@ -164,7 +164,7 @@ abstract class ActorSystem {
       checkResult onSuccess {
         case Compatible => 
           result = new ActorRef[M]{
-            val untyped_ref = system.actorFor(actorPath)
+            val untypedRef = system.actorFor(actorPath)
           } 
         case NonCompatible => 
           throw new Exception("ActorRef["+actorPath+"] does not exist or does not have type ActorRef["+manifest[M]+"]")
@@ -173,7 +173,7 @@ abstract class ActorSystem {
     }else{
       // local actor reference, fetch from local name server
       new ActorRef[M]{
-        val untyped_ref = system.actorFor(actorPath)
+        val untypedRef = system.actorFor(actorPath)
       }    
     }
   }
@@ -224,7 +224,7 @@ abstract class ActorSystem {
       val sys_path = localPathStr.split("@")
       val remotePathStr = sys_path(0)+"@"+system.host+":"+system.port+sys_path(1)
 //akka://RemoteCreation@129.215.91.195:2554/user/...
-      val untyped_ref = system.system.actorFor(remotePathStr)
+      val untypedRef = system.system.actorFor(remotePathStr)
     }
   }
   
@@ -236,7 +236,7 @@ abstract class ActorSystem {
       val sys_path = localPathStr.split("@")
       val remotePathStr = sys_path(0)+"@"+system.host+":"+system.port+sys_path(1)
 //akka://RemoteCreation@129.215.91.195:2554/user/...
-      val untyped_ref = system.system.actorFor(remotePathStr)
+      val untypedRef = system.system.actorFor(remotePathStr)
     }
   }
   

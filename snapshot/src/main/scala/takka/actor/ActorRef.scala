@@ -13,50 +13,49 @@ import takka.util.SerialVersionUID
 @SerialVersionUID("ActorRef-v-0-1")
 //trait ActorRef[-Msg : Manifest] { // compile error: traits cannot have type parameters with context bounds
 abstract class ActorRef[-M](implicit mt:Manifest[M]) {
-  val untyped_ref:akka.actor.ActorRef 
+  val untypedRef:akka.actor.ActorRef 
 //  def typename(implicit m: scala.reflect.Manifest[M]) = m.toString
   
   /**
    *  Return true if the actor has been shut down 
    */
-  def isTerminated : Boolean = {untyped_ref.isTerminated}
+  def isTerminated : Boolean = {untypedRef.isTerminated}
   
   /**
    *  Return the ActorPath of the actor reference
    */
-  def path : akka.actor.ActorPath = {untyped_ref.path}
+  def path : akka.actor.ActorPath = {untypedRef.path}
   
   /**
    *  Comparing address (akka) and Static Type (extended feature)
    */
-  final def compareTo (other: ActorRef[_]): Int = {untyped_ref.compareTo(other.untyped_ref)}
+  final def compareTo (other: ActorRef[_]): Int = {untypedRef.compareTo(other.untypedRef)}
   
-  //TODO
   override def equals (that: Any):Boolean = that match {
-    case that:ActorRef[Any] => untyped_ref.equals(that.untyped_ref)
+    case that:ActorRef[Any] => untypedRef.equals(that.untypedRef)
     case _ => false
   }
 
-  final override def hashCode (): Int = untyped_ref.hashCode()
+  final override def hashCode (): Int = untypedRef.hashCode()
 
   /**
    * Sends message:M to the actor reference.
    */
   final def tell (msg: M): Unit = {
-    untyped_ref.tell(msg)
+    untypedRef.tell(msg)
   }
   
   /**
    *  Sends message:M to the actor reference, same as tell.
    */
-  def !(message: M) = {
-    untyped_ref ! message
+//  def !(message: M) = {
+//    untypedRef ! message
+//  }
+  
+  def !(message: M)(implicit sender: ActorRef[_] = this) = {
+    untypedRef.!(message)(sender.untypedRef)
   }
-  /*
-  def !(message: M)(implicit sender: ActorRef[M] = this) = {
-    untyped_ref.!(message)(sender.untyped_ref)
-  }
-  */
+  
   
   override def toString (): String = {
     "ActorRef["+this.mt+"]: "+this.path    
@@ -66,9 +65,9 @@ abstract class ActorRef[-M](implicit mt:Manifest[M]) {
    *  Type safe cast
    */
   def publishAs[SubM<:M](implicit mt:Manifest[SubM]):ActorRef[SubM] = {
-    val preciseRef = this.untyped_ref
+    val preciseRef = this.untypedRef
      new ActorRef[SubM] {
-      val untyped_ref = preciseRef
+      val untypedRef = preciseRef
     } 
   }
   
@@ -76,7 +75,7 @@ abstract class ActorRef[-M](implicit mt:Manifest[M]) {
    *  Send synchronous request.  The current implementation is buggy because it does not restrict SynMessage[R] <: M
    */
   def ?[R](message: SynMessage[R])(implicit timeout: akka.util.Timeout, mr:Manifest[R]):akka.dispatch.Future[R] = {    
-    (untyped_ref ? message).mapTo[R]
+    (untypedRef ? message).mapTo[R]
   }
 }
 
