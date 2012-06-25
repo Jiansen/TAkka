@@ -58,8 +58,18 @@ object Props{
  * }}}
  */
 case class Props[-T] (props: akka.actor.Props) {
-  def withCreator[T] (c: => Actor[T]): Props[T] ={
+  def withCreator[T](c: => Actor[T]): Props[T] ={
     val p = akka.actor.Props(c)
+    return Props(p)
+  }
+  
+  def withRouter(r: akka.routing.RouterConfig): Props[T] = {
+    val p = props.withRouter(r)
+    return Props(p)
+  }
+
+  def withDispatcher(d: String): Props[T] = {
+    val p = props.withDispatcher(d)
     return Props(p)
   }
 }
