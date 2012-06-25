@@ -29,7 +29,7 @@ object FSM {
   case class TimeoutMarker(generation: Long)
 
   case class Timer[E](name: String, msg: E, repeat: Boolean, generation: Int)(implicit system: ActorSystem) {
-    private var ref: Option[akka.actor.Cancellable] = _ //TODO
+    private var ref: Option[akka.actor.Cancellable] = _ 
 
     def schedule(actor: ActorRef[E], timeout: Duration) {
       if (repeat) {
@@ -57,7 +57,7 @@ object FSM {
 
   case class LogEntry[S, D, E](stateName: S, stateData: D, event: E)
 
-  case class State[S, D](stateName: S, stateData: D, timeout: Option[Duration] = None, stopReason: Option[Reason] = None, replies: List[Any] = Nil) {
+  case class State[S, D](stateName: S, stateData: D, timeout: Option[Duration] = None, stopReason: Option[Reason] = None, replies: List[(ActorRef[_], _)] = Nil) {
 
     /**
      * Modify state transition descriptor to include a state timeout for the
@@ -73,8 +73,9 @@ object FSM {
      *
      * @return this state transition descriptor
      */
-    def replying(replyValue: Any): State[S, D] = {
-      copy(replies = replyValue :: replies)
+    // Changes: each reply value matches the actor it replying to
+    def replying[M](to:ActorRef[M], replyValue: M): State[S, D] = {
+      copy(replies = (to, replyValue) :: replies)
     }
 
     /**
@@ -516,7 +517,7 @@ trait FSM[S, D, E] extends Listeners {
     nextState.stopReason match {
       case None => makeTransition(nextState)
       case _ =>
-        nextState.replies.reverse foreach { r => sender ! r }
+        nextState.replies.reverse foreach { case (t,r) => t.untypedRef ! r } // type safety is guaranteed by API implementation
         terminate(nextState)
         context.stop(self)
     }
@@ -526,7 +527,7 @@ trait FSM[S, D, E] extends Listeners {
     if (!stateFunctions.contains(nextState.stateName)) {
       terminate(stay withStopReason Failure("Next state %s does not exist".format(nextState.stateName)))
     } else {
-      nextState.replies.reverse foreach { r => sender ! r }
+      nextState.replies.reverse foreach { case (t,r) => t.untypedRef ! r } // type safety is guaranteed by API implementation
       if (currentState.stateName != nextState.stateName) {
         this.nextState = nextState
         handleTransition(currentState.stateName, nextState.stateName)

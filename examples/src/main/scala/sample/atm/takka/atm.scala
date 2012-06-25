@@ -39,8 +39,8 @@ object atm {
   
   //Interface
   def start(Name:Symbol):ActorRef[ATMEvent] = {
-    //TODO
-    assert(system.system.actorFor("/user/atm").isTerminated, "ATM has been started.")
+    //we don't care the type of "/user/atm" here
+    assert(system.actorFor("/user/atm").isTerminated, "ATM has been started.")
     pri_actor = system.actorOf(Props(new ATM_Class()), "atm")
     pri_actor
   }
@@ -59,10 +59,10 @@ object atm {
     pri_actor = act
   }
   
-  def stop() {// TODO
-      val a = system.system.actorFor("/user/atm")
-      system.system.stop(a)
-      system.system.shutdown()
+  def stop() {// type for "user/atm" does not matter at this place
+      val a = system.actorFor("/user/atm")
+      system.stop(a)
+      system.shutdown()
   }
 
   def card_inserted(account:Int) = { pri_actor ! CardInserted(account) }

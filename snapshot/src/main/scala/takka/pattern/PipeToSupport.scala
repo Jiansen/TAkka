@@ -11,7 +11,7 @@ trait PipeToSupport {
     def pipeTo(recipient: ActorRef[T]): Future[T] =
       future onComplete {
         case Right(r) => recipient ! r
-        case Left(f)  => recipient.untypedRef ! Status.Failure(f) //TODO:
+        case Left(f)  => recipient.untypedRef ! Status.Failure(f)
       }
 
     def to(recipient: ActorRef[T]): PipeableFuture[T] = {

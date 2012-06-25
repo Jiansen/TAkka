@@ -1,7 +1,0 @@
-# TAkka #
-
-TAkka provides better typed "akka":http://akka.io. style APIs for concurrent, fault-tolerant and scalable applications.
-
-TAkka is Open Source and available under the Apache 2 License.
-
-Learn more at <version>/README.md

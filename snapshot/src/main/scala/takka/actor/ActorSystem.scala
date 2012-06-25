@@ -121,6 +121,10 @@ abstract class ActorSystem {
   
   def shutdown (): Unit = system.shutdown()
   
+  def stop(actor: ActorRef[_]): Unit = {
+    system.stop(actor.untypedRef)
+  }
+  
   override def toString():String = system.toString()
   
   // use publishas[T] when ActorRef[T] is required

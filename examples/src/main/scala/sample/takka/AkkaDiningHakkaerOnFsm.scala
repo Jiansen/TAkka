@@ -45,7 +45,7 @@ class Chopstick extends Actor[ChopstickMessage] with FSM[ChopstickState, TakenBy
   when(Available) {
     case Event(Take(hakker), _) =>
       //println("sender "+sender)
-      goto(Taken) using TakenBy(hakker) replying Taken(typedSelf)
+      goto(Taken) using TakenBy(hakker) replying (hakker, Taken(typedSelf))
   }
 
   // When a chopstick is taken by a hakker
@@ -53,7 +53,7 @@ class Chopstick extends Actor[ChopstickMessage] with FSM[ChopstickState, TakenBy
   // But the owning hakker can put it back
   when(Taken) {
     case Event(Take(hakker), currentState) =>
-      stay replying Busy(typedSelf)
+      stay replying (hakker, Busy(typedSelf))
     case Event(Put, TakenBy(hakker)) => //if sender == hakker =>  // no sender in takka
       goto(Available) using TakenBy(system.deadLetters)
   }

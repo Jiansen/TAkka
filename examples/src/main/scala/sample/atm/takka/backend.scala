@@ -257,8 +257,7 @@ object backend {
   
   //Interface
   def start():ActorRef[BackendMsg] = {
-    //TODO
-    assert(system.system.actorFor("/user/backend").isTerminated, "ATM backend has been started.")
+    assert(system.actorFor("/user/backend").isTerminated, "ATM backend has been started.")
     pri_actor = system.actorOf(Props(new backend()), "backend")
     pri_actor
   }
@@ -275,10 +274,9 @@ object backend {
   }
   
   def stop() {
-    //TODO
-    val a = system.system.actorFor("/user/backend")
+    val a = system.actorFor("/user/backend")
     //println(a.isTerminated)    
-    system.system.stop(a)
+    system.stop(a)
     //Thread.sleep(1000)
     //println(a.isTerminated)    
     system.shutdown()

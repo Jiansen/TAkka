@@ -89,7 +89,6 @@ class Worker extends Actor[WorkerMessage] with ActorLogging {
   val counterService:ActorRef[CounterServiceMessage] = typedContext.actorOf(Props[CounterServiceMessage, CounterService], name = "counter")
   val totalCount = 51
  
-//  def typedReceive = LoggingReceive { //TODO:
   def typedReceive = {
     case Start(listerner) if progressListener.isEmpty ⇒
       progressListener = Some(listerner)
@@ -243,7 +242,6 @@ class Counter(key: String, initialValue: Long) extends Actor[CounterMessage] {
   var count = initialValue
   var storage: Option[ActorRef[StorageMessage]] = None
  
-//  def receive = LoggingReceive { // TODO:
   def typedReceive = {
     case UseStorage(s) ⇒
       storage = s

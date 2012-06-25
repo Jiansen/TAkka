@@ -83,7 +83,9 @@ object TAkkaBuild extends Build {
   //
   lazy val root = Project(id = "takka",
                           base = file("."),
-                          settings = defaultSettings) aggregate(snapshot, examples, takkasockowebserver, takkasockoexamples)
+                          settings = defaultSettings) aggregate(snapshot, examples,
+                                                                takkasockowebserver, takkasockoexamples,
+                                                                sockowebserver, sockoexamples)
 
   lazy val snapshot = Project(id = "snapshot",
                          base = file("snapshot"),
@@ -116,6 +118,25 @@ object TAkkaBuild extends Build {
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.takkasockoexamples
                          ))  
+
+  lazy val sockowebserver = Project(id = "socko-webserver",
+                         base = file("socko-webserver"),
+                         dependencies = Seq(snapshot),
+                         settings = defaultSettings ++ Seq(
+                           libraryDependencies ++= Dependencies.sockowebserver ))
+//                           publishTo <<= sockoPublishTo,
+//                           publishMavenStyle := true,
+//                           publishArtifact in Test := false,
+//                           pomIncludeRepository := { x => false },
+//                           pomExtra := sockoPomExtra
+//                         ))
+
+  lazy val sockoexamples = Project(id = "sockoexamples",
+                         base = file("socko-examples"),
+                         dependencies = Seq(sockowebserver),
+                         settings = defaultSettings ++ Seq(
+                           libraryDependencies ++= Dependencies.sockoexamples
+                         ))  
 }
 
 //
@@ -142,6 +163,15 @@ object Dependencies {
   
   // socko webserver in takka
   val takkasockoexamples = Seq(
+    Dependency.logback
+  )  
+
+  val sockowebserver = Seq(
+    Dependency.akkaActor, Dependency.akkaSlf4j, Dependency.akkaTestKit,
+    Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalatest
+  )
+  
+  val sockoexamples = Seq(
     Dependency.logback
   )  
 }
