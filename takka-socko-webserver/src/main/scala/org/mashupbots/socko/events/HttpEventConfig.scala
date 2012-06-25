@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +16,8 @@
 //
 package org.mashupbots.socko.events
 
-import akka.actor.ActorRef
+// import akka.actor.ActorRef
+import takka.actor.ActorRef
 
 /**
  * HTTP event configuration used in the processing of [[org.mashupbots.socko.events.HttpEvent]]s.
@@ -33,6 +35,5 @@ case class HttpEventConfig(
   minCompressibleContentSizeInBytes: Int,
   maxCompressibleContentSizeInBytes: Int,
   compressibleContentTypes: List[String],
-  webLogWriter: Option[ActorRef]) {
-
+  webLogWriter: Option[ActorRef[org.mashupbots.socko.infrastructure.WebLogEvent]]) { // Type refined
 }

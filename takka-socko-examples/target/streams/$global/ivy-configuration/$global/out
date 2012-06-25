@@ -1,0 +1,21 @@
+[0m[[0mdebug[0m] [0mOther repositories:[0m
+[0m[[0mdebug[0m] [0mDefault repositories:[0m
+[0m[[0mdebug[0m] [0m	Raw(ProjectResolver(inter-project, mapped: snapshot#snapshot_2.9.1;0.2.0, takka-socko-webserver#takka-socko-webserver_2.9.1;0.2.0))[0m
+[0m[[0mdebug[0m] [0m	FileRepository(local,FileConfiguration(true,None),sbt.Patterns@42dc3e)[0m
+[0m[[0mdebug[0m] [0m	Typesafe Repository: http://repo.typesafe.com/typesafe/releases/[0m
+[0m[[0mdebug[0m] [0m	public: http://repo1.maven.org/maven2/[0m
+[0m[[0mdebug[0m] [0m	Scala-Tools Maven2 Repository: http://scala-tools.org/repo-releases[0m
+[0m[[0mdebug[0m] [0mUsing inline dependencies specified in Scala.[0m
+[0m[[0minfo[0m] [0mResolving takka-socko-webserver#takka-socko-webserver_2.9.1;0.2.0 ...[0m
+[0m[[0minfo[0m] [0mResolving snapshot#snapshot_2.9.1;0.2.0 ...[0m
+[0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.9.1 ...[0m
+[0m[[0minfo[0m] [0mResolving com.typesafe.akka#akka-actor;2.0.2 ...[0m
+[0m[[0minfo[0m] [0mResolving com.typesafe.akka#akka-kernel;2.0.2 ...[0m
+[0m[[0minfo[0m] [0mResolving com.typesafe.akka#akka-slf4j;2.0 ...[0m
+[0m[[0minfo[0m] [0mResolving org.slf4j#slf4j-api;1.6.4 ...[0m
+[0m[[0minfo[0m] [0mResolving com.typesafe.akka#akka-testkit;2.0 ...[0m
+[0m[[0minfo[0m] [0mResolving io.netty#netty;3.5.0.Final ...[0m
+[0m[[0minfo[0m] [0mResolving org.scalacheck#scalacheck_2.9.1;1.9 ...[0m
+[0m[[0minfo[0m] [0mResolving org.scala-tools.testing#test-interface;0.5 ...[0m
+[0m[[0minfo[0m] [0mResolving ch.qos.logback#logback-classic;1.0.3 ...[0m
+[0m[[0minfo[0m] [0mResolving ch.qos.logback#logback-core;1.0.3 ...[0m

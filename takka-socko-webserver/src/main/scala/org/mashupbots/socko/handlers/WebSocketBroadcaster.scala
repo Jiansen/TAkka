@@ -1,4 +1,5 @@
-//
+// changes made to this file:  new subclass relationships
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,7 +22,7 @@ import org.jboss.netty.handler.codec.http.websocketx.BinaryWebSocketFrame
 import org.jboss.netty.handler.codec.http.websocketx.TextWebSocketFrame
 import org.mashupbots.socko.events.WebSocketHandshakeEvent
 
-import akka.actor.Actor
+import takka.actor.Actor //
 
 /**
  * Broadcasts a message to registered web socket connections.
@@ -39,10 +40,10 @@ import akka.actor.Actor
  * 
  * For more information, see the example `ChatApp`.
  */
-class WebSocketBroadcaster extends Actor {
+class WebSocketBroadcaster extends Actor[WebSocketBroadcasterEvent] {
   private val socketConnections = new DefaultChannelGroup()
 
-  protected def receive = {
+  protected def typedReceive = {
     case WebSocketBroadcastText(text) =>
       socketConnections.write(new TextWebSocketFrame(text))
     case WebSocketBroadcastBinary(bytes) =>
@@ -53,23 +54,25 @@ class WebSocketBroadcaster extends Actor {
 
 }
 
+sealed trait WebSocketBroadcasterEvent
+
 /**
  * Message sent to [[org.mashupbots.socko.processors.WebSocketBroadcaster]] during the web socket handshake 
  * in order to register the web socket connection to receive broadcast messages
  */
-case class WebSocketBroadcasterRegistration(context: WebSocketHandshakeEvent)
+case class WebSocketBroadcasterRegistration(context: WebSocketHandshakeEvent) extends WebSocketBroadcasterEvent
 
 /**
  * Message sent to [[org.mashupbots.socko.processors.WebSocketBroadcaster]] to broadcast a web socket text frame
  * to all registered web socket connection.
  */
-case class WebSocketBroadcastText(text: String)
+case class WebSocketBroadcastText(text: String) extends WebSocketBroadcasterEvent
 
 /**
  * Message sent to [[org.mashupbots.socko.processors.WebSocketBroadcaster]] to broadcast a web socket binary frame
  * to all registered web socket connection.
  */
-case class WebSocketBroadcastBinary(bytes: Array[Byte])
+case class WebSocketBroadcastBinary(bytes: Array[Byte]) extends WebSocketBroadcasterEvent
 
 
 

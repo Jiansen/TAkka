@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,13 +21,14 @@ import java.util.Date
 import org.mashupbots.socko.events.HttpRequestEvent
 import org.mashupbots.socko.infrastructure.CharsetUtil
 
-import akka.actor.Actor
+import takka.actor.Actor //
+import org.mashupbots.socko.events.SockoEvent
 
 /**
  * Streams a greeting and stops.
  */
-class StreamingHandler extends Actor {
-  def receive = {
+class StreamingHandler extends Actor[SockoEvent] {
+  def typedReceive = {
     case event: HttpRequestEvent =>
       
       event.response.writeFirstChunk("text/plain; charset=UTF-8")

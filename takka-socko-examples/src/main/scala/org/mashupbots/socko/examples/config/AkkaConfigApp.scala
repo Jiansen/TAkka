@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,11 +23,14 @@ import org.mashupbots.socko.webserver.WebServer
 import org.mashupbots.socko.webserver.WebServerConfig
 
 import akka.actor.actorRef2Scala
-import akka.actor.ActorSystem
+//import akka.actor.ActorSystem
+import takka.actor.ActorSystem
 import akka.actor.ExtendedActorSystem
 import akka.actor.ExtensionId
 import akka.actor.ExtensionIdProvider
-import akka.actor.Props
+//import akka.actor.Props
+import takka.actor.Props
+import org.mashupbots.socko.events.SockoEvent
 
 /**
  * This example shows how load your web server configuration from AKKA's `application.conf`. 
@@ -46,7 +50,7 @@ object AkkaConfigApp extends Logger {
   //
   val routes = Routes({
     case GET(request) => {
-      actorSystem.actorOf(Props[HelloHandler]) ! request
+      actorSystem.actorOf(Props[SockoEvent, HelloHandler]) ! request
     }
   })
 
@@ -56,7 +60,7 @@ object AkkaConfigApp extends Logger {
   def main(args: Array[String]) {
 
     log.info("Loading configuration from application.conf")
-    val myWebServerConfig = MyWebServerConfig(actorSystem)
+    val myWebServerConfig = MyWebServerConfig(actorSystem.system)// TODO: improve this
     log.info("Config is: " + myWebServerConfig.toString)
 
     val webServer = new WebServer(myWebServerConfig, routes, actorSystem)

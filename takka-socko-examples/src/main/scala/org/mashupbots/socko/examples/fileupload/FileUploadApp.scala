@@ -1,4 +1,5 @@
-//
+// changes made in this example
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,8 +30,8 @@ import org.mashupbots.socko.webserver.WebServerConfig
 
 import com.typesafe.config.ConfigFactory
 
-import akka.actor.ActorSystem
-import akka.actor.Props
+import takka.actor.ActorSystem //
+import takka.actor.Props //
 import akka.actor.actorRef2Scala
 import akka.routing.FromConfig
 
@@ -80,10 +81,10 @@ object FileUploadApp extends Logger {
 
   val actorSystem = ActorSystem("FileUploadExampleActorSystem", ConfigFactory.parseString(actorConfig))
 
-  val staticFileHandlerRouter = actorSystem.actorOf(Props[StaticContentHandler]
+  val staticFileHandlerRouter = actorSystem.actorOf(Props[org.mashupbots.socko.handlers.StaticContentRequest, StaticContentHandler]
     .withRouter(FromConfig()).withDispatcher("my-pinned-dispatcher"), "static-file-router")
 
-  val fileUploadHandlerRouter = actorSystem.actorOf(Props[FileUploadHandler]
+  val fileUploadHandlerRouter = actorSystem.actorOf(Props[FileUploadRequest, FileUploadHandler]
     .withRouter(FromConfig()).withDispatcher("my-pinned-dispatcher"), "file-upload-router")
 
   //

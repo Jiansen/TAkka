@@ -51,6 +51,7 @@ import org.mashupbots.socko.events.WebSocketFrameEvent
 import org.mashupbots.socko.events.WebSocketHandshakeEvent
 import org.mashupbots.socko.infrastructure.Logger
 
+import org.mashupbots.socko.infrastructure.WebLogEvent
 /**
  * Handles incoming HTTP messages from Netty
  *

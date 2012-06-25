@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,15 +16,15 @@
 //
 package org.mashupbots.socko.examples.spdy
 
-import org.mashupbots.socko.events.HttpRequestEvent
-import akka.actor.Actor
+import org.mashupbots.socko.events.{SockoEvent, HttpRequestEvent}
+import takka.actor.Actor
 import java.util.Date
 
 /**
  * Returns dynamic content
  */
-class DynamicHandler extends Actor {
-  def receive = {
+class DynamicHandler extends Actor[SockoEvent] {
+  def typedReceive = {
     case event: HttpRequestEvent =>
       val content = "<html>\n<body>\nDate and time is " + new Date().toString + "\n</body>\n</html>\n"
       event.response.write(content, "text/html; charset=UTF-8")

@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,17 +17,16 @@
 package org.mashupbots.socko.examples.weblog
 
 import org.mashupbots.socko.events.HttpRequestEvent
-import akka.actor.Actor
+import takka.actor.Actor//
 import java.util.Date
-
+import org.mashupbots.socko.events.SockoEvent
 /**
  * Writes a greeting and stops.
  */
-class HelloHandler extends Actor {
-  def receive = {
+class HelloHandler extends Actor[SockoEvent] {
+  def typedReceive = {
     case event: HttpRequestEvent =>
       event.response.write("Hello from Socko (" + new Date().toString + "). You have been logged.")
       context.stop(self)
   }
 }
-

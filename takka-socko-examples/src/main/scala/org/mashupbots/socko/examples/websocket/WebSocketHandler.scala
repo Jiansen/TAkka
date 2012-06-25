@@ -1,4 +1,5 @@
-//
+// changes made
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,19 +22,21 @@ import java.util.GregorianCalendar
 import org.mashupbots.socko.events.HttpRequestEvent
 import org.mashupbots.socko.events.WebSocketFrameEvent
 
-import akka.actor.Actor
+import takka.actor.Actor //
 import akka.event.Logging
+import org.mashupbots.socko.events.SockoEvent //
+
 
 /**
  * Delivers HTML page to setup web sockets in the browser and echos incoming text frames in upper case.
  */
-class WebSocketHandler extends Actor {
+class WebSocketHandler extends Actor[SockoEvent] {
   val log = Logging(context.system, this)
 
   /**
    * Process incoming messages
    */
-  def receive = {
+  def typedReceive = {
     case event: HttpRequestEvent =>
       // Return the HTML page to setup web sockets in the browser
       writeHTML(event)

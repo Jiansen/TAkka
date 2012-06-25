@@ -1,3 +1,4 @@
+// changes made to this file
 //
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
@@ -16,7 +17,8 @@
 
 package org.mashupbots.socko.infrastructure
 
-import akka.actor.Actor
+//import akka.actor.Actor
+import takka.actor.Actor
 import akka.event.Logging
 
 /**
@@ -27,14 +29,16 @@ import akka.event.Logging
  * 
  * @param format Web log format
  */
-class WebLogWriter(format: WebLogFormat.Value) extends Actor {
+class WebLogWriter(format: WebLogFormat.Value) extends Actor[WebLogEvent] {
   private val log = Logging(context.system, this)
 
   /**
    * Process incoming messages
    */
-  def receive = {
-    case evt: WebLogEvent => {
+//  def receive = {
+//    case evt: WebLogEvent => {
+  def typedReceive = {
+    case evt => {
       format match {
         case WebLogFormat.Common => { log.info(evt.toCommonFormat) }
         case WebLogFormat.Combined => { log.info(evt.toCombinedFormat) }
@@ -42,10 +46,12 @@ class WebLogWriter(format: WebLogFormat.Value) extends Actor {
         case _ => { log.info(evt.toString) }
       }
     }
+    /*
+     * don't need following code
     case unknown => {
       log.error("WebLogWriter cannot process '{}' messages from '{}'.",
         unknown.toString, sender.path)
     }
-
+    */
   }
 }

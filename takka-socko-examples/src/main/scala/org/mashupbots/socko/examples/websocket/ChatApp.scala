@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,11 +21,14 @@ import org.mashupbots.socko.routes._
 import org.mashupbots.socko.infrastructure.Logger
 import org.mashupbots.socko.webserver.WebServer
 import org.mashupbots.socko.webserver.WebServerConfig
-import akka.actor.ActorSystem
-import akka.actor.Props
+//import akka.actor.ActorSystem
+//import akka.actor.Props
+import takka.actor.ActorSystem
+import takka.actor.Props
 import akka.actor.actorRef2Scala
 import org.mashupbots.socko.handlers.WebSocketBroadcasterRegistration
-import org.mashupbots.socko.handlers.WebSocketBroadcaster
+import org.mashupbots.socko.handlers.{WebSocketBroadcaster, WebSocketBroadcasterEvent}
+import org.mashupbots.socko.events.SockoEvent  //
 
 /**
  * This example shows how to use web sockets, specifically [[org.mashupbots.socko.processors.WebSocketBroadcaster]],
@@ -44,7 +48,7 @@ object ChatApp extends Logger {
   // `ChatHandler` is created in the route and is self-terminating
   //
   val actorSystem = ActorSystem("ChatExampleActorSystem")
-  val webSocketBroadcaster = actorSystem.actorOf(Props[WebSocketBroadcaster], "webSocketBroadcaster")
+  val webSocketBroadcaster = actorSystem.actorOf(Props[WebSocketBroadcasterEvent, WebSocketBroadcaster], "webSocketBroadcaster")
 
   //
   // STEP #2 - Define Routes
@@ -56,7 +60,7 @@ object ChatApp extends Logger {
     case HttpRequest(httpRequest) => httpRequest match {
       case GET(Path("/html")) => {
         // Return HTML page to establish web socket
-        actorSystem.actorOf(Props[ChatHandler]) ! httpRequest
+        actorSystem.actorOf(Props[SockoEvent, ChatHandler]) ! httpRequest
       }
       case Path("/favicon.ico") => {
         // If favicon.ico, just return a 404 because we don't have that file
@@ -77,7 +81,7 @@ object ChatApp extends Logger {
 
     case WebSocketFrame(wsFrame) => {
       // Once handshaking has taken place, we can now process frames sent from the client
-      actorSystem.actorOf(Props[ChatHandler]) ! wsFrame
+      actorSystem.actorOf(Props[SockoEvent, ChatHandler]) ! wsFrame
     }
 
   })

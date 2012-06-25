@@ -1,4 +1,5 @@
-//
+// changes made
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,10 +22,10 @@ import org.mashupbots.socko.infrastructure.Logger
 import org.mashupbots.socko.webserver.WebServer
 import org.mashupbots.socko.webserver.WebServerConfig
 
-import akka.actor.ActorSystem
-import akka.actor.Props
+import takka.actor.ActorSystem //
+import takka.actor.Props //
 import akka.actor.actorRef2Scala
-
+import org.mashupbots.socko.events.SockoEvent //
 /**
  * This example shows how to use web sockets with Socko.
  *  - Open your browser and navigate to `http://localhost:8888/html`.
@@ -50,7 +51,7 @@ object WebSocketApp extends Logger {
     case HttpRequest(httpRequest) => httpRequest match {
       case GET(Path("/html")) => {
         // Return HTML page to establish web socket
-        actorSystem.actorOf(Props[WebSocketHandler]) ! httpRequest
+        actorSystem.actorOf(Props[SockoEvent, WebSocketHandler]) ! httpRequest
       }
       case Path("/favicon.ico") => {
         // If favicon.ico, just return a 404 because we don't have that file
@@ -68,7 +69,7 @@ object WebSocketApp extends Logger {
 
     case WebSocketFrame(wsFrame) => {
       // Once handshaking has taken place, we can now process frames sent from the client
-      actorSystem.actorOf(Props[WebSocketHandler]) ! wsFrame
+      actorSystem.actorOf(Props[SockoEvent, WebSocketHandler]) ! wsFrame
     }
 
   })

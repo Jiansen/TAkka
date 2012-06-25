@@ -1,4 +1,5 @@
-//
+// changes made to this file
+// 
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,17 +25,17 @@ import org.jboss.netty.handler.codec.http.multipart.HttpPostRequestDecoder
 import org.mashupbots.socko.events.HttpRequestEvent
 import org.mashupbots.socko.events.HttpResponseStatus
 
-import akka.actor.Actor
+import takka.actor.Actor
 import akka.event.Logging
 
 /**
  * Processes file uploads
  */
-class FileUploadHandler extends Actor {
+class FileUploadHandler extends Actor[FileUploadRequest] {
 
   private val log = Logging(context.system, this)
 
-  def receive = {
+  def typedReceive = {
     case msg: FileUploadRequest => {
       val ctx = msg.event
       try {

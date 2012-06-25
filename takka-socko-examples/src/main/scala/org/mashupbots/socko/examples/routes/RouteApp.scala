@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,8 +23,8 @@ import org.mashupbots.socko.webserver.WebLogConfig
 import org.mashupbots.socko.webserver.WebServer
 import org.mashupbots.socko.webserver.WebServerConfig
 
-import akka.actor.ActorSystem
-import akka.actor.Props
+import takka.actor.ActorSystem //
+import takka.actor.Props //
 import akka.actor.actorRef2Scala
 
 /**
@@ -55,20 +56,20 @@ object RouteApp extends Logger {
       // If the timezone is specified on the query string, (like "/time?tz=sydney"), pass the
       // timezone to the TimeHandler    
       case (GET(Path("/time")) & TimezoneQueryString(timezone)) => {
-        actorSystem.actorOf(Props[TimeHandler]) ! TimeRequest(request, Some(timezone))
+        actorSystem.actorOf(Props[TimeRequest, TimeHandler]) ! TimeRequest(request, Some(timezone))
       }
 
       // *** HOW TO MATCH AND EXTRACT A PATH SEGMENT ***
       // If the timezone is specified on the path (like "/time/sydney"), pass the
       // timezone to the TimeHandler
       case GET(PathSegments("time" :: timezone :: Nil)) => {
-        actorSystem.actorOf(Props[TimeHandler]) ! TimeRequest(request, Some(timezone))
+        actorSystem.actorOf(Props[TimeRequest, TimeHandler]) ! TimeRequest(request, Some(timezone))
       }
 
       // *** HOW TO MATCH AN EXACT PATH ***
       // No timezone specified, make TimeHandler return the time in the default timezone
       case GET(Path("/time")) => {
-        actorSystem.actorOf(Props[TimeHandler]) ! TimeRequest(request, None)
+        actorSystem.actorOf(Props[TimeRequest, TimeHandler]) ! TimeRequest(request, None)
       }
 
       // If favicon.ico, just return a 404 because we don't have that file

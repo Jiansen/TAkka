@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,10 +34,17 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.GivenWhenThen
 import org.scalatest.WordSpec
 import com.typesafe.config.ConfigFactory
+/*
 import akka.actor.actorRef2Scala
 import akka.actor.ActorRef
 import akka.actor.ActorSystem
 import akka.actor.Props
+*/
+import akka.actor.actorRef2Scala //TODO: check
+import takka.actor.ActorRef
+import takka.actor.ActorSystem
+import takka.actor.Props
+
 import akka.routing.FromConfig
 import org.mashupbots.socko.events.HttpRequestEvent
 
@@ -68,7 +76,7 @@ class StaticContentSpec
   val path = "http://localhost:" + port + "/"
   var rootDir: File = null
   var tempDir: File = null
-  var router: ActorRef = null
+  var router: ActorRef[StaticContentRequest] = null
 
   val routes = Routes({
     case event @ GET(PathSegments("files" :: relativePath)) => {
@@ -101,7 +109,7 @@ class StaticContentSpec
     StaticContentHandlerConfig.serverCacheTimeoutSeconds = 2
 
     // Start routers
-    router = actorSystem.actorOf(Props[StaticContentHandler]
+    router = actorSystem.actorOf(Props[StaticContentRequest, StaticContentHandler]
       .withRouter(FromConfig()).withDispatcher("my-pinned-dispatcher"), "my-router")
 
     // Start web server

@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,21 +29,22 @@ import org.mashupbots.socko.events.HttpChunkEvent
 import org.mashupbots.socko.events.HttpRequestEvent
 import org.mashupbots.socko.events.WebSocketFrameEvent
 
-import akka.actor.Actor
+//import akka.actor.Actor
 import akka.event.Logging
-
+import takka.actor.Actor
+import org.mashupbots.socko.events.SockoEvent
 /**
  * Sends a response containing information about the received event.
  * 
  * We use this in our testing of Socko
  */
-class SnoopHandler extends Actor {
+class SnoopHandler extends Actor[SockoEvent] {
   private val log = Logging(context.system, this)
 
   /**
    * Process incoming events
    */
-  def receive = {
+  def typedReceive = {
     case httpRequestEvent: HttpRequestEvent =>
       snoopHttpRequest(httpRequestEvent)
       context.stop(self)
@@ -52,10 +54,10 @@ class SnoopHandler extends Actor {
     case webSocketEvent: WebSocketFrameEvent =>
       snoopWebSocket(webSocketEvent)
       context.stop(self)
-    case _ => {
-      log.info("received unknown message of type: ")
-      context.stop(self)
-    }
+//    case _ => {
+//      log.info("received unknown message of type: ")
+//      context.stop(self)
+//    }
   }
 
   /**

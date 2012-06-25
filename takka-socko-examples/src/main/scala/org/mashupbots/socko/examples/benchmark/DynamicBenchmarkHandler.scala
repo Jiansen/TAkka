@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,18 +17,20 @@
 package org.mashupbots.socko.examples.benchmark
 
 import org.mashupbots.socko.events.HttpRequestEvent
-import akka.actor.Actor
+//import akka.actor.Actor
+import takka.actor.Actor
 import java.util.Date
-
+import org.mashupbots.socko.events.SockoEvent
 /**
  * Returns dynamic content
  */
-class DynamicBenchmarkHandler extends Actor {
-  def receive = {
-    case event: HttpRequestEvent =>
+class DynamicBenchmarkHandler extends Actor[SockoEvent] {
+  def typedReceive = {
+    case event : HttpRequestEvent =>
       val content = "<html>\n<body>\nDate and time is " + new Date().toString + "\n</body>\n</html>\n"
       event.response.write(content, "text/html; charset=UTF-8")
       context.stop(self)
+    // case ...  bug
   }
 }
 

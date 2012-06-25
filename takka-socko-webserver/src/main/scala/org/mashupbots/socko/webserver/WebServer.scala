@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,9 +23,11 @@ import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory
 import org.mashupbots.socko.events.SockoEvent
 import org.mashupbots.socko.infrastructure.Logger
 import org.mashupbots.socko.infrastructure.WebLogWriter
-import akka.actor.ActorRef
-import akka.actor.ActorSystem
-import akka.actor.Props
+//import akka.actor.ActorRef
+//import akka.actor.ActorSystem
+//import akka.actor.Props
+import takka.actor.{ActorRef, ActorSystem, Props}
+import org.mashupbots.socko.infrastructure.WebLogEvent
 import org.jboss.netty.channel.FixedReceiveBufferSizePredictor
 import org.jboss.netty.channel.Channel
 
@@ -70,7 +73,7 @@ class WebServer(
   /**
    * Actor to which web log events will be sent
    */
-  val webLogWriter: Option[ActorRef] = if (config.webLog.isEmpty) {
+  val webLogWriter: Option[ActorRef[WebLogEvent]] = if (config.webLog.isEmpty) {
     // Web log turned off
     None
   } else if (config.webLog.get.customActorPath.isEmpty) {

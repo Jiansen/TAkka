@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,11 +23,16 @@ import org.mashupbots.socko.infrastructure.WebLogFormat
 import org.mashupbots.socko.webserver.WebLogConfig
 import org.mashupbots.socko.webserver.WebServer
 import org.mashupbots.socko.webserver.WebServerConfig
-import akka.actor.ActorSystem
-import akka.actor.Props
-import akka.actor.actorRef2Scala
-import akka.actor.Actor
+//import akka.actor.ActorSystem
+//import akka.actor.Props
+//import akka.actor.actorRef2Scala
+//import akka.actor.Actor
 
+import takka.actor.ActorSystem
+import takka.actor.Props
+import akka.actor.actorRef2Scala
+import takka.actor.Actor
+import org.mashupbots.socko.events.SockoEvent
 /**
  * This example shows how to use a custom web log writer
  */
@@ -49,7 +55,7 @@ object CustomWebLogApp extends Logger {
   //
   val routes = Routes({
     case GET(request) => {
-      actorSystem.actorOf(Props[HelloHandler]) ! request
+      actorSystem.actorOf(Props[SockoEvent, HelloHandler]) ! request
     }
   })
 
@@ -75,8 +81,8 @@ object CustomWebLogApp extends Logger {
 /**
  * Custom web log writer that just dumps the web log event to the console
  */
-class CustomWebLogWriter() extends Actor {
-  def receive = {
+class CustomWebLogWriter() extends Actor[WebLogEvent] {
+  def typedReceive = {
     case evt: WebLogEvent => { System.out.println("CUSTOM WEBLOG WRITER: " + evt.toString) }
   }
 }

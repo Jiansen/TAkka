@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,7 +54,8 @@ import org.mashupbots.socko.infrastructure.LocalCache
 import org.mashupbots.socko.infrastructure.MimeTypes
 import org.mashupbots.socko.netty.HttpChunkedFile
 
-import akka.actor.Actor
+//import akka.actor.Actor
+import takka.actor.Actor
 import akka.event.Logging
 
 /**
@@ -173,7 +175,7 @@ import akka.event.Logging
  *
  * See [[http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html HTTP Header Field Definitions]]
  */
-class StaticContentHandler() extends Actor {
+class StaticContentHandler() extends Actor[StaticContentRequest] {
 
   private val log = Logging(context.system, this)
   private val rootFilePaths = StaticContentHandlerConfig.rootFilePaths
@@ -192,16 +194,16 @@ class StaticContentHandler() extends Actor {
    * Only takes [[org.mashupbots.socko.handlers.StaticFileRequest]] or
    * messages.
    */
-  def receive = {
+  def typedReceive = {
     case request: StaticFileRequest => {
       processStaticFileRequest(request)
     }
     case request: StaticResourceRequest => {
       processStaticResourceRequest(request)
     }
-    case msg => {
-      log.info("received unknown message of type: {}", msg.getClass.getName)
-    }
+//    case msg => {
+//      log.info("received unknown message of type: {}", msg.getClass.getName)
+//    }
   }
 
   /**
@@ -711,7 +713,7 @@ case class StaticFileRequest(
   event: HttpRequestEvent,
   file: File,
   serverCacheTimeoutSeconds: Option[Int] = None,
-  browserCacheTimeoutSeconds: Option[Int] = None) {
+  browserCacheTimeoutSeconds: Option[Int] = None) extends StaticContentRequest {
 
   val cacheKey = "FILE::" + file.getAbsolutePath
 }
@@ -730,10 +732,16 @@ case class StaticResourceRequest(
   event: HttpRequestEvent,
   classpath: String,
   serverCacheTimeoutSeconds: Option[Int] = None,
-  browserCacheTimeoutSeconds: Option[Int] = None) {
+  browserCacheTimeoutSeconds: Option[Int] = None) extends StaticContentRequest{
 
   val cacheKey = "RES::" + classpath
 }
+
+/** new trait added in the takka version
+ *  superclass of StaticResourceRequest and StaticFileRequest
+ */
+sealed trait StaticContentRequest
+
 
 /**
  * Configuration for [[org.mashupbots.socko.handlers.StaticContentHandler]].

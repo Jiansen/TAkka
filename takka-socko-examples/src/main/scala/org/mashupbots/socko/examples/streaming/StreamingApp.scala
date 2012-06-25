@@ -1,4 +1,5 @@
-//
+// changes made 
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,9 +22,9 @@ import org.mashupbots.socko.webserver.WebServer
 import org.mashupbots.socko.webserver.WebServerConfig
 
 import akka.actor.actorRef2Scala
-import akka.actor.ActorSystem
-import akka.actor.Props
-
+import takka.actor.ActorSystem //
+import takka.actor.Props //
+import org.mashupbots.socko.events.SockoEvent //
 /**
  * This example shows stream your HTTP response.
  *  - Run this class as a Scala Application
@@ -41,7 +42,7 @@ object StreamingApp extends Logger {
   //
   val routes = Routes({
     case GET(request) => {
-      actorSystem.actorOf(Props[StreamingHandler]) ! request
+      actorSystem.actorOf(Props[SockoEvent, StreamingHandler]) ! request
     }
   })
 

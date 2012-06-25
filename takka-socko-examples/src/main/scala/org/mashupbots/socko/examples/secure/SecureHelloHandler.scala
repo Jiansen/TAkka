@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,13 +20,16 @@ import java.util.Date
 
 import org.mashupbots.socko.events.HttpRequestEvent
 
-import akka.actor.Actor
+import takka.actor.Actor
+
+import org.mashupbots.socko.events.SockoEvent
 
 /**
  * Writes a greeting and terminates.
  */
-class SecureHelloHandler extends Actor {
-  def receive = {
+// type error found
+class SecureHelloHandler extends Actor[SockoEvent] {
+  def typedReceive = {
     case event: HttpRequestEvent =>
       event.response.write("Hello from a Secure Socko (" + new Date().toString + ")")
       context.stop(self)

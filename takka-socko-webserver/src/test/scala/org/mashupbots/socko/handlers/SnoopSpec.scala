@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,10 +39,15 @@ import org.scalatest.GivenWhenThen
 import org.scalatest.WordSpec
 
 import com.typesafe.config.ConfigFactory
-
+/*
 import akka.actor.actorRef2Scala
 import akka.actor.ActorSystem
 import akka.actor.Props
+*/
+import akka.actor.actorRef2Scala
+import takka.actor.ActorSystem
+import takka.actor.Props
+import org.mashupbots.socko.events.SockoEvent
 
 @RunWith(classOf[JUnitRunner])
 class SnoopSpec extends WordSpec with ShouldMatchers with BeforeAndAfterAll with GivenWhenThen with TestHttpClient {
@@ -62,7 +68,7 @@ class SnoopSpec extends WordSpec with ShouldMatchers with BeforeAndAfterAll with
     case HttpRequest(httpRequest) => httpRequest match {
       case Path("/snoop/") => {
         val name = "SnoopHandler_%s_%s".format(httpRequest.channel.getId, System.currentTimeMillis)
-        actorSystem.actorOf(Props[SnoopHandler], name) ! httpRequest
+        actorSystem.actorOf(Props[SockoEvent, SnoopHandler], name) ! httpRequest
       }
     }
     case WebSocketHandshake(wsHandshake) => wsHandshake match {
@@ -74,7 +80,7 @@ class SnoopSpec extends WordSpec with ShouldMatchers with BeforeAndAfterAll with
     }
     case WebSocketFrame(wsFrame) => {
       val name = "SnoopHandler_%s_%s".format(wsFrame.channel.getId, System.currentTimeMillis)
-      actorSystem.actorOf(Props[SnoopHandler], name) ! wsFrame
+      actorSystem.actorOf(Props[SockoEvent, SnoopHandler], name) ! wsFrame
     }
   })
 

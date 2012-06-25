@@ -41,7 +41,7 @@ case class WebSocketFrameEvent(
   channel: Channel,
   initialHttpRequest: InitialHttpRequestMessage,
   wsFrame: WebSocketFrame,
-  config: WebSocketEventConfig) extends SockoEvent {
+  config: WebSocketEventConfig) extends SockoEvent{
 
   /**
    * HTTP end point used by this chunk

@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +16,9 @@
 //
 package org.mashupbots.socko.events
 
-import akka.actor.ActorRef
-
+//import akka.actor.ActorRef
+import takka.actor.ActorRef
+import org.mashupbots.socko.infrastructure.WebLogEvent
 /**
  * Web Socket configuration used by [[org.mashupbots.socko.events.WebSocketFrameEvent]]
  *
@@ -25,5 +27,5 @@ import akka.actor.ActorRef
  */
 case class WebSocketEventConfig(
   serverName: String,
-  webLogWriter: Option[ActorRef]) {
+  webLogWriter: Option[ActorRef[WebLogEvent]]) {
 }

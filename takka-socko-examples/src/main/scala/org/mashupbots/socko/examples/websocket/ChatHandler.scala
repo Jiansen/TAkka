@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,19 +24,19 @@ import org.mashupbots.socko.events.WebSocketFrameEvent
 import org.mashupbots.socko.handlers.WebSocketBroadcastText
 
 import akka.actor.actorRef2Scala
-import akka.actor.Actor
+import takka.actor.Actor //
 import akka.event.Logging
-
+import org.mashupbots.socko.events.SockoEvent
 /**
  * Web Socket processor for chatting
  */
-class ChatHandler extends Actor {
+class ChatHandler extends Actor[SockoEvent] {
   val log = Logging(context.system, this)
 
   /**
    * Process incoming events
    */
-  def receive = {
+  def typedReceive = {
     case event: HttpRequestEvent =>
       // Return the HTML page to setup web sockets in the browser
       writeHTML(event)

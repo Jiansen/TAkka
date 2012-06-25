@@ -1,4 +1,5 @@
-//
+// changes made to this file.  New subclass relationship added.
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +21,7 @@ import org.jboss.netty.handler.codec.http.HttpHeaders
 import org.jboss.netty.handler.codec.http.HttpRequest
 import org.mashupbots.socko.infrastructure.WebLogEvent
 
-import akka.actor.actorRef2Scala
+import akka.actor.actorRef2Scala // TODO: rewrite
 
 /**
  * Event fired when a HTTP request has been received
@@ -29,10 +30,10 @@ import akka.actor.actorRef2Scala
  * @param nettyHttpRequest Incoming Netty request for processing
  * @param config Processing configuration
  */
-case class HttpRequestEvent(
+case class HttpRequestEvent ( 
   channel: Channel,
   nettyHttpRequest: HttpRequest,
-  config: HttpEventConfig) extends HttpEvent {
+  config: HttpEventConfig) extends HttpEvent {// subclassing
 
   /**
    * Incoming HTTP request

@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,10 +33,14 @@ import org.mashupbots.socko.webserver.WebServerConfig
 import com.typesafe.config.ConfigFactory
 
 import akka.actor.actorRef2Scala
-import akka.actor.ActorSystem
-import akka.actor.Props
+//import akka.actor.ActorSystem
+//import akka.actor.Props
 import akka.routing.FromConfig
 
+import takka.actor.ActorSystem
+import takka.actor.Props
+import org.mashupbots.socko.events.SockoEvent
+import org.mashupbots.socko.handlers.StaticContentRequest
 /**
  * This example is used for benchmarking
  */
@@ -93,7 +98,7 @@ object BenchmarkApp extends Logger {
 	}"""
 
   val actorSystem = ActorSystem("BenchmarkActorSystem", ConfigFactory.parseString(actorConfig))
-  val staticContentHandlerRouter = actorSystem.actorOf(Props[StaticContentHandler]
+  val staticContentHandlerRouter = actorSystem.actorOf(Props[StaticContentRequest, StaticContentHandler]
     .withRouter(FromConfig()).withDispatcher("my-dispatcher"), "static-file-router")
 
   //
@@ -111,7 +116,7 @@ object BenchmarkApp extends Logger {
         staticContentHandlerRouter ! new StaticFileRequest(request, new File(contentDir, "big.txt"))
       }
       case GET(Path("/dynamic")) => {
-        actorSystem.actorOf(Props[DynamicBenchmarkHandler].withDispatcher("my-dispatcher")) ! request
+        actorSystem.actorOf(Props[SockoEvent, DynamicBenchmarkHandler].withDispatcher("my-dispatcher")) ! request
       }
       case GET(Path("/favicon.ico")) => {
         request.response.write(HttpResponseStatus.NOT_FOUND)

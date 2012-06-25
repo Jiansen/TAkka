@@ -1,4 +1,5 @@
-//
+// changes made to this file
+
 // Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,13 +22,13 @@ import java.util.TimeZone
 
 import org.mashupbots.socko.events.HttpRequestEvent
 
-import akka.actor.Actor
+import takka.actor.Actor
 import akka.event.Logging
 
 /**
  * Returns the current time in the response
  */
-class TimeHandler extends Actor {
+class TimeHandler extends Actor[TimeRequest] {
   val log = Logging(context.system, this)
 
   /**
@@ -38,7 +39,7 @@ class TimeHandler extends Actor {
    * The message contains the `HttpRequestProcessingEvent` that contains request data and will be used to
    * write the response.
    */
-  def receive = {
+  def typedReceive = { // 
     case msg: TimeRequest =>
 
       val tz = if (msg.timezone.isDefined) {
