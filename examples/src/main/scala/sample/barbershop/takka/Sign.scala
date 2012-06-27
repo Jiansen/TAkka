@@ -39,7 +39,7 @@ class Sign extends Actor[SignMessages] with PostStart {
 //        self.reply(Wait(customer))
         sender ! Wait(customer)
       } else {
-        val (barber: ActorRef[BarberMessages], tail) = sleeping.dequeue
+        val (barber, tail) = sleeping.dequeue
         context.become(signReceive(tail)) // become(...)  -> context.become
         log.debug("sending {} to  {} (sleeping {})", customer, barber, barberNames(tail))
         barber ! rb

@@ -1,6 +1,5 @@
-// changes made to this file
-
-// Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
+//
+// Copyright 2012 Jiansen HE.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
+// takka-socko is a derivative work of the socko project that is developed by
+//   Vibul Imtarnasan, David Bolton and Socko contributors.
 
 package org.mashupbots.socko.handlers
 
@@ -29,17 +31,17 @@ import org.mashupbots.socko.events.HttpChunkEvent
 import org.mashupbots.socko.events.HttpRequestEvent
 import org.mashupbots.socko.events.WebSocketFrameEvent
 
-//import akka.actor.Actor
 import akka.event.Logging
-import takka.actor.Actor
-import org.mashupbots.socko.events.SockoEvent
+import takka.actor.Actor //import akka.actor.Actor
+import org.mashupbots.socko.events.SockoEvent //
+
 /**
  * Sends a response containing information about the received event.
  * 
  * We use this in our testing of Socko
  */
 class SnoopHandler extends Actor[SockoEvent] {
-  private val log = Logging(context.system, this)
+  private val log = Logging(context.system, this) // TODO: use untyped feature here
 
   /**
    * Process incoming events
@@ -47,13 +49,13 @@ class SnoopHandler extends Actor[SockoEvent] {
   def typedReceive = {
     case httpRequestEvent: HttpRequestEvent =>
       snoopHttpRequest(httpRequestEvent)
-      context.stop(self)
+      typedContext.stop(typedSelf)
     case httpChunkEvent: HttpChunkEvent =>
       snoopHttpChunk(httpChunkEvent)
-      context.stop(self)
+      typedContext.stop(typedSelf)
     case webSocketEvent: WebSocketFrameEvent =>
       snoopWebSocket(webSocketEvent)
-      context.stop(self)
+      typedContext.stop(typedSelf)
 //    case _ => {
 //      log.info("received unknown message of type: ")
 //      context.stop(self)

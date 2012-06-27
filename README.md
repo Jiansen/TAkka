@@ -5,7 +5,7 @@ TAkka provides better typed [akka](http://akka.io) style APIs for concurrent, fa
 TAkka is Open Source and available under the Apache 2 License.
 
 ## Source Code in This Repository ##
-Source code in this repository is either original or derived work of open source project under the Apache License, Version 2.0.
+Source code in this repository is either original or derivative works of open source project.  Work in this reporsitory are licensed under the Apache License, Version 2.0.
 
 * snapshot: the developer version of the takka framework.
 

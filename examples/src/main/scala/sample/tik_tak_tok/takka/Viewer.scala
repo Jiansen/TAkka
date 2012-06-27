@@ -54,8 +54,8 @@ class GUIApplication extends SimpleSwingApplication {
     }
     
     private class GameButton(val row:Int, val col:Int) extends Button {
-        // text = row +" , "+ col
-      this.size = new Dimension(100,100)
+      // text = row +" , "+ col
+      // this.size = new Dimension(100,100)
     }
     
     // the next move

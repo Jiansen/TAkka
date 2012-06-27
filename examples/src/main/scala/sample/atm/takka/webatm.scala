@@ -105,7 +105,7 @@ object webatm {
   }
   
   private def lookup_pid(name:Symbol):ActorRef[WebATMMsg] = {
-    val tmp = mydb.matchWith('webatm, a => a match { case (sname:Symbol, port:Int, actor:ActorRef[WebATMMsg]) => name == sname })
+    val tmp = mydb.matchWith('webatm, a => a match { case (sname, _, _) => name == sname })
     tmp match {
       case (_, _, actor:ActorRef[WebATMMsg])::Nil => actor
       case _ => throw new Error("ATM Internal Error: webatm.scala L103")
@@ -114,7 +114,8 @@ object webatm {
   
   private def update_pid(port:Int, pid:ActorRef[WebATMMsg]) = {
     val tmp = mydb.updateWith('webatm, a => a match { 
-      case (name:Symbol, sport:Int, actor:ActorRef[WebATMMsg]) => 
+//      case (name:Symbol, sport:Int, actor:ActorRef[WebATMMsg]) => 
+      case (name:Symbol, sport:Int, actor) =>     
         if (port == sport) (name, port, pid) else (name, sport, actor)})
   }
       

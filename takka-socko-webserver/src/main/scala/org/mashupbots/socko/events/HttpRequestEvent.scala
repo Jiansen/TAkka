@@ -1,6 +1,5 @@
-// changes made to this file.  New subclass relationship added.
-
-// Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
+//
+// Copyright 2012 Jiansen HE.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
+// takka-socko is a derivative work of the socko project that is developed by
+//   Vibul Imtarnasan, David Bolton and Socko contributors.
 package org.mashupbots.socko.events
 
 import org.jboss.netty.channel.Channel
@@ -21,7 +23,7 @@ import org.jboss.netty.handler.codec.http.HttpHeaders
 import org.jboss.netty.handler.codec.http.HttpRequest
 import org.mashupbots.socko.infrastructure.WebLogEvent
 
-import akka.actor.actorRef2Scala // TODO: rewrite
+//import akka.actor.actorRef2Scala // redundant code?
 
 /**
  * Event fired when a HTTP request has been received
@@ -33,7 +35,7 @@ import akka.actor.actorRef2Scala // TODO: rewrite
 case class HttpRequestEvent ( 
   channel: Channel,
   nettyHttpRequest: HttpRequest,
-  config: HttpEventConfig) extends HttpEvent {// subclassing
+  config: HttpEventConfig) extends HttpEvent {
 
   /**
    * Incoming HTTP request

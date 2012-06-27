@@ -29,7 +29,7 @@ class DynamicBenchmarkHandler extends Actor[SockoEvent] {
     case event : HttpRequestEvent =>
       val content = "<html>\n<body>\nDate and time is " + new Date().toString + "\n</body>\n</html>\n"
       event.response.write(content, "text/html; charset=UTF-8")
-      context.stop(self)
+      typedContext.stop(typedSelf)
     // case ...  bug
   }
 }

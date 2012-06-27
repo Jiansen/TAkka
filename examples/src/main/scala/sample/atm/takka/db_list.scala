@@ -1,6 +1,6 @@
 package sample.atm.takka
 
-import java.util.Date
+import java.util.Calendar;
 
 sealed trait TransactionType
 case object DepositType extends TransactionType
@@ -8,7 +8,7 @@ case object WithdrawType extends TransactionType
 
 
 
-case class Transaction(trans_type:TransactionType, date:Date, amount:Int)
+case class Transaction(trans_type:TransactionType, date:Calendar, amount:Int)
 
 class Account(var no:Int, var balance:Int, var pin:String, val name:String, var transactions:List[Transaction]) {
   assert(no>0, "Initial Error: account number must be a positive integer.")

@@ -1,7 +1,7 @@
 package sample.atm.takka
 
 import takka.actor._
-import java.util.Date
+import java.util.Calendar
 import akka.util.{Timeout, Duration, FiniteDuration}
 import akka.dispatch.{Future, Await}
 import akka.util.duration._
@@ -148,7 +148,7 @@ class backend extends Actor[BackendMsg]{
         throw new Error("Not enough money on account!")
       }else{
         val newBalance = account.balance - amount
-        val newtransactions = Transaction(WithdrawType, new Date(), amount)::account.transactions
+        val newtransactions = Transaction(WithdrawType, Calendar.getInstance(), amount)::account.transactions
         account.balance = newBalance
         account.transactions = newtransactions
         
@@ -162,7 +162,7 @@ class backend extends Actor[BackendMsg]{
   private def deposit(accountNo:Int, amount:Int, state:STATE):STATE = {
     val account = findAccount(accountNo, state)
     val newBalance = account.balance + amount
-    val newtransactions = Transaction(DepositType, new Date(), amount) :: account.transactions
+    val newtransactions = Transaction(DepositType, Calendar.getInstance(), amount) :: account.transactions
     account.balance = newBalance
     account.transactions = newtransactions
     state

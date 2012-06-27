@@ -282,7 +282,7 @@ object display extends EventHandler {
         case Some(eg) => e_graphic.stop(eg._2)
         case None => throw new Error("Internal Error: eNo "+eNo+" not found in ElevGs "+ElevGs+".")
       }
-    case ControllerStartedEvent(eNo:Int, ePid:ActorRef[ElevatorMessage]) =>
+    case ControllerStartedEvent(eNo, ePid) =>
       ElevGs.find(elevG =>elevG._1 == eNo) match {
         case Some(eg) => e_graphic.set_controller(eg._2, ePid)
         case None => throw new Error("Internal Error: eNo "+eNo+" not found in ElevGs "+ElevGs+".")

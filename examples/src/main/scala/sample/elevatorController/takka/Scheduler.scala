@@ -218,10 +218,17 @@ init([]) ->
 */
   def set_controller(ENo:Int, EPid:ActorRef[ElevatorMessage]) = synchronized {
     //println("scheduler "+pri_scheduler)
+    if (pri_scheduler.isTerminated) {
+      new Error("Actor scheduler not found") 
+    }else{
+      pri_scheduler ! SetController(ENo, EPid)
+    }
+    /*
     pri_scheduler match {
       case dead if dead.isTerminated => new Error("Actor scheduler not found")      
-      case sch:ActorRef[SchedulerMessage] => sch ! SetController(ENo, EPid) 
+      case sch => sch ! SetController(ENo, EPid) 
     }
+    */
   } 
   
 /*
@@ -230,6 +237,13 @@ init([]) ->
 %%  has been pressed.
 */
   def f_button_pressed(floor:Floor) = synchronized {
+    if (pri_scheduler.isTerminated) {
+      new Error("Actor scheduler not found") 
+    }else{
+      sys_event.f_button_pressed(floor)//MARK
+      pri_scheduler ! FButton(floor)
+    }
+    /*
     pri_scheduler match {
       case dead if dead.isTerminated => 
         new Error("Actor scheduler not found")
@@ -237,6 +251,7 @@ init([]) ->
         sys_event.f_button_pressed(floor)//MARK
         sch ! FButton(floor)
     } 
+    */
   }
   
 /*
@@ -245,12 +260,20 @@ init([]) ->
 %%  has been pressed in elevator ENo.
 */
   def e_button_pressed(eNo:Int, floor:Floor) = synchronized {
+    if (pri_scheduler.isTerminated) {
+      new Error("Actor scheduler not found") 
+    }else{
+      sys_event.e_button_pressed(eNo, floor)
+      pri_scheduler ! EButtonPressed(eNo, floor) 
+    }
+    /*
     pri_scheduler match {
       case dead if dead.isTerminated => new Error("Actor scheduler not found")
       case sch:ActorRef[SchedulerMessage] => 
         sys_event.e_button_pressed(eNo, floor)
         sch ! EButtonPressed(eNo, floor) 
     } 
+    */
   }
 
 /*
@@ -258,11 +281,18 @@ init([]) ->
 %%  Informs the scheduler that elevator ENo is passing the floor Floor.
 */
   def passing(eNo:Int, floor:Floor) = synchronized {
+    if (pri_scheduler.isTerminated) {
+      new Error("Actor scheduler not found") 
+    }else{
+      pri_scheduler ! Passing(eNo, floor) 
+    }
+    /*
     pri_scheduler match {
       case dead if dead.isTerminated => new Error("Actor scheduler not found")
       case sch:ActorRef[SchedulerMessage] =>
         sch ! Passing(eNo, floor) 
     } 
+    */
   }
   
 /*
@@ -270,11 +300,18 @@ init([]) ->
 %%  Informs the scheduler that elevator ENo has stopped at the floor Floor.
 */
   def open(eNo:Int, floor:Floor) = synchronized {
+    if (pri_scheduler.isTerminated) {
+      new Error("Actor scheduler not found") 
+    }else{
+      pri_scheduler ! Open(eNo, floor) 
+    }
+    /*
     pri_scheduler match {
       case dead if dead.isTerminated => new Error("Actor scheduler not found")
       case sch:ActorRef[SchedulerMessage] =>
         sch ! Open(eNo, floor) 
     } 
+    */
   }
 
 /*
@@ -283,11 +320,18 @@ init([]) ->
 %%  Floor.
 */
   def closed(eNo:Int, floor:Floor) = synchronized {
+    if (pri_scheduler.isTerminated) {
+      new Error("Actor scheduler not found") 
+    }else{
+      pri_scheduler ! Closed(eNo, floor) 
+    }
+    /*
     pri_scheduler match {
       case dead if dead.isTerminated => new Error("Actor scheduler not found")
       case sch:ActorRef[SchedulerMessage] =>
         sch ! Closed(eNo, floor) 
     } 
+    */
   }
 
 /*
@@ -297,6 +341,14 @@ init([]) ->
 %%  Uses catch to handle the possibility of a timeout.
 */
   def approaching(eNo:Int, floor:Floor):Command = synchronized {
+    if (pri_scheduler.isTerminated) {
+      Stop 
+    }else{
+      implicit val timeout = Timeout(5 seconds)
+      val res = pri_scheduler ? Approaching(eNo, floor)
+      Await.result(res, 200 millis)
+    }
+    /*
     pri_scheduler match {
       case dead if dead.isTerminated => Stop
       case sch:ActorRef[SchedulerMessage] =>
@@ -306,6 +358,7 @@ init([]) ->
         val res = sch.?[Command](Approaching(eNo, floor))
         Await.result(res, 200 millis)
     } 
+    */
   }
     
   

@@ -2,6 +2,7 @@ package sample.atm.takka
 
 import takka.actor._
 import akka.util.duration._
+import java.util.Calendar
 
 sealed trait ATMState
 case object IdleState extends ATMState
@@ -260,7 +261,7 @@ class ATM_Class extends Actor[ATMEvent] with FSM[ATMState, ATMStateData, ATMEven
            case DepositType => ""
            case WithdrawType => "-"
          }
-         statementHTML += date.getDate() +"-"+ (date.getMonth()+1) +"-"+ (date.getYear()+1900) +": "+ con +" "+ amount +"<br>"
+         statementHTML += date.get(Calendar.DAY_OF_MONTH) +"-"+ date.get(Calendar.MONTH) +"-"+ date.get(Calendar.YEAR) +": "+ con +" "+ amount +"<br>"
      }
      statementHTML += "Balance: £ " + balance +"<br></html>"
      webatm.display(statementHTML)

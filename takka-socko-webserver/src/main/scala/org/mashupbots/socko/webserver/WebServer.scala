@@ -1,6 +1,5 @@
-// changes made to this file
-
-// Copyright 2012 Vibul Imtarnasan, David Bolton and Socko contributors.
+//
+// Copyright 2012 Jiansen HE.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,6 +13,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
+
+// takka-socko is a derivative work of the socko project that is developed by
+//   Vibul Imtarnasan, David Bolton and Socko contributors.
 package org.mashupbots.socko.webserver
 
 import java.util.concurrent.Executors
