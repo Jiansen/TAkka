@@ -11,9 +11,9 @@ Source code in this repository is either original or derivative works of open so
 
 * examples: small takka and akka examples
 
-* socko-webserver: source code of the [socko webserver project](http://sockoweb.org/).  Retrieved at 24 June 2012 
+* socko-webserver: source code of the [socko webserver project](http://sockoweb.org/).  Retrieved on 24 June 2012 
 
-* socko-examples: examples of socko.  Retrieved at 24 June 2012
+* socko-examples: examples of socko.  Retrieved on 24 June 2012
 
 * takka-socko-webserver: rewrite socko using takka.
 
