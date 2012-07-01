@@ -23,10 +23,10 @@ import org.mashupbots.socko.infrastructure.Logger
 import org.mashupbots.socko.webserver.WebServer
 import org.mashupbots.socko.webserver.WebServerConfig
 
-import akka.actor.actorRef2Scala
+// import akka.actor.actorRef2Scala
 import takka.actor.ActorSystem //
 import takka.actor.Props //
-import org.mashupbots.socko.events.SockoEvent //
+import org.mashupbots.socko.events.HttpRequestEvent //
 /**
  * This example shows stream your HTTP response.
  *  - Run this class as a Scala Application
@@ -44,7 +44,7 @@ object StreamingApp extends Logger {
   //
   val routes = Routes({
     case GET(request) => {
-      actorSystem.actorOf(Props[SockoEvent, StreamingHandler]) ! request
+      actorSystem.actorOf(Props[HttpRequestEvent, StreamingHandler]) ! request
     }
   })
 

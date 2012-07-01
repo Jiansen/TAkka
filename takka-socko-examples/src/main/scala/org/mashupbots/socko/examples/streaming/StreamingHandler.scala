@@ -24,14 +24,13 @@ import org.mashupbots.socko.events.HttpRequestEvent
 import org.mashupbots.socko.infrastructure.CharsetUtil
 
 import takka.actor.Actor //
-import org.mashupbots.socko.events.SockoEvent
 
 /**
  * Streams a greeting and stops.
  */
-class StreamingHandler extends Actor[SockoEvent] {
+class StreamingHandler extends Actor[HttpRequestEvent] {
   def typedReceive = {
-    case event: HttpRequestEvent =>
+    case event => // : HttpRequestEvent =>
       
       event.response.writeFirstChunk("text/plain; charset=UTF-8")
       
@@ -42,7 +41,7 @@ class StreamingHandler extends Actor[SockoEvent] {
       
       event.response.writeLastChunk()
             
-      context.stop(self)
+      typedContext.stop(typedSelf)
   }
 }
 

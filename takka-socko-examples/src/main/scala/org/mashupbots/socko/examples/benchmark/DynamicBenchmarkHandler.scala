@@ -20,13 +20,13 @@ import org.mashupbots.socko.events.HttpRequestEvent
 //import akka.actor.Actor
 import takka.actor.Actor
 import java.util.Date
-import org.mashupbots.socko.events.SockoEvent
+//import org.mashupbots.socko.events.SockoEvent
 /**
  * Returns dynamic content
  */
-class DynamicBenchmarkHandler extends Actor[SockoEvent] {
+class DynamicBenchmarkHandler extends Actor[HttpRequestEvent] {
   def typedReceive = {
-    case event : HttpRequestEvent =>
+    case event => // : HttpRequestEvent =>
       val content = "<html>\n<body>\nDate and time is " + new Date().toString + "\n</body>\n</html>\n"
       event.response.write(content, "text/html; charset=UTF-8")
       typedContext.stop(typedSelf)

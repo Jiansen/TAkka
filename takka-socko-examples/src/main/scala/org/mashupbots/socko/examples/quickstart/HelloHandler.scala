@@ -22,14 +22,12 @@ import org.mashupbots.socko.events.HttpRequestEvent
 import takka.actor.Actor //
 import java.util.Date
 
-import org.mashupbots.socko.events.SockoEvent
-
 /**
  * Hello processor writes a greeting and stops.
  * 
  * bug found in original example!!! event should have type SockoEvent !!!
  */
-class HelloHandler extends Actor[SockoEvent] {
+class HelloHandler extends Actor[HttpRequestEvent] {
   def typedReceive = { 
     case event: HttpRequestEvent =>
       event.response.write("Hello from Socko (" + new Date().toString + ")")

@@ -19,22 +19,18 @@
 package org.mashupbots.socko.examples.secure
 
 import java.util.Date
-
 import org.mashupbots.socko.events.HttpRequestEvent
-
 import takka.actor.Actor
-
-import org.mashupbots.socko.events.SockoEvent
 
 /**
  * Writes a greeting and terminates.
  */
 // type error found
-class SecureHelloHandler extends Actor[SockoEvent] {
+class SecureHelloHandler extends Actor[HttpRequestEvent] {
   def typedReceive = {
-    case event: HttpRequestEvent =>
+    case event => // : HttpRequestEvent =>
       event.response.write("Hello from a Secure Socko (" + new Date().toString + ")")
-      context.stop(self)
+      typedContext.stop(typedSelf)
   }
 }
 

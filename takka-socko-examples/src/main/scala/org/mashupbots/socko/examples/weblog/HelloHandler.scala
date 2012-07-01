@@ -21,14 +21,14 @@ package org.mashupbots.socko.examples.weblog
 import org.mashupbots.socko.events.HttpRequestEvent
 import takka.actor.Actor//
 import java.util.Date
-import org.mashupbots.socko.events.SockoEvent
+
 /**
  * Writes a greeting and stops.
  */
-class HelloHandler extends Actor[SockoEvent] {
+class HelloHandler extends Actor[HttpRequestEvent] {
   def typedReceive = {
-    case event: HttpRequestEvent =>
+    case event => // : HttpRequestEvent =>
       event.response.write("Hello from Socko (" + new Date().toString + "). You have been logged.")
-      context.stop(self)
+      typedContext.stop(typedSelf)
   }
 }

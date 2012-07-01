@@ -279,3 +279,43 @@ abstract class ActorSystem {
 }
 
 case class NotRemoteSystemException(system:ActorSystem) extends Exception("ActorSystem: "+system+" does not support remoting")
+
+
+
+
+
+
+
+/*
+abstract class ExtendedActorSystem extends ActorSystem {
+
+  /**
+   * The ActorRefProvider is the only entity which creates all actor references within this actor system.
+   */
+  def provider: akka.actor.ActorRefProvider
+
+  /**
+   * The top-level supervisor of all actors created using system.actorOf(...).
+   */
+//  def guardian: akka.actor.InternalActorRef
+
+  /**
+   * The top-level supervisor of all system-internal services like logging.
+   */
+//  def systemGuardian: akka.actor.InternalActorRef
+
+  /**
+   * Implementation of the mechanism which is used for watch()/unwatch().
+   */
+//  def deathWatch: akka.actor.DeathWatch
+
+  /**
+   * ClassLoader wrapper which is used for reflective accesses internally. This is set
+   * to use the context class loader, if one is set, or the class loader which
+   * loaded the ActorSystem implementation. The context class loader is also
+   * set on all threads created by the ActorSystem, if one was set during
+   * creation.
+   */
+  def dynamicAccess: akka.actor.DynamicAccess
+}
+*/

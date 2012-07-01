@@ -29,7 +29,7 @@ import org.mashupbots.socko.webserver.WebServerConfig
 import akka.actor.actorRef2Scala
 import takka.actor.ActorSystem
 import takka.actor.Props
-import org.mashupbots.socko.events.SockoEvent
+import org.mashupbots.socko.events.HttpRequestEvent
 /**
  * This is a clone of the quick start `HelloApp` ... but using HTTPS.
  * 
@@ -62,7 +62,7 @@ object SecureApp extends Logger {
   //
   val routes = Routes({
     case GET(request) => {
-      actorSystem.actorOf(Props[SockoEvent, SecureHelloHandler]) ! request // refer to bug in SecureHelloHandler.scala
+      actorSystem.actorOf(Props[HttpRequestEvent, SecureHelloHandler]) ! request // refer to bug in SecureHelloHandler.scala
     }
   })
 

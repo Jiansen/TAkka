@@ -29,7 +29,7 @@ import akka.actor.actorRef2Scala
 //import akka.actor.Props
 import takka.actor.ActorSystem
 import takka.actor.Props
-import org.mashupbots.socko.events.SockoEvent
+import org.mashupbots.socko.events.HttpRequestEvent
 /**
  * This example shows how load your web server configuration from code when instancing 
  * [[org.mashupbots.socko.webserver.WebServerConfig]].
@@ -48,7 +48,7 @@ object CodedConfigApp extends Logger {
   //
   val routes = Routes({
     case GET(request) => {
-      actorSystem.actorOf(Props[SockoEvent, HelloHandler]) ! request
+      actorSystem.actorOf(Props[HttpRequestEvent, HelloHandler]) ! request
     }
   })
 

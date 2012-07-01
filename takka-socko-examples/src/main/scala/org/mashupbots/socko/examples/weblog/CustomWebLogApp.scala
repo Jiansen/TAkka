@@ -34,7 +34,7 @@ import takka.actor.ActorSystem
 import takka.actor.Props
 import akka.actor.actorRef2Scala
 import takka.actor.Actor
-import org.mashupbots.socko.events.SockoEvent
+import org.mashupbots.socko.events.HttpRequestEvent
 /**
  * This example shows how to use a custom web log writer
  */
@@ -57,7 +57,7 @@ object CustomWebLogApp extends Logger {
   //
   val routes = Routes({
     case GET(request) => {
-      actorSystem.actorOf(Props[SockoEvent, HelloHandler]) ! request
+      actorSystem.actorOf(Props[HttpRequestEvent, HelloHandler]) ! request
     }
   })
 

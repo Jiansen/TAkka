@@ -167,12 +167,18 @@ object HttpChunk {
  *
  * @param method Name of the HTTP method
  */
+/*
 class Method(method: String) {
   def unapply(ctx: SockoEvent) =
     if (ctx.endPoint.method.equalsIgnoreCase(method)) Some(ctx)
     else None
 }
-
+*/
+class Method(method: String) {
+  def unapply(ctx: SockoEvent):Option[HttpRequestEvent] =  // refined type
+    if (ctx.endPoint.method.equalsIgnoreCase(method)) Some(ctx.asInstanceOf[HttpRequestEvent])
+    else None
+}
 /**
  * Matches HTTP requests with a method set to `GET`.
  *
