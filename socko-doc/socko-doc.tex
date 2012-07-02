@@ -1,0 +1,292 @@
+\title{TAkka-Socko}
+\author{Jiansen HE}
+\date{\today}
+
+\documentclass[11pt, a4paper]{article}
+
+\usepackage{comment}
+\usepackage{url}
+\usepackage{tabularx}
+\usepackage{listings} 	
+% "define" Scala
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,%
+    do,else,extends,false,final,finally,%
+    for,if,implicit,import,match,mixin,%
+    new,null,object,override,package,%
+    private,protected,requires,return,sealed,%
+    super,this,throw,trait,true,try,%
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
+
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+
+% Default settings for code listings
+\lstset{frame=tb,
+  language=scala,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=none,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  frame=single,
+  breaklines=true,
+  breakatwhitespace=true
+  tabsize=3
+}
+
+\begin{document}
+\maketitle
+
+\section{Porting Socko to TAkka}
+The Socko Web Server \cite{sockoorg} implements RESTful web services \cite{RESTfulwiki} using akka actors \cite{akka}.  The source code of Socko v0.2, retrieved on 24th June 2012, serves a good basis for examining writing medium-sized TAkka applications.  Source code for the retrieved socko implementation and the ported version, TAkka-Socko, are available at the TAkka repository (\url{ https://github.com/Jiansen/TAkka}).  API for the TAkka-socko could be generated from the source using $sbt\ doc$ command.
+
+
+\section{Quick Start}\label{changes}
+This section compares the quick start example written in Socko and TAkka-Socko.  Code used in this section is copied from the socko and TAkka-socko repository.  For space sake, however, licences declarations and trivial comments are omitted.
+
+In the quick start , the server application, HelloApp, passes each request to a new instance of HelloHandler, an actor for processing an HttpRequestsEvent.  HelloHandler and HelloApp in akka is given in Code-1 and Code-2 respectively.
+
+% \begin{table}[h]
+\begin{lstlisting}
+package org.mashupbots.socko.examples.quickstart
+import org.mashupbots.socko.events.HttpRequestEvent
+import akka.actor.Actor
+import java.util.Date
+// Hello processor writes a greeting and stops.
+class HelloHandler extends Actor {
+  def receive = {
+    case event: HttpRequestEvent =>
+      event.response.write("Hello from Socko (" + new Date().toString + ")")
+      context.stop(self)
+}}
+\end{lstlisting}
+\begin{center}Code-1: HelloHandler.scala using Akka\end{center}
+% \caption{HelloHandler.scala using Akka}
+% \end{table}
+
+
+\begin{lstlisting}
+import org.mashupbots.socko.routes._
+import org.mashupbots.socko.infrastructure.Logger
+import org.mashupbots.socko.webserver.WebServer
+import org.mashupbots.socko.webserver.WebServerConfig
+
+import akka.actor.actorRef2Scala
+import akka.actor.ActorSystem
+import akka.actor.Props
+
+object HelloApp extends Logger {
+  // STEP #1 - Define Actors and Start Akka
+  // See `HelloHandler`
+  val actorSystem = ActorSystem("HelloExampleActorSystem")
+
+  // STEP #2 - Define Routes
+  // Dispatch all HTTP GET events to a newly instanced `HelloHandler` actor for processing.
+  // `HelloHandler` will `stop()` itself after processing each request.
+  val routes = Routes({
+    case GET(request:SockoEvent) => {
+      actorSystem.actorOf(Props[HelloHandler]) ! request
+    }
+  })
+
+  // STEP #3 - Start and Stop Socko Web Server
+  def main(args: Array[String]) {
+    val webServer = new WebServer(WebServerConfig(), routes, actorSystem)
+    webServer.start()
+
+    Runtime.getRuntime.addShutdownHook(new Thread {
+      override def run { webServer.stop() }
+    })
+
+    System.out.println("Open your browser and navigate to http://localhost:8888")
+  }
+}
+\end{lstlisting}
+\begin{center}Code-2: HelloApp.scala using Akka\end{center}
+
+Notice that the unapply method of GET object, inherited from the Method class, has different type in socko and TAkka-socko API.  In socko v0.2, Get.unapply is declared as:
+\begin{lstlisting}
+def unapply (ctx: SockoEvent): Option[SockoEvent]
+\end{lstlisting}
+ Therefore, message $request$ in Code-2 has type SockoEvent whereas actor HelloHandler is only defined for processing message of type HttpRequestEvent, one of subclasses of SockoEvent.  The above type error is reported by the scala compiler after the the akka implementation was ported into the first version of TAkka-Socko, where the type signature of Method.unapply is the same as in  socko v0.2.  Further investigation into socko documentation shows that all objects extended from Method, including GET, are used as pattern extractor from SockoEvent to HttpRequestEvent.  For this reason,  the Method.unapply should be declared as:
+\begin{lstlisting}
+def unapply (ctx: SockoEvent): Option[HttpRequestEvent]
+\end{lstlisting}
+The new API has been confirmed by socko developers and will be used in the next socko release (v0.3).
+
+With minor changes,  the quick start example is straightforwardly ported using takka and takka-socko as below.
+
+\begin{lstlisting}
+package org.mashupbots.socko.examples.quickstart
+import org.mashupbots.socko.events.HttpRequestEvent
+import takka.actor.Actor
+import java.util.Date
+// Hello processor writes a greeting and stops.
+class HelloHandler extends Actor[HttpRequestEvent] {
+  def typedReceive = { 
+    case event: HttpRequestEvent =>
+      event.response.write("Hello from Socko (" + new Date().toString + ")")
+      typedContext.stop(typedSelf)
+  }
+}
+\end{lstlisting}
+\begin{center}{Code-3: HelloHandler.scala using TAkka}\end{center}
+
+
+\begin{lstlisting}
+import org.mashupbots.socko.routes._
+import org.mashupbots.socko.infrastructure.Logger
+import org.mashupbots.socko.webserver.WebServer
+import org.mashupbots.socko.webserver.WebServerConfig
+
+import takka.actor.ActorSystem 
+import takka.actor.Props 
+import org.mashupbots.socko.events.HttpRequestEvent
+
+object HelloApp extends Logger {
+  // STEP #1 - Define Actors and Start Akka
+  // See `HelloHandler`
+  val actorSystem = ActorSystem("HelloExampleActorSystem")
+
+  // STEP #2 - Define Routes
+  // Dispatch all HTTP GET events to a newly instanced `HelloHandler` actor for processing.
+  // `HelloHandler` will `stop()` itself after processing each request.
+  val routes = Routes({
+    case GET(request:HttpRequestEvent) => {
+      actorSystem.actorOf(Props[HttpRequestEvent, HelloHandler]) ! request
+    }
+  })
+
+  // STEP #3 - Start and Stop Socko Web Server
+  def main(args: Array[String]) {
+    val webServer = new WebServer(WebServerConfig(), routes, actorSystem)
+    webServer.start()
+
+    Runtime.getRuntime.addShutdownHook(new Thread {
+      override def run { webServer.stop() }
+    })
+
+    System.out.println("Open your browser and navigate to http://localhost:8888")
+  }
+}
+\end{lstlisting}
+\begin{center}{Code-4: HelloApp.scala using TAkka}\end{center}
+
+
+ 
+\section{Benchmark}\label{benchmark}
+We use the benchmark application shipped with socko source code to compare the performance of socko and takka-socko.  The testing method is similar to the method used in \cite{socko-bench}.  As we are interested in the speed of message processing, the benchmark is launched at a local machine to eliminate the effects of network delay.
+
+
+\subsection{Setup}
+\begin{itemize}
+  \item These tests were performed on
+  \begin{itemize}
+    \item Ubuntu 12.04 (precise) 32-bit
+    \item Intel Core i5 CPU M 520  @ 2.40GHz x 2
+    \item 3.8 GiB RAM
+  \end{itemize}
+  
+  \item Each test was run 3 times and the median result displayed.
+  
+  \item Application tested
+  \begin{itemize}
+    \item Socko v0.2 Benchmark example application.
+    \item TAkka-Socko Benchmark example application.
+  \end{itemize}  
+  
+  \item ApacheBench, Version 2.3 $<$\$Revision: 655654\$$>$ was used to perform the test
+  
+  \item java version ``1.7.0\_03"
+\end{itemize}
+
+\subsection{87 bytes static file, 100 concurrent users, 10,000 requests}
+\begin{verbatim}
+  ab -n10000 -c100 http://localhost:8888/small.html
+\end{verbatim}
+\begin{table}[h]
+\begin{tabularx}{\textwidth}{ |l|X|c| }
+  \hline
+  application    & Time taken for tests & Requests per second (mean)  \\
+  \hline
+  Socko               & 4.938 seconds           & 2025.23 [\#/sec] \\
+  \hline
+  TAkka-Socko  & 5.474 seconds           & 1826.67 [\#/sec]  \\
+  \hline  
+\end{tabularx}
+\end{table}
+
+\subsection{200K static file, 100 concurrent users, 10,000 requests}
+\begin{verbatim}
+  ab -n10000 -c100 http://localhost:8888/medium.txt
+\end{verbatim}
+\begin{table}[h]
+\begin{tabularx}{\textwidth}{ |l|X|c| }
+  \hline
+  application & Time taken for tests & Requests per second (mean)  \\
+  \hline
+  Socko  & 5.746 seconds  &1740.39 [\#/sec]  \\
+  \hline
+  TAkka-Socko  & 5.478 seconds  &1825.36 [\#/sec] \\
+  \hline  
+\end{tabularx}
+\end{table}
+
+\subsection{1MB static file, 100 concurrent users, 10,000 requests}
+\begin{verbatim}
+  ab -n10000 -c100 http://localhost:8888/big.txt
+\end{verbatim}
+
+\begin{table}[h]
+\begin{tabularx}{\textwidth}{ |l|X|c| }
+  \hline
+  application & Time taken for tests & Requests per second (mean)  \\
+  \hline
+  Socko  & 13.711 seconds & 729.33 [\#/sec] \\
+  \hline
+  TAkka-Socko  & 14.615 seconds  & 684.21 [\#/sec]  \\
+  \hline  
+\end{tabularx}
+
+\subsection{Dynamic Content, 100 concurrent users, 10,000 requests}
+\begin{verbatim}
+  ab -n10000 -c100 http://localhost:8888/dynamic.txt
+\end{verbatim}
+\end{table}
+
+%\begin{table}[!h]
+\begin{tabularx}{\textwidth}{ |l|X|c| }
+  \hline
+  application & Time taken for tests & Requests per second (mean)  \\
+  \hline
+  Socko  & 7.655 seconds  & 1306.37 [\#/sec]  \\
+  \hline
+  TAkka-Socko  & 7.239 seconds  &1381.32 [\#/sec] \\
+  \hline  
+\end{tabularx}
+%\end{table}
+
+\subsection{Summary}
+Results given above show that the performance of Socko and TAkka-Socko are comparable. 
+
+\bibliographystyle{plain}
+\bibliography{socko-doc}
+
+\end{document}
