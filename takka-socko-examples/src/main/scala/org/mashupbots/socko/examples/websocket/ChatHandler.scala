@@ -42,14 +42,14 @@ class ChatHandler extends Actor[SockoEvent] {
     case event: HttpRequestEvent =>
       // Return the HTML page to setup web sockets in the browser
       writeHTML(event)
-      context.stop(self)
+      typedContext.stop(typedSelf)
     case event: WebSocketFrameEvent =>
       // Echo web socket text frames
       writeWebSocketResponse(event)
-      context.stop(self)
+      typedContext.stop(typedSelf)
     case _ => {
       log.info("received unknown message of type: ")
-      context.stop(self)
+      typedContext.stop(typedSelf)
     }
   }
 

@@ -63,11 +63,13 @@ class TimeHandler extends Actor[TimeRequest] {
 
       msg.event.response.write("The time is " + ts + ".\nThe timezone is " +
         dateFormatter.getTimeZone.getDisplayName)
-      context.stop(self)
+      typedContext.stop(typedSelf)
+      /*
     case _ => {
       log.info("received unknown message of type: ")
       context.stop(self)
     }
+       */
   }
 }
 

@@ -31,7 +31,7 @@ class HelloHandler extends Actor[HttpRequestEvent] {
   def typedReceive = { 
     case event: HttpRequestEvent =>
       event.response.write("Hello from Socko (" + new Date().toString + ")")
-      context.stop(self)
+      typedContext.stop(typedSelf)
   }
 }
 

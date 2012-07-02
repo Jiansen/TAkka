@@ -48,7 +48,7 @@ case class Customer(id: String, barbershop: Barbershop) extends Actor[CustomerMe
     
     case STOPCustomer => // stopped by Tracker
       log.debug("customer {} stoped by tracker", id)      
-      context.stop(self)
+      typedContext.stop(typedSelf)
 
   }
 }

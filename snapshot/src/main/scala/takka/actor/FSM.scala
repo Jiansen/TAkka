@@ -534,7 +534,7 @@ trait FSM[S, D, E] extends Listeners {
       case _ =>
         nextState.replies.reverse foreach { case (t,r) => t.untypedRef ! r } // type safety is guaranteed by API implementation
         terminate(nextState)
-        context.stop(self)
+        typedContext.stop(typedSelf)
     }
   }
 
