@@ -188,6 +188,7 @@ object FSM {
  * </pre>
  */
 trait FSM[S, D, E] extends Listeners {
+  
   this: Actor[E] =>
 
   import FSM._
