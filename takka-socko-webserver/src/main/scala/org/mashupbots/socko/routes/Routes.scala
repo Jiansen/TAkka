@@ -175,7 +175,7 @@ class Method(method: String) {
 }
 */
 class Method(method: String) {
-  def unapply(ctx: SockoEvent):Option[HttpRequestEvent] =  // refined type
+  def unapply(ctx: SockoEvent):Option[HttpRequestEvent] =  // type refined
     if (ctx.endPoint.method.equalsIgnoreCase(method)) Some(ctx.asInstanceOf[HttpRequestEvent])
     else None
 }
@@ -305,9 +305,9 @@ object TRACE extends Method("TRACE")
  *
  * This will match `/folderX` but not: `/folderx`, `/folderX/` or `/TheFolderX`
  */
-object Path {
-  def unapply(ctx: SockoEvent) = Some(ctx.endPoint.path)
-  def apply(ctx: SockoEvent) = ctx.endPoint.path
+object Path { // type refined
+  def unapply(ctx: HttpRequestEvent) = Some(ctx.endPoint.path)
+  def apply(ctx: HttpRequestEvent) = ctx.endPoint.path
 }
 
 /**
@@ -323,8 +323,8 @@ object Path {
  *   })
  * }}}
  */
-object PathSegments {
-  def unapply(ctx: SockoEvent): Option[List[String]] = ctx.endPoint.path.split("/").toList match {
+object PathSegments {//type Refined
+  def unapply(ctx: HttpRequestEvent): Option[List[String]] = ctx.endPoint.path.split("/").toList match {
     case "" :: rest => Some(rest) // skip a leading slash
     case all => Some(all)
   }
@@ -349,8 +349,8 @@ object PathSegments {
  *   })
  * }}}
  */
-class PathRegex(regex: Regex) {
-  def unapply(ctx: SockoEvent) = regex.findFirstMatchIn(ctx.endPoint.path)
+class PathRegex(regex: Regex) {//type refeined
+  def unapply(ctx: HttpRequestEvent) = regex.findFirstMatchIn(ctx.endPoint.path)
 }
 
 /**
@@ -367,9 +367,9 @@ class PathRegex(regex: Regex) {
  *
  * This will match `www.sockoweb.com` but not: `www1.sockoweb.com`, `sockoweb.com` or `sockoweb.org`
  */
-object Host {
-  def unapply(ctx: SockoEvent) = Some(ctx.endPoint.host)
-  def apply(ctx: SockoEvent) = ctx.endPoint.host
+object Host {// type refined
+  def unapply(ctx: HttpRequestEvent) = Some(ctx.endPoint.host)
+  def apply(ctx: HttpRequestEvent) = ctx.endPoint.host
 }
 
 /**
@@ -385,8 +385,8 @@ object Host {
  *   })
  * }}}
  */
-object HostSegments {
-  def unapply(ctx: SockoEvent): Option[List[String]] = Some(ctx.endPoint.host.split("""\.""").toList)
+object HostSegments {// type refined
+  def unapply(ctx: HttpRequestEvent): Option[List[String]] = Some(ctx.endPoint.host.split("""\.""").toList)
 }
 
 /**
@@ -408,7 +408,7 @@ object HostSegments {
  * }}}
  */
 class HostRegex(regex: Regex) {
-  def unapply(ctx: SockoEvent) = {
+  def unapply(ctx: HttpRequestEvent) = { // type refined
     regex.findFirstMatchIn(ctx.endPoint.host)
   }
 }
@@ -425,9 +425,9 @@ class HostRegex(regex: Regex) {
  *   })
  * }}}
  */
-object QueryString {
-  def unapply(ctx: SockoEvent) = Some(ctx.endPoint.queryString)
-  def apply(ctx: SockoEvent) = ctx.endPoint.queryString
+object QueryString {// type refined
+  def unapply(ctx: HttpRequestEvent) = Some(ctx.endPoint.queryString)
+  def apply(ctx: HttpRequestEvent) = ctx.endPoint.queryString
 }
 
 /**
@@ -474,8 +474,8 @@ class QueryStringRegex(regex: Regex) {
  *   })
  * }}}
  */
-class QueryStringField(name: String) {
-  def unapply(ctx: SockoEvent) = {
+class QueryStringField(name: String) { // type refined
+  def unapply(ctx: HttpRequestEvent) = {
     ctx.endPoint.getQueryString(name)
   }
 }

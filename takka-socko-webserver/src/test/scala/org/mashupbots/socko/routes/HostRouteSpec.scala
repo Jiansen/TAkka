@@ -21,6 +21,7 @@ import org.scalatest.junit.JUnitRunner
 import org.scalatest.matchers.ShouldMatchers
 import org.scalatest.GivenWhenThen
 import org.scalatest.WordSpec
+// import org.mashupbots.socko.routes.TestContext
 
 @RunWith(classOf[JUnitRunner])
 class HostRouteSpec extends WordSpec with ShouldMatchers with GivenWhenThen {
