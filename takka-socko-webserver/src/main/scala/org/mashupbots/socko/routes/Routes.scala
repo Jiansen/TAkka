@@ -293,7 +293,7 @@ object TRACE extends Method("TRACE")
 
 /**
  * 
- * //bug doc: Matches HTTP requests with the same case-sensitive path.
+ * //buggy doc: Matches HTTP requests with the same case-sensitive path.
  * Matches SockoEvent with the same case-sensitive path.
  * 
  * For example, to match `/folderX` use:
@@ -313,7 +313,8 @@ object Path {
 }
 
 /**
- * Matches HTTP requests with the same path segment pattern.
+ * //buggy doc: Matches HTTP requests with the same path segment pattern.
+ * Matches SockoEvent with the same path segment pattern.
  *
  * For example, to match `/record/1`, use:
  * {{{
@@ -325,16 +326,17 @@ object Path {
  *   })
  * }}}
  */
-object PathSegments {//type Refined
-  def unapply(ctx: HttpRequestEvent): Option[List[String]] = ctx.endPoint.path.split("/").toList match {
+object PathSegments {
+  def unapply(ctx: SockoEvent): Option[List[String]] = ctx.endPoint.path.split("/").toList match {
     case "" :: rest => Some(rest) // skip a leading slash
     case all => Some(all)
   }
 }
 
 /**
- * Matches HTTP requests that have paths matching the specified regular expression.
- *
+ * //buggy doc: Matches HTTP requests that have paths matching the specified regular expression.
+ * Matches SockoEvent that have paths matching the specified regular expression.
+ * 
  * For example, to match `/path/to/file`, first define your regular expression as an object:
  * {{{
  *    object MyPathRegex extends PathRegex("""/path/([a-z0-9]+)/([a-z0-9]+)""".r)
@@ -351,13 +353,14 @@ object PathSegments {//type Refined
  *   })
  * }}}
  */
-class PathRegex(regex: Regex) {//type refeined
+class PathRegex(regex: Regex) {
   def unapply(ctx: HttpRequestEvent) = regex.findFirstMatchIn(ctx.endPoint.path)
 }
 
 /**
- * Matches HTTP requests with the same case-sensitive host.
- *
+ *  //buggy doc: Matches HTTP requests with the same case-sensitive host.
+ *   Matches SockoEvent with the same case-sensitive host.
+ * 
  * For example, to match `www.sockoweb.com`, use:
  * {{{
  *   val r = Routes({
@@ -369,14 +372,15 @@ class PathRegex(regex: Regex) {//type refeined
  *
  * This will match `www.sockoweb.com` but not: `www1.sockoweb.com`, `sockoweb.com` or `sockoweb.org`
  */
-object Host {// type refined
-  def unapply(ctx: HttpRequestEvent) = Some(ctx.endPoint.host)
-  def apply(ctx: HttpRequestEvent) = ctx.endPoint.host
+object Host {
+  def unapply(ctx: SockoEvent) = Some(ctx.endPoint.host)
+  def apply(ctx: SockoEvent) = ctx.endPoint.host
 }
 
 /**
- * Matches HTTP requests with the same host segment pattern.
- *
+ * //buggy doc: Matches HTTP requests with the same host segment pattern.
+ *  Matches SockoEvent with the same host segment pattern.
+ *  
  * For example, to match `server1.sockoweb.com`, use:
  * {{{
  *   val r = Routes({
@@ -387,13 +391,13 @@ object Host {// type refined
  *   })
  * }}}
  */
-object HostSegments {// type refined
-  def unapply(ctx: HttpRequestEvent): Option[List[String]] = Some(ctx.endPoint.host.split("""\.""").toList)
+object HostSegments {
+  def unapply(ctx: SockoEvent): Option[List[String]] = Some(ctx.endPoint.host.split("""\.""").toList)
 }
 
 /**
- * Matches HTTP requests that have hosts matching the specified regular expression.
- *
+ * //buggy doc:  Matches HTTP requests that have hosts matching the specified regular expression.
+ *  Matches SockoEvent that have hosts matching the specified regular expression.
  * For example, to match `www.sockoweb.com`, first define your regex as an object:
  * {{{
  *    object MyHostRegex extends HostRegex("""www\.([a-z]+)\.com""".r)
@@ -410,14 +414,15 @@ object HostSegments {// type refined
  * }}}
  */
 class HostRegex(regex: Regex) {
-  def unapply(ctx: HttpRequestEvent) = { // type refined
+  def unapply(ctx: SockoEvent) = {
     regex.findFirstMatchIn(ctx.endPoint.host)
   }
 }
 
 /**
- * Matches HTTP requests that have identical query string
- *
+ * //buggy doc: Matches HTTP requests that have identical query string
+ * Matches SockoEvent that have identical query string
+ * 
  * For example, to match `http://www.sockoweb.org/do?action=save`:
  * {{{
  *   val r = Routes({
@@ -427,14 +432,15 @@ class HostRegex(regex: Regex) {
  *   })
  * }}}
  */
-object QueryString {// type refined
-  def unapply(ctx: HttpRequestEvent) = Some(ctx.endPoint.queryString)
-  def apply(ctx: HttpRequestEvent) = ctx.endPoint.queryString
+object QueryString {
+  def unapply(ctx: SockoEvent) = Some(ctx.endPoint.queryString)
+  def apply(ctx: SockoEvent) = ctx.endPoint.queryString
 }
 
 /**
- * Matches HTTP requests that have a query string matching the specified regular expression.
- *
+ * //buggy doc: Matches HTTP requests that have a query string matching the specified regular expression.
+ * Matches SockoEvent that have a query string matching the specified regular expression.
+ * 
  * For example, to match `?name1=value1`, first define your regular expression as an object:
  * {{{
  *    object MyQueryStringRegex extends QueryStringRegex("""name1=([a-z0-9]+)""".r)
@@ -457,7 +463,8 @@ class QueryStringRegex(regex: Regex) {
 }
 
 /**
- * Matches HTTP requests that have a query string field with the specified name.
+ * // buggy doc: Matches HTTP requests that have a query string field with the specified name.
+ * Matches SockoEvent that have a query string field with the specified name.
  *
  * If a match is found, the value is returned. If there are more than one value, on the first value is returned.
  *
@@ -476,8 +483,8 @@ class QueryStringRegex(regex: Regex) {
  *   })
  * }}}
  */
-class QueryStringField(name: String) { // type refined
-  def unapply(ctx: HttpRequestEvent) = {
+class QueryStringField(name: String) {
+  def unapply(ctx: SockoEvent) = {
     ctx.endPoint.getQueryString(name)
   }
 }
