@@ -292,8 +292,10 @@ object OPTIONS extends Method("OPTIONS")
 object TRACE extends Method("TRACE")
 
 /**
- * Matches HTTP requests with the same case-sensitive path.
- *
+ * 
+ * //bug doc: Matches HTTP requests with the same case-sensitive path.
+ * Matches SockoEvent with the same case-sensitive path.
+ * 
  * For example, to match `/folderX` use:
  * {{{
  *   val r = Routes({
@@ -305,9 +307,9 @@ object TRACE extends Method("TRACE")
  *
  * This will match `/folderX` but not: `/folderx`, `/folderX/` or `/TheFolderX`
  */
-object Path { // type refined
-  def unapply(ctx: HttpRequestEvent) = Some(ctx.endPoint.path)
-  def apply(ctx: HttpRequestEvent) = ctx.endPoint.path
+object Path {
+  def unapply(ctx: SockoEvent) = Some(ctx.endPoint.path)
+  def apply(ctx: SockoEvent) = ctx.endPoint.path
 }
 
 /**

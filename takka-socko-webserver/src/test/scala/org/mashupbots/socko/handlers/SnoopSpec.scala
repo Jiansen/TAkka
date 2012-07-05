@@ -46,10 +46,11 @@ import akka.actor.actorRef2Scala
 import akka.actor.ActorSystem
 import akka.actor.Props
 */
-// import akka.actor.actorRef2Scala  // redundant code?
-import takka.actor.ActorSystem
-import takka.actor.Props
-import org.mashupbots.socko.events.SockoEvent
+// import akka.actor.actorRef2Scala  // redundant code
+import takka.actor.ActorSystem //
+import takka.actor.Props //
+import org.mashupbots.socko.events.SockoEvent //
+import org.mashupbots.socko.events.HttpRequestEvent //
 
 @RunWith(classOf[JUnitRunner])
 class SnoopSpec extends WordSpec with ShouldMatchers with BeforeAndAfterAll with GivenWhenThen with TestHttpClient {
@@ -70,13 +71,14 @@ class SnoopSpec extends WordSpec with ShouldMatchers with BeforeAndAfterAll with
     case HttpRequest(httpRequest) => httpRequest match {
       case Path("/snoop/") => {
         val name = "SnoopHandler_%s_%s".format(httpRequest.channel.getId, System.currentTimeMillis)
-        actorSystem.actorOf(Props[SockoEvent, SnoopHandler], name) ! httpRequest
+        actorSystem.actorOf(Props[SockoEvent, SnoopHandler], name) ! httpRequest  //
       }
     }
     case WebSocketHandshake(wsHandshake) => wsHandshake match {
       case Path("/snoop/websocket/") => {
         // For WebSocket processing, we first have to authorize the handshake by setting the "isAllowed" property.
         // This is a security measure to make sure that web sockets can only be established at your specified end points.
+        Thread.sleep(2000)
         wsHandshake.authorize()
       }
     }
@@ -101,7 +103,6 @@ class SnoopSpec extends WordSpec with ShouldMatchers with BeforeAndAfterAll with
   }
 
   "Socko Web Server" should {
-
     "support HTTP GET" in {
       val url = new URL(path + "snoop/")
       val conn = url.openConnection().asInstanceOf[HttpURLConnection]
@@ -241,6 +242,7 @@ class SnoopSpec extends WordSpec with ShouldMatchers with BeforeAndAfterAll with
       wsc.disconnect()
 
       val receivedText = wsc.getReceivedText
+      println("***   "+receivedText)
       receivedText should equal("test #1\ntest #2\ntest #3\n")
     }
 
@@ -294,6 +296,5 @@ class SnoopSpec extends WordSpec with ShouldMatchers with BeforeAndAfterAll with
       resp.headers("Date").length should be > 0
       resp.headers("Content-Encoding") should equal("deflate")
     }
-
   }
 }
