@@ -78,7 +78,6 @@ class SnoopSpec extends WordSpec with ShouldMatchers with BeforeAndAfterAll with
       case Path("/snoop/websocket/") => {
         // For WebSocket processing, we first have to authorize the handshake by setting the "isAllowed" property.
         // This is a security measure to make sure that web sockets can only be established at your specified end points.
-        Thread.sleep(2000)
         wsHandshake.authorize()
       }
     }
