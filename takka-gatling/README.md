@@ -24,8 +24,9 @@ com.excilys.ebi.gatling.recorder.ui.frame.RunningFrame.scala
 
 # Using TAkka
 
-Akka actors in gatling-core and gatling-http are replaced by TAkka actors.  Source code of [TAkka.actor](https://github.com/Jiansen/TAkka) is copied to gatling-core, which is the base of gatling-http.  Changes are made to following files:
+Akka actors in gatling-core and gatling-http are replaced by TAkka actors.  Source code of [TAkka.actor](https://github.com/Jiansen/TAkka) is copied to gatling-core, which is the base of gatling-http.
 
+## Modified files
 <pre><code>
 com.excilys.ebi.gatling.core  
                          |- action  
@@ -62,10 +63,13 @@ com.excilys.ebi.gatling.http
                              |- package.scala
 </code></pre>
 
+## Major Changes
+* ConsoleDataWriter is rewritten using FSM
+* FileDataWriter is rewritten using FSM
+* Actions is a subclass of Actor[Session]
+* DataWriter is a subclass of Actor[DataWriterMessage]
 
 #TODO
-* rewrite com.excilys.ebi.gatling.core.result.writer.ConsoleDataWriter using FSM
-* rewrite com.excilys.ebi.gatling.core.result.writer.FileDataWriter using FSM
 * Runner.Scala Line 107
 
 

@@ -72,3 +72,8 @@ object DataWriter {
  * generate the statistics
  */
 abstract class DataWriter extends Actor[DataWriterMessage]
+
+// new classes definition
+sealed trait DataWriterState
+case object DataWriterUninitialized extends DataWriterState
+case object DataWriterInitialized extends DataWriterState

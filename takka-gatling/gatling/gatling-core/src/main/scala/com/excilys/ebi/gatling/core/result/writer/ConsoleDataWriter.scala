@@ -24,10 +24,10 @@ import com.excilys.ebi.gatling.core.result.message.RequestStatus.{ OK, KO }
 
 import grizzled.slf4j.Logging
 
-// TODO: re-write using FSM
-class ConsoleDataWriter extends DataWriter with Logging {
+import takka.actor.FSM
+import com.excilys.ebi.gatling.core.result.message.DataWriterMessage
 
-  def typedReceive = {case _ =>}
+class ConsoleDataWriter extends DataWriter with FSM[DataWriterState, Unit, DataWriterMessage] with Logging {
   
 	private var runningUsersCount = 0
 	private var doneUsersCount = 0
@@ -39,8 +39,9 @@ class ConsoleDataWriter extends DataWriter with Logging {
 
 	private val displayPeriod = 5 * 1000
 
-	def uninitialized: Receive = {
-		case InitializeDataWriter(_, total, _, _) =>
+	this.startWith(DataWriterUninitialized, Unit)
+	when (DataWriterUninitialized){
+		case Event(InitializeDataWriter(_, total, _, _), _) =>
 			runningUsersCount = 0
 			doneUsersCount = 0
 			totalUsersCount = total
@@ -48,15 +49,16 @@ class ConsoleDataWriter extends DataWriter with Logging {
 			failedRequestsCount = 0
 			startUpTime = currentTimeMillis
 			lastDisplayTime = currentTimeMillis
-			context.become(initialized)
+			goto(DataWriterInitialized)
+		case unknown: DataWriterMessage =>
+		  error("Unsupported DataWriterMessage" + unknown)
+		  stay
+//		case unknown: AnyRef => error("Unsupported message type in uninilialized state" + unknown.getClass)
+//		case unknown: Any => error("Unsupported message type in uninilialized state " + unknown)
+    }
 
-		case unknown: AnyRef => error("Unsupported message type in uninilialized state" + unknown.getClass)
-		case unknown: Any => error("Unsupported message type in uninilialized state " + unknown)
-	}
-
-	def initialized: Receive = {
-		case RequestRecord(scenarioName, userId, actionName, executionStartDate, executionEndDate, requestSendingEndDate, responseReceivingStartDate, resultStatus, resultMessage, extraInfo) =>
-
+	when (DataWriterInitialized) {
+		case Event(RequestRecord(scenarioName, userId, actionName, executionStartDate, executionEndDate, requestSendingEndDate, responseReceivingStartDate, resultStatus, resultMessage, extraInfo), _) =>
 			actionName match {
 				case START_OF_SCENARIO => runningUsersCount += 1
 				case END_OF_SCENARIO => runningUsersCount -= 1; doneUsersCount += 1
@@ -83,14 +85,16 @@ class ConsoleDataWriter extends DataWriter with Logging {
 					.append(" KO=")
 					.append(failedRequestsCount))
 			}
+			stay
 
-		case FlushDataWriter => context.unbecome() // return to uninitialized state
-
-		case unknown: AnyRef => error("Unsupported message type in inilialized state " + unknown.getClass)
-		case unknown: Any => error("Unsupported message type in inilialized state " + unknown)
+		case Event(FlushDataWriter, _) =>
+		  goto(DataWriterUninitialized) // return to uninitialized state
+		case unknown: DataWriterMessage =>
+		  error("Unsupported DataWriterMessage" + unknown)
+		  stay
+//		case unknown: AnyRef => error("Unsupported message type in inilialized state " + unknown.getClass)
+//		case unknown: Any => error("Unsupported message type in inilialized state " + unknown)
 	}
-
-	override def receive = uninitialized
 }
 
 

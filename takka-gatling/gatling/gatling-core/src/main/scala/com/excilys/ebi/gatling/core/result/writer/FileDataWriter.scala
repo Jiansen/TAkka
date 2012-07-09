@@ -27,6 +27,9 @@ import com.excilys.ebi.gatling.core.util.StringHelper.END_OF_LINE
 
 import grizzled.slf4j.Logging
 
+import takka.actor.FSM
+import com.excilys.ebi.gatling.core.result.message.DataWriterMessage
+
 object FileDataWriter {
 
 	val emptyField = " "
@@ -68,9 +71,7 @@ object FileDataWriter {
  *
  * It writes the data of the simulation if a tabulation separated values file
  */
-// TODO: rewrite using FSM
-class FileDataWriter extends DataWriter with Logging {
-def typedReceive = {case _ => }
+class FileDataWriter extends DataWriter with FSM[DataWriterState, Unit, DataWriterMessage] with Logging {
 	/**
 	 * The OutputStreamWriter used to write to files
 	 */
@@ -81,8 +82,9 @@ def typedReceive = {case _ => }
 	 */
 	private var latch: CountDownLatch = _
 
-	def uninitialized: Receive = {
-		case InitializeDataWriter(runRecord, totalUsersCount, latch, encoding) =>
+	this.startWith(DataWriterUninitialized, Unit)
+	when(DataWriterUninitialized){
+		case Event(InitializeDataWriter(runRecord, totalUsersCount, latch, encoding), _) =>
 			this.latch = latch
 			val simulationLog = simulationLogDirectory(runRecord.runUuid) / "simulation.log"
 			osw = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(simulationLog.toString)), encoding)
@@ -92,31 +94,34 @@ def typedReceive = {case _ => }
 				// hack for being able to deserialize in FileDataReader
 				.append(if (runRecord.runDescription.isEmpty) FileDataWriter.emptyField else runRecord.runDescription)
 				.append(END_OF_LINE)
-			context.become(initialized)
+			goto(DataWriterInitialized)
+		case unknown: DataWriterMessage =>
+		  error("Unsupported DataWriterMessage" + unknown)
+		  stay
 
-		case unknown: AnyRef => error("Unsupported message type in uninilialized state" + unknown.getClass)
-		case unknown: Any => error("Unsupported message type in uninilialized state " + unknown)
+//		case unknown: AnyRef => error("Unsupported message type in uninilialized state" + unknown.getClass)
+//		case unknown: Any => error("Unsupported message type in uninilialized state " + unknown)
 	}
 
-	def initialized: Receive = {
-		case requestRecord: RequestRecord =>
+	when(DataWriterInitialized){
+		case Event(requestRecord: RequestRecord, _) =>
 			FileDataWriter.append(osw, requestRecord)
-
-		case FlushDataWriter =>
+			stay
+		case Event(FlushDataWriter, _) =>
 			info("Received flush order")
-
 			try {
 				osw.flush
+				stay
 			} finally {
-				context.unbecome // return to uninitialized state
 				// Decrease the latch (should be at 0 here)
 				osw.close
-				latch.countDown
+				latch.countDown			  
+				goto(DataWriterUninitialized) // return to uninitialized state
 			}
-
-		case unknown: AnyRef => error("Unsupported message type in inilialized state " + unknown.getClass)
-		case unknown: Any => error("Unsupported message type in inilialized state " + unknown)
+		case unknown: DataWriterMessage =>
+		  error("Unsupported DataWriterMessage" + unknown)
+		  stay
+//		case unknown: AnyRef => error("Unsupported message type in inilialized state " + unknown.getClass)
+//		case unknown: Any => error("Unsupported message type in inilialized state " + unknown)
 	}
-
-	override def receive = uninitialized
 }
