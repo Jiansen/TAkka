@@ -64,7 +64,7 @@ com.excilys.ebi.gatling.http
 
 
 #TODO
-* rewrite com.excilys.ebi.gatling.core.result.writer.DataWriter using FSM
+* rewrite com.excilys.ebi.gatling.core.result.writer.ConsoleDataWriter using FSM
 * rewrite com.excilys.ebi.gatling.core.result.writer.FileDataWriter using FSM
 * Runner.Scala Line 107
 
