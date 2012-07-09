@@ -1,0 +1,2 @@
+eclipse.preferences.version=1
+task-tag-projects-already-scanned=gatling,gatling-app,gatling-bundle,gatling-charts,gatling-charts-highcharts,gatling-core,gatling-highcharts,gatling-highcharts-maven-archetype,gatling-http,gatling-jdbc,gatling-maven-plugin,gatling-recorder,gatling-redis
