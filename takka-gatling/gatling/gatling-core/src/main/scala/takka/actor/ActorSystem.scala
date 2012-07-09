@@ -130,7 +130,7 @@ abstract class ActorSystem {
   }
   
   def scheduler : akka.actor.Scheduler = {
-    system.scheduler
+    system.
   }
   
   def settings : akka.actor.ActorSystem.Settings = {system.settings}

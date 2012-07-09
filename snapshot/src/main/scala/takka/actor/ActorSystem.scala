@@ -22,6 +22,7 @@ import akka.actor.{ActorPath, Extension, ExtensionId}
 import akka.event.LoggingAdapter
 import akka.util.Duration
 import akka.pattern._
+import akka.actor.Cancellable
 
 import takka.nameserver.{NameServer, TSymbol}
 
@@ -129,8 +130,32 @@ abstract class ActorSystem {
     system.registerOnTermination(code)
   }
   
-  def scheduler : akka.actor.Scheduler = {
-    system.scheduler
+  def scheduler : takka.actor.Scheduler = new takka.actor.Scheduler {
+    val akkaScheduler = system.scheduler
+    
+    def schedule[M](initialDelay: Duration, frequency: Duration, receiver: ActorRef[M], message: M): Cancellable = {
+      akkaScheduler.schedule(initialDelay, frequency, receiver.untypedRef, message)
+    }
+
+    def schedule(initialDelay: Duration, frequency: Duration)(f: ⇒ Unit): Cancellable = {
+      akkaScheduler.schedule(initialDelay, frequency)(f)
+    }
+
+    def schedule(initialDelay: Duration, frequency: Duration, runnable: Runnable): Cancellable = {
+      akkaScheduler.schedule(initialDelay, frequency, runnable)
+    }
+
+    def scheduleOnce(delay: Duration, runnable: Runnable): Cancellable = {
+      akkaScheduler.scheduleOnce(delay, runnable)
+    }
+
+    def scheduleOnce[M](delay: Duration, receiver: ActorRef[M], message: M): Cancellable = {
+      akkaScheduler.scheduleOnce(delay, receiver.untypedRef, message)
+    }
+
+    def scheduleOnce(delay: Duration)(f: ⇒ Unit): Cancellable = {
+      akkaScheduler.scheduleOnce(delay)(f)
+    }
   }
   
   def settings : akka.actor.ActorSystem.Settings = {system.settings}
