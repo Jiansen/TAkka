@@ -1,0 +1,105 @@
+<% import com.excilys.ebi.gatling.charts.component.RequestStatistics %>
+<% import com.excilys.ebi.gatling.core.util.FileHelper.formatToFilename %>
+<%@ val stats: Map[String, RequestStatistics] %>
+var stats = {
+<% val it = stats.values.iterator %>
+<% while (it.hasNext) { %>
+<% val stat = it.next %>
+	<%=formatToFilename(stat.name)%>: {
+		numberOfRequests : {
+			total: "<%=stat.numberOfRequestsStatistics.printableTotal%>",
+			ok: "<%=stat.numberOfRequestsStatistics.printableSuccess%>",
+			ko: "<%=stat.numberOfRequestsStatistics.printableFailure%>"
+		},
+		minResponseTime : {
+			total: "<%=stat.minResponseTimeStatistics.printableTotal%>",
+			ok: "<%=stat.minResponseTimeStatistics.printableSuccess%>",
+			ko: "<%=stat.minResponseTimeStatistics.printableFailure%>"
+		},
+		maxResponseTime : {
+			total: "<%=stat.maxResponseTimeStatistics.printableTotal%>",
+			ok: "<%=stat.maxResponseTimeStatistics.printableSuccess%>",
+			ko: "<%=stat.maxResponseTimeStatistics.printableFailure%>"
+		},
+		meanResponseTime : {
+			total: "<%=stat.meanStatistics.printableTotal%>",
+			ok: "<%=stat.meanStatistics.printableSuccess%>",
+			ko: "<%=stat.meanStatistics.printableFailure%>"
+		},
+		standardDeviation : {
+			total: "<%=stat.stdDeviationStatistics.printableTotal%>",
+			ok: "<%=stat.stdDeviationStatistics.printableSuccess%>",
+			ko: "<%=stat.stdDeviationStatistics.printableFailure%>"
+		},
+		percentiles1 : {
+			total: "<%=stat.percentiles1.printableTotal%>",
+			ok: "<%=stat.percentiles1.printableSuccess%>",
+			ko: "<%=stat.percentiles1.printableFailure%>"
+		},
+		percentiles2 : {
+			total: "<%=stat.percentiles2.printableTotal%>",
+			ok: "<%=stat.percentiles2.printableSuccess%>",
+			ko: "<%=stat.percentiles2.printableFailure%>"
+		},
+		group1 : {
+			name: "<%=stat.groupedCounts(0)._1%>",
+			count: <%=stat.groupedCounts(0)._2.toString%>,
+			percentage: <%=stat.groupedCounts(0)._3.toString%>
+		},
+		group2 : {
+			name: "<%=stat.groupedCounts(1)._1%>",
+			count: <%=stat.groupedCounts(1)._2.toString%>,
+			percentage: <%=stat.groupedCounts(1)._3.toString%>
+		},
+		group3 : {
+			name: "<%=stat.groupedCounts(2)._1%>",
+			count: <%=stat.groupedCounts(2)._2.toString%>,
+			percentage: <%=stat.groupedCounts(2)._3.toString%>
+		},
+		group4 : {
+			name: "<%=stat.groupedCounts(3)._1%>",
+			count: <%=stat.groupedCounts(3)._2.toString%>,
+			percentage: <%=stat.groupedCounts(3)._3.toString%>
+		},
+		meanNumberOfRequestsPerSecond: {
+			total: "<%=stat.meanNumberOfRequestsPerSecondStatistics.printableTotal%>",
+			ok: "<%=stat.meanNumberOfRequestsPerSecondStatistics.printableSuccess%>",
+			ko: "<%=stat.meanNumberOfRequestsPerSecondStatistics.printableFailure%>"
+		}
+	}<% if (it.hasNext) {%>,<%}%>
+<%}%>
+}
+
+function fillStats(stat){
+    $("#numberOfRequests").append(stat.numberOfRequests.total);
+    $("#numberOfRequestsOK").append(stat.numberOfRequests.ok);
+    $("#numberOfRequestsKO").append(stat.numberOfRequests.ko);
+
+    $("#minResponseTime").append(stat.minResponseTime.total);
+    $("#minResponseTimeOK").append(stat.minResponseTime.ok);
+    $("#minResponseTimeKO").append(stat.minResponseTime.ko);
+
+    $("#maxResponseTime").append(stat.maxResponseTime.total);
+    $("#maxResponseTimeOK").append(stat.maxResponseTime.ok);
+    $("#maxResponseTimeKO").append(stat.maxResponseTime.ko);
+
+    $("#meanResponseTime").append(stat.meanResponseTime.total);
+    $("#meanResponseTimeOK").append(stat.meanResponseTime.ok);
+    $("#meanResponseTimeKO").append(stat.meanResponseTime.ko);
+
+    $("#standardDeviation").append(stat.standardDeviation.total);
+    $("#standardDeviationOK").append(stat.standardDeviation.ok);
+    $("#standardDeviationKO").append(stat.standardDeviation.ko);
+
+    $("#percentiles1").append(stat.percentiles1.total);
+    $("#percentiles1OK").append(stat.percentiles1.ok);
+    $("#percentiles1KO").append(stat.percentiles1.ko);
+
+    $("#percentiles2").append(stat.percentiles2.total);
+    $("#percentiles2OK").append(stat.percentiles2.ok);
+    $("#percentiles2KO").append(stat.percentiles2.ko);
+
+    $("#meanNumberOfRequestsPerSecond").append(stat.meanNumberOfRequestsPerSecond.total);
+    $("#meanNumberOfRequestsPerSecondOK").append(stat.meanNumberOfRequestsPerSecond.ok);
+    $("#meanNumberOfRequestsPerSecondKO").append(stat.meanNumberOfRequestsPerSecond.ko);
+}
