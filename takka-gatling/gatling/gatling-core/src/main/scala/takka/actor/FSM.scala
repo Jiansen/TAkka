@@ -48,9 +48,9 @@ object FSM {
 
     def schedule(actor: ActorRef[E], timeout: Duration) {
       if (repeat) {
-        ref = Some(system.scheduler.schedule(timeout, timeout, actor.untypedRef, this))
+        ref = Some(system.system.scheduler.schedule(timeout, timeout, actor.untypedRef, this)) // out of bound message to self
       } else {
-        ref = Some(system.scheduler.scheduleOnce(timeout, actor.untypedRef, this))
+        ref = Some(system.system.scheduler.scheduleOnce(timeout, actor.untypedRef, this)) // out of bound message to self
       }
     }
 

@@ -104,7 +104,7 @@ class Runner(runRecord: RunRecord, scenarioConfigurationBuilders: Seq[ScenarioCo
 			val period = rampUnit.toMillis(rampValue) / (configuration.users - 1)
 
 			for (i <- 1 to configuration.users)
-				system.scheduler.scheduleOnce(period * (i - 1) milliseconds, scenario.untypedRef, buildSession(configuration, i)) // TODO: improve this
+				system.scheduler.scheduleOnce(period * (i - 1) milliseconds, scenario, buildSession(configuration, i))
 		}
 	}
 
