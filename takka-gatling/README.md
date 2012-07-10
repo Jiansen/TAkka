@@ -4,7 +4,7 @@
 
 * gatling-highcharts  https://github.com/excilys/gatling-highcharts
 
-Date of Retrieved: 9 July 2012
+Retrieve Date: 9 July 2012
 
 Learn more about gatling at [gatling wiki](https://github.com/excilys/gatling/wiki)
 
