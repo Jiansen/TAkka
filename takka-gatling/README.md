@@ -63,7 +63,7 @@ com.excilys.ebi.gatling.http
                              |- package.scala
 </code></pre>
 
-## Major Changes
+## Main Changes
 * ConsoleDataWriter is rewritten using FSM
 * FileDataWriter is rewritten using FSM
 * Actions is a subclass of Actor[Session]

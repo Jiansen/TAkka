@@ -1,5 +1,5 @@
 /**
- * Copyright 2012 Jiansen HE.
+ * Copyright 2011-2012 eBusiness Information, Groupe Excilys (www.excilys.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 /**
  * takka-galting is a derivative work of the gatling project, developed by eBusiness Information, Groupe Excilys (www.excilys.com)
  */
