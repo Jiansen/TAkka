@@ -1,0 +1,6 @@
+<%@ val activeSessions: com.excilys.ebi.gatling.highcharts.series.NumberPerSecondSeries %>
+
+allSessionsData = {
+	<% render("series_number_per_sec.ssp", Map("serie" -> activeSessions)) %>
+	, yAxis: 1
+};
