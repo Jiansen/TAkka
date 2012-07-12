@@ -63,7 +63,7 @@ object TAkkaBuild extends Build {
                          base = file("socko-webserver"),
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.sockowebserver 
-                         )) dependsOn(snapshot)
+                         ))
 
 
   lazy val sockoexamples = Project(id = "socko-examples",
