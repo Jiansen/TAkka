@@ -89,7 +89,7 @@ object Dependencies {
 
   // socko webserver in takka
   val takkasockowebserver = Seq(
-    Dependency.akkaActor, Dependency.akkaSlf4j, Dependency.akkaTestKit,
+    Dependency.akkaSlf4j, Dependency.akkaTestKit,
     Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalatest
   )
   

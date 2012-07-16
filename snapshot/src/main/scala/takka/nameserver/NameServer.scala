@@ -43,7 +43,7 @@ object NameServer {
    * the name has been used by the name server.
    */
   @throws(classOf[NamesHasBeenRegisteredException])
-  def set[T:Manifest](name:TSymbol[T], value:T):Unit = {
+  def set[T:Manifest](name:TSymbol[T], value:T):Unit = synchronized {
     val tValue = TValue[T](value)
     if (nameMap.contains(name)){
       throw new NamesHasBeenRegisteredException(name)
@@ -58,14 +58,14 @@ object NameServer {
    * The type parameter does not take into account, in another word, 
    * '''T''' may not be the same as the registered type.
    */
-  def unset[T](name:TSymbol[T]):Unit = {
+  def unset[T](name:TSymbol[T]):Unit = synchronized {
     nameMap -= name
   }
   
   /**
    * Return Some if 'name' is associated with a value, and '''T''' is a supertype of the registered type; Otherwise return None
    */
-  def get[T](name:TSymbol[T]):Option[T] = {
+  def get[T](name:TSymbol[T]):Option[T] = synchronized {
     if (!nameMap.contains(name)) {return None}
     else { 
       val tValue = nameMap(name)
