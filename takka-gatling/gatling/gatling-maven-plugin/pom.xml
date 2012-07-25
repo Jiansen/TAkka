@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.excilys.ebi.gatling</groupId>
-		<artifactId>gatling-parent</artifactId>
+		<groupId>takka-gatling</groupId>
+		<artifactId>takka-gatling-parent</artifactId>
 		<version>1.3.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>gatling-maven-plugin</artifactId>
@@ -17,7 +17,7 @@
 	<dependencies>
 		<!-- Gatling Dependencies -->
 		<dependency>
-			<groupId>com.excilys.ebi.gatling</groupId>
+			<groupId>takka-gatling</groupId>
 			<artifactId>gatling-app</artifactId>
 		</dependency>
 

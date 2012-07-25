@@ -2,8 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<artifactId>gatling-parent</artifactId>
-		<groupId>com.excilys.ebi.gatling</groupId>
+		<artifactId>takka-gatling-parent</artifactId>
+		<groupId>takka-gatling</groupId>
 		<version>1.3.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>gatling-app</artifactId>
@@ -16,19 +16,19 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.excilys.ebi.gatling</groupId>
+			<groupId>takka-gatling</groupId>
 			<artifactId>gatling-http</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.excilys.ebi.gatling</groupId>
+			<groupId>takka-gatling</groupId>
 			<artifactId>gatling-jdbc</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.excilys.ebi.gatling</groupId>
+			<groupId>takka-gatling</groupId>
 			<artifactId>gatling-redis</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.excilys.ebi.gatling</groupId>
+			<groupId>takka-gatling</groupId>
 			<artifactId>gatling-charts</artifactId>
 		</dependency>
 		<dependency>
