@@ -94,6 +94,7 @@
 		<encoding>UTF-8</encoding>
 		<scala.version>2.9.2</scala.version>
 		<ahc.version>1.7.5</ahc.version>
+		<akka.version>0.2</akka.version>
 		<akka.version>2.0.2</akka.version>
 		<jaxen.version>1.1.4</jaxen.version>
 		<xerces.version>2.11.0</xerces.version>
@@ -207,7 +208,6 @@
 				<artifactId>grizzly-websockets</artifactId>
 				<version>${grizzly.version}</version>
 			</dependency>
-                        <!-- TAkka Repository -->
 			<dependency>
 				<groupId>takka</groupId>
 				<artifactId>takka-actor</artifactId>
