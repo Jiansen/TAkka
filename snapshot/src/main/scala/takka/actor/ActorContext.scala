@@ -39,7 +39,8 @@ import akka.util.Duration
  * Where no name is given explicitly, one will be automatically generated.
  */
 trait ActorContext[M] {
-  implicit var mt:Manifest[M] = manifest[M]
+  implicit private val m:Manifest[M] = manifest[M]
+  implicit var mt:Manifest[_] = m
 
   val untyped_context:akka.actor.ActorContext
 
@@ -128,7 +129,7 @@ trait ActorContext[M] {
 //  def become[SupM, M <: SupM](behavior: SupM => Unit, possibleHamfulHandler:akka.actor.PossiblyHarmful => Unit):Unit = {
     if (!(smt >:> mt))
       throw BehaviorUpdateException(smt, mt)
-    
+    mt = smt
     untyped_context.become({
       case x:SupM => behavior(x)
       case x:akka.actor.PossiblyHarmful => possibleHamfulHandler(x)
