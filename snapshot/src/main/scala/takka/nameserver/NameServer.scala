@@ -37,9 +37,9 @@ object NameServer {
   private val nameMap = new scala.collection.mutable.HashMap[TSymbol[_], TValue[_]]
   
   /**
-   * Tegister a typed symbol with a value of corresponding type.
+   * Register a typed symbol with a value of corresponding type.
    * 
-   * Throws an 'NamesHasBeenRegisteredException' if
+   * Throws a 'NamesHasBeenRegisteredException' if
    * the name has been used by the name server.
    */
   @throws(classOf[NamesHasBeenRegisteredException])
@@ -53,13 +53,17 @@ object NameServer {
   }
   
   /**
-   * Cancel the entry associated with 'name'.
-   * 
-   * The type parameter does not take into account, in another word, 
-   * '''T''' may not be the same as the registered type.
+   * Cancel the entry associated with 'name'. if
+   * (i)  'name'.symbol is registered, and
+   * (ii) 'name'.type (intention type) :> registered type
+   * Otherwise, do noting.
    */
   def unset[T](name:TSymbol[T]):Unit = synchronized {
-    nameMap -= name
+    if (nameMap.contains(name)  && name.t >:> nameMap(name).t ){// intention type is a super type of registered type
+      nameMap -= name
+    }else{ // nameMap.contains(name) && (nameMap(name).t <:< name.t) && (!(nameMap(name).t =:= name.t))
+      //DO nothing
+    }
   }
   
   /**
