@@ -1,0 +1,21 @@
+[0m[[0minfo[0m] [0mRunning scalability.akka.ehb.EHB [0m
+[0m[[0mdebug[0m] [0mStarting sandboxed run...[0m
+[0m[[0mdebug[0m] [0mWaiting for threads to exit or System.exit to be called.[0m
+[0m[[0mdebug[0m] [0m  Classpath:[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/TAkka/scalabilityBenchmark/target/scala-2.9.1/classes[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/TAkka/snapshot/target/scala-2.9.1/classes[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/.sbt/boot/scala-2.9.1/lib/scala-library.jar[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/.ivy2/cache/com.typesafe.akka/akka-actor/jars/akka-actor-2.0.2.jar[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/.ivy2/cache/com.typesafe.akka/akka-kernel/jars/akka-kernel-2.0.2.jar[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/.ivy2/cache/com.typesafe.akka/akka-slf4j/jars/akka-slf4j-2.0.jar[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/.ivy2/cache/org.slf4j/slf4j-api/jars/slf4j-api-1.6.4.jar[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/.ivy2/cache/com.typesafe.akka/akka-testkit/jars/akka-testkit-2.0.jar[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/.ivy2/cache/io.netty/netty/bundles/netty-3.5.2.Final.jar[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/.ivy2/cache/org.scalacheck/scalacheck_2.9.1/jars/scalacheck_2.9.1-1.9.jar[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/.ivy2/cache/org.scala-tools.testing/test-interface/jars/test-interface-0.5.jar[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/.ivy2/cache/org.scala-lang/scala-swing/jars/scala-swing-2.9.1.jar[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/.ivy2/cache/ch.qos.logback/logback-classic/jars/logback-classic-1.0.3.jar[0m
+[0m[[0mdebug[0m] [0m	/home/jiajia/.ivy2/cache/ch.qos.logback/logback-core/jars/logback-core-1.0.3.jar[0m
+[0m[[0mdebug[0m] [0mWaiting for thread run-main to exit[0m
+[0m[[0mdebug[0m] [0m	Thread run-main exited.[0m
+[0m[[0mdebug[0m] [0mWaiting for thread EHB-akka.actor.default-dispatcher-3 to exit[0m
