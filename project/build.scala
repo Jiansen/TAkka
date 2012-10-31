@@ -14,7 +14,7 @@ object TAkkaBuild extends Build {
   lazy val defaultSettings = Defaults.defaultSettings ++ Seq(
     // Info
     organization := "takka",
-    version      := "0.2.0",
+    version      := "0.2.1",
 
     // Repositories
     resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
@@ -71,6 +71,12 @@ object TAkkaBuild extends Build {
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.sockoexamples
                          )) dependsOn(sockowebserver)
+                         
+  lazy val scalabilityBenchmark = Project(id = "scalabilityBenchmark",
+                         base = file("scalabilityBenchmark"),
+                         settings = defaultSettings ++ Seq(
+                           libraryDependencies ++= Dependencies.scalability
+                         )) dependsOn(snapshot)
 }
 
 // Dependencies
@@ -105,7 +111,11 @@ object Dependencies {
   
   val sockoexamples = Seq(
     Dependency.logback
-  )  
+  )
+  
+  val scalability = Seq(
+    Dependency.akkaActor, Dependency.logback
+  )
 }
 
 object Dependency {
