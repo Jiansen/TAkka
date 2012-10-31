@@ -71,6 +71,12 @@ object TAkkaBuild extends Build {
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.sockoexamples
                          )) dependsOn(sockowebserver)
+                         
+  lazy val scalabilityBenchmark = Project(id = "scalabilityBenchmark",
+                         base = file("scalabilityBenchmark"),
+                         settings = defaultSettings ++ Seq(
+                           libraryDependencies ++= Dependencies.scalability
+                         )) dependsOn(snapshot)
 }
 
 // Dependencies
@@ -89,7 +95,7 @@ object Dependencies {
 
   // socko webserver in takka
   val takkasockowebserver = Seq(
-    Dependency.akkaActor, Dependency.akkaSlf4j, Dependency.akkaTestKit,
+    Dependency.akkaSlf4j, Dependency.akkaTestKit,
     Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalatest
   )
   
@@ -105,7 +111,11 @@ object Dependencies {
   
   val sockoexamples = Seq(
     Dependency.logback
-  )  
+  )
+  
+  val scalability = Seq(
+    Dependency.akkaActor, Dependency.logback
+  )
 }
 
 object Dependency {

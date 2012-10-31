@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.excilys.ebi.gatling</groupId>
-	<artifactId>gatling-parent</artifactId>
+	<groupId>takka-gatling</groupId>
+	<artifactId>takka-gatling-parent</artifactId>
 	<version>1.3.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<inceptionYear>2011</inceptionYear>
+	<inceptionYear>2012</inceptionYear>
 	<modules>
 		<module>gatling-core</module>
 		<module>gatling-jdbc</module>
@@ -25,7 +25,7 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
-
+<!--
 	<scm>
 		<connection>scm:git:git@github.com:excilys/gatling.git</connection>
 		<developerConnection>scm:git:git@github.com:excilys/gatling.git</developerConnection>
@@ -39,43 +39,20 @@
 			<url>http://repository.excilys.com/content/repositories/releases</url>
 		</repository>
 	</distributionManagement>
-
+-->
 	<developers>
 		<developer>
-			<id>slandelle@excilys.com</id>
-			<name>Stephane Landelle</name>
-			<organization>eBusiness Information, Excilys Group</organization>
-		</developer>
-		<developer>
-			<id>rsertelon@excilys.com</id>
-			<name>Romain Sertelon</name>
-			<organization>eBusiness Information, Excilys Group</organization>
-		</developer>
-		<developer>
-			<id>ybenkhaled@excilys.com</id>
-			<name>Yassine Ben Khaled</name>
-			<organization>eBusiness Information, Excilys Group</organization>
-		</developer>
-		<developer>
-			<id>hcordier@excilys.com</id>
-			<name>Hugo Cordier</name>
-			<organization>eBusiness Information, Excilys Group</organization>
-		</developer>
-		<developer>
-			<id>nicolas.remond@gmail.com</id>
-			<name>Nicolas Remond</name>
-		</developer>
-		<developer>
-			<id>skuenzli@gmail.com</id>
-			<name>Stephen Kuenzli</name>
+			<id>jiansen.he@ed.ac.uk</id>
+			<name>Jiansen HE</name>
+			<organization>LFCS, School of Informatics, University of Edinburgh</organization>
 		</developer>
 	</developers>
 
 	<repositories>
 		<repository>
-			<id>excilys</id>
-			<name>Excilys Repository</name>
-			<url>http://repository.excilys.com/content/groups/public</url>
+			<id>takka</id>
+			<name>TAkka Repository</name>
+                        <url>http://homepages.inf.ed.ac.uk/s1024484/repository</url>
 			<releases>
 				<updatePolicy>never</updatePolicy>
 			</releases>
@@ -83,6 +60,14 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</repository>
+
+                <!-- gatling repository managed by excilys -->
+		<repository>
+			<id>untyped-gatling</id>
+			<name>untyped-gatling</name>
+			<url>http://repository.excilys.com/content/groups/public/</url>
+		</repository>
+
 		<!-- http://repo.typesafe.com/typesafe/releases -->
 		<!-- http://maven.jenkins-ci.org/content/repositories/releases -->
 		<!-- http://maven.twttr.com -->
@@ -94,7 +79,7 @@
 		<encoding>UTF-8</encoding>
 		<scala.version>2.9.2</scala.version>
 		<ahc.version>1.7.5</ahc.version>
-		<akka.version>0.2</akka.version>
+		<takka.version>0.2.0</takka.version>
 		<akka.version>2.0.2</akka.version>
 		<jaxen.version>1.1.4</jaxen.version>
 		<xerces.version>2.11.0</xerces.version>
@@ -139,47 +124,47 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>com.excilys.ebi.gatling</groupId>
+				<groupId>takka-gatling</groupId>
 				<artifactId>gatling-core</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.excilys.ebi.gatling</groupId>
+				<groupId>takka-gatling</groupId>
 				<artifactId>gatling-http</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.excilys.ebi.gatling</groupId>
+				<groupId>takka-gatling</groupId>
 				<artifactId>gatling-jdbc</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.excilys.ebi.gatling</groupId>
+				<groupId>takka-gatling</groupId>
 				<artifactId>gatling-redis</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.excilys.ebi.gatling</groupId>
+				<groupId>takka-gatling</groupId>
 				<artifactId>gatling-app</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.excilys.ebi.gatling</groupId>
+				<groupId>takka-gatling</groupId>
 				<artifactId>gatling-charts</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.excilys.ebi.gatling</groupId>
+				<groupId>takka-gatling</groupId>
 				<artifactId>gatling-recorder</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.excilys.ebi.gatling</groupId>
+				<groupId>takka-gatling</groupId>
 				<artifactId>gatling-bundle</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.excilys.ebi.gatling</groupId>
+				<groupId>takka-gatling</groupId>
 				<artifactId>gatling-maven-plugin</artifactId>
 				<version>${project.version}</version>
 			</dependency>
@@ -210,7 +195,7 @@
 			</dependency>
 			<dependency>
 				<groupId>takka</groupId>
-				<artifactId>takka-actor</artifactId>
+				<artifactId>takka</artifactId>
 				<version>${takka.version}</version>
 			</dependency>
 			<dependency>
