@@ -77,6 +77,13 @@ object TAkkaBuild extends Build {
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.scalability
                          )) dependsOn(snapshot)
+
+  lazy val scalabilityAWS = Project(id = "scalabilityAWS",
+                         base = file("scalabilityAWS"),
+                         settings = defaultSettings ++ Seq(
+                           libraryDependencies ++= Dependencies.aws
+                         )) dependsOn(snapshot)
+
 }
 
 // Dependencies
@@ -116,6 +123,11 @@ object Dependencies {
   val scalability = Seq(
     Dependency.akkaActor, Dependency.logback
   )
+  
+  val aws = Seq(
+    Dependency.awsJava, Dependency.logback
+  )
+
 }
 
 object Dependency {
@@ -130,4 +142,7 @@ object Dependency {
   val junit         = "junit"               % "junit"              % "4.9"           % "test"
   val scalatest     = "org.scalatest"       %% "scalatest"         % "1.7.1"         % "test"
   val scalacheck    = "org.scalacheck"      %% "scalacheck"        % "1.9"
+
+  val awsJava           = "com.amazonaws" % "aws-java-sdk" % "1.3.9"
+
 }
