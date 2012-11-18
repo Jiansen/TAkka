@@ -83,7 +83,14 @@ object TAkkaBuild extends Build {
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.aws
                          )) dependsOn(snapshot)
+  /*
+  lazy val scalabilityGAE = Project(id = "scalabilityGAE",
+                         base = file("scalabilityGAE"),
+                         settings = defaultSettings ++ Seq(
+                           libraryDependencies ++= Dependencies.gae
+                         )) dependsOn(snapshot)
 
+*/
 }
 
 // Dependencies
@@ -128,13 +135,17 @@ object Dependencies {
     Dependency.awsJava, Dependency.logback
   )
 
+  val gae = Seq(
+    Dependency.logback
+  )
+
 }
 
 object Dependency {
-  val scalaSwing = "org.scala-lang" % "scala-swing" % "2.9.1"
-  val akkaActor     = "com.typesafe.akka"   % "akka-actor"         % "2.0.2"
-  val akkaKernel    = "com.typesafe.akka"   % "akka-kernel"        % "2.0.2"
-  val akkaRemote    = "com.typesafe.akka"   % "akka-remote"        % "2.0.2"
+  val scalaSwing = "org.scala-lang" % "scala-swing" % "2.9.2"
+  val akkaActor     = "com.typesafe.akka"   % "akka-actor"         % "2.0.3"
+  val akkaKernel    = "com.typesafe.akka"   % "akka-kernel"        % "2.0.3"
+  val akkaRemote    = "com.typesafe.akka"   % "akka-remote"        % "2.0.3"
   val akkaSlf4j     = "com.typesafe.akka"   % "akka-slf4j"         % "2.0"
   val akkaTestKit   = "com.typesafe.akka"   % "akka-testkit"       % "2.0"
   val netty         = "io.netty"            % "netty"              % "3.5.2.Final"
@@ -143,6 +154,5 @@ object Dependency {
   val scalatest     = "org.scalatest"       %% "scalatest"         % "1.7.1"         % "test"
   val scalacheck    = "org.scalacheck"      %% "scalacheck"        % "1.9"
 
-  val awsJava           = "com.amazonaws" % "aws-java-sdk" % "1.3.9"
-
+  val awsJava       = "com.amazonaws" % "aws-java-sdk" % "1.3.9"
 }

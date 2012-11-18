@@ -2,18 +2,26 @@
 
   <!-- Servlets -->
   <servlet>
-    <servlet-name>greetServlet</servlet-name>
-    <servlet-class>scalability.gae.server.GreetingServiceImpl</servlet-class>
-  </servlet>
-  
+    <servlet-name>bigAkkaServlet</servlet-name>
+    <servlet-class>scalability.gae.akka.BigServlet</servlet-class>
+  </servlet>  
   <servlet-mapping>
-    <servlet-name>greetServlet</servlet-name>
-    <url-pattern>/scalabilitygae/greet</url-pattern>
+    <servlet-name>bigAkkaServlet</servlet-name>
+    <url-pattern>/big/akka</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>bigTAkkaServlet</servlet-name>
+    <servlet-class>scalability.gae.takka.BigServlet</servlet-class>
+  </servlet>  
+  <servlet-mapping>
+    <servlet-name>bigTAkkaServlet</servlet-name>
+    <url-pattern>/big/takka</url-pattern>
+  </servlet-mapping>
+    
   <!-- Default page to serve -->
   <welcome-file-list>
-    <welcome-file>ScalabilityGAE.html</welcome-file>
+    <welcome-file>index.html</welcome-file>
   </welcome-file-list>
 
   <servlet>
