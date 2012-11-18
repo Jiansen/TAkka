@@ -143,9 +143,9 @@ object Dependencies {
 
 object Dependency {
   val scalaSwing = "org.scala-lang" % "scala-swing" % "2.9.2"
-  val akkaActor     = "com.typesafe.akka"   % "akka-actor"         % "2.0.2"
-  val akkaKernel    = "com.typesafe.akka"   % "akka-kernel"        % "2.0.2"
-  val akkaRemote    = "com.typesafe.akka"   % "akka-remote"        % "2.0.2"
+  val akkaActor     = "com.typesafe.akka"   % "akka-actor"         % "2.0.3"
+  val akkaKernel    = "com.typesafe.akka"   % "akka-kernel"        % "2.0.3"
+  val akkaRemote    = "com.typesafe.akka"   % "akka-remote"        % "2.0.3"
   val akkaSlf4j     = "com.typesafe.akka"   % "akka-slf4j"         % "2.0"
   val akkaTestKit   = "com.typesafe.akka"   % "akka-testkit"       % "2.0"
   val netty         = "io.netty"            % "netty"              % "3.5.2.Final"

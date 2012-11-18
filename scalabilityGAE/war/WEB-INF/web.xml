@@ -9,7 +9,7 @@
     <servlet-name>bigAkkaServlet</servlet-name>
     <url-pattern>/big/akka</url-pattern>
   </servlet-mapping>
-  
+  <!-- 
   <servlet>
     <servlet-name>bigTAkkaServlet</servlet-name>
     <servlet-class>scalability.gae.takka.BigServlet</servlet-class>
@@ -18,12 +18,12 @@
     <servlet-name>bigTAkkaServlet</servlet-name>
     <url-pattern>/big/takka</url-pattern>
   </servlet-mapping>
-    
+ -->    
   <!-- Default page to serve -->
   <welcome-file-list>
     <welcome-file>index.html</welcome-file>
   </welcome-file-list>
-
+<!--
   <servlet>
     <servlet-name>SystemServiceServlet</servlet-name>
     <servlet-class>com.google.api.server.spi.SystemServiceServlet</servlet-class>
@@ -37,5 +37,5 @@
     <servlet-name>SystemServiceServlet</servlet-name>
     <url-pattern>/_ah/spi/*</url-pattern>
   </servlet-mapping>
-
+-->
 </web-app>
