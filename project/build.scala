@@ -77,13 +77,13 @@ object TAkkaBuild extends Build {
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.scalability
                          )) dependsOn(snapshot)
-
+  /*
   lazy val scalabilityAWS = Project(id = "scalabilityAWS",
                          base = file("scalabilityAWS"),
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.aws
                          )) dependsOn(snapshot)
-  /*
+
   lazy val scalabilityGAE = Project(id = "scalabilityGAE",
                          base = file("scalabilityGAE"),
                          settings = defaultSettings ++ Seq(
