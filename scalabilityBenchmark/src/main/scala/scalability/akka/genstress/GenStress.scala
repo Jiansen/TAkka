@@ -94,7 +94,6 @@ class GenStressTestActor extends Actor {
 }
 
 object GenStress extends App {
-  private val timer = new BenchTimer
   private val system = ActorSystem("GenStressSystem")
 
   val testActor = system.actorOf(Props[GenStressTestActor], "GenStressTestActor")
