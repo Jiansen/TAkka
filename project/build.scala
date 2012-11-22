@@ -77,6 +77,13 @@ object TAkkaBuild extends Build {
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.scalability
                          )) dependsOn(snapshot)
+
+  lazy val scalabilityBeowulf = Project(id = "scalabilityBeowulf",
+                         base = file("scalabilityBeowulf"),
+                         settings = defaultSettings ++ Seq(
+                           libraryDependencies ++= Dependencies.beowulf
+                         )) dependsOn(snapshot)
+
   /*
   lazy val scalabilityAWS = Project(id = "scalabilityAWS",
                          base = file("scalabilityAWS"),
@@ -98,7 +105,7 @@ object Dependencies {
   import Dependency._
 
   val snapshot = Seq(
-    Dependency.akkaActor, Dependency.akkaKernel, Dependency.akkaSlf4j, Dependency.akkaTestKit,
+    Dependency.akkaActor, Dependency.akkaKernel, Dependency.akkaRemote, Dependency.akkaSlf4j, Dependency.akkaTestKit,
     Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalacheck, Dependency.scalaSwing
   )
   
@@ -139,6 +146,9 @@ object Dependencies {
     Dependency.logback
   )
 
+  val beowulf = Seq(
+    Dependency.akkaRemote, Dependency.netty, Dependency.logback
+  )
 }
 
 object Dependency {
