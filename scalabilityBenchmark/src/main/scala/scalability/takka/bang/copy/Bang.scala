@@ -1,4 +1,4 @@
-package scalability.akka.bang
+package scalability.takka.bang
 
 /*
  * A benchmark for many-to-one message passing that 
@@ -8,15 +8,16 @@ package scalability.akka.bang
  * messages that each sender will send to the receiver.
  */
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{Actor, ActorRef, ActorSystem, Props}
 import scala.concurrent.ops.spawn
 import util.{BenchTimer, BenchCounter}
 
-case class BangBench(s:Int, m:Int)
-object DummyMessage
+sealed trait BangMessage
+case class BangBench(s:Int, m:Int) extends BangMessage
+object DummyMessage extends BangMessage
 object BangDone
 
-class Bang extends Actor{  
+class Bang extends Actor[BangMessage]{  
   val timer = new BenchTimer
   var counter = new BenchCounter
   def receive = {
@@ -27,7 +28,7 @@ class Bang extends Actor{
       }
       timer.start
       for (sender <- senders) spawn {
-        sender.send(self, m)
+        sender.send(typedSelf, m)
       }
     case DummyMessage => 
       counter.decrement
@@ -41,7 +42,7 @@ class Bang extends Actor{
   
 class Sender {
   // send m Done messages to receiver
-  def send(receiver:ActorRef, m:Int) = {
+  def send(receiver:ActorRef[DummyMessage.type], m:Int) = {
     var i:Int = 0;
     while(i<m){
       receiver ! DummyMessage
@@ -53,7 +54,7 @@ class Sender {
 object BangBench extends App{  
   def bang(s:Int, m:Int){
     val system = ActorSystem("BangSystem")
-    val bang = system.actorOf(Props[Bang], "receiver")
+    val bang = system.actorOf(Props[BangMessage, Bang], "receiver")
     bang ! BangBench(s, m)
   }
   
