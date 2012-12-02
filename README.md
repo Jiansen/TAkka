@@ -26,6 +26,7 @@ Source code in this repository is either original or derivative works of open so
 * We are currently using Scala 2.9.1 and JDK7.
 
 * copy to a local working folder. $ git clone git@github.com:Jiansen/TAkka.git
+* (read-only copy.  $ git clone git://github.com/Jiansen/TAkka.git)
 * enter to the working folder. $ cd TAkka
 * (option) update the working copy. $ git pull
 * (option) $ sbt update
