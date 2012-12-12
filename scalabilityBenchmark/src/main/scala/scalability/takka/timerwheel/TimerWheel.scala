@@ -14,7 +14,7 @@ any "ping" messages it receives. In case of a timeout, the process exits.
  */
 import takka.actor.{Actor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
-import akka.actor.ReceiveTimeout
+import takka.actor.ReceiveTimeout
 import akka.util.duration._
 //import scala.concurrent.duration._
 
@@ -51,7 +51,7 @@ class WheelHandler(ping_left:Int, master:ActorRef[MasterMsg]) extends Actor[Whee
       }
   }
   
-  override def possiblyHarmfulHandler = {
+  override def systemMessageHandler = {
     case ReceiveTimeout =>
       master ! Done(typedSelf)
   }

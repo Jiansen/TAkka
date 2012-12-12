@@ -52,8 +52,8 @@ class Listener extends Actor[ListenerMessage] with ActorLogging {
       }
   }
   
-  override def possiblyHarmfulHandler = {
-    case akka.actor.ReceiveTimeout ⇒
+  override def systemMessageHandler = {
+    case ReceiveTimeout ⇒
       // No progress within 15 seconds, ServiceUnavailable
       log.error("Shutting down due to unavailable service")
       context.system.shutdown()
@@ -191,9 +191,9 @@ class CounterService extends Actor[CounterServiceMessage] {
     case Reconnect ⇒
       // Re-establish storage after the scheduled delay
       initStorage()
-    case _ => 
+//    case _ => 
   }
-  
+  /*
   override def possiblyHarmfulHandler = {
     case akka.actor.Terminated(actorRef) if actorRef == storage.get.untypedRef ⇒
       // After 3 restarts the storage child is stopped.
@@ -204,7 +204,7 @@ class CounterService extends Actor[CounterServiceMessage] {
       // Try to re-establish storage after while
       context.system.scheduler.scheduleOnce(10 seconds, self, Reconnect) //TODO: untyped feature
   }
- 
+  */
   def forwardOrPlaceInBacklog(msg: CounterMessage) {  //  TODO: refine message 
   //def forwardOrPlaceInBacklog(msg: CounterMessage, sender:ActorRef[CounterMessage]) {
     // We need the initial value from storage before we can start delegate to the counter.

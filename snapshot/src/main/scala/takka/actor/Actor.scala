@@ -88,7 +88,9 @@ trait Actor[M] extends akka.actor.Actor{
    */
   protected def typedReceive:PartialFunction[M, Unit]
   protected def receive = {
-    case hmsg:akka.actor.PossiblyHarmful => possiblyHarmfulHandler(hmsg)    
+    case hmsg:akka.actor.PossiblyHarmful => hmsg match {
+      case akka.actor.ReceiveTimeout => systemMessageHandler(ReceiveTimeout)   
+    } 
 //    case m:Msg if (typedReceive.isDefinedAt(m)) => typedReceive(m)
     case m:M => typedReceive(m)    
 //    case akka.actor.ReceiveTimeout => receiveTimeout ()
@@ -134,24 +136,13 @@ trait Actor[M] extends akka.actor.Actor{
   // def receiveTimeout : () => Unit = () => {}
   
   /**
-   * handler of untyped harmful features
+   * handler of system messages
    * 
-   * akka.actor.PossiblyHarmful [[[http://doc.akka.io/api/akka/2.0.1/#akka.actor.PossiblyHarmful]]]
-   * has five subclasses:
+   * Currently the only subclass of SystemMessage is ReceiveTimeout
    * 
-   * 
-   * {{{
-case class Failed(cause: Throwable) extends AutoReceivedMessage with PossiblyHarmful
-case object PoisonPill extends AutoReceivedMessage with PossiblyHarmful
-case object Kill extends AutoReceivedMessage with PossiblyHarmful
-case class Terminated(@BeanProperty actor: ActorRef) extends PossiblyHarmful
-case object ReceiveTimeout extends PossiblyHarmful      
-   * }}}
-   * 
-   * Notice that the field of the Terminated message is an untyped actor reference.
+   * Other internal messages for supervision purposes are inviable to general users.
    */
-  //TODO: make it typed
-  def possiblyHarmfulHandler:akka.actor.PossiblyHarmful => Unit = {
+  def systemMessageHandler:SystemMessage => Unit = {
     case _ => 
   }
 }

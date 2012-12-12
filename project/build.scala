@@ -14,7 +14,7 @@ object TAkkaBuild extends Build {
   lazy val defaultSettings = Defaults.defaultSettings ++ Seq(
     // Info
     organization := "takka",
-    version      := "0.2.1",
+    version      := "0.2.3",
 
     // Repositories
     resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",

@@ -14,7 +14,7 @@ object TAkkaBuild extends Build {
   lazy val defaultSettings = Defaults.defaultSettings ++ Seq(
     // Info
     organization := "takka",
-    version      := "0.2.1",
+    version      := "0.2.2",
 
     // Repositories
     resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
@@ -147,7 +147,7 @@ object Dependencies {
   )
 
   val beowulf = Seq(
-    Dependency.akkaRemote, Dependency.logback
+    Dependency.akkaRemote, Dependency.netty, Dependency.logback
   )
 }
 
