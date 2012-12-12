@@ -66,11 +66,11 @@ object CreationApp {
   def main(args: Array[String]) {
     val app = new CreationApplication
     println("Started Creation Application")
-    while (true) {
+/*    while (true) {
       if (Random.nextInt(100) % 2 == 0) app.doSomething(Multiply(Random.nextInt(20), Random.nextInt(20)))
       else app.doSomething(Divide(Random.nextInt(10000), (Random.nextInt(99) + 1)))
 
       Thread.sleep(200)
-    }
+/    } */
   }
 }

@@ -42,6 +42,7 @@ object BeowulfConfig {
       
     akka {
       actor {
+        provider = "akka.remote.RemoteActorRefProvider"
         deployment { 
           """ + actorDeploymentString(p, nodes) + """
         }
@@ -51,7 +52,7 @@ object BeowulfConfig {
     }
     """  
     
-          println("config is: "+configStr)
+//          println("config is: "+configStr)
     ConfigFactory.parseString(configStr)
   }
   

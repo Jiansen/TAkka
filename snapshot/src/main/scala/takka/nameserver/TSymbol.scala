@@ -4,7 +4,8 @@ package takka.nameserver
  * A typed symbol is a pair of a symbol and a type descriptor.
  * The type descriptor (Manifest) can be used at run-time for type comparison.
  */
-case class TSymbol[T](val symbol:Symbol)(implicit val t:Manifest[T]) {
+case class TSymbol[T:Manifest](val symbol:Symbol) {
+  private [takka] def t:Manifest[T] = manifest[T]
   /**
    * To support subtyping enquiry in typed name server,
    * the hash of a '''TSymbol''' only considers the symbol representation.

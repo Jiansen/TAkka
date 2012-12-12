@@ -84,7 +84,7 @@ object RANNode extends App {
 }
 
 object RANNodeConfig {
-  val WorkerNodePrefix = "RANNodeSystem"
+  val WorkerNodePrefix = "RANNode"
   val ProcessPathPrefix = "RANTestActor"
   val ProcessNamePrefix = "RANProcess"
 }
