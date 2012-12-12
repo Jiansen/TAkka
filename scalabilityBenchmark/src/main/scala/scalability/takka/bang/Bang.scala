@@ -20,7 +20,7 @@ object BangDone
 class Bang extends Actor[BangMessage]{  
   val timer = new BenchTimer
   var counter = new BenchCounter
-  def receive = {
+  def typedReceive = {
     case BangBench(s, m) =>
       counter.set(s*m)
       val senders = for (i<- 1 to s) yield {

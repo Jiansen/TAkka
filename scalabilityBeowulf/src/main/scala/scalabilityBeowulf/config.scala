@@ -18,7 +18,7 @@ object BeowulfConfig {
   }
   */
   
-  def masterNodeConfig(workerNodePrefix:String, processPrefix:String, p:Int, nodes:Int):Config = {
+  def masterNodeConfig(workerNodePrefix:String, processPathPrefix:String, processNamePrefix:String, p:Int, nodes:Int):Config = {
     def actorDeploymentString(p:Int, nodes:Int):String = {
       def calnode(i:Int,n:Int):Int = i % n match {
         case 0 => n
@@ -28,30 +28,38 @@ object BeowulfConfig {
       for (i <- 1 to p) {
         val depNode:Int = calnode(i, nodes)
           result +=
-            """/"""+processPrefix+i+""" {
+            """/"""+processPathPrefix+"""/"""+processNamePrefix+i+""" {
               remote = "akka://"""+workerNodePrefix+depNode+"@"+node(depNode).ip+""":"""+node(depNode).port+""""
             }
             """
       }
+
       result
     }
     
-    ConfigFactory.parseString(
-    """
+    val configStr = """
+      include "common"
+      
     akka {
       actor {
         deployment { 
           """ + actorDeploymentString(p, nodes) + """
         }
       }
+          
+      remote.netty.port = 2554
     }
-    """    
-    )
+    """  
+    
+          println("config is: "+configStr)
+    ConfigFactory.parseString(configStr)
   }
   
   def WorkerNodeConfig(nodeID:Int):Config = {
     ConfigFactory.parseString(
-    """  
+    """
+        include "common"
+        
     akka {
       actor {
         provider = "akka.remote.RemoteActorRefProvider"

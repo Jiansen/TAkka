@@ -37,6 +37,7 @@ class RANProcess extends Actor {
   def receive = {
     case GO(testor) =>
       testor ! RANReply(self, random(100))    
+      println(self.path)
   }
 
 }
@@ -48,11 +49,12 @@ class RANTestActor extends Actor {
     case RANTestMsg(n) =>
       this.n = n
       val plist = (for (i<- 1 to n) yield {
-        context.actorOf(Props[RANProcess], RANNodeConfig.ProcessPrefix+i)       
+        context.actorOf(Props[RANProcess], RANNodeConfig.ProcessNamePrefix+i)       
       }).toList
       timer.start
       
       for (p<-plist){
+//        println(p.path)
         p ! GO(self)
       }
     case RANReply(_, _) =>
@@ -67,9 +69,9 @@ class RANTestActor extends Actor {
 
 object RAN extends App {
   private val nodes:Int = args(0).toInt
-  private val processes:Int = 200
+  private val processes:Int = 6
 
-  private val system = ActorSystem("RANSystem", masterNodeConfig(RANNodeConfig.WorkerNodePrefix, RANNodeConfig.ProcessPrefix, processes, nodes))
+  private val system = ActorSystem("RANSystem", masterNodeConfig(RANNodeConfig.WorkerNodePrefix, RANNodeConfig.ProcessPathPrefix, RANNodeConfig.ProcessNamePrefix, processes, nodes))
   val testActor = system.actorOf(Props[RANTestActor], "RANTestActor")
   testActor ! RANTestMsg(processes)
 }
@@ -82,5 +84,6 @@ object RANNode extends App {
 
 object RANNodeConfig {
   val WorkerNodePrefix = "RANNodeSystem"
-  val ProcessPrefix = "RANProcess"
+  val ProcessPathPrefix = "RANTestActor"
+  val ProcessNamePrefix = "RANProcess"
 }
