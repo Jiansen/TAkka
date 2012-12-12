@@ -53,7 +53,7 @@ class MasterActor extends Actor{
       }
     case GroupDone(g) =>
       doneCounter.decrement
-      println("FINISH " + doneCounter.isZero) 
+//      println("FINISH " + doneCounter.isZero) 
       if(doneCounter.isZero){
         timer.finish
         timer.report
