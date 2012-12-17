@@ -57,20 +57,13 @@ class RANTestActor extends Actor {
         timer.report
         sys.exit
       }
-      /*
-    Start = now(),
-    lists:foreach(fun (P) -> P ! {Parent, go} end, PList),
-    lists:foreach(fun (P) -> receive {P, _RN} -> ok end end, PList),
-    Stop = now(),
-    timer:now_diff(Stop, Start)/1000.
-       */
-      
   }
 }
 
 object RAN extends App {
+  private val processes:Int = 6000
+ 
   private val system = ActorSystem("RANSystem")
-
   val testActor = system.actorOf(Props[RANTestActor], "RANTestActor")
-  testActor ! RANTestMsg(200) // 200 processes
+  testActor ! RANTestMsg(processes)
 }
