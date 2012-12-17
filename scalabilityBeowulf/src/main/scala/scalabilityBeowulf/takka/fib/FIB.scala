@@ -61,7 +61,7 @@ class FIBMaster extends Actor[FibMasterMsg] {
   }
 }
 
-object RAN extends App {
+object FIB extends App {
   private val nodes:Int = args(0).toInt
   private val processes:Int = 100
 
