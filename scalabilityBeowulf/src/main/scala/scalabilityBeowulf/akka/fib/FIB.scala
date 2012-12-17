@@ -44,7 +44,7 @@ class FIBMaster extends Actor {
     case FibMasterStart(n) =>
       this.n = n
       val plist = (for (i<- 1 to n) yield {
-        context.actorOf(Props[FIBWorker])        
+        context.actorOf(Props[FIBWorker], FIBNodeConfig.ProcessNamePrefix+i)        
       }).toList
       timer.start
       
