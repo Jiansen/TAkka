@@ -59,7 +59,6 @@ class GenStressClientActor extends Actor[ClientMessage] {
 class GenStressServerActor extends Actor[ServerMessage] {
   var np:Int = 0
   val timer = new BenchTimer
-  var server:ActorRef[ServerMsg] = _
   var clients:List[ActorRef[ClientMessage]] = _
   def typedReceive = {
     case GenStressTestMsg(np, n, cqueue) =>
@@ -82,7 +81,7 @@ class GenStressServerActor extends Actor[ServerMessage] {
         timer.finish
         timer.report
         
-        typedContext.stop(server)
+        typedContext.stop(typedSelf)
         for (client <- clients) {
           typedContext.stop(client)
         }
