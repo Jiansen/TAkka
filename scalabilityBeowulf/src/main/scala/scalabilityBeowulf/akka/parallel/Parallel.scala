@@ -1,4 +1,4 @@
-package scalabilityBeowulf.takka.parallel
+package scalabilityBeowulf.akka.parallel
 
 /*
 A benchmark for parallel execution that spawns a number of processes, 
@@ -8,7 +8,7 @@ promised by the implementation of erlang:now/0), it sends the result to
 its parent. The benchmark is parameterized by the number of processes 
 and the number of timestamps.
  */
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import util.{BenchTimer, BenchCounter}
 import akka.remote._
 import com.typesafe.config.ConfigFactory
@@ -17,25 +17,25 @@ import scalabilityBeowulf.BeowulfConfig._
 case object OK
 sealed trait MasterMsg
 case class Start(n:Int, m:Int) extends MasterMsg
-case class Result(pid:ActorRef[Loop], r:Boolean) extends MasterMsg
-case class Loop(master:ActorRef[MasterMsg],n:Int)
+case class Result(pid:ActorRef, r:Boolean) extends MasterMsg
+case class Loop(master:ActorRef,n:Int)
 
-class NowTime extends Actor[MasterMsg] {  
+class NowTime extends Actor {  
   val counter = new BenchCounter
   
   val timer = new BenchTimer  
   
-  def typedReceive = {
+  def receive = {
     case Start(n:Int, m:Int) =>
       counter.set(m)
       val me = self
       val base = for (_ <- 1 to m) yield OK      
       timer.start
       val pids = for (i <- 1 to m) yield {
-        typedContext.actorOf(Props[Loop, LoopActor], ParallelNodeConfig.ProcessNamePrefix+i)
+        context.actorOf(Props[LoopActor], ParallelNodeConfig.ProcessNamePrefix+i)
       }  
       for (pid <- pids) {
-        pid ! Loop(typedSelf, n)
+        pid ! (self, n)
       }
     case Result(_, _) =>
       counter.decrement
@@ -47,7 +47,7 @@ class NowTime extends Actor[MasterMsg] {
   }
 }
 
-class LoopActor extends Actor[Loop] {
+class LoopActor extends Actor {
   def check_now(ts:List[Long]):Boolean = {
     true
   }
@@ -59,9 +59,9 @@ class LoopActor extends Actor[Loop] {
     }
   }
   
-  def typedReceive = {
+  def receive = {
     case Loop(master,n:Int) =>
-      master ! Result(typedSelf, loop(n, Nil))  
+      master ! Result(self, loop(n, Nil))  
     case _ => 
   }
 }
@@ -72,7 +72,7 @@ object ParallelBench extends App{
   private val processes = 5000
   
   private val system = ActorSystem("ParallelSystem", masterNodeConfig(ParallelNodeConfig.WorkerNodePrefix, ParallelNodeConfig.ProcessPathPrefix, ParallelNodeConfig.ProcessNamePrefix, processes, nodes))  
-  val master = system.actorOf(Props[MasterMsg, NowTime], "ParallelBenchActor")
+  val master = system.actorOf(Props[NowTime], "ParallelBenchActor")
   master ! Start(processes, 128)
 }
 
