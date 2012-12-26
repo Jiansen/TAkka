@@ -17,7 +17,7 @@ import scalabilityBeowulf.BeowulfConfig._
 sealed trait SupMsg
 sealed trait WorkerMsg
 case class GO(n:Int, np:Int) extends SupMsg
-
+case class Work(n:Int, master:ActorRef[SupMsg]) extends WorkerMsg
 
 object MBrotCons{
   val MAXITER = 255
@@ -35,7 +35,7 @@ class WorkerSup extends Actor[SupMsg]{
         counter.set(np)
         timer.start
         (for(i<-1 to np) yield {
-          typedContext.actorOf(Props[WorkerMsg].withCreator(new Worker(n, typedSelf)), MBrotNodeConfig.ProcessNamePrefix+i)
+          typedContext.actorOf(Props[WorkerMsg, Worker], MBrotNodeConfig.ProcessNamePrefix+i)
         }).toList
       }
       case Done(_) =>
@@ -50,10 +50,11 @@ class WorkerSup extends Actor[SupMsg]{
 
 case class Done(worker:ActorRef[WorkerMsg]) extends SupMsg
 
-class Worker(n:Int, parent:ActorRef[SupMsg]) extends Actor[WorkerMsg] {
-  rows(n, n)
-  parent ! Done(typedSelf)
+class Worker extends Actor[WorkerMsg] {
   def typedReceive = {
+    case Work(n, master) =>
+      rows(n, n)
+      master ! Done(typedSelf)      
     case _ => 
   }
   
