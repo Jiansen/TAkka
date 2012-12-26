@@ -95,7 +95,7 @@ class GenStressServerActor extends Actor[ServerMessage] {
 
 object GenBench extends App{
   private val nodes:Int = args(0).toInt
-  private val processes = 1000
+  private val processes = 10
   
   private val system = ActorSystem("GenStressSystem", masterNodeConfig(GenNodeConfig.WorkerNodePrefix, GenNodeConfig.ProcessPathPrefix, GenNodeConfig.ProcessNamePrefix, processes, nodes))  
   val master = system.actorOf(Props[ServerMessage, GenStressServerActor], "GenStressBenchActor")
