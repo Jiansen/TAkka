@@ -18,9 +18,9 @@ case object OK
 sealed trait MasterMsg
 case class Start(n:Int, m:Int) extends MasterMsg
 case class Result(pid:ActorRef[Loop], r:Boolean) extends MasterMsg
-case class Loop(master:ActorRef[Result],n:Int)
+case class Loop(master:ActorRef[MasterMsg],n:Int)
 
-class NowTime(n:Int, m:Int) extends Actor[MasterMsg] {  
+class NowTime extends Actor[MasterMsg] {  
   val counter = new BenchCounter
   
   val timer = new BenchTimer  
