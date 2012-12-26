@@ -22,7 +22,7 @@ case class Send(receiver:ActorRef[BangMessage], m:Int)
 
 class Bang extends Actor[BangMessage]{  
   val timer = new BenchTimer
-  var counter = new BenchCounter
+  val counter = new BenchCounter
   def typedReceive = {
     case BangBench(s, m) =>
       counter.set(s*m)
