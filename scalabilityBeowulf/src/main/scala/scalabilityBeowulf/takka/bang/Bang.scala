@@ -8,7 +8,7 @@ package scalabilityBeowulf.takka.bang
  * messages that each sender will send to the receiver.
  */
 
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.remote._
 import util.{BenchTimer, BenchCounter}
 import com.typesafe.config.ConfigFactory
@@ -18,20 +18,20 @@ sealed trait BangMessage
 case class BangBench(s:Int, m:Int) extends BangMessage
 case object DummyMessage extends BangMessage
 case object BangDone
-case class Send(receiver:ActorRef[BangMessage], m:Int)
+case class Send(receiver:ActorRef, m:Int)
 
-class Bang extends Actor[BangMessage]{  
+class Bang extends Actor{  
   val timer = new BenchTimer
   var counter = new BenchCounter
-  def typedReceive = {
+  def receive = {
     case BangBench(s, m) =>
       counter.set(s*m)
       val senders = (for (i<- 1 to s) yield {
-        typedContext.actorOf(Props[Send, Sender], BangNodeConfig.ProcessNamePrefix+i)
+        context.actorOf(Props[Sender], BangNodeConfig.ProcessNamePrefix+i)
       }).toList
       timer.start
       for (sender <- senders) {
-        sender ! Send(typedSelf, m)
+        sender ! Send(self, m)
       }
     case DummyMessage => 
       counter.decrement
@@ -43,9 +43,9 @@ class Bang extends Actor[BangMessage]{
   }
 }
   
-class Sender extends Actor[Send]{
+class Sender extends Actor{
   // send m Done messages to receiver
-  def typedReceive = {
+  def receive = {
     case Send(receiver, m) => 
       var i:Int = 0;
       while(i<m){
@@ -57,11 +57,11 @@ class Sender extends Actor[Send]{
   
 object BangBench extends App{  
   private val nodes:Int = args(0).toInt
-  private val processes:Int = 60
+  private val processes:Int = 6000
   private val messagess:Int = 2000
 
   private val system = ActorSystem("BangSystem", masterNodeConfig(BangNodeConfig.WorkerNodePrefix, BangNodeConfig.ProcessPathPrefix, BangNodeConfig.ProcessNamePrefix, processes, nodes))
-  val testActor = system.actorOf(Props[BangMessage, Bang], "BangBenchActor")
+  val testActor = system.actorOf(Props[Bang], "BangBenchActor")
   testActor ! BangBench(processes,messagess)
 }
 
