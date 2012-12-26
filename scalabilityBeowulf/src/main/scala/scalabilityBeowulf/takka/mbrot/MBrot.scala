@@ -34,9 +34,12 @@ class WorkerSup extends Actor[SupMsg]{
       case GO(n, np) =>{
         counter.set(np)
         timer.start
-        (for(i<-1 to np) yield {
+        val workers = (for(i<-1 to np) yield {
           typedContext.actorOf(Props[WorkerMsg, Worker], MBrotNodeConfig.ProcessNamePrefix+i)
         }).toList
+        for (worker <- workers) {
+          worker ! Work(n, typedSelf)
+        }
       }
       case Done(_) =>
         counter.decrement
@@ -54,7 +57,7 @@ class Worker extends Actor[WorkerMsg] {
   def typedReceive = {
     case Work(n, master) =>
       rows(n, n)
-      master ! Done(typedSelf)      
+      master ! Done(typedSelf)
     case _ => 
   }
   
