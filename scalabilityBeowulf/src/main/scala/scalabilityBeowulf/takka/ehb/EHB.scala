@@ -34,11 +34,12 @@ object EHBConstant {
 
 
 case class MasterGO(groups:Int, loops:Int) extends MasterMsg
-case class GroupGO(master:ActorRef[MasterMsg]) extends GroupMsg
+case object GroupGO extends GroupMsg
+case class GroupInit(master:ActorRef[MasterMsg], loops:Int) extends GroupMsg
 case class GroupReady(g:ActorRef[GroupMsg]) extends MasterMsg
 case class GroupDone(g:ActorRef[GroupMsg]) extends MasterMsg
 
-class MasterActor extends Actor[MasterMsg] with Serializable{
+class MasterActor extends Actor[MasterMsg]{
   val master = typedSelf
   val timer = new BenchTimer
   var gs:List[ActorRef[GroupMsg]] = _
@@ -48,16 +49,18 @@ class MasterActor extends Actor[MasterMsg] with Serializable{
     case MasterGO(groups, loops) =>
       readyCounter.set(groups)
       doneCounter.set(groups)
-//      timer.start
       gs = (for (gid <- 1 to groups) yield {
-        typedContext.actorOf(Props[GroupMsg](new GroupActor(master, loops)), EHBNodeConfig.ProcessNamePrefix+gid)
+        typedContext.actorOf(Props[GroupMsg, GroupActor], EHBNodeConfig.ProcessNamePrefix+gid)
       }).toList
+      for (g <- gs) {
+        g ! GroupInit(master, loops)
+      }
     case GroupReady(g) =>   
       readyCounter.decrement
       if(readyCounter.isZero){
         timer.start
        for (g<-gs) {
-         g ! GroupGO(master)
+         g ! GroupGO
        }
       }
     case GroupDone(g) =>
@@ -71,21 +74,24 @@ class MasterActor extends Actor[MasterMsg] with Serializable{
   }
 }
 
-class GroupActor(master:ActorRef[MasterMsg], loops:Int) extends Actor[GroupMsg] with Serializable{
+class GroupActor extends Actor[GroupMsg] {
   val gMaster = typedSelf
   val receiverDoneCounter = new BenchCounter
   receiverDoneCounter.set(EHBConstant.GSIZE)
   val rs:List[ActorRef[ReceiverMsg]] = (for (rid <- 1 to EHBConstant.GSIZE) yield {
     typedContext.actorOf(Props[ReceiverMsg].withCreator(new Receiver(gMaster, EHBConstant.GSIZE)), "receiver_"+rid)
   }).toList
-  val ss:List[ActorRef[SenderMsg]] = (for (sid <- 1 to EHBConstant.GSIZE) yield {
-    typedContext.actorOf(Props[SenderMsg].withCreator(new Sender(rs, loops)), "sender_"+sid)
-  }).toList
-  
-  master ! GroupReady(typedSelf)
-  
+  var ss:List[ActorRef[SenderMsg]] = _
+  var master:ActorRef[MasterMsg] = _
   def typedReceive = {
-    case GroupGO(master) =>
+    case GroupInit(master, loops) => {
+      this.ss = (for (sid <- 1 to EHBConstant.GSIZE) yield {
+        typedContext.actorOf(Props[SenderMsg].withCreator(new Sender(rs, loops)), "sender_"+sid)
+      }).toList
+      this.master = master
+      master ! GroupReady(typedSelf)      
+    }
+    case GroupGO =>
       for (s<-ss) {
         s ! SenderGo(gMaster)
       }
