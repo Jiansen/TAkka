@@ -100,7 +100,7 @@ class GenStressTestActor extends Actor[TestorMsg] {
 }
 
 
-object EHBBench extends App{
+object GenBench extends App{
   private val nodes:Int = args(0).toInt
   private val processes = 1000
   
@@ -109,7 +109,7 @@ object EHBBench extends App{
   master ! GenStressTestMsg(processes, GenNodeConfig.queue, GenNodeConfig.cqueue)
 }
 
-object EHBNode extends App {
+object GenNode extends App {
   private val nodeID:Int = args(0).toInt
 
   private val system = ActorSystem(GenNodeConfig.WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
