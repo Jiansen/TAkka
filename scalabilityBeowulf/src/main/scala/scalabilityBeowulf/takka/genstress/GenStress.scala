@@ -26,31 +26,24 @@ sealed trait TestorMsg
                n ( the number of messages to the server ), 
                cqueue ( the number of dummy messages ) 
    */
-case class GenStressTestMsg(np:Int, n:Int, cqueue:Int) extends TestorMsg
-case class ClientEcho(client:ActorRef[ClientMsg]) extends TestorMsg
+case class GenStressTestMsg(np:Int, n:Int, cqueue:Int) extends ServerMessage
+case class ClientEcho(client:ActorRef[ClientMsg]) extends ServerMessage
 
-case class ClientMsg(server:ActorRef[ServerMsg], n:Int, testor:ActorRef[TestorMsg]) extends ClientMessage// from testor
-case class Echo(server:ActorRef[ServerMsg], msg:String) extends ServerMessage with ClientMessage//from server
+case class ClientMsg(server:ActorRef[ServerMessage], n:Int) extends ClientMessage// from testor
+case class Echo(server:ActorRef[ServerMessage], msg:String) extends ServerMessage with ClientMessage//from server
 
 case class ServerMsg(client:ActorRef[ClientMessage], msg:String) extends ServerMessage//from client
 
 sealed trait ServerMessage
 sealed trait ClientMessage
 
-class GenStressServerActor extends Actor[ServerMsg] {
-  def typedReceive = {
-    case ServerMsg(client, msg) =>
-      client ! Echo(typedSelf, msg)
-  }
-}
-
 class GenStressClientActor extends Actor[ClientMessage] {
   var n:Int = 0
-  var testor:ActorRef[TestorMsg] = _
+  var server:ActorRef[ServerMessage] = _
   def typedReceive = {
-    case ClientMsg(server, n, testor) =>
+    case ClientMsg(server, n) =>
       this.n = n
-      this.testor = testor
+      this.server = server
 
       for (i<-1 to n) {
         server ! ServerMsg(typedSelf, "dummy message")
@@ -58,12 +51,12 @@ class GenStressClientActor extends Actor[ClientMessage] {
     case Echo(server, msg) =>
       this.n -= 1
       if (n == 0){
-        testor ! ClientEcho(typedSelf)
+        server ! ClientEcho(typedSelf.publishAs[ClientMsg])
       }
   }
 }
 
-class GenStressTestActor extends Actor[TestorMsg] {
+class GenStressServerActor extends Actor[ServerMessage] {
   var np:Int = 0
   val timer = new BenchTimer
   var server:ActorRef[ServerMsg] = _
@@ -72,7 +65,6 @@ class GenStressTestActor extends Actor[TestorMsg] {
     case GenStressTestMsg(np, n, cqueue) =>
       this.np = np
      
-      this.server = typedContext.actorOf(Props[ServerMsg, GenStressServerActor])
       this.clients = (for (i<- 1 to np) yield {
         typedContext.actorOf(Props[ClientMessage, GenStressClientActor], GenNodeConfig.ProcessNamePrefix+i)        
       }).toList
@@ -80,9 +72,10 @@ class GenStressTestActor extends Actor[TestorMsg] {
       timer.start
       
       for (client <- clients) {
-        client ! ClientMsg(server, n, typedSelf)
+        client ! ClientMsg(typedSelf, n)
       }
-      
+    case ServerMsg(client, msg) =>
+      client ! Echo(typedSelf, msg)      
     case ClientEcho(_) =>
       np = np-1
       if (np == 0) {
@@ -104,8 +97,8 @@ object GenBench extends App{
   private val nodes:Int = args(0).toInt
   private val processes = 1000
   
-  private val system = ActorSystem("EHBSystem", masterNodeConfig(GenNodeConfig.WorkerNodePrefix, GenNodeConfig.ProcessPathPrefix, GenNodeConfig.ProcessNamePrefix, processes, nodes))  
-  val master = system.actorOf(Props[TestorMsg, GenStressTestActor], "GenStressBenchActor")
+  private val system = ActorSystem("GenStressSystem", masterNodeConfig(GenNodeConfig.WorkerNodePrefix, GenNodeConfig.ProcessPathPrefix, GenNodeConfig.ProcessNamePrefix, processes, nodes))  
+  val master = system.actorOf(Props[ServerMessage, GenStressServerActor], "GenStressBenchActor")
   master ! GenStressTestMsg(processes, GenNodeConfig.queue, GenNodeConfig.cqueue)
 }
 
