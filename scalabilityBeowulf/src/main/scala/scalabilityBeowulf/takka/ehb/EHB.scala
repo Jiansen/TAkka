@@ -38,7 +38,7 @@ case class GroupGO(master:ActorRef[MasterMsg]) extends GroupMsg
 case class GroupReady(g:ActorRef[GroupMsg]) extends MasterMsg
 case class GroupDone(g:ActorRef[GroupMsg]) extends MasterMsg
 
-class MasterActor extends Actor[MasterMsg]{
+class MasterActor extends Actor[MasterMsg] with Serializable{
   val master = typedSelf
   val timer = new BenchTimer
   var gs:List[ActorRef[GroupMsg]] = _
