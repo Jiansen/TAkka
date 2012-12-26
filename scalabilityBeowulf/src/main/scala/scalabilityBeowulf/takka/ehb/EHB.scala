@@ -50,7 +50,7 @@ class MasterActor extends Actor[MasterMsg]{
       doneCounter.set(groups)
 //      timer.start
       gs = (for (gid <- 1 to groups) yield {
-        typedContext.actorOf(Props[GroupMsg](new GroupActor(master, loops)), "group_"+gid)
+        typedContext.actorOf(Props[GroupMsg](new GroupActor(master, loops)), EHBNodeConfig.ProcessNamePrefix+gid)
       }).toList
     case GroupReady(g) =>   
       readyCounter.decrement
