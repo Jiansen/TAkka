@@ -71,7 +71,7 @@ class MasterActor extends Actor[MasterMsg]{
   }
 }
 
-class GroupActor(master:ActorRef[MasterMsg], loops:Int) extends Actor[GroupMsg] {
+class GroupActor(master:ActorRef[MasterMsg], loops:Int) extends Actor[GroupMsg] with Serializable{
   val gMaster = typedSelf
   val receiverDoneCounter = new BenchCounter
   receiverDoneCounter.set(EHBConstant.GSIZE)
