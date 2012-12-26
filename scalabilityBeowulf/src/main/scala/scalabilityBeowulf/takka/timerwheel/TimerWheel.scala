@@ -43,7 +43,7 @@ class WheelHandler extends Actor[WheelMsg] {//with timeout
   def typedReceive = {
     case Init(others, ping_left, master) =>
       this.others = others
-      this.pingLeft = pingLeft
+      this.pingLeft = ping_left
       this.master = master
     case Start =>
       for (p<-others) {p ! Ping(typedSelf)}
@@ -64,12 +64,13 @@ class WheelHandler extends Actor[WheelMsg] {//with timeout
 
 class NoWheelHandler extends Actor[WheelMsg] {//without timeout
   var others:List[ActorRef[WheelMsg]] = _
-  var pingLeft:Int = _ 
+  var pingLeft:Int = _
   var master:ActorRef[MasterMsg] = _
+  
   def typedReceive = {
     case Init(others, ping_left, master) =>
       this.others = others
-      this.pingLeft = pingLeft
+      this.pingLeft = ping_left
       this.master = master
     case Start =>
       for (p<-others) {p ! Ping(typedSelf)}
