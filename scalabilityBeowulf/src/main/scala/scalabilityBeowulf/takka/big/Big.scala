@@ -16,21 +16,23 @@ sealed trait PingerMsg
 sealed trait ReporterMsg
 case class BigBench(processes:Int) extends ReporterMsg
 case class BigDone(p:ActorRef[PingerMsg]) extends ReporterMsg
-case class BigProcs(procs:List[ActorRef[PingerMsg]]) extends PingerMsg
+case class BigProcs(procs:List[ActorRef[PingerMsg]], reporter:ActorRef[ReporterMsg]) extends PingerMsg
 case class BigPing(from:ActorRef[PingerMsg]) extends PingerMsg
 case object BigPong extends PingerMsg
 
-class Pinger(val reporter:ActorRef[ReporterMsg]) extends Actor[PingerMsg]{
-  private var n:Int = _
+class Pinger extends Actor[PingerMsg]{
+  private var n = new BenchCounter
+  private var reporter:ActorRef[ReporterMsg] = _
   def typedReceive = {
-    case BigProcs(procs) =>
-      this.n = procs.length
+    case BigProcs(procs, reporter) =>
+      this.reporter = reporter
+      n.set(procs.length)
       for (p <- procs) {
         p ! BigPing(typedSelf)
       }
     case BigPong =>
-      n = n-1
-      if (n == 0) {
+      n.decrement
+      if (n.isZero) {
         reporter ! BigDone(typedSelf)
       }
     case BigPing(from) => 
@@ -45,10 +47,10 @@ class Reporter extends Actor[ReporterMsg]{
     case BigBench(n) => {
       counter.set(n)
       val procs = (for (i<-1 to n) yield {
-        typedContext.actorOf(Props().withCreator(new Pinger(typedSelf)), BigNodeConfig.ProcessNamePrefix+i)
+        typedContext.actorOf(Props[PingerMsg, Pinger], BigNodeConfig.ProcessNamePrefix+i)
       }).toList
       timer.start
-      for (p<-procs){  p ! BigProcs(procs)  }
+      for (p<-procs){  p ! BigProcs(procs, typedSelf)  }
     }
     case BigDone(_) =>
       counter.decrement
