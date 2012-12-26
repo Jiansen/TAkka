@@ -9,13 +9,13 @@ package scalability.takka.bang
  */
 
 import takka.actor.{Actor, ActorRef, ActorSystem, Props}
-import scala.concurrent.ops.spawn
 import util.{BenchTimer, BenchCounter}
 
 sealed trait BangMessage
 case class BangBench(s:Int, m:Int) extends BangMessage
 object DummyMessage extends BangMessage
 object BangDone
+case class Send(receiver:ActorRef[BangMessage], m:Int)
 
 class Bang extends Actor[BangMessage]{  
   val timer = new BenchTimer
@@ -23,12 +23,12 @@ class Bang extends Actor[BangMessage]{
   def typedReceive = {
     case BangBench(s, m) =>
       counter.set(s*m)
-      val senders = for (i<- 1 to s) yield {
-        new Sender
-      }
+      val senders = (for (i<- 1 to s) yield {
+        typedContext.actorOf(Props[Send, Sender])
+      }).toList
       timer.start
-      for (sender <- senders) spawn {
-        sender.send(typedSelf, m)
+      for (sender <- senders) {
+        sender ! Send(typedSelf, m)
       }
     case DummyMessage => 
       counter.decrement
@@ -40,23 +40,23 @@ class Bang extends Actor[BangMessage]{
   }
 }
   
-class Sender {
+class Sender extends Actor[Send]{
   // send m Done messages to receiver
-  def send(receiver:ActorRef[DummyMessage.type], m:Int) = {
-    var i:Int = 0;
-    while(i<m){
-      receiver ! DummyMessage
-      i += 1
+  def typedReceive = {
+    case Send(receiver, m) => 
+      var i:Int = 0;
+      while(i<m){
+        receiver ! DummyMessage
+        i += 1
+      }
     }
-  }
 }
   
-object BangBench extends App{  
-  def bang(s:Int, m:Int){
-    val system = ActorSystem("BangSystem")
-    val bang = system.actorOf(Props[BangMessage, Bang], "receiver")
-    bang ! BangBench(s, m)
-  }
-  
-  bang(6000,2000)
+object BangBench extends App{
+  private val processes:Int = 6000
+  private val messagess:Int = 2000
+
+  private val system = ActorSystem("BangSystem")
+  val testActor = system.actorOf(Props[BangMessage, Bang], "BangBenchActor")
+  testActor ! BangBench(processes,messagess)
 }

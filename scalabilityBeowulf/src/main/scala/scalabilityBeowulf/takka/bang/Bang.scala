@@ -10,7 +10,6 @@ package scalabilityBeowulf.takka.bang
 
 import takka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.remote._
-import scala.concurrent.ops.spawn
 import util.{BenchTimer, BenchCounter}
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
@@ -31,7 +30,7 @@ class Bang extends Actor[BangMessage]{
         typedContext.actorOf(Props[Send, Sender], BangNodeConfig.ProcessNamePrefix+i)
       }).toList
       timer.start
-      for (sender <- senders) spawn {
+      for (sender <- senders) {
         sender ! Send(typedSelf, m)
       }
     case DummyMessage => 
@@ -59,10 +58,11 @@ class Sender extends Actor[Send]{
 object BangBench extends App{  
   private val nodes:Int = args(0).toInt
   private val processes:Int = 6000
+  private val messagess:Int = 2000
 
   private val system = ActorSystem("BangSystem", masterNodeConfig(BangNodeConfig.WorkerNodePrefix, BangNodeConfig.ProcessPathPrefix, BangNodeConfig.ProcessNamePrefix, processes, nodes))
   val testActor = system.actorOf(Props[BangMessage, Bang], "BangBenchActor")
-  testActor ! BangBench(6000,2000)
+  testActor ! BangBench(processes,messagess)
 }
 
 object BangNode extends App {

@@ -12,9 +12,11 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import scala.concurrent.ops.spawn
 import util.{BenchTimer, BenchCounter}
 
-case class BangBench(s:Int, m:Int)
-object DummyMessage
+sealed trait BangMessage
+case class BangBench(s:Int, m:Int) extends BangMessage
+object DummyMessage extends BangMessage
 object BangDone
+case class Send(receiver:ActorRef, m:Int)
 
 class Bang extends Actor{  
   val timer = new BenchTimer
@@ -22,12 +24,12 @@ class Bang extends Actor{
   def receive = {
     case BangBench(s, m) =>
       counter.set(s*m)
-      val senders = for (i<- 1 to s) yield {
-        new Sender
-      }
+      val senders = (for (i<- 1 to s) yield {
+        context.actorOf(Props[Sender])
+      }).toList
       timer.start
-      for (sender <- senders) spawn {
-        sender.send(self, m)
+      for (sender <- senders) {
+        sender ! Send(self, m)
       }
     case DummyMessage => 
       counter.decrement
@@ -39,23 +41,23 @@ class Bang extends Actor{
   }
 }
   
-class Sender {
+class Sender extends Actor{
   // send m Done messages to receiver
-  def send(receiver:ActorRef, m:Int) = {
-    var i:Int = 0;
-    while(i<m){
-      receiver ! DummyMessage
-      i += 1
+  def receive = {
+    case Send(receiver, m) => 
+      var i:Int = 0;
+      while(i<m){
+        receiver ! DummyMessage
+        i += 1
+      }
     }
-  }
 }
   
-object BangBench extends App{  
-  def bang(s:Int, m:Int){
-    val system = ActorSystem("BangSystem")
-    val bang = system.actorOf(Props[Bang], "receiver")
-    bang ! BangBench(s, m)
-  }
-  
-  bang(6000,2000)
+object BangBench extends App{
+  private val processes:Int = 6000
+  private val messagess:Int = 2000
+
+  private val system = ActorSystem("BangSystem")
+  val testActor = system.actorOf(Props[Bang], "BangBenchActor")
+  testActor ! BangBench(processes,messagess)
 }
