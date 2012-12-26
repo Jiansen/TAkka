@@ -64,7 +64,7 @@ class Reporter extends Actor[ReporterMsg]{
 
 object BigBench extends App{
   private val nodes:Int = args(0).toInt
-  private val processes = 1500
+  private val processes = 15
   
   
   private val system = ActorSystem("BigSystem", masterNodeConfig(BigNodeConfig.WorkerNodePrefix, BigNodeConfig.ProcessPathPrefix, BigNodeConfig.ProcessNamePrefix, processes, nodes))  
