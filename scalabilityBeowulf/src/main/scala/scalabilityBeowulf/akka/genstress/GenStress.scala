@@ -1,4 +1,4 @@
-package scalabilityBeowulf.takka.genstress
+package scalabilityBeowulf.akka.genstress
 
 /*
 This is a generic server benchmark that spawns an echo server 
@@ -14,75 +14,76 @@ without using the gen_server behaviour.
 The benchmark is parametrised by the number of clients, dummy messages 
 and messages exchanged with the echo server.
  */
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import util.{BenchTimer, BenchCounter}
 import akka.remote._
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
 
+sealed trait TestorMsg
  /*
     Arguments: np ( the number of clients ),
                n ( the number of messages to the server ), 
                cqueue ( the number of dummy messages ) 
    */
 case class GenStressTestMsg(np:Int, n:Int, cqueue:Int) extends ServerMessage
-case class ClientEcho(client:ActorRef[ClientMsg]) extends ServerMessage
+case class ClientEcho(client:ActorRef) extends ServerMessage
 
-case class ClientMsg(server:ActorRef[ServerMessage], n:Int) extends ClientMessage// from testor
-case class Echo(server:ActorRef[ServerMessage], msg:String) extends ServerMessage with ClientMessage//from server
+case class ClientMsg(server:ActorRef, n:Int) extends ClientMessage// from testor
+case class Echo(server:ActorRef, msg:String) extends ServerMessage with ClientMessage//from server
 
-case class ServerMsg(client:ActorRef[ClientMessage], msg:String) extends ServerMessage//from client
+case class ServerMsg(client:ActorRef, msg:String) extends ServerMessage//from client
 
 sealed trait ServerMessage
 sealed trait ClientMessage
 
-class GenStressClientActor extends Actor[ClientMessage] {
+class GenStressClientActor extends Actor {
   var n:Int = 0
-  var server:ActorRef[ServerMessage] = _
-  def typedReceive = {
+  var server:ActorRef = _
+  def receive = {
     case ClientMsg(server, n) =>
       this.n = n
       this.server = server
 
       for (i<-1 to n) {
-        server ! ServerMsg(typedSelf, "dummy message")
+        server ! ServerMsg(self, "dummy message")
       }
     case Echo(server, msg) =>
       this.n -= 1
       if (n == 0){
-        server ! ClientEcho(typedSelf.publishAs[ClientMsg])
+        server ! ClientEcho(self)
       }
   }
 }
 
-class GenStressServerActor extends Actor[ServerMessage] {
+class GenStressServerActor extends Actor {
   var np:Int = 0
   val timer = new BenchTimer
-  var clients:List[ActorRef[ClientMessage]] = _
-  def typedReceive = {
+  var clients:List[ActorRef] = _
+  def receive = {
     case GenStressTestMsg(np, n, cqueue) =>
       this.np = np
      
       this.clients = (for (i<- 1 to np) yield {
-        typedContext.actorOf(Props[ClientMessage, GenStressClientActor], GenNodeConfig.ProcessNamePrefix+i)        
+        context.actorOf(Props[GenStressClientActor], GenNodeConfig.ProcessNamePrefix+i)        
       }).toList
     
       timer.start
       
       for (client <- clients) {
-        client ! ClientMsg(typedSelf, n)
+        client ! ClientMsg(self, n)
       }
     case ServerMsg(client, msg) =>
-      client ! Echo(typedSelf, msg)      
+      client ! Echo(self, msg)      
     case ClientEcho(_) =>
       np = np-1
       if (np == 0) {
         timer.finish
         timer.report
         
-        typedContext.stop(typedSelf)
+        context.stop(self)
         for (client <- clients) {
-          typedContext.stop(client)
+          context.stop(client)
         }
         sys.exit
       }
@@ -96,7 +97,7 @@ object GenBench extends App{
   private val processes = 10
   
   private val system = ActorSystem("GenStressSystem", masterNodeConfig(GenNodeConfig.WorkerNodePrefix, GenNodeConfig.ProcessPathPrefix, GenNodeConfig.ProcessNamePrefix, processes, nodes))  
-  val master = system.actorOf(Props[ServerMessage, GenStressServerActor], "GenStressBenchActor")
+  val master = system.actorOf(Props[GenStressServerActor], "GenStressBenchActor")
   master ! GenStressTestMsg(processes, GenNodeConfig.queue, GenNodeConfig.cqueue)
 }
 
