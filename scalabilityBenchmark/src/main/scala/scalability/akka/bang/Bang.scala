@@ -14,8 +14,8 @@ import util.{BenchTimer, BenchCounter}
 
 sealed trait BangMessage
 case class BangBench(s:Int, m:Int) extends BangMessage
-object DummyMessage extends BangMessage
-object BangDone
+case object DummyMessage extends BangMessage
+case object BangDone
 case class Send(receiver:ActorRef, m:Int)
 
 class Bang extends Actor{  
