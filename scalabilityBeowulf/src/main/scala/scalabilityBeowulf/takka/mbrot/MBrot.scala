@@ -94,7 +94,7 @@ class Worker extends Actor[WorkerMsg] {
 
 object MBrotBench extends App{
   private val nodes:Int = args(0).toInt
-  private val processes = 400
+  private val processes = 40
   
   private val system = ActorSystem("MBrotSystem", masterNodeConfig(MBrotNodeConfig.WorkerNodePrefix, MBrotNodeConfig.ProcessPathPrefix, MBrotNodeConfig.ProcessNamePrefix, processes, nodes))  
   val master = system.actorOf(Props[SupMsg, WorkerSup], "MBrotBenchActor")
@@ -111,7 +111,4 @@ object MBrotNodeConfig {
   val WorkerNodePrefix = "MBrotNode"
   val ProcessPathPrefix = "MBrotBenchActor"
   val ProcessNamePrefix = "MBrotProcess"
-    
-  val queue:Int = 3000
-  val cqueue:Int = 5000
 }
