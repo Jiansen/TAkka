@@ -128,20 +128,19 @@ object TimerWheelBench extends App {
   private val nodes:Int = args(0).toInt
   private val processes:Int = 800
 
-  private val system = ActorSystem("TimerWheelSystem", masterNodeConfig(TimerWheelNodeConfig.WorkerNodePrefix, TimerWheelNodeConfig.ProcessPathPrefix, TimerWheelNodeConfig.ProcessNamePrefix, processes, nodes))
+  private val system = ActorSystem("TimerWheelSystem", masterNodeConfig(WorkerNodePrefix, TimerWheelNodeConfig.ProcessPathPrefix, TimerWheelNodeConfig.ProcessNamePrefix, processes, nodes))
   val testActor = system.actorOf(Props[TimerWheelActor], "TimerWheelActor")
   //testActor ! Wheel(processes)
   testActor ! NoWheel(processes)
 }
-
+/*
 object TimerWheelNode extends App {
   private val nodeID:Int = args(0).toInt
 
-  private val system = ActorSystem(TimerWheelNodeConfig.WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
+  private val system = ActorSystem(WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
 }
-
+*/
 object TimerWheelNodeConfig {
-  val WorkerNodePrefix = "TimerWheelNode"
   val ProcessPathPrefix = "TimerWheelActor"
   val ProcessNamePrefix = "TimerWheelProcess"
 }
