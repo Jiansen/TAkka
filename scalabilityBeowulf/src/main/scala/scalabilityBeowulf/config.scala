@@ -77,14 +77,4 @@ object BeowulfConfig {
   }
   
   val WorkerNodePrefix = "WorkerNode"
-    
-  object AkkaWorkerNode extends App {  
-    private val nnt = args(0).toInt
-    private val system = akka.actor.ActorSystem(WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-  }
-  
-  object TAkkaWorkerNode extends App {
-    private val nodeID:Int = args(0).toInt
-    private val system = takka.actor.ActorSystem(WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-  }
 }
