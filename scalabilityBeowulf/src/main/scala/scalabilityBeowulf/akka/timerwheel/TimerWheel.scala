@@ -133,13 +133,7 @@ object TimerWheelBench extends App {
   //testActor ! Wheel(processes)
   testActor ! NoWheel(processes)
 }
-/*
-object TimerWheelNode extends App {
-  private val nodeID:Int = args(0).toInt
 
-  private val system = ActorSystem(WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-}
-*/
 object TimerWheelNodeConfig {
   val ProcessPathPrefix = "TimerWheelActor"
   val ProcessNamePrefix = "TimerWheelProcess"

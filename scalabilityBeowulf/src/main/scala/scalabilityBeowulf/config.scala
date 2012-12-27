@@ -77,4 +77,6 @@ object BeowulfConfig {
   }
   
   val WorkerNodePrefix = "WorkerNode"
+  val ProcessPathPrefix = "MasterActor"
+  val ProcessNamePrefix = "Process"    
 }

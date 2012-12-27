@@ -67,19 +67,12 @@ object BigBench extends App{
   private val processes = 15
   
   
-  private val system = ActorSystem("BigSystem", masterNodeConfig(BigNodeConfig.WorkerNodePrefix, BigNodeConfig.ProcessPathPrefix, BigNodeConfig.ProcessNamePrefix, processes, nodes))  
+  private val system = ActorSystem("BigSystem", masterNodeConfig(WorkerNodePrefix, BigNodeConfig.ProcessPathPrefix, BigNodeConfig.ProcessNamePrefix, processes, nodes))  
   val reporter = system.actorOf(Props[Reporter], "BigBenchActor")
   reporter ! BigBench(processes)
 }
 
-object BigNode extends App {
-  private val nodeID:Int = args(0).toInt
-
-  private val system = ActorSystem(BigNodeConfig.WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-}
-
 object BigNodeConfig {
-  val WorkerNodePrefix = "BigNode"
   val ProcessPathPrefix = "BigBenchActor"
   val ProcessNamePrefix = "BigProcess"
 }
