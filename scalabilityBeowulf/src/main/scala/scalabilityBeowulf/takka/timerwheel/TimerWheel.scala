@@ -93,7 +93,7 @@ class TimerWheelActor extends Actor[MasterMsg] {
       this.n = n
       // val me = self
       val pids = (for (i <- 1 to n) yield 
-          typedContext.actorOf(Props[WheelMsg, WheelHandler], TimerWheelNodeConfig.ProcessNamePrefix+i)) toList
+          typedContext.actorOf(Props[WheelMsg, WheelHandler], ProcessNamePrefix+i)) toList
           
       for (pid <- pids) {
         pid ! Init(pids filterNot (_ == pid), n-1, typedSelf)
@@ -107,7 +107,7 @@ class TimerWheelActor extends Actor[MasterMsg] {
       this.n = n
       // val me = self
       val pids = (for (i <- 1 to n) yield 
-          typedContext.actorOf(Props[WheelMsg, NoWheelHandler], TimerWheelNodeConfig.ProcessNamePrefix+i)) toList
+          typedContext.actorOf(Props[WheelMsg, NoWheelHandler], ProcessNamePrefix+i)) toList
           
       for (pid <- pids) {
         pid ! Init(pids filterNot (_ == pid), n-1, typedSelf)
@@ -131,20 +131,8 @@ object TimerWheelBench extends App {
   private val nodes:Int = args(0).toInt
   private val processes:Int = 800
 
-  private val system = ActorSystem("TimerWheelSystem", masterNodeConfig(TimerWheelNodeConfig.WorkerNodePrefix, TimerWheelNodeConfig.ProcessPathPrefix, TimerWheelNodeConfig.ProcessNamePrefix, processes, nodes))
-  val testActor = system.actorOf(Props[MasterMsg, TimerWheelActor], "TimerWheelActor")
+  private val system = ActorSystem("TimerWheelSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
+  val testActor = system.actorOf(Props[MasterMsg, TimerWheelActor], ProcessPathPrefix)
   //testActor ! Wheel(processes)
   testActor ! NoWheel(processes)
-}
-
-object TimerWheelNode extends App {
-  private val nodeID:Int = args(0).toInt
-
-  private val system = ActorSystem(TimerWheelNodeConfig.WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-}
-
-object TimerWheelNodeConfig {
-  val WorkerNodePrefix = "TimerWheelNode"
-  val ProcessPathPrefix = "TimerWheelActor"
-  val ProcessNamePrefix = "TimerWheelProcess"
 }

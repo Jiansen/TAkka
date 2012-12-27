@@ -27,7 +27,7 @@ class Bang extends Actor{
     case BangBench(s, m) =>
       counter.set(s*m)
       val senders = (for (i<- 1 to s) yield {
-        context.actorOf(Props[Sender], BangNodeConfig.ProcessNamePrefix+i)
+        context.actorOf(Props[Sender], ProcessNamePrefix+i)
       }).toList
       timer.start
       for (sender <- senders) {
@@ -60,19 +60,7 @@ object BangBench extends App{
   private val processes:Int = 6000
   private val messagess:Int = 2000
 
-  private val system = ActorSystem("BangSystem", masterNodeConfig(BangNodeConfig.WorkerNodePrefix, BangNodeConfig.ProcessPathPrefix, BangNodeConfig.ProcessNamePrefix, processes, nodes))
-  val testActor = system.actorOf(Props[Bang], "BangBenchActor")
+  private val system = ActorSystem("BangSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
+  val testActor = system.actorOf(Props[Bang], ProcessPathPrefix)
   testActor ! BangBench(processes,messagess)
-}
-
-object BangNode extends App {
-  private val nodeID:Int = args(0).toInt
-
-  private val system = ActorSystem(BangNodeConfig.WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-}
-
-object BangNodeConfig {
-  val WorkerNodePrefix = "BangNode"
-  val ProcessPathPrefix = "BangBenchActor"
-  val ProcessNamePrefix = "BangProcess"
 }

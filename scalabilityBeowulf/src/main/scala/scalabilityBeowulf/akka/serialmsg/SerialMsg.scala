@@ -87,7 +87,7 @@ class PushActor extends Actor {
       this.p = p
       
       val recvs:List[ActorRef] = (for (i<-1 to p) yield {
-        context.actorOf(Props[Receiver], SerialMsgNodeConfig.ProcessNamePrefix+i)
+        context.actorOf(Props[Receiver], ProcessNamePrefix+i)
       }).toList
       for(recv <- recvs) {
         recv ! SetMaster(self)
@@ -116,21 +116,7 @@ object SerialMsgBench extends App {
   private val nodes:Int = args(0).toInt
   private val processes:Int = 100
 
-  private val system = ActorSystem("SerialMsgSystem", masterNodeConfig(SerialMsgNodeConfig.WorkerNodePrefix, SerialMsgNodeConfig.ProcessPathPrefix, SerialMsgNodeConfig.ProcessNamePrefix, processes, nodes))
-  val testActor = system.actorOf(Props[PushActor], "SerialMsgMasterActor")
+  private val system = ActorSystem("SerialMsgSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
+  val testActor = system.actorOf(Props[PushActor], ProcessPathPrefix)
   testActor ! Push(processes, 1000, 2000)
 }
-
-object SerialMsgNode extends App {
-  private val nodeID:Int = args(0).toInt
-
-  private val system = ActorSystem(SerialMsgNodeConfig.WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-}
-
-object SerialMsgNodeConfig {
-  val WorkerNodePrefix = "SerialMsgNode"
-  val ProcessPathPrefix = "SerialMsgMasterActor"
-  val ProcessNamePrefix = "SerialMsgReceiverProcess"
-}
-
-

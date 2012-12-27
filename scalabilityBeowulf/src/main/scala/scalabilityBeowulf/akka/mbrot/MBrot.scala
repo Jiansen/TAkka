@@ -35,7 +35,7 @@ class WorkerSup extends Actor{
         counter.set(np)
         timer.start
         val workers = (for(i<-1 to np) yield {
-          context.actorOf(Props[Worker], MBrotNodeConfig.ProcessNamePrefix+i)
+          context.actorOf(Props[Worker], ProcessNamePrefix+i)
         }).toList
         for (worker <- workers) {
           worker ! Work(n, self)
@@ -99,19 +99,7 @@ object MBrotBench extends App{
   private val nodes:Int = args(0).toInt
   private val processes = 40
   
-  private val system = ActorSystem("MBrotSystem", masterNodeConfig(MBrotNodeConfig.WorkerNodePrefix, MBrotNodeConfig.ProcessPathPrefix, MBrotNodeConfig.ProcessNamePrefix, processes, nodes))  
-  val master = system.actorOf(Props[WorkerSup], "MBrotBenchActor")
+  private val system = ActorSystem("MBrotSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))  
+  val master = system.actorOf(Props[WorkerSup], ProcessPathPrefix)
   master ! GO(processes, 200)
-}
-
-object MBrotNode extends App {
-  private val nodeID:Int = args(0).toInt
-
-  private val system = ActorSystem(MBrotNodeConfig.WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-}
-
-object MBrotNodeConfig {
-  val WorkerNodePrefix = "MBrotNode"
-  val ProcessPathPrefix = "MBrotBenchActor"
-  val ProcessNamePrefix = "MBrotProcess"
 }

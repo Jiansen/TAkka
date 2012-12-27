@@ -32,7 +32,7 @@ class NowTime extends Actor[MasterMsg] {
       val base = for (_ <- 1 to m) yield OK      
       timer.start
       val pids = for (i <- 1 to m) yield {
-        typedContext.actorOf(Props[Loop, LoopActor], ParallelNodeConfig.ProcessNamePrefix+i)
+        typedContext.actorOf(Props[Loop, LoopActor], ProcessNamePrefix+i)
       }  
       for (pid <- pids) {
         pid ! Loop(typedSelf, n)
@@ -71,19 +71,7 @@ object ParallelBench extends App{
   private val nodes:Int = args(0).toInt
   private val processes = 5000
   
-  private val system = ActorSystem("ParallelSystem", masterNodeConfig(ParallelNodeConfig.WorkerNodePrefix, ParallelNodeConfig.ProcessPathPrefix, ParallelNodeConfig.ProcessNamePrefix, processes, nodes))  
-  val master = system.actorOf(Props[MasterMsg, NowTime], "ParallelBenchActor")
+  private val system = ActorSystem("ParallelSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))  
+  val master = system.actorOf(Props[MasterMsg, NowTime], ProcessPathPrefix)
   master ! Start(processes, 128)
-}
-
-object ParallelNode extends App {
-  private val nodeID:Int = args(0).toInt
-
-  private val system = ActorSystem(ParallelNodeConfig.WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-}
-
-object ParallelNodeConfig {
-  val WorkerNodePrefix = "ParalleNode"
-  val ProcessPathPrefix = "ParallelBenchActor"
-  val ProcessNamePrefix = "ParalleProcess"
 }

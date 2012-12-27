@@ -65,7 +65,7 @@ class GenStressServerActor extends Actor {
       this.np = np
      
       this.clients = (for (i<- 1 to np) yield {
-        context.actorOf(Props[GenStressClientActor], GenNodeConfig.ProcessNamePrefix+i)        
+        context.actorOf(Props[GenStressClientActor], ProcessNamePrefix+i)        
       }).toList
     
       timer.start
@@ -96,22 +96,11 @@ object GenBench extends App{
   private val nodes:Int = args(0).toInt
   private val processes = 10
   
-  private val system = ActorSystem("GenStressSystem", masterNodeConfig(GenNodeConfig.WorkerNodePrefix, GenNodeConfig.ProcessPathPrefix, GenNodeConfig.ProcessNamePrefix, processes, nodes))  
-  val master = system.actorOf(Props[GenStressServerActor], "GenStressBenchActor")
+  private val system = ActorSystem("GenStressSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))  
+  val master = system.actorOf(Props[GenStressServerActor], ProcessPathPrefix)
   master ! GenStressTestMsg(processes, GenNodeConfig.queue, GenNodeConfig.cqueue)
 }
-
-object GenNode extends App {
-  private val nodeID:Int = args(0).toInt
-
-  private val system = ActorSystem(GenNodeConfig.WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-}
-
-object GenNodeConfig {
-  val WorkerNodePrefix = "GenStressNode"
-  val ProcessPathPrefix = "GenStressBenchActor"
-  val ProcessNamePrefix = "GenStressProcess"
-    
+object GenNodeConfig {    
   val queue:Int = 3000
   val cqueue:Int = 5000
 }

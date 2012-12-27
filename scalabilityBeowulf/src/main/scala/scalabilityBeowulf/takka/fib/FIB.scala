@@ -44,7 +44,7 @@ class FIBMaster extends Actor[FibMasterMsg] {
     case FibMasterStart(n) =>
       this.n = n
       val plist = (for (i<- 1 to n) yield {
-        typedContext.actorOf(Props[GO, FIBWorker], FIBNodeConfig.ProcessNamePrefix+i)        
+        typedContext.actorOf(Props[GO, FIBWorker], ProcessNamePrefix+i)        
       }).toList
       timer.start
       
@@ -65,20 +65,7 @@ object FIB extends App {
   private val nodes:Int = args(0).toInt
   private val processes:Int = 200
 
-  private val system = ActorSystem("FIBSystem", masterNodeConfig(FIBNodeConfig.WorkerNodePrefix, FIBNodeConfig.ProcessPathPrefix, FIBNodeConfig.ProcessNamePrefix, processes, nodes))
-  val testActor = system.actorOf(Props[FibMasterMsg, FIBMaster], "FIBMaster")
+  private val system = ActorSystem("FIBSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
+  val testActor = system.actorOf(Props[FibMasterMsg, FIBMaster], ProcessPathPrefix)
   testActor ! FibMasterStart(processes)
-}
-
-
-object FIBNode extends App {
-  private val nodeID:Int = args(0).toInt
-
-  private val system = ActorSystem(FIBNodeConfig.WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-}
-
-object FIBNodeConfig {
-  val WorkerNodePrefix = "FIBNode"
-  val ProcessPathPrefix = "FIBMaster"
-  val ProcessNamePrefix = "FIBWorker"
 }

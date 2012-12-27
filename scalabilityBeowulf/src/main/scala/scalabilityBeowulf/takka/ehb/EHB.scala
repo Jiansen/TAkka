@@ -50,7 +50,7 @@ class MasterActor extends Actor[MasterMsg]{
       readyCounter.set(groups)
       doneCounter.set(groups)
       gs = (for (gid <- 1 to groups) yield {
-        typedContext.actorOf(Props[GroupMsg, GroupActor], EHBNodeConfig.ProcessNamePrefix+gid)
+        typedContext.actorOf(Props[GroupMsg, GroupActor], ProcessNamePrefix+gid)
       }).toList
       for (g <- gs) {
         g ! GroupInit(master, loops)
@@ -169,19 +169,7 @@ object EHBBench extends App{
   private val nodes:Int = args(0).toInt
   private val groups = 3
   
-  private val system = ActorSystem("EHBSystem", masterNodeConfig(EHBNodeConfig.WorkerNodePrefix, EHBNodeConfig.ProcessPathPrefix, EHBNodeConfig.ProcessNamePrefix, groups, nodes))  
-  val master = system.actorOf(Props[MasterMsg, MasterActor], "EHBBenchActor")
+  private val system = ActorSystem("EHBSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, groups, nodes))  
+  val master = system.actorOf(Props[MasterMsg, MasterActor], ProcessPathPrefix)
   master ! MasterGO(groups,3)
-}
-
-object EHBNode extends App {
-  private val nodeID:Int = args(0).toInt
-
-  private val system = ActorSystem(EHBNodeConfig.WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-}
-
-object EHBNodeConfig {
-  val WorkerNodePrefix = "EHBNode"
-  val ProcessPathPrefix = "EHBBenchActor"
-  val ProcessNamePrefix = "EHBProcess"
 }

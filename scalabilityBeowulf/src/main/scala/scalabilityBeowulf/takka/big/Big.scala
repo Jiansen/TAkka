@@ -47,7 +47,7 @@ class Reporter extends Actor[ReporterMsg]{
     case BigBench(n) => {
       counter.set(n)
       val procs = (for (i<-1 to n) yield {
-        typedContext.actorOf(Props[PingerMsg, Pinger], BigNodeConfig.ProcessNamePrefix+i)
+        typedContext.actorOf(Props[PingerMsg, Pinger], ProcessNamePrefix+i)
       }).toList
       timer.start
       for (p<-procs){  p ! BigProcs(procs, typedSelf)  }
@@ -67,19 +67,7 @@ object BigBench extends App{
   private val processes = 15
   
   
-  private val system = ActorSystem("BigSystem", masterNodeConfig(BigNodeConfig.WorkerNodePrefix, BigNodeConfig.ProcessPathPrefix, BigNodeConfig.ProcessNamePrefix, processes, nodes))  
-  val reporter = system.actorOf(Props[ReporterMsg, Reporter], "BigBenchActor")
+  private val system = ActorSystem("BigSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))  
+  val reporter = system.actorOf(Props[ReporterMsg, Reporter], ProcessPathPrefix)
   reporter ! BigBench(processes)
-}
-
-object BigNode extends App {
-  private val nodeID:Int = args(0).toInt
-
-  private val system = ActorSystem(BigNodeConfig.WorkerNodePrefix+nodeID, WorkerNodeConfig(nodeID))
-}
-
-object BigNodeConfig {
-  val WorkerNodePrefix = "BigNode"
-  val ProcessPathPrefix = "BigBenchActor"
-  val ProcessNamePrefix = "BigProcess"
 }
