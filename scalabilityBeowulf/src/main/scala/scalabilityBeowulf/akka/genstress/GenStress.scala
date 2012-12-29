@@ -94,13 +94,13 @@ class GenStressServerActor extends Actor {
 
 object GenBench extends App{
   private val nodes:Int = args(0).toInt
-  private val processes = 10
+  private val processes = 64
   
   private val system = ActorSystem("GenStressSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))  
   val master = system.actorOf(Props[GenStressServerActor], ProcessPathPrefix)
   master ! GenStressTestMsg(processes, GenNodeConfig.queue, GenNodeConfig.cqueue)
 }
 object GenNodeConfig {    
-  val queue:Int = 3000
+  val queue:Int = 300
   val cqueue:Int = 5000
 }

@@ -69,9 +69,9 @@ class LoopActor extends Actor[Loop] {
 
 object ParallelBench extends App{
   private val nodes:Int = args(0).toInt
-  private val processes = 5000
+  private val processes = 256
   
   private val system = ActorSystem("ParallelSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))  
   val master = system.actorOf(Props[MasterMsg, NowTime], ProcessPathPrefix)
-  master ! Start(processes, 128)
+  master ! Start(10000, processes)
 }

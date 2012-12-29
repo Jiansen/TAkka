@@ -57,7 +57,7 @@ class Sender extends Actor[Send]{
   
 object BangBench extends App{  
   private val nodes:Int = args(0).toInt
-  private val processes:Int = 6
+  private val processes:Int = 600
   private val messagess:Int = 2000
 
   private val system = ActorSystem("BangSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))

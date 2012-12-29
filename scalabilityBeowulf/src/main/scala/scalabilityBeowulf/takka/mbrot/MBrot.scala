@@ -97,9 +97,9 @@ class Worker extends Actor[WorkerMsg] {
 
 object MBrotBench extends App{
   private val nodes:Int = args(0).toInt
-  private val processes = 40
+  private val processes = 256
   
   private val system = ActorSystem("MBrotSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))  
   val master = system.actorOf(Props[SupMsg, WorkerSup], ProcessPathPrefix)
-  master ! GO(processes, 200)
+  master ! GO(6000, processes)
 }
