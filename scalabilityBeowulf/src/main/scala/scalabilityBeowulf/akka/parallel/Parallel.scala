@@ -72,6 +72,6 @@ object ParallelBench extends App{
   private val processes = 256
   
   private val system = ActorSystem("ParallelSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))  
-  val master = system.actorOf(Props[NowTime], WorkerNodePrefix)
-  master ! Start(10000, processes)
+  val master = system.actorOf(Props[NowTime], ProcessPathPrefix)
+  master ! Start(6000, processes)
 }
