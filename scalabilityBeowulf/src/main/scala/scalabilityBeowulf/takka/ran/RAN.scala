@@ -69,7 +69,7 @@ class RANTestActor extends Actor[RANTestMessage] {
 
 object RAN extends App {
   private val nodes:Int = args(0).toInt
-  private val processes:Int = 200
+  private val processes:Int = 6000
 
   private val system = ActorSystem("RANSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
   val testActor = system.actorOf(Props[RANTestMessage ,RANTestActor], ProcessPathPrefix)
