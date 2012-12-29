@@ -26,14 +26,13 @@ class RANProcess extends Actor[GO] {
    1 to len map { _ => r.nextInt(max) +1 } toList
   }
   
-  def random(n:Int):List[Int] = {
-    val len = 100000
-    n_rands(len, 200).sortWith(_<_).take(len / 2)
+  def random(len:Int):List[Int] = {
+    n_rands(len, 2000000).sortWith(_<_).take(len / 2)
   }
   
   def typedReceive = {
     case GO(testor) =>
-      testor ! RANReply(typedSelf, random(100))    
+      testor ! RANReply(typedSelf, random(1000000))
   }
 
 }
