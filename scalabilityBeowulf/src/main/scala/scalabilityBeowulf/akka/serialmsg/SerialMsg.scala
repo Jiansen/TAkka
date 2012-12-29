@@ -114,9 +114,9 @@ class PushActor extends Actor {
 
 object SerialMsgBench extends App {
   private val nodes:Int = args(0).toInt
-  private val processes:Int = 100
+  private val processes:Int = 128
 
   private val system = ActorSystem("SerialMsgSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
   val testActor = system.actorOf(Props[PushActor], ProcessPathPrefix)
-  testActor ! Push(processes, 1000, 2000)
+  testActor ! Push(processes, 100, 200)
 }

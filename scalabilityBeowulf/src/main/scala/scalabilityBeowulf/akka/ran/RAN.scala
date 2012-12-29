@@ -7,8 +7,8 @@ Arguments: N ( the number of processes )
 
 Function: dom
 
-Long description: Spawns N processes. Each process generates a list with 10000 
-random integers between 1 and 200, sorts the list and then sends its first 
+Long description: Spawns N processes. Each process generates a list with 100000 
+random integers between 1 and 2000000, sorts the list and then sends its first 
 half to the parent process.
  */
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
@@ -35,7 +35,7 @@ class RANProcess extends Actor {
   
   def receive = {
     case GO(testor) =>
-      testor ! RANReply(self, random(1000000))
+      testor ! RANReply(self, random(100000))
   }
 
 }

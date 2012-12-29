@@ -7,8 +7,8 @@ Arguments: N ( the number of processes )
 
 Function: dom
 
-Long description: Spawns N processes. Each process generates a list with 10000 
-random integers between 1 and 200, sorts the list and then sends its first 
+Long description: Spawns N processes. Each process generates a list with 100000 
+random integers between 1 and 2000000, sorts the list and then sends its first 
 half to the parent process.
  */
 import takka.actor.{Actor, ActorRef, ActorSystem, Props}
@@ -37,7 +37,7 @@ class RANProcess extends Actor[RANProcessMessage] {
   
   def typedReceive = {
     case GO(testor) =>
-      testor ! RANReply(typedSelf, random(1000000))
+      testor ! RANReply(typedSelf, random(100000))
   }
 
 }
@@ -53,8 +53,7 @@ class RANTestActor extends Actor[RANTestMessage] {
       }).toList
       timer.start
       
-      for (p<-plist){
-        
+      for (p<-plist){        
         p ! GO(typedSelf)
       }
     case RANReply(_, _) =>
