@@ -1,1 +1,0 @@
-java -Xms1024M -Xmx1536M -Xss1M -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=384M -Xbootclasspath/p:`dirname $0`/npn-boot-1.0.0.v20120402.jar  -jar `dirname $0`/sbt-launch-0.11.3.jar "$@"
