@@ -11,7 +11,7 @@ package takka.util
  * class Hello 
  * }}}
  */
-class SerialVersionUID(uidStr:String) extends scala.SerialVersionUID( uidStr.hashCode() )
+class SerialVersion(uidStr:String) extends scala.SerialVersionUID( uidStr.hashCode() )
 
 /*
 @SerialVersionUID("HelloClass-v-0-1")

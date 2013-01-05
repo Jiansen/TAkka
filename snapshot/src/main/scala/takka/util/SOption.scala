@@ -8,7 +8,7 @@ package takka.util
  *  @author  Jiansen HE
  *  @version 1.0, 10/03/2012
  */
-@SerialVersionUID("serializable Option Type v.1.0")
+@SerialVersion("serializable Option Type v.1.0")
 sealed abstract class SOption[+A] extends Product with Serializable {
   self =>
 
@@ -187,7 +187,7 @@ sealed abstract class SOption[+A] extends Product with Serializable {
  *  @author  Jiansen HE
  *  @version 1.0, 10/03/2012
  */
-@SerialVersionUID("serializable Some Type v.1.0")
+@SerialVersion("serializable Some Type v.1.0")
 final case class SSome[+A](x: A) extends SOption[A] {
   def isEmpty = false
   def get = x
@@ -201,7 +201,7 @@ final case class SSome[+A](x: A) extends SOption[A] {
  *  @author  Jiansen HE
  *  @version 1.0, 10/03/2012
  */
-@SerialVersionUID("serializable None Object v.1.0")
+@SerialVersion("serializable None Object v.1.0")
 case object SNone extends SOption[Nothing] {
   def isEmpty = true
   def get = throw new NoSuchElementException("None.get")

@@ -479,7 +479,7 @@ trait FSM[S, D, E] extends Listeners {
       // TODO use DeathWatch to clean up list
       listeners.add(actorRef.untypedRef)
       // send current state back as reference point
-      actorRef ! CurrentState(typedSelf, currentState.stateName)
+      actorRef.untypedRef ! CurrentState(typedSelf, currentState.stateName)
     case Listen(actorRef) =>
       // TODO use DeathWatch to clean up list
       listeners.add(actorRef)

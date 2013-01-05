@@ -1,3 +1,4 @@
+package takka
 
 import takka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.event.Logging

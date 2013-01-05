@@ -17,14 +17,15 @@
 package takka.actor
 
 import akka.pattern.ask
-import takka.util.SerialVersionUID
+import takka.util._
 
 
 /**
  * An actor reference is an immutable reference to an actor.
  * Only message of type M, or a subtype of M, can be sent via actor reference of type ActorRef[M].
  */
-@SerialVersionUID("ActorRef-v-0-1")
+//@SerialVersion("ActorRef-v-0-1")
+@SerialVersionUID(13L)
 //trait ActorRef[-Msg : Manifest] { // compile error: traits cannot have type parameters with context bounds
 abstract class ActorRef[-M](implicit mt:Manifest[M]) extends Serializable {
   val untypedRef:akka.actor.ActorRef 
@@ -46,7 +47,7 @@ abstract class ActorRef[-M](implicit mt:Manifest[M]) extends Serializable {
   final def compareTo (other: ActorRef[_]): Int = {untypedRef.compareTo(other.untypedRef)}
   
   override def equals (that: Any):Boolean = that match {
-    case that:ActorRef[Any] => untypedRef.equals(that.untypedRef)
+    case that:ActorRef[_] => untypedRef.equals(that.untypedRef)
     case _ => false
   }
 
