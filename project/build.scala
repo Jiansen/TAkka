@@ -4,34 +4,26 @@
 
 import sbt._
 import Keys._
-import com.typesafe.sbteclipse.plugin.EclipsePlugin._
+//import com.typesafe.sbteclipse.plugin.EclipsePlugin._
 import sbt.Project.Initialize
 
 object TAkkaBuild extends Build {
   lazy val defaultSettings = Defaults.defaultSettings ++ Seq(
-    // Info
-    organization := "takka",
-    version      := "0.3.0",
-    scalaVersion := "2.10.0",
-
-    // Repositories
-    resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    
     // Compile options
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-optimize"),
-    javacOptions  ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
+    javacOptions  ++= Seq("-Xlint:unchecked", "-Xlint:deprecation")
     
     // sbtEclipse - see examples https://github.com/typesafehub/sbteclipse/blob/master/sbteclipse-plugin/src/sbt-test/sbteclipse/02-contents/project/Build.scala
-    EclipseKeys.createSrc := EclipseCreateSrc.ValueSet(EclipseCreateSrc.Unmanaged, EclipseCreateSrc.Source, EclipseCreateSrc.Resource),
-    EclipseKeys.withSource := true    
+//    EclipseKeys.createSrc := EclipseCreateSrc.ValueSet(EclipseCreateSrc.Unmanaged, EclipseCreateSrc.Source, EclipseCreateSrc.Resource),
+//    EclipseKeys.withSource := true    
   )
     
   // Projects
   lazy val root = Project(id = "takka",
                           base = file("."),
-                          settings = defaultSettings) aggregate(snapshot, examples,
-                                                                takkasockowebserver, takkasockoexamples,
-                                                                sockowebserver, sockoexamples)
+                          settings = defaultSettings) aggregate(snapshot, examples)//,
+//                                                                takkasockowebserver, takkasockoexamples,
+//	                                                                sockowebserver, sockoexamples)
 
   lazy val snapshot = Project(id = "snapshot",
                          base = file("snapshot"),
@@ -44,7 +36,7 @@ object TAkkaBuild extends Build {
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.examples
                          ))  dependsOn(snapshot)
-
+/*
   lazy val takkasockowebserver = Project(id = "takka-socko-webserver",
                          base = file("takka-socko-webserver"),
                          settings = defaultSettings ++ Seq(
@@ -69,7 +61,7 @@ object TAkkaBuild extends Build {
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.sockoexamples
                          )) dependsOn(sockowebserver)
-                         
+*/                         
   lazy val scalabilityBenchmark = Project(id = "scalabilityBenchmark",
                          base = file("scalabilityBenchmark"),
                          settings = defaultSettings ++ Seq(
@@ -104,7 +96,7 @@ object Dependencies {
 
   val snapshot = Seq(
     Dependency.akkaActor, Dependency.akkaKernel, Dependency.akkaRemote, Dependency.akkaSlf4j, Dependency.akkaTestKit,
-    Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalaSwing//, Dependency.scalacheck
+    Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalaSwing, Dependency.scalacheck
   )
   
   val examples = Seq(
@@ -152,19 +144,19 @@ object Dependencies {
 object Dependency {
   // Versions
   object V {
-    val Akka      = "2.0.4"
+    val Akka      = "2.1.0"
   }
   val scalaSwing = "org.scala-lang" % "scala-swing" % "2.10.0"
-  val akkaActor     = "com.typesafe.akka"   % "akka-actor"  	% V.Akka
-  val akkaKernel    = "com.typesafe.akka"   % "akka-kernel" 	% V.Akka
-  val akkaRemote    = "com.typesafe.akka"   % "akka-remote" 	% V.Akka
-  val akkaSlf4j     = "com.typesafe.akka"   % "akka-slf4j"  	% V.Akka
-  val akkaTestKit   = "com.typesafe.akka"   % "akka-testkit"	% V.Akka
+  val akkaActor     = "com.typesafe.akka"   % "akka-actor_2.10"  	% V.Akka
+  val akkaKernel    = "com.typesafe.akka"   % "akka-kernel_2.10" 	% V.Akka
+  val akkaRemote    = "com.typesafe.akka"   % "akka-remote_2.10" 	% V.Akka
+  val akkaSlf4j     = "com.typesafe.akka"   % "akka-slf4j_2.10"  	% V.Akka
+  val akkaTestKit   = "com.typesafe.akka"   % "akka-testkit_2.10"	% V.Akka
   val netty         = "io.netty"            % "netty"              % "3.5.2.Final"
   val logback       = "ch.qos.logback"      % "logback-classic"    % "1.0.3"         % "runtime"
   val junit         = "junit"               % "junit"              % "4.9"           % "test"
-//  val scalatest     = "org.scalatest"       %% "scalatest"         % "1.7.1"         % "test"
-//  val scalacheck    = "org.scalacheck"      %% "scalacheck"        % "1.9"
+  val scalatest     = "org.scalatest"       %% "scalatest"         % "1.9-2.10.0-M5-B2" % "test"
+  val scalacheck    = "org.scalacheck"      %% "scalacheck"        % "1.10.0" % "test"
 
   val awsJava       = "com.amazonaws" % "aws-java-sdk" % "1.3.9"
 }

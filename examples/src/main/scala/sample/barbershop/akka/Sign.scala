@@ -21,7 +21,7 @@ import akka.event.Logging // new import: for logging
 class Sign extends Actor with PostStart {
   val log = Logging(context.system, this) //new val: for logging
 
-  protected def receive = signReceive(Queue[ActorRef]())
+  def receive = signReceive(Queue[ActorRef]())
 
   def signReceive(sleeping: Queue[ActorRef]): Receive = {
 

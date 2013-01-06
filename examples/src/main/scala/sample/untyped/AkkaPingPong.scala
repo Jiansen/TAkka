@@ -62,6 +62,6 @@ object AkkaPingPong extends App{
 //  val ping = new Ping(100000, pong)
   
   AkkaTimer.start = java.util.Calendar.getInstance().getTime().getTime()
-  pong.tell((Ping, ping))
+  pong ! (Ping, ping)
   //pong ! (Ping, ping)
 }

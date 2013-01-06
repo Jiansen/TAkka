@@ -15,7 +15,7 @@ any "ping" messages it receives. In case of a timeout, the process exits.
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
 import akka.actor.ReceiveTimeout
-import akka.util.duration._
+import scala.concurrent.duration._
 //import scala.concurrent.duration._
 
 case class Wheel(n:Int)

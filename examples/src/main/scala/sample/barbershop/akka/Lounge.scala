@@ -10,7 +10,7 @@ case class Lounge(count: Int) extends Actor with PostStart {
 //  self.id = "Lounge"
   val log = Logging(context.system, this) //new val: for logging
  
-  protected def receive = chairsReceive(LoungeState(Queue[OccupiedChair](), Range(0, count).foldLeft(List[Int]())(_ :+ _)))
+  def receive = chairsReceive(LoungeState(Queue[OccupiedChair](), Range(0, count).foldLeft(List[Int]())(_ :+ _)))
 
   def chairsReceive(state: LoungeState): Receive = {
 

@@ -15,7 +15,7 @@ any "ping" messages it receives. In case of a timeout, the process exits.
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.actor.ReceiveTimeout
 import akka.remote._
-import akka.util.duration._
+import scala.concurrent.duration._
 import util.BenchTimer
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._

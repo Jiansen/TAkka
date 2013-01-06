@@ -15,7 +15,9 @@
 */
 package takka.actor
 
-import akka.util.Duration
+import scala.concurrent.duration.Duration
+import scala.reflect.runtime.universe._
+import language.implicitConversions
 
 /**
  * The actor context - the internal view of the actor cell from the actor itself.
@@ -39,27 +41,23 @@ import akka.util.Duration
  * Where no name is given explicitly, one will be automatically generated.
  */
 trait ActorContext[M] {
-  implicit private val m:Manifest[M] = manifest[M]
-  implicit var mt:Manifest[_] = m
+  implicit private val m:TypeTag[M] = typeTag[M]
+  implicit var mt : Type = typeOf[M]
 
   val untyped_context:akka.actor.ActorContext
 
   val props:Props[M]
   
-  def actorOf[Msg](props:Props[Msg], name:String)(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
+  def actorOf[Msg](props:Props[Msg], name:String)(implicit mt:TypeTag[Msg]):ActorRef[Msg] = {
     new ActorRef[Msg] { val untypedRef = untyped_context.actorOf(props.props, name) }
   }
   
-  def actorOf[Msg](props:Props[Msg])(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
+  def actorOf[Msg](props:Props[Msg])(implicit mt:TypeTag[Msg]):ActorRef[Msg] = {
     new ActorRef[Msg] { val untypedRef = untyped_context.actorOf(props.props) }
   }
   
-  def receiveTimeout : Option[Duration] = {
+  def receiveTimeout : Duration = {
     untyped_context.receiveTimeout
-  }
-  
-  def resetReceiveTimeout (): Unit = {
-    untyped_context.resetReceiveTimeout()
   }
   
   lazy val typedSelf:ActorRef[M] = new ActorRef[M]{
@@ -113,7 +111,7 @@ trait ActorContext[M] {
     }
   }
   
-  def remoteActorOf[Msg](props:Props[Msg], name:String)(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
+  def remoteActorOf[Msg](props:Props[Msg], name:String)(implicit mt:TypeTag[Msg]):ActorRef[Msg] = {
     val actor = actorOf[Msg](props:Props[Msg], name:String)
     val system = this.system
     new ActorRef[Msg] {
@@ -125,14 +123,15 @@ trait ActorContext[M] {
     }
   }
   
-  def become[SupM >: M](behavior: SupM => Unit, possibleHamfulHandler:akka.actor.PossiblyHarmful => Unit)(implicit smt:Manifest[SupM]):ActorRef[SupM] = {
+  def become[SupM >: M](behavior: SupM => Unit, possibleHamfulHandler:akka.actor.PossiblyHarmful => Unit)(implicit smtTag:TypeTag[SupM]):ActorRef[SupM] = {
 //  def become[SupM, M <: SupM](behavior: SupM => Unit, possibleHamfulHandler:akka.actor.PossiblyHarmful => Unit):Unit = {
-    if (!(smt >:> mt))
+    val smt = typeOf[SupM]
+    if (!(smt <:< mt))
       throw BehaviorUpdateException(smt, mt)
     mt = smt
     untyped_context.become({
+      case x:akka.actor.PossiblyHarmful => possibleHamfulHandler(x)            
       case x:SupM => behavior(x)
-      case x:akka.actor.PossiblyHarmful => possibleHamfulHandler(x)
     })
     new ActorRef[SupM] {
       val untypedRef = untyped_context.self
@@ -140,4 +139,4 @@ trait ActorContext[M] {
   }
 }
 
-case class BehaviorUpdateException(smt:Manifest[_], mt:Manifest[_]) extends Exception(smt + "must be a supertype of "+mt+".")
+case class BehaviorUpdateException(smt:Type, mt:Type) extends Exception(smt + "must be a supertype of "+mt+".")

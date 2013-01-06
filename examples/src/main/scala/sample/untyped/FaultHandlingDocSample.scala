@@ -2,8 +2,7 @@ package sample.untyped
 
 import akka.actor._
 import akka.actor.SupervisorStrategy._
-import akka.util.duration._
-import akka.util.Duration
+import scala.concurrent.duration._
 import akka.util.Timeout
 import akka.event.LoggingReceive
 import akka.pattern.{ ask, pipe }
@@ -81,7 +80,8 @@ class Worker extends Actor with ActorLogging {
   var progressListener: Option[ActorRef] = None
   val counterService = context.actorOf(Props[CounterService], name = "counter")
   val totalCount = 51
- 
+  import context.dispatcher // Use this Actors' Dispatcher as ExecutionContext
+  
   def receive = LoggingReceive {
     case Start if progressListener.isEmpty ⇒
       progressListener = Some(sender)
@@ -130,6 +130,8 @@ class CounterService extends Actor {
   var backlog = IndexedSeq.empty[(ActorRef, Any)]
   val MaxBacklog = 10000
  
+  import context.dispatcher // Use this Actors' Dispatcher as ExecutionContext
+  
   override def preStart() {
     initStorage()
   }

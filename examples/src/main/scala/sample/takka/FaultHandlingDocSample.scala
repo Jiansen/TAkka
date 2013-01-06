@@ -4,8 +4,7 @@ import akka.actor.ActorLogging
 
 import takka.actor._
 import akka.actor.SupervisorStrategy._
-import akka.util.duration._
-import akka.util.Duration
+import scala.concurrent.duration._
 import akka.util.Timeout
 import akka.event.LoggingReceive
 import akka.pattern.ask
@@ -31,7 +30,7 @@ object FaultHandlingDocSample extends App {
   // start the work and listen on progress
   // note that the listener is used as sender of the tell,
   // i.e. it will receive replies from the worker
-  worker.tell(Start(listener))
+  worker ! Start(listener)
 }
  
 /**
@@ -78,7 +77,8 @@ class Worker extends Actor[WorkerMessage] with ActorLogging {
   import Worker._
   import CounterService._
   implicit val askTimeout = Timeout(5 seconds)
- 
+  import context.dispatcher // Use this Actors' Dispatcher as ExecutionContext
+  
   // Stop the CounterService child if it throws ServiceUnavailable
   override val supervisorStrategy = akka.actor.OneForOneStrategy() {
     case _: CounterService.ServiceUnavailable ⇒ akka.actor.SupervisorStrategy.Stop
@@ -151,6 +151,8 @@ class CounterService extends Actor[CounterServiceMessage] {
   var backlog = IndexedSeq.empty[CounterMessage]// recipiant is part of the message
   val MaxBacklog = 10000
  
+  import context.dispatcher // Use this Actors' Dispatcher as ExecutionContext
+  
   override def preStart() {
     initStorage()
   }

@@ -13,7 +13,7 @@ case class Customer(id: String, barbershop: Barbershop) extends Actor {
     barbershop.line ! RequestBarber
   }
 
-  protected def receive = customerReceive(CustomerStats())
+  def receive = customerReceive(CustomerStats())
 
   def customerReceive(stats: CustomerStats): Receive = {
 

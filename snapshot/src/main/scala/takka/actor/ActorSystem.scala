@@ -20,11 +20,14 @@ import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 import akka.actor.{ActorPath, Extension, ExtensionId}
 import akka.event.LoggingAdapter
-import akka.util.Duration
+import scala.concurrent.duration.{FiniteDuration, Duration}
 import akka.pattern._
 import akka.actor.Cancellable
-
+import scala.language.existentials
+import scala.reflect.runtime.universe.typeTag
+import scala.concurrent.{ ExecutionContext, Promise }
 import takka.nameserver.{NameServer, TSymbol}
+import scala.Symbol
 
 object ActorSystem {
   def apply():ActorSystem = new ActorSystem {
@@ -62,6 +65,8 @@ object ActorSystem {
 abstract class ActorSystem {
   val system:akka.actor.ActorSystem
 
+  private implicit val executionContext = system.dispatcher
+  
 //  system.actorOf(akka.actor.Props[ActorTypeChecker])
   // Abstract Value Members
   def / (name: Iterable[String]): ActorPath = {
@@ -78,7 +83,7 @@ abstract class ActorSystem {
   def actorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg] = {
     val actor = new ActorRef[Msg] { val untypedRef = system.actorOf(props.props) }
     
-    NameServer.set(TSymbol[ActorRef[Msg]](Symbol(actor.path.toString())), actor)
+    NameServer.set(TSymbol[ActorRef[Msg]](scala.Symbol(actor.path.toString())), actor)
     
     actor
   }
@@ -133,30 +138,49 @@ abstract class ActorSystem {
   def scheduler : takka.actor.Scheduler = new takka.actor.Scheduler {
     val akkaScheduler = system.scheduler
     
-    def schedule[M](initialDelay: Duration, frequency: Duration, receiver: ActorRef[M], message: M): Cancellable = {
-      akkaScheduler.schedule(initialDelay, frequency, receiver.untypedRef, message)
+    def schedule[M](
+      initialDelay: FiniteDuration,
+      interval: FiniteDuration,
+      receiver: ActorRef[M],
+      message: M)(implicit executor: ExecutionContext, sender: ActorRef[_] = Actor.noSender): Cancellable = {
+      akkaScheduler.schedule(initialDelay, interval, receiver.untypedRef, message)
+    }
+    
+    def schedule(
+      initialDelay: FiniteDuration,
+      interval: FiniteDuration)(f: ⇒ Unit)(
+      implicit executor: ExecutionContext): Cancellable = {
+      akkaScheduler.schedule(initialDelay, interval)(f)(executor)
     }
 
-    def schedule(initialDelay: Duration, frequency: Duration)(f: ⇒ Unit): Cancellable = {
-      akkaScheduler.schedule(initialDelay, frequency)(f)
+    def schedule(
+      initialDelay: FiniteDuration,
+      interval: FiniteDuration,
+      runnable: Runnable)(implicit executor: ExecutionContext): Cancellable = {
+      akkaScheduler.schedule(initialDelay, interval, runnable)(executor)
     }
-
-    def schedule(initialDelay: Duration, frequency: Duration, runnable: Runnable): Cancellable = {
-      akkaScheduler.schedule(initialDelay, frequency, runnable)
+    
+    def scheduleOnce(
+      delay: FiniteDuration,
+      runnable: Runnable)(implicit executor: ExecutionContext): Cancellable = {
+      akkaScheduler.scheduleOnce(delay, runnable)(executor) 
+      }
+    
+    def scheduleOnce[M](
+      delay: FiniteDuration,
+      receiver: ActorRef[M],
+      message: M)(implicit executor: ExecutionContext): Cancellable = {
+      akkaScheduler.scheduleOnce(delay, receiver.untypedRef, message)(executor)
     }
-
-    def scheduleOnce(delay: Duration, runnable: Runnable): Cancellable = {
-      akkaScheduler.scheduleOnce(delay, runnable)
-    }
-
-    def scheduleOnce[M](delay: Duration, receiver: ActorRef[M], message: M): Cancellable = {
-      akkaScheduler.scheduleOnce(delay, receiver.untypedRef, message)
-    }
-
-    def scheduleOnce(delay: Duration)(f: ⇒ Unit): Cancellable = {
+    
+    def scheduleOnce(
+      delay: FiniteDuration)(f: ⇒ Unit)(
+      implicit executor: ExecutionContext): Cancellable = {
       akkaScheduler.scheduleOnce(delay)(f)
     }
   }
+  
+  
   
   def settings : akka.actor.ActorSystem.Settings = {system.settings}
   
@@ -204,7 +228,7 @@ abstract class ActorSystem {
                               +actorPath.address.host.get+":"
                               +actorPath.address.port.get+"/user/ActorTypeServer")
       implicit val timeout = new akka.util.Timeout(10000) // 10 seconds
-      val checkResult = remoteChecker ? Check(actorPath, manifest[M]) 
+      val checkResult = remoteChecker ? Check(actorPath, typeTag[M]) 
       var result:ActorRef[M] = null
       checkResult onSuccess {
         case Compatible => 
@@ -287,15 +311,15 @@ abstract class ActorSystem {
   
   
 //  private sealed trait ActorTypeCheckerMsg
-  private case class Check(path:akka.actor.ActorPath, manifest:Manifest[_]) 
+  private case class Check(path:akka.actor.ActorPath, t:scala.reflect.runtime.universe.TypeTag[_]) 
   private case object Compatible
   private case object NonCompatible // type error or isDeadLetter
 
   
   private class ActorTypeChecker extends akka.actor.Actor{
     def receive = {
-      case Check(path, manifest) =>
-        NameServer.get(TSymbol(Symbol(path.toString))(manifest) ) match {
+      case Check(path, t) =>
+        NameServer.get(TSymbol(Symbol(path.toString))(t) ) match {
           case None => sender ! NonCompatible // not registered actor or incompatible type
           case Some(_) => sender ! Compatible
         }
@@ -304,43 +328,3 @@ abstract class ActorSystem {
 }
 
 case class NotRemoteSystemException(system:ActorSystem) extends Exception("ActorSystem: "+system+" does not support remoting")
-
-
-
-
-
-
-
-/*
-abstract class ExtendedActorSystem extends ActorSystem {
-
-  /**
-   * The ActorRefProvider is the only entity which creates all actor references within this actor system.
-   */
-  def provider: akka.actor.ActorRefProvider
-
-  /**
-   * The top-level supervisor of all actors created using system.actorOf(...).
-   */
-//  def guardian: akka.actor.InternalActorRef
-
-  /**
-   * The top-level supervisor of all system-internal services like logging.
-   */
-//  def systemGuardian: akka.actor.InternalActorRef
-
-  /**
-   * Implementation of the mechanism which is used for watch()/unwatch().
-   */
-//  def deathWatch: akka.actor.DeathWatch
-
-  /**
-   * ClassLoader wrapper which is used for reflective accesses internally. This is set
-   * to use the context class loader, if one is set, or the class loader which
-   * loaded the ActorSystem implementation. The context class loader is also
-   * set on all threads created by the ActorSystem, if one was set during
-   * creation.
-   */
-  def dynamicAccess: akka.actor.DynamicAccess
-}
-*/

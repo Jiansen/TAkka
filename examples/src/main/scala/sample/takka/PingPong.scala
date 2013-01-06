@@ -22,7 +22,7 @@ class Ping(count: Int, pong: ActorRef[(PongMsg, ActorRef[PingMsg])]) extends Act
 //      if (pingsLeft % 100 == 0) {}
         // Console.println("Ping: pong")
       if (pingsLeft > 0) {
-        pong.tell((Ping, typedSelf))
+        pong ! (Ping, typedSelf)
         pingsLeft -= 1
       } else {
         Console.println("Ping: stop")
@@ -52,7 +52,7 @@ object PingPong extends App{
   val ping = system.actorOf[PingMsg](Props(new Ping(100000, pong)), "ping")
 
   MyTimer.start = java.util.Calendar.getInstance().getTime().getTime()
-  pong.tell((Ping, ping))
+  pong ! (Ping, ping)
 }
 
 

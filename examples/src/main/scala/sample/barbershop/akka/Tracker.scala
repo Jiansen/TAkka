@@ -17,7 +17,7 @@ import collection.immutable.Queue
 import akka.event.Logging // new import: for logging
 
 case class Tracker(totalCustomers: Int, numberOfChairs: Int, maxLine: Int) extends Actor with PostStart {
-  protected def receive = trackerReceive(TrackerState(numberOfChairs, maxLine))
+  def receive = trackerReceive(TrackerState(numberOfChairs, maxLine))
 
   val log = Logging(context.system, this) //new val: for logging
   

@@ -87,7 +87,8 @@ trait Actor[M] extends akka.actor.Actor{
    * with the actor logic.
    */
   protected def typedReceive:PartialFunction[M, Unit]
-  protected def receive = {
+  
+  def receive = {
     case hmsg:akka.actor.PossiblyHarmful => hmsg match {
       case akka.actor.ReceiveTimeout => systemMessageHandler(ReceiveTimeout)   
     } 
@@ -145,4 +146,28 @@ trait Actor[M] extends akka.actor.Actor{
   def systemMessageHandler:SystemMessage => Unit = {
     case _ => 
   }
+  
+  
+}
+
+
+object Actor {
+  final val noSender: ActorRef[_] = null
+}
+
+object Status {
+  sealed trait Status extends Serializable
+
+  /**
+   * This class/message type is preferably used to indicate success of some operation performed.
+   */
+  @SerialVersionUID(1L)
+  case class Success(status: AnyRef) extends Status
+
+  /**
+   * This class/message type is preferably used to indicate failure of some operation performed.
+   * As an example, it is used to signal failure with AskSupport is used (ask/?).
+   */
+  @SerialVersionUID(1L)
+  case class Failure(cause: Throwable) extends Status
 }

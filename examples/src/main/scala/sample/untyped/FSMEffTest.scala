@@ -2,8 +2,7 @@ package sample.untyped
 
 import akka.actor._
 import akka.actor.FSM._
-import akka.util.Duration
-import akka.util.duration._
+import scala.concurrent.duration._
 
 sealed trait FSMState
 case object A1 extends FSMState

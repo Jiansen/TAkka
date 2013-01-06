@@ -15,8 +15,7 @@ any "ping" messages it receives. In case of a timeout, the process exits.
 import takka.actor.{Actor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
 import takka.actor.ReceiveTimeout
-import akka.util.duration._
-//import scala.concurrent.duration._
+import scala.concurrent.duration._
 
 sealed trait MasterMsg
 sealed trait WheelMsg

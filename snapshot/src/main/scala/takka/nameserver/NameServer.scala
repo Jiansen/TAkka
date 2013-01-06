@@ -1,5 +1,8 @@
 package takka.nameserver
 
+import scala.reflect.runtime.universe.{TypeTag}
+import scala.language.existentials
+
 /**
   * A local typed name server.  
   * 
@@ -43,7 +46,7 @@ object NameServer {
    * the name has been used by the name server.
    */
   @throws(classOf[NamesHasBeenRegisteredException])
-  def set[T:Manifest](name:TSymbol[T], value:T):Unit = synchronized {
+  def set[T:TypeTag](name:TSymbol[T], value:T):Unit = synchronized {
     val tValue = TValue[T](value)
     if (nameMap.contains(name)){
       throw new NamesHasBeenRegisteredException(name)
@@ -59,7 +62,7 @@ object NameServer {
    * Otherwise, do noting.
    */
   def unset[T](name:TSymbol[T]):Unit = synchronized {
-    if (nameMap.contains(name)  && name.t >:> nameMap(name).t ){// intention type is a super type of registered type
+    if (nameMap.contains(name)  && nameMap(name).t <:< name.t  ){// intention type is a super type of registered type
       nameMap -= name
     }else{ // nameMap.contains(name) && (nameMap(name).t <:< name.t) && (!(nameMap(name).t =:= name.t))
       //DO nothing
@@ -73,7 +76,7 @@ object NameServer {
     if (!nameMap.contains(name)) {return None}
     else { 
       val tValue = nameMap(name)
-      if (name.t >:> tValue.t) {
+      if (tValue.t <:< name.t) {
         return Some(tValue.value.asInstanceOf[T])
       }else{
         return None

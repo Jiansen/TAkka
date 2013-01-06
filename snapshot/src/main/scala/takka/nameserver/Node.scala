@@ -5,9 +5,8 @@ import util._
 import akka.actor.{ ActorRef, Props, Actor, ActorSystem }
 import com.typesafe.config.ConfigFactory
 import akka.pattern.ask // for synchronous ask operator (?)
-import akka.dispatch.Await
 import akka.util.Timeout
-import akka.util.duration._
+import scala.concurrent.duration.Duration
 
 /*
  * A node in an distributed system

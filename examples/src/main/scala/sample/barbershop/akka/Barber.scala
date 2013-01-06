@@ -25,7 +25,7 @@ case class Barber(name: String, cutTime: () => Long) extends Actor with PostStar
   }
 
 
-  protected def receive = {
+  def receive = {
 
     case RequestBarber(customer) => cut(customer)
     case RequestBarber => // cut(self.sender.get)

@@ -5,9 +5,9 @@
 
 
 import takka.actor._
-import akka.dispatch.{ Future, Promise }
-import akka.util.{ Timeout, Duration }
-
+import scala.concurrent.{ ExecutionContext, Promise, Future }
+import akka.util.Timeout
+import scala.concurrent.duration.Duration
 /**
  * == Commonly Used Patterns With Akka ==
  *
