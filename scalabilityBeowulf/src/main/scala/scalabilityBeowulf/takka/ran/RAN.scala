@@ -17,6 +17,7 @@ import akka.remote._
 import util.BenchTimer
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
+import language.postfixOps
 
 sealed trait RANTestMessage
 case class RANTestMsg(n:Int) extends RANTestMessage// number of processes

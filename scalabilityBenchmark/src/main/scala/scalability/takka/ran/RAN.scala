@@ -13,6 +13,7 @@ half to the parent process.
  */
 import takka.actor.{Actor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
+import language.postfixOps
 
 sealed trait TestorMsg
 

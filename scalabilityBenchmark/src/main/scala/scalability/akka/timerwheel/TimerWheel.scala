@@ -16,7 +16,7 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
 import akka.actor.ReceiveTimeout
 import scala.concurrent.duration._
-//import scala.concurrent.duration._
+import language.postfixOps
 
 case class Wheel(n:Int)
 case class NoWheel(n:Int)

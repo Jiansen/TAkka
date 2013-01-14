@@ -4,7 +4,7 @@
 
 import sbt._
 import Keys._
-// import com.typesafe.sbteclipse.plugin.EclipsePlugin._
+import com.typesafe.sbteclipse.plugin.EclipsePlugin._
 import sbt.Project.Initialize
 
 object TAkkaBuild extends Build {
@@ -15,17 +15,19 @@ object TAkkaBuild extends Build {
 
     // Compile options
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-optimize"),
-    javacOptions  ++= Seq("-Xlint:unchecked", "-Xlint:deprecation")
+    javacOptions  ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
     
     // sbtEclipse - see examples https://github.com/typesafehub/sbteclipse/blob/master/sbteclipse-plugin/src/sbt-test/sbteclipse/02-contents/project/Build.scala
-//    EclipseKeys.createSrc := EclipseCreateSrc.ValueSet(EclipseCreateSrc.Unmanaged, EclipseCreateSrc.Source, EclipseCreateSrc.Resource),
-//    EclipseKeys.withSource := true    
+    retrieveManaged := true,
+//    EclipseKeys.createSrc := EclipseCreateSrc.ValueSet(EclipseCreateSrc.Managed, EclipseCreateSrc.Resource),
+    EclipseKeys.withSource := true    
   )
     
   // Projects
   lazy val root = Project(id = "takka",
                           base = file("."),
-                          settings = defaultSettings) aggregate(snapshot) //, examples)//,
+                          settings = defaultSettings) aggregate(snapshot, examples,
+                                          scalabilityBenchmark, scalabilityBeowulf)
 //                                                                takkasockowebserver, takkasockoexamples,
 //	                                                                sockowebserver, sockoexamples)
 

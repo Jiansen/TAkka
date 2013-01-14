@@ -7,7 +7,8 @@ import akka.util.Timeout
 import akka.event.LoggingReceive
 import akka.pattern.{ ask, pipe }
 import com.typesafe.config.ConfigFactory
- 
+import language.postfixOps
+
 /**
  * Runs the sample
  */
@@ -41,14 +42,14 @@ class Listener extends Actor with ActorLogging {
   context.setReceiveTimeout(15 seconds)
  
   def receive = {
-    case Progress(percent) ⇒
+    case Progress(percent) =>
       log.info("Current progress: {} %", percent)
       if (percent >= 100.0) {
         log.info("That's all, shutting down")
         context.system.shutdown()
       }
  
-    case ReceiveTimeout ⇒
+    case ReceiveTimeout =>
       // No progress within 15 seconds, ServiceUnavailable
       log.error("Shutting down due to unavailable service")
       context.system.shutdown()
@@ -73,7 +74,7 @@ class Worker extends Actor with ActorLogging {
  
   // Stop the CounterService child if it throws ServiceUnavailable
   override val supervisorStrategy = OneForOneStrategy() {
-    case _: CounterService.ServiceUnavailable ⇒ akka.actor.SupervisorStrategy.Stop
+    case _: CounterService.ServiceUnavailable => akka.actor.SupervisorStrategy.Stop
   }
  
   // The sender of the initial Start message will continuously be notified about progress
@@ -83,18 +84,18 @@ class Worker extends Actor with ActorLogging {
   import context.dispatcher // Use this Actors' Dispatcher as ExecutionContext
   
   def receive = LoggingReceive {
-    case Start if progressListener.isEmpty ⇒
+    case Start if progressListener.isEmpty =>
       progressListener = Some(sender)
       context.system.scheduler.schedule(Duration.Zero, 1 second, self, Do)
  
-    case Do ⇒
+    case Do =>
       counterService ! Increment(1)
       counterService ! Increment(1)
       counterService ! Increment(1)
  
       // Send current progress to the initial sender
       counterService ? GetCurrentCount map {
-        case CurrentCount(_, count) ⇒ Progress(100.0 * count / totalCount)
+        case CurrentCount(_, count) => Progress(100.0 * count / totalCount)
       } pipeTo progressListener.get
   }
 }
@@ -121,7 +122,7 @@ class CounterService extends Actor {
   // Restart the storage child when StorageException is thrown.
   // After 3 restarts within 5 seconds it will be stopped.
   override val supervisorStrategy = OneForOneStrategy(maxNrOfRetries = 3, withinTimeRange = 5 seconds) {
-    case _: Storage.StorageException ⇒ Restart
+    case _: Storage.StorageException => Restart
   }
  
   val key = self.path.name
@@ -152,21 +153,21 @@ class CounterService extends Actor {
  
   def receive = LoggingReceive {
  
-    case Entry(k, v) if k == key && counter == None ⇒
+    case Entry(k, v) if k == key && counter == None =>
       // Reply from Storage of the initial value, now we can create the Counter
       val c = context.actorOf(Props(new Counter(key, v)))
       counter = Some(c)
       // Tell the counter to use current storage
       c ! UseStorage(storage)
       // and send the buffered backlog to the counter
-      for ((replyTo, msg) ← backlog) c.tell(msg, sender = replyTo)
+      for ((replyTo, msg) <- backlog) c.tell(msg, sender = replyTo)
       backlog = IndexedSeq.empty
  
-    case msg @ Increment(n)    ⇒ forwardOrPlaceInBacklog(msg)
+    case msg @ Increment(n)    => forwardOrPlaceInBacklog(msg)
  
-    case msg @ GetCurrentCount ⇒ forwardOrPlaceInBacklog(msg)
+    case msg @ GetCurrentCount => forwardOrPlaceInBacklog(msg)
  
-    case Terminated(actorRef) if Some(actorRef) == storage ⇒
+    case Terminated(actorRef) if Some(actorRef) == storage =>
       // After 3 restarts the storage child is stopped.
       // We receive Terminated because we watch the child, see initStorage.
       storage = None
@@ -175,7 +176,7 @@ class CounterService extends Actor {
       // Try to re-establish storage after while
       context.system.scheduler.scheduleOnce(10 seconds, self, Reconnect)
  
-    case Reconnect ⇒
+    case Reconnect =>
       // Re-establish storage after the scheduled delay
       initStorage()
       
@@ -187,8 +188,8 @@ class CounterService extends Actor {
     // Before that we place the messages in a backlog, to be sent to the counter when
     // it is initialized.
     counter match {
-      case Some(c) ⇒ c forward msg
-      case None ⇒
+      case Some(c) => c forward msg
+      case None =>
         if (backlog.size >= MaxBacklog)
           throw new ServiceUnavailable("CounterService not available, lack of initial value")
         backlog = backlog :+ (sender, msg)
@@ -215,15 +216,15 @@ class Counter(key: String, initialValue: Long) extends Actor {
   var storage: Option[ActorRef] = None
  
   def receive = LoggingReceive {
-    case UseStorage(s) ⇒
+    case UseStorage(s) =>
       storage = s
       storeCount()
  
-    case Increment(n) ⇒
+    case Increment(n) =>
       count += n
       storeCount()
  
-    case GetCurrentCount ⇒
+    case GetCurrentCount =>
       sender ! CurrentCount(key, count)
  
   }
@@ -254,8 +255,8 @@ class Storage extends Actor {
   val db = DummyDB
  
   def receive = LoggingReceive {
-    case Store(Entry(key, count)) ⇒ db.save(key, count)
-    case Get(key)                 ⇒ sender ! Entry(key, db.load(key).getOrElse(0L))
+    case Store(Entry(key, count)) => db.save(key, count)
+    case Get(key)                 => sender ! Entry(key, db.load(key).getOrElse(0L))
   }
 }
  

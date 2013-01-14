@@ -9,6 +9,7 @@ import akka.util.Timeout
 import akka.event.LoggingReceive
 import akka.pattern.ask
 import com.typesafe.config.ConfigFactory
+import language.postfixOps
  
 /**
  * Runs the sample
@@ -43,7 +44,7 @@ class Listener extends Actor[ListenerMessage] with ActorLogging {
   context.setReceiveTimeout(15 seconds)
  
   def typedReceive = {
-    case Progress(percent) ⇒
+    case Progress(percent) =>
       log.info("Current progress: {} %", percent)
       if (percent >= 100.0) {
         log.info("That's all, shutting down")
@@ -52,7 +53,7 @@ class Listener extends Actor[ListenerMessage] with ActorLogging {
   }
   
   override def systemMessageHandler = {
-    case ReceiveTimeout ⇒
+    case ReceiveTimeout =>
       // No progress within 15 seconds, ServiceUnavailable
       log.error("Shutting down due to unavailable service")
       context.system.shutdown()
@@ -81,7 +82,7 @@ class Worker extends Actor[WorkerMessage] with ActorLogging {
   
   // Stop the CounterService child if it throws ServiceUnavailable
   override val supervisorStrategy = akka.actor.OneForOneStrategy() {
-    case _: CounterService.ServiceUnavailable ⇒ akka.actor.SupervisorStrategy.Stop
+    case _: CounterService.ServiceUnavailable => akka.actor.SupervisorStrategy.Stop
   }
  
   // The sender of the initial Start message will continuously be notified about progress
@@ -90,11 +91,11 @@ class Worker extends Actor[WorkerMessage] with ActorLogging {
   val totalCount = 51
  
   def typedReceive = {
-    case Start(listerner) if progressListener.isEmpty ⇒
+    case Start(listerner) if progressListener.isEmpty =>
       progressListener = Some(listerner)
       context.system.scheduler.schedule(Duration.Zero, 1 second, self, Do)
  
-    case Do ⇒
+    case Do =>
       counterService ! WorkerIncrement(1)
       counterService ! WorkerIncrement(1)
       counterService ! WorkerIncrement(1)
@@ -102,13 +103,13 @@ class Worker extends Actor[WorkerMessage] with ActorLogging {
       // Send current progress to the initial sender
       /*
       counterService ? GetCurrentCount map {
-        case CurrentCount(_, count) ⇒ Progress(100.0 * count / totalCount)
+        case CurrentCount(_, count) ��� Progress(100.0 * count / totalCount)
       } pipeTo progressListener.get
       */
       
       /*
       pattern.Patterns.ask(counterService, WorkerGetCurrentCount(typedSelf), 10000) map {
-        case CurrentCount(_, count) ⇒ Progress(100.0 * count / totalCount)
+        case CurrentCount(_, count) ��� Progress(100.0 * count / totalCount)
       } pipeTo progressListener.get
       */
       
@@ -142,7 +143,7 @@ class CounterService extends Actor[CounterServiceMessage] {
   // Restart the storage child when StorageException is thrown.
   // After 3 restarts within 5 seconds it will be stopped.
   override val supervisorStrategy = akka.actor.OneForOneStrategy(maxNrOfRetries = 3, withinTimeRange = 5 seconds) {
-    case _: Storage.StorageException ⇒ Restart
+    case _: Storage.StorageException => Restart
   }
  
   val key = self.path.name
@@ -173,7 +174,7 @@ class CounterService extends Actor[CounterServiceMessage] {
   }
  
   def typedReceive = LoggingReceive { 
-    case Entry(k, v) if k == key && counter == None ⇒
+    case Entry(k, v) if k == key && counter == None =>
       // Reply from Storage of the initial value, now we can create the Counter
       val c = typedContext.actorOf(Props[CounterMessage](new Counter(key, v)))
       counter = Some(c)
@@ -186,18 +187,18 @@ class CounterService extends Actor[CounterServiceMessage] {
       for (msg <- backlog) { c ! msg }      
       backlog = IndexedSeq.empty
  
-    case WorkerIncrement(n)    ⇒ forwardOrPlaceInBacklog(CounterServiceIncrement(n)) // worker is discarded
+    case WorkerIncrement(n) => forwardOrPlaceInBacklog(CounterServiceIncrement(n)) // worker is discarded
  
-    case WorkerGetCurrentCount(worker) ⇒ forwardOrPlaceInBacklog(CounterServiceGetCurrentCount(worker))
+    case WorkerGetCurrentCount(worker) => forwardOrPlaceInBacklog(CounterServiceGetCurrentCount(worker))
  
-    case Reconnect ⇒
+    case Reconnect =>
       // Re-establish storage after the scheduled delay
       initStorage()
 //    case _ => 
   }
   /*
   override def possiblyHarmfulHandler = {
-    case akka.actor.Terminated(actorRef) if actorRef == storage.get.untypedRef ⇒
+    case akka.actor.Terminated(actorRef) if actorRef == storage.get.untypedRef ���
       // After 3 restarts the storage child is stopped.
       // We receive Terminated because we watch the child, see initStorage.
       storage = None
@@ -213,8 +214,8 @@ class CounterService extends Actor[CounterServiceMessage] {
     // Before that we place the messages in a backlog, to be sent to the counter when
     // it is initialized.
     counter match {
-      case Some(c) ⇒ c ! msg
-      case None ⇒
+      case Some(c) => c ! msg
+      case None =>
         if (backlog.size >= MaxBacklog)
           throw new ServiceUnavailable("CounterService not available, lack of initial value")
         backlog = backlog :+ msg
@@ -245,15 +246,15 @@ class Counter(key: String, initialValue: Long) extends Actor[CounterMessage] {
   var storage: Option[ActorRef[StorageMessage]] = None
  
   def typedReceive = {
-    case UseStorage(s) ⇒
+    case UseStorage(s) =>
       storage = s
       storeCount()
  
-    case CounterServiceIncrement(n) ⇒
+    case CounterServiceIncrement(n) =>
       count += n
       storeCount()
  
-    case CounterServiceGetCurrentCount(worker) ⇒
+    case CounterServiceGetCurrentCount(worker) =>
       worker ! CurrentCount(key, count)
  
   }
@@ -285,8 +286,8 @@ class Storage extends Actor[StorageMessage] {
   val db = DummyDB
  
   def typedReceive = LoggingReceive {
-    case Store(Entry(key, count)) ⇒ db.save(key, count)
-    case Get(key, counterSeervice) ⇒ counterSeervice ! Entry(key, db.load(key).getOrElse(0L))
+    case Store(Entry(key, count)) => db.save(key, count)
+    case Get(key, counterSeervice) => counterSeervice ! Entry(key, db.load(key).getOrElse(0L))
   }
 }
  

@@ -16,6 +16,7 @@ message contains a list of integers between 1 and L.
  */
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
+import language.postfixOps
 
 case class Push(p:Int, n:Int, l:Int)
 case class RecvDone(recv:ActorRef)

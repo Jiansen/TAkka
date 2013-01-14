@@ -84,7 +84,7 @@ class GroupActor(master:ActorRef[MasterMsg], loops:Int) extends Actor[GroupMsg] 
   
   def typedReceive = {
     case GroupGO(master) =>
-      for (s<-ss) spawn {
+      for (s<-ss) {
         s ! SenderGo(gMaster)
       }
     case ReceiverDone(r) =>

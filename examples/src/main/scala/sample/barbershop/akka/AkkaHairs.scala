@@ -17,6 +17,7 @@ package sample.barbershop.akka
 import akka.actor._
 import scala.math.random
 import akka.event.Logging // new import: for logging
+import language.postfixOps
 
 object AkkaHairs {
 

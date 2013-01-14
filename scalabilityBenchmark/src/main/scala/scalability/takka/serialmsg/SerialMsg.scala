@@ -16,6 +16,7 @@ message contains a list of integers between 1 and L.
  */
 import takka.actor.{Actor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
+import language.postfixOps
 
 sealed trait DispatcherMsg
 sealed trait ReceiverMsg

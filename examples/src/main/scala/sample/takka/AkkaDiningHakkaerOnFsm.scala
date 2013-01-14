@@ -7,6 +7,7 @@ package sample.takka
 import takka.actor._
 import takka.actor.FSM._
 import scala.concurrent.duration._
+import language.postfixOps
 
 /*
 * Some messages for the chopstick
@@ -183,7 +184,7 @@ object DiningHakkersOnFsm {
     val chopsticks = for (i <- 1 to 5) yield system.actorOf(Props[ChopstickMessage, Chopstick], "Chopstick" + i)
     // Create 5 awesome fsm hakkers and assign them their left and right chopstick
     val hakkers = for {
-      (name, i) <- List("Ghosh", "Bonér", "Klang", "Krasser", "Manie").zipWithIndex
+      (name, i) <- List("Ghosh", "Bon��r", "Klang", "Krasser", "Manie").zipWithIndex
     } yield {
      system.actorOf(Props(new FSMHakker(name, chopsticks(i), chopsticks((i + 1) % 5)))) 
     }

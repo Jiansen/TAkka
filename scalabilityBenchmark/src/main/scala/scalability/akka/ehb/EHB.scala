@@ -77,7 +77,7 @@ class GroupActor(master:ActorRef, loops:Int) extends Actor {
   
   def receive = {
     case GroupGO(master) =>
-      for (s<-ss) spawn {
+      for (s<-ss) {
         s ! SenderGo(gMaster)
       }
     case ReceiverDone(r) =>

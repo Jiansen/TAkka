@@ -17,7 +17,7 @@ import akka.remote._
 import util.BenchTimer
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
-
+import language.postfixOps
 
 case class RANTestMsg(n:Int)// number of processes
 case class GO(testor:ActorRef)

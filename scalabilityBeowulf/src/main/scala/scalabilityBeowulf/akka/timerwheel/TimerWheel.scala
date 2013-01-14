@@ -19,6 +19,7 @@ import scala.concurrent.duration._
 import util.BenchTimer
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
+import language.postfixOps
 
 sealed trait MasterMsg
 sealed trait WheelMsg

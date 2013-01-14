@@ -13,6 +13,7 @@ half to the parent process.
  */
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
+import language.postfixOps
 
 case class RANTestMsg(n:Int)// number of processes
 case class GO(testor:ActorRef)
