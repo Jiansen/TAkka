@@ -4,11 +4,15 @@
 
 import sbt._
 import Keys._
-//import com.typesafe.sbteclipse.plugin.EclipsePlugin._
+// import com.typesafe.sbteclipse.plugin.EclipsePlugin._
 import sbt.Project.Initialize
 
 object TAkkaBuild extends Build {
   lazy val defaultSettings = Defaults.defaultSettings ++ Seq(
+    resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
+
+    scalaVersion := "2.10.0",
+
     // Compile options
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-optimize"),
     javacOptions  ++= Seq("-Xlint:unchecked", "-Xlint:deprecation")
@@ -21,7 +25,7 @@ object TAkkaBuild extends Build {
   // Projects
   lazy val root = Project(id = "takka",
                           base = file("."),
-                          settings = defaultSettings) aggregate(snapshot, examples)//,
+                          settings = defaultSettings) aggregate(snapshot) //, examples)//,
 //                                                                takkasockowebserver, takkasockoexamples,
 //	                                                                sockowebserver, sockoexamples)
 
@@ -96,7 +100,8 @@ object Dependencies {
 
   val snapshot = Seq(
     Dependency.akkaActor, Dependency.akkaKernel, Dependency.akkaRemote, Dependency.akkaSlf4j, Dependency.akkaTestKit,
-    Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalaSwing, Dependency.scalacheck
+    Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalaSwing, Dependency.scalacheck,
+    Dependency.scala_lib, Dependency.scala_comp
   )
   
   val examples = Seq(
@@ -152,11 +157,13 @@ object Dependency {
   val akkaRemote    = "com.typesafe.akka"   % "akka-remote_2.10" 	% V.Akka
   val akkaSlf4j     = "com.typesafe.akka"   % "akka-slf4j_2.10"  	% V.Akka
   val akkaTestKit   = "com.typesafe.akka"   % "akka-testkit_2.10"	% V.Akka
-  val netty         = "io.netty"            % "netty"              % "3.5.2.Final"
-  val logback       = "ch.qos.logback"      % "logback-classic"    % "1.0.3"         % "runtime"
-  val junit         = "junit"               % "junit"              % "4.9"           % "test"
-  val scalatest     = "org.scalatest"       %% "scalatest"         % "1.9-2.10.0-M5-B2" % "test"
+  val netty         = "io.netty"            % "netty"              % "3.6.1.Final"
+  val logback       = "ch.qos.logback"      % "logback-classic"    % "1.0.7"         % "runtime"
+  val junit         = "junit"               % "junit"              % "4.10"           % "test"
+  val scalatest     = "org.scalatest"       %% "scalatest"         % "1.9.1" % "test"
   val scalacheck    = "org.scalacheck"      %% "scalacheck"        % "1.10.0" % "test"
 
-  val awsJava       = "com.amazonaws" % "aws-java-sdk" % "1.3.9"
+  val awsJava       = "com.amazonaws" %% "aws-java-sdk" % "1.3.9"
+  val scala_lib     = "org.scala-lang" % "scala-library" % "2.10.0" % "provided"
+  val scala_comp    = "org.scala-lang" % "scala-compiler" % "2.10.0"
 }

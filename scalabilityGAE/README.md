@@ -1,2 +1,0 @@
-# Scalability Test on GAE #
-
