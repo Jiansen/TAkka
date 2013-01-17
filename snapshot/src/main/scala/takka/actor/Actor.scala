@@ -16,6 +16,8 @@
 
 package takka.actor
 
+import scala.reflect.runtime.universe._
+
 /**
  * A stronger typed Actor trait based on akka.actor.Actor.
  * 
@@ -58,7 +60,7 @@ package takka.actor
  *                                      // just to demonstrate how to stop yourself
  *     case Shutdown                 => typedContext.stop(typedSelf)
  *
- *                                      // error kernel with child replying directly to “customer”
+ *                                      // error kernel with child replying directly to ���customer���
  *     case Dangerous(j, sender)     => typedContext.actorOf(Props[ReplyToOriginWorker]).tell(PerformWork(j), sender)
  *
  *                                      // error kernel with reply going through us
@@ -73,7 +75,7 @@ package takka.actor
  * allow direct reply if that is what makes sense, or round-trip the sender
  * as shown with the fictitious JobRequest/JobReply message pair.
  *
- * If you don’t like writing `typedContext` you can always `import typedContext._` to get
+ * If you don���t like writing `typedContext` you can always `import typedContext._` to get
  * direct access to `actorOf`, `stop` etc. This is not default in order to keep
  * the name-space clean.
  */
@@ -81,7 +83,7 @@ package takka.actor
 //trait Actor[Msg](implicit msgT:Manifest[Msg]) extends akka.actor.Actor {
 //trait Actor[Msg:Manifest] extends akka.actor.Actor {
 trait Actor[M] extends akka.actor.Actor{  
-  implicit val mt:Manifest[M] = manifest[M]
+  implicit val mt:TypeTag[M] = typeTag[M]
   /**
    * This defines the initial actor behavior, it must return a partial function
    * with the actor logic.
