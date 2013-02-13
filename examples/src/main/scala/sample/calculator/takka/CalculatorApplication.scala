@@ -14,18 +14,18 @@ import com.typesafe.config.ConfigFactory
 //#actor
 class SimpleCalculatorActor extends Actor[CalculatorMessage] {
   def typedReceive = {
-    case Op(Add(n1, n2), sender) ⇒
+    case Op(Add(n1, n2), sender) =>
       println("Calculating %d + %d".format(n1, n2))
       sender ! AddResult(n1, n2, n1 + n2)
-    case Op(Subtract(n1, n2), sender) ⇒
+    case Op(Subtract(n1, n2), sender) =>
       println("Calculating %d - %d".format(n1, n2))
       sender ! SubtractResult(n1, n2, n1 - n2)
     /*
-    case Op(Add(n1, n2), senderPath) ⇒
+    case Op(Add(n1, n2), senderPath) =>
       println("Calculating %d + %d".format(n1, n2))
       val sender = typed_context.system.actorFor[MathResult](senderPath)      
       sender ! AddResult(n1, n2, n1 + n2)
-    case Op(Subtract(n1, n2), senderPath) ⇒
+    case Op(Subtract(n1, n2), senderPath) =>
       val sender = typed_context.system.actorFor[MathResult](senderPath)      
       sender ! SubtractResult(n1, n2, n1 - n2)
       */

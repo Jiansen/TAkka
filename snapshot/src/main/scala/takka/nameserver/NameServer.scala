@@ -46,12 +46,13 @@ object NameServer {
    * the name has been used by the name server.
    */
   @throws(classOf[NamesHasBeenRegisteredException])
-  def set[T:TypeTag](name:TSymbol[T], value:T):Unit = synchronized {
+  def set[T:TypeTag](name:TSymbol[T], value:T):Boolean = synchronized {
     val tValue = TValue[T](value)
     if (nameMap.contains(name)){
-      throw new NamesHasBeenRegisteredException(name)
+      return false
     }else{
       nameMap.+=((name, tValue))
+      return true
     }
   }
   
@@ -61,11 +62,13 @@ object NameServer {
    * (ii) 'name'.type (intention type) :> registered type
    * Otherwise, do noting.
    */
-  def unset[T](name:TSymbol[T]):Unit = synchronized {
+  def unset[T](name:TSymbol[T]):Boolean = synchronized {
     if (nameMap.contains(name)  && nameMap(name).t <:< name.t  ){// intention type is a super type of registered type
       nameMap -= name
+      return true
     }else{ // nameMap.contains(name) && (nameMap(name).t <:< name.t) && (!(nameMap(name).t =:= name.t))
       //DO nothing
+      return false
     }
   }
   

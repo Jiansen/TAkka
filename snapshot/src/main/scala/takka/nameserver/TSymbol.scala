@@ -7,8 +7,8 @@ import scala.Symbol
  * A typed symbol is a pair of a symbol and a type descriptor.
  * The type descriptor (Manifest) can be used at run-time for type comparison.
  */
-case class TSymbol[T:TypeTag](val symbol:Symbol) {
-  private [takka] def t:Type = typeOf[T]
+case class TSymbol[-T:TypeTag](val symbol:Symbol) {
+  private [takka] val t:Type = typeOf[T]
   /**
    * To support subtyping enquiry in typed name server,
    * the hash of a '''TSymbol''' only considers the symbol representation.

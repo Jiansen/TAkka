@@ -78,8 +78,8 @@ object FSM {
      * state.
      */
     def forMax(timeout: Duration): State[S, D] = timeout match {
-      case f: FiniteDuration ⇒ copy(timeout = Some(f))
-      case _                 ⇒ copy(timeout = None)
+      case f: FiniteDuration => copy(timeout = Some(f))
+      case _                 => copy(timeout = None)
     }
 
     /**

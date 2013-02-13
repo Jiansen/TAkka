@@ -52,13 +52,13 @@ class LookupApplication extends Bootable {
 //#actor
 class LookupActor extends Actor[MathResult] {
   def typedReceive = {
-    case Ask(calculator, op) ⇒ {
+    case Ask(calculator, op) => {
 //      calculator ! Op(op, "akka://LookupApplication@129.215.91.195:2553/user/lookupActor")
       calculator ! Op(op, typedRemoteSelf)
     }
-    case result: MathResult ⇒ result match {
-      case AddResult(n1, n2, r)      ⇒ println("Add result: %d + %d = %d".format(n1, n2, r))
-      case SubtractResult(n1, n2, r) ⇒ println("Sub result: %d - %d = %d".format(n1, n2, r))
+    case result: MathResult => result match {
+      case AddResult(n1, n2, r)      => println("Add result: %d + %d = %d".format(n1, n2, r))
+      case SubtractResult(n1, n2, r) => println("Sub result: %d - %d = %d".format(n1, n2, r))
     }
   }
 }

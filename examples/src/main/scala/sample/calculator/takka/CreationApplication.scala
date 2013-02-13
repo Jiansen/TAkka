@@ -53,14 +53,14 @@ class CreationApplication extends Bootable {
 //#actor
 class CreationActor extends Actor[MathResult] {
   def typedReceive = {
-    case Ask(calculator, op) ⇒ {
+    case Ask(calculator, op) => {
       //calculator ! Op(op, typedSelf.path)
 //      calculator ! Op(op, "akka://RemoteCreation@129.215.91.195:2554/user/creationActor")
       calculator ! Op(op, typedRemoteSelf)      
     }
-    case result: MathResult ⇒ result match {
-      case MultiplicationResult(n1, n2, r) ⇒ println("Mul result: %d * %d = %d".format(n1, n2, r))
-      case DivisionResult(n1, n2, r)       ⇒ println("Div result: %.0f / %d = %.2f".format(n1, n2, r))
+    case result: MathResult => result match {
+      case MultiplicationResult(n1, n2, r) => println("Mul result: %d * %d = %d".format(n1, n2, r))
+      case DivisionResult(n1, n2, r)       => println("Div result: %.0f / %d = %.2f".format(n1, n2, r))
     }
   }
 }

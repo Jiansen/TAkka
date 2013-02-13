@@ -50,10 +50,10 @@ class LookupApplication extends Bootable {
 //#actor
 class LookupActor extends Actor {
   def receive = {
-    case (actor: ActorRef, op: MathOp) ⇒ actor ! op
-    case result: MathResult ⇒ result match {
-      case AddResult(n1, n2, r)      ⇒ println("Add result: %d + %d = %d".format(n1, n2, r))
-      case SubtractResult(n1, n2, r) ⇒ println("Sub result: %d - %d = %d".format(n1, n2, r))
+    case (actor: ActorRef, op: MathOp) => actor ! op
+    case result: MathResult => result match {
+      case AddResult(n1, n2, r)      => println("Add result: %d + %d = %d".format(n1, n2, r))
+      case SubtractResult(n1, n2, r) => println("Sub result: %d - %d = %d".format(n1, n2, r))
     }
   }
 }

@@ -14,10 +14,10 @@ import com.typesafe.config.ConfigFactory
 //#actor
 class SimpleCalculatorActor extends Actor {
   def receive = {
-    case Add(n1, n2) ⇒
+    case Add(n1, n2) =>
       println("Calculating %d + %d".format(n1, n2))
       sender ! AddResult(n1, n2, n1 + n2)
-    case Subtract(n1, n2) ⇒
+    case Subtract(n1, n2) =>
       println("Calculating %d - %d".format(n1, n2))
       sender ! SubtractResult(n1, n2, n1 - n2)
   }

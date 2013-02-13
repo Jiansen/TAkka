@@ -57,7 +57,7 @@ trait Scheduler {
    */
   def schedule(
     initialDelay: FiniteDuration,
-    interval: FiniteDuration)(f: ⇒ Unit)(
+    interval: FiniteDuration)(f: => Unit)(
       implicit executor: ExecutionContext): Cancellable
 
   /**
@@ -101,7 +101,7 @@ trait Scheduler {
    * Scala API
    */
   def scheduleOnce(
-    delay: FiniteDuration)(f: ⇒ Unit)(
+    delay: FiniteDuration)(f: => Unit)(
       implicit executor: ExecutionContext): Cancellable
 }
 

@@ -27,10 +27,10 @@ case class DivisionResult(nbr1: Double, nbr2: Int, result: Double) extends MathR
 
 class AdvancedCalculatorActor extends Actor {
   def receive = {
-    case Multiply(n1, n2) ⇒
+    case Multiply(n1, n2) =>
       println("Calculating %d * %d".format(n1, n2))
       sender ! MultiplicationResult(n1, n2, n1 * n2)
-    case Divide(n1, n2) ⇒
+    case Divide(n1, n2) =>
       println("Calculating %.0f / %d".format(n1, n2))
       sender ! DivisionResult(n1, n2, n1 / n2)
   }

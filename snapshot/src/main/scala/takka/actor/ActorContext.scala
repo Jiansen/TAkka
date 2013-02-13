@@ -126,7 +126,7 @@ trait ActorContext[M] {
   def become[SupM >: M](behavior: SupM => Unit, possibleHamfulHandler:akka.actor.PossiblyHarmful => Unit)(implicit smtTag:TypeTag[SupM]):ActorRef[SupM] = {
 //  def become[SupM, M <: SupM](behavior: SupM => Unit, possibleHamfulHandler:akka.actor.PossiblyHarmful => Unit):Unit = {
     val smt = typeOf[SupM]
-    if (!(smt <:< mt))
+    if (!(mt <:< smt))
       throw BehaviorUpdateException(smt, mt)
     mt = smt
     untyped_context.become({

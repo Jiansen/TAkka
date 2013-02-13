@@ -148,7 +148,7 @@ abstract class ActorSystem {
     
     def schedule(
       initialDelay: FiniteDuration,
-      interval: FiniteDuration)(f: ⇒ Unit)(
+      interval: FiniteDuration)(f: => Unit)(
       implicit executor: ExecutionContext): Cancellable = {
       akkaScheduler.schedule(initialDelay, interval)(f)(executor)
     }
@@ -174,7 +174,7 @@ abstract class ActorSystem {
     }
     
     def scheduleOnce(
-      delay: FiniteDuration)(f: ⇒ Unit)(
+      delay: FiniteDuration)(f: => Unit)(
       implicit executor: ExecutionContext): Cancellable = {
       akkaScheduler.scheduleOnce(delay)(f)
     }

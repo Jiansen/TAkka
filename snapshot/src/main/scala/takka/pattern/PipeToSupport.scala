@@ -10,8 +10,8 @@ trait PipeToSupport {
   final class PipeableFuture[T](val future: Future[T])(implicit executionContext: ExecutionContext) {
     def pipeTo(recipient: ActorRef[T])(implicit sender: ActorRef[_] = Actor.noSender): Future[T] = {
       future onComplete {
-        case Success(r) ⇒ recipient.untypedRef ! r
-        case Failure(f) ⇒ recipient.untypedRef ! Status.Failure(f)
+        case Success(r) => recipient.untypedRef ! r
+        case Failure(f) => recipient.untypedRef ! Status.Failure(f)
       }
       future
     }

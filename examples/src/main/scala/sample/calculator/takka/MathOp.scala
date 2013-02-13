@@ -35,19 +35,19 @@ case class Ask(calculator:ActorRef[CalculatorMessage], op:MathOp) extends MathRe
 class AdvancedCalculatorActor extends Actor[CalculatorMessage] {
   def typedReceive = {
     /*
-    case Op(Multiply(n1, n2), senderPath) ⇒
+    case Op(Multiply(n1, n2), senderPath) =>
       println("Calculating %d * %d".format(n1, n2))
       val sender = typed_context.system.actorFor[MathResult](senderPath)
       sender ! MultiplicationResult(n1, n2, n1 * n2)
-    case Op(Divide(n1, n2), senderPath) ⇒
+    case Op(Divide(n1, n2), senderPath) =>
       println("Calculating %.0f / %d".format(n1, n2))
       val sender = typed_context.system.actorFor[MathResult](senderPath)      
       sender ! DivisionResult(n1, n2, n1 / n2)
       */
-    case Op(Multiply(n1, n2), sender) ⇒
+    case Op(Multiply(n1, n2), sender) =>
       println("Calculating %d * %d".format(n1, n2))
       sender ! MultiplicationResult(n1, n2, n1 * n2)
-    case Op(Divide(n1, n2), sender) ⇒
+    case Op(Divide(n1, n2), sender) =>
       println("Calculating %.0f / %d".format(n1, n2))
       sender ! DivisionResult(n1, n2, n1 / n2)
   }

@@ -53,10 +53,10 @@ class CreationApplication extends Bootable {
 //#actor
 class CreationActor extends Actor {
   def receive = {
-    case (actor: ActorRef, op: MathOp) ⇒ actor ! op
-    case result: MathResult ⇒ result match {
-      case MultiplicationResult(n1, n2, r) ⇒ println("Mul result: %d * %d = %d".format(n1, n2, r))
-      case DivisionResult(n1, n2, r)       ⇒ println("Div result: %.0f / %d = %.2f".format(n1, n2, r))
+    case (actor: ActorRef, op: MathOp) => actor ! op
+    case result: MathResult => result match {
+      case MultiplicationResult(n1, n2, r) => println("Mul result: %d * %d = %d".format(n1, n2, r))
+      case DivisionResult(n1, n2, r)       => println("Div result: %.0f / %d = %.2f".format(n1, n2, r))
     }
   }
 }
