@@ -12,11 +12,11 @@
  */
 package sample.barbershop.takka
 
-import takka.actor.{ActorRef, Actor}
+import takka.actor.{ActorRef, TypedActor}
 import collection.immutable.Queue
 import akka.event.Logging // new import: for logging
 
-case class Tracker(totalCustomers: Int, numberOfChairs: Int, maxLine: Int) extends Actor[TrackerMessages] with PostStart {
+case class Tracker(totalCustomers: Int, numberOfChairs: Int, maxLine: Int) extends TypedActor[TrackerMessages] with PostStart {
   protected def typedReceive = trackerReceive(TrackerState(numberOfChairs, maxLine))
 
   val log = Logging(context.system, this) //new val: for logging

@@ -4,7 +4,7 @@ import takka.actor._
 import scala.swing._
 import scala.swing.event._
 
-final class Viewer extends Actor[Controller2ViewerMessage]{
+final class Viewer extends TypedActor[Controller2ViewerMessage]{
    var controller:ActorRef[Viewer2ControllerMessage] = _
    
    val guiApp:GUIApplication = new GUIApplication

@@ -14,7 +14,7 @@ without using the gen_server behaviour.
 The benchmark is parametrised by the number of clients, dummy messages 
 and messages exchanged with the echo server.
  */
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
 
 sealed trait TestorMsg
@@ -34,14 +34,14 @@ case class ServerMsg(client:ActorRef[ClientMessage], msg:String) extends ServerM
 sealed trait ServerMessage
 sealed trait ClientMessage
 
-class GenStressServerActor extends Actor[ServerMsg] {
+class GenStressServerActor extends TypedActor[ServerMsg] {
   def typedReceive = {
     case ServerMsg(client, msg) =>
       client ! Echo(typedSelf, msg)
   }
 }
 
-class GenStressClientActor(queue:Int) extends Actor[ClientMessage] {
+class GenStressClientActor(queue:Int) extends TypedActor[ClientMessage] {
   var n:Int = 0
   var testor:ActorRef[TestorMsg] = _
   def typedReceive = {
@@ -60,7 +60,7 @@ class GenStressClientActor(queue:Int) extends Actor[ClientMessage] {
   }
 }
 
-class GenStressTestActor extends Actor[TestorMsg] {
+class GenStressTestActor extends TypedActor[TestorMsg] {
   var np:Int = 0
   val timer = new BenchTimer
   var server:ActorRef[ServerMsg] = _

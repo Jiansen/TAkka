@@ -3,7 +3,7 @@ package sample.barbershop.takka
 import takka.actor._
 import akka.event.Logging // new import: for logging
 
-case class Customer(id: String, barbershop: Barbershop) extends Actor[CustomerMessage] {
+case class Customer(id: String, barbershop: Barbershop) extends TypedActor[CustomerMessage] {
   // no need for id, set id when initialise Customer
   // self.id = id
 

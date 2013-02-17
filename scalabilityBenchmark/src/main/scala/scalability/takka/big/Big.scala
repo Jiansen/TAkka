@@ -6,7 +6,7 @@ Several processes are spawned, each of which sends a ping message to
 the others, and responds with a pong message to any ping message it 
 receives. The benchmark is parameterized by the number of processes.
  */
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
 
 sealed trait PingerMsg
@@ -16,7 +16,7 @@ case class BigProcs(procs:List[ActorRef[PingerMsg]]) extends PingerMsg
 case class BigPing(from:ActorRef[PingerMsg]) extends PingerMsg
 case object BigPong extends PingerMsg
 
-class Pinger(val reporter:ActorRef[ReporterMsg]) extends Actor[PingerMsg]{
+class Pinger(val reporter:ActorRef[ReporterMsg]) extends TypedActor[PingerMsg]{
   private var n:Int = _
   def typedReceive = {
     case BigProcs(procs) =>
@@ -34,7 +34,7 @@ class Pinger(val reporter:ActorRef[ReporterMsg]) extends Actor[PingerMsg]{
   }
 }
 
-class Reporter(var n:Int, val timer:BenchTimer) extends Actor[ReporterMsg]{
+class Reporter(var n:Int, val timer:BenchTimer) extends TypedActor[ReporterMsg]{
   def typedReceive = {
     case BigDone(_) =>
       n = n-1

@@ -10,7 +10,7 @@ Function:
 Long description: Spawns N processes. Each process calculate fib(x) and
  send the result to the parent process.
  */
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
 
 sealed trait FibMasterMsg
@@ -18,7 +18,7 @@ case class FibMasterStart(n:Int) extends FibMasterMsg// number of processes
 case class GO(master:ActorRef[WorkerReply])
 case class WorkerReply(worker:ActorRef[GO], res:Int) extends FibMasterMsg
 
-class FIBWorker extends Actor[GO] {
+class FIBWorker extends TypedActor[GO] {
   def fib(n : Int):Int = n match {
     case 0 => 1
     case 1 => 1
@@ -32,7 +32,7 @@ class FIBWorker extends Actor[GO] {
 
 }
 
-class FIBMaster extends Actor[FibMasterMsg] {
+class FIBMaster extends TypedActor [FibMasterMsg] {
   val timer = new BenchTimer
   var n:Int = _
   def typedReceive = {

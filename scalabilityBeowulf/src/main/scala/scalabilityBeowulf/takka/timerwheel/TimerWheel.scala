@@ -12,7 +12,7 @@ or without a timeout), before sending out any more "ping" messages. While
 waiting for a "pong" message, the process can respond with a "pong" message to 
 any "ping" messages it receives. In case of a timeout, the process exits.
  */
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import takka.actor.ReceiveTimeout
 import akka.remote._
 import scala.concurrent.duration._
@@ -35,7 +35,7 @@ case class Init(pids:List[ActorRef[WheelMsg]], ping_left:Int, master:ActorRef[Ma
 case object Start extends WheelMsg
 case class Done(pid:ActorRef[WheelMsg]) extends MasterMsg
 
-class WheelHandler extends Actor[WheelMsg] {//with timeout
+class WheelHandler extends TypedActor[WheelMsg] {//with timeout
   typedContext.setReceiveTimeout(30 milliseconds)
   
   var others:List[ActorRef[WheelMsg]] = _
@@ -63,7 +63,7 @@ class WheelHandler extends Actor[WheelMsg] {//with timeout
   }
 }
 
-class NoWheelHandler extends Actor[WheelMsg] {//without timeout
+class NoWheelHandler extends TypedActor[WheelMsg] {//without timeout
   var others:List[ActorRef[WheelMsg]] = _
   var pingLeft:Int = _
   var master:ActorRef[MasterMsg] = _
@@ -85,7 +85,7 @@ class NoWheelHandler extends Actor[WheelMsg] {//without timeout
   }
 }
 
-class TimerWheelActor extends Actor[MasterMsg] {
+class TimerWheelActor extends TypedActor[MasterMsg] {
   val timer = new BenchTimer
   var n:Int = _
   

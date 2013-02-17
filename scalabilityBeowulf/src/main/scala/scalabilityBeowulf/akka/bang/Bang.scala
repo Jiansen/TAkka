@@ -8,7 +8,7 @@ package scalabilityBeowulf.akka.bang
  * messages that each sender will send to the receiver.
  */
 
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import akka.remote._
 import util.{BenchTimer, BenchCounter}
 import com.typesafe.config.ConfigFactory
@@ -20,7 +20,7 @@ case object DummyMessage extends BangMessage
 case object BangDone
 case class Send(receiver:ActorRef[BangMessage], m:Int)
 
-class Bang extends Actor[BangMessage]{  
+class Bang extends TypedActor[BangMessage]{  
   val timer = new BenchTimer
   val counter = new BenchCounter
   def typedReceive = {
@@ -43,7 +43,7 @@ class Bang extends Actor[BangMessage]{
   }
 }
   
-class Sender extends Actor[Send]{
+class Sender extends TypedActor[Send]{
   // send m Done messages to receiver
   def typedReceive = {
     case Send(receiver, m) => 

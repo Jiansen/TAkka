@@ -8,7 +8,7 @@ promised by the implementation of erlang:now/0), it sends the result to
 its parent. The benchmark is parameterized by the number of processes 
 and the number of timestamps.
  */
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
 import util.BenchCounter
 
@@ -17,7 +17,7 @@ object Start
 case class Result(pid:ActorRef[LoopMsg], r:Boolean)
 sealed trait LoopMsg
 
-class NowTime(n:Int, m:Int) extends Actor[Result] {  
+class NowTime(n:Int, m:Int) extends TypedActor[Result] {  
   val counter = new BenchCounter
   counter.set(m)
   val timer = new BenchTimer  
@@ -38,7 +38,7 @@ class NowTime(n:Int, m:Int) extends Actor[Result] {
   }
 }
 
-class LoopActor(master:ActorRef[Result],n:Int) extends Actor[LoopMsg] {
+class LoopActor(master:ActorRef[Result],n:Int) extends TypedActor[LoopMsg] {
   def check_now(ts:List[Long]):Boolean = {
     true
   }

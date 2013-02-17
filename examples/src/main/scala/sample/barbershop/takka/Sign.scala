@@ -14,11 +14,11 @@
 
 package sample.barbershop.takka
 
-import takka.actor.{ActorRef, Actor}
+import takka.actor.{ActorRef, TypedActor}
 import collection.immutable.Queue
 import akka.event.Logging // new import: for logging
 
-class Sign extends Actor[SignMessages] with PostStart {
+class Sign extends TypedActor[SignMessages] with PostStart {
   val log = Logging(context.system, this) //new val: for logging
 
   protected def typedReceive = signReceive(Queue[ActorRef[BarberMessages]]()) //type clearer

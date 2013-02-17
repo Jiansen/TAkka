@@ -34,7 +34,7 @@ case class TakenBy(hakker: ActorRef[FSMHakkerMessage])
 /*
 * A chopstick is an actor, it can be taken, and put back
 */
-class Chopstick extends Actor[ChopstickMessage] with FSM[ChopstickState, TakenBy, ChopstickMessage] {
+class Chopstick extends TypedActor[ChopstickMessage] with FSM[ChopstickState, TakenBy, ChopstickMessage] {
   import typedContext._
 
   // A chopstick begins its existence as available and taken by no one
@@ -87,7 +87,7 @@ case class TakenChopsticks(left: Option[ActorRef[ChopstickMessage]], right: Opti
 /*
 * A fsm hakker is an awesome dude or dudette who either thinks about hacking or has to eat ;-)
 */
-class FSMHakker(name: String, left: ActorRef[ChopstickMessage], right: ActorRef[ChopstickMessage]) extends Actor[FSMHakkerMessage] with FSM[FSMHakkerState, TakenChopsticks, FSMHakkerMessage] {
+class FSMHakker(name: String, left: ActorRef[ChopstickMessage], right: ActorRef[ChopstickMessage]) extends TypedActor[FSMHakkerMessage] with FSM[FSMHakkerState, TakenChopsticks, FSMHakkerMessage] {
 
   //All hakkers start waiting
   startWith(Waiting, TakenChopsticks(None, None))

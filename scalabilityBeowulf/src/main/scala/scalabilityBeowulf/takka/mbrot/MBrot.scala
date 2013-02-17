@@ -8,7 +8,7 @@ whether the point belongs to the Mandelbrot set or not. The total
 set of points is divided among a number of workers. The benchmark 
 is parameterized by the dimensions of the image.
  */
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import util.{BenchTimer, BenchCounter}
 import akka.remote._
 import com.typesafe.config.ConfigFactory
@@ -26,7 +26,7 @@ object MBrotCons{
   val IL = 2.0
 }
 
-class WorkerSup extends Actor[SupMsg]{
+class WorkerSup extends TypedActor[SupMsg]{
   val counter = new BenchCounter
   val timer = new BenchTimer
   
@@ -53,7 +53,7 @@ class WorkerSup extends Actor[SupMsg]{
 
 case class Done(worker:ActorRef[WorkerMsg]) extends SupMsg
 
-class Worker extends Actor[WorkerMsg] {
+class Worker extends TypedActor[WorkerMsg] {
   def typedReceive = {
     case Work(n, master) =>
       rows(n, n)

@@ -1,9 +1,9 @@
 package takka
 
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import akka.event.Logging
 
-class MyActor extends Actor[String] {
+class MyActor extends TypedActor[String] {
   def typedReceive = {
     case "test" => self ! "test2"; println("received test")
     case m      => println("received unknown message: "+m)

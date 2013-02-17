@@ -1,10 +1,10 @@
 package sample.barbershop.takka
 
 import collection.immutable.Queue
-import takka.actor.{ActorRef, Actor}
+import takka.actor.{ActorRef, TypedActor}
 import akka.event.Logging // new import: for logging
 
-case class Lounge(count: Int) extends Actor[ChairsMessages] with PostStart {
+case class Lounge(count: Int) extends TypedActor[ChairsMessages] with PostStart {
 
   // no need for id, set id when initialise Lounge
 //  self.id = "Lounge"

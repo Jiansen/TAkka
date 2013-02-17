@@ -3,7 +3,7 @@ package sample.takka
 import takka.actor._
 
 
-class TypedRootActor extends Actor[String] {
+class TypedRootActor extends TypedActor[String] {
 //  println("CONTEXT.context  "+actor_context.context)
   val mid1 = typedContext.actorOf(Props(new TypedMidActor1), "mid1")
   val mid2 = typedContext.actorOf(Props(new TypedMidActor2), "mid2")
@@ -20,7 +20,7 @@ class TypedRootActor extends Actor[String] {
   }
 }
 
-class TypedMidActor1 extends Actor[String] {
+class TypedMidActor1 extends TypedActor[String] {
 
   val leaf = typedContext.actorOf(Props(new TypedLeafActor1), "leaf")
 //  def leaf = actor_context.actorOf(new TypedLeafActor1)  
@@ -31,7 +31,7 @@ class TypedMidActor1 extends Actor[String] {
   }
 }
 
-class TypedMidActor2 extends Actor[String] {
+class TypedMidActor2 extends TypedActor[String] {
 
   val leaf2 = typedContext.actorOf(Props(new TypedLeafActor2), "leaf2")
   val leaf3 = typedContext.actorOf(Props(new TypedLeafActor3), "leaf3")  
@@ -45,18 +45,18 @@ class TypedMidActor2 extends Actor[String] {
   }
 }
 
-class TypedLeafActor1 extends Actor[String] {
+class TypedLeafActor1 extends TypedActor[String] {
   def typedReceive = {
     case _ => println(self)
   }  
 }
 
-class TypedLeafActor2 extends Actor[String] {
+class TypedLeafActor2 extends TypedActor[String] {
   def typedReceive = {
     case _ => println(self)
   }  
 }
-class TypedLeafActor3 extends Actor[String] {
+class TypedLeafActor3 extends TypedActor[String] {
   def typedReceive = {
     case _ => println(self)
   }  

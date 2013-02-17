@@ -11,7 +11,7 @@ Long description: Spawns N processes. Each process generates a list with 10000
 random integers between 1 and 200, sorts the list and then sends its first 
 half to the parent process.
  */
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import util.BenchTimer
 import language.postfixOps
 
@@ -21,7 +21,7 @@ case class RANTestMsg(n:Int) extends TestorMsg// number of processes
 case class GO(testor:ActorRef[TestorMsg])
 case class RANReply(process:ActorRef[GO], res:List[Int]) extends TestorMsg
 
-class RANProcess extends Actor[GO] {
+class RANProcess extends TypedActor[GO] {
   def n_rands(len : Int, max:Int):List[Int] = {
    var r = new scala.util.Random
    1 to len map { _ => r.nextInt(max) +1 } toList
@@ -38,7 +38,7 @@ class RANProcess extends Actor[GO] {
 
 }
 
-class RANTestActor extends Actor[TestorMsg] {
+class RANTestActor extends TypedActor[TestorMsg] {
   val timer = new BenchTimer
   var n:Int = _
   def typedReceive = {

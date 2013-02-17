@@ -2,7 +2,7 @@ package sample.tik_tak_tok.takka
 
 import takka.actor._
 
-final class Controller(model:ActorRef[Controller2ModelMessage], viewer:ActorRef[Controller2ViewerMessage]) extends Actor[ControllerMessage] {
+final class Controller(model:ActorRef[Controller2ModelMessage], viewer:ActorRef[Controller2ViewerMessage]) extends TypedActor[ControllerMessage] {
   def typedReceive = {
     case _ =>
   }

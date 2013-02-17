@@ -11,7 +11,7 @@ import akka.kernel.Bootable
 import scala.util.Random
 //#imports
 import com.typesafe.config.ConfigFactory
-import takka.actor.{ ActorRef, Props, Actor, ActorSystem }
+import takka.actor.{ ActorRef, Props, TypedActor, ActorSystem }
 //#imports
 
 class LookupApplication extends Bootable {
@@ -50,7 +50,7 @@ class LookupApplication extends Bootable {
 }
 
 //#actor
-class LookupActor extends Actor[MathResult] {
+class LookupActor extends TypedActor[MathResult] {
   def typedReceive = {
     case Ask(calculator, op) => {
 //      calculator ! Op(op, "akka://LookupApplication@129.215.91.195:2553/user/lookupActor")

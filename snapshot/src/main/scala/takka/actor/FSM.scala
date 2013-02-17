@@ -188,7 +188,7 @@ object FSM {
  */
 trait FSM[S, D, E] extends Listeners {
   
-  this: Actor[E] =>
+  this: TypedActor[E] =>
 
   import FSM._
 
@@ -589,7 +589,7 @@ trait FSM[S, D, E] extends Listeners {
  *
  * @since 1.2
  */
-trait LoggingFSM[S, D, E] extends FSM[S, D, E] { this: Actor[E] =>
+trait LoggingFSM[S, D, E] extends FSM[S, D, E] { this: TypedActor[E] =>
 
   import FSM._
 

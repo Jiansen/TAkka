@@ -27,7 +27,7 @@ object FSMTimer{
   }
 }
 
-class FSMExample extends Actor[FSMEvent] with FSM[FSMState, Null, FSMEvent]{
+class FSMExample extends TypedActor[FSMEvent] with FSM[FSMState, Null, FSMEvent]{
   this.startWith(A1, null)
   
   when(A1) {

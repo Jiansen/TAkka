@@ -1,9 +1,9 @@
 package sample.barbershop.takka
 
-import takka.actor.{ActorRef, Actor}
+import takka.actor.{ActorRef, TypedActor}
 import akka.event.Logging // new import: for logging
 
-case class Barber(name: String, cutTime: () => Long) extends Actor[BarberMessages] with PostStart {
+case class Barber(name: String, cutTime: () => Long) extends TypedActor[BarberMessages] with PostStart {
 
   // no need for id, set id when initialise Barber
  // self.id = name

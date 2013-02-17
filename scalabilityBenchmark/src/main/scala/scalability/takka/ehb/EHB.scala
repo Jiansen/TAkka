@@ -7,7 +7,7 @@ benchmark receives.
  */
 package scalability.takka.ehb
 
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import util.{BenchTimer, BenchCounter}
 import scala.concurrent.ops.spawn
 
@@ -36,7 +36,7 @@ case class GroupGO(master:ActorRef[MasterMsg]) extends GroupMsg
 case class GroupReady(g:ActorRef[GroupMsg]) extends MasterMsg
 case class GroupDone(g:ActorRef[GroupMsg]) extends MasterMsg
 
-class MasterActor extends Actor[MasterMsg]{
+class MasterActor extends TypedActor[MasterMsg]{
   val master = typedSelf
   val timer = new BenchTimer
   var gs:List[ActorRef[GroupMsg]] = _
@@ -69,7 +69,7 @@ class MasterActor extends Actor[MasterMsg]{
   }
 }
 
-class GroupActor(master:ActorRef[MasterMsg], loops:Int) extends Actor[GroupMsg] {
+class GroupActor(master:ActorRef[MasterMsg], loops:Int) extends TypedActor[GroupMsg] {
   val gMaster = typedSelf
   val receiverDoneCounter = new BenchCounter
   receiverDoneCounter.set(EHBConstant.GSIZE)
@@ -97,7 +97,7 @@ class GroupActor(master:ActorRef[MasterMsg], loops:Int) extends Actor[GroupMsg] 
 
 case class SenderGo(master:ActorRef[GroupMsg]) extends SenderMsg
 
-class Sender(rs:List[ActorRef[ReceiverMsg]], loops:Int) extends Actor[SenderMsg] {
+class Sender(rs:List[ActorRef[ReceiverMsg]], loops:Int) extends TypedActor[SenderMsg] {
   def typedReceive = {
     case SenderGo(master) =>
       sender(rs, loops)
@@ -135,14 +135,14 @@ class Sender(rs:List[ActorRef[ReceiverMsg]], loops:Int) extends Actor[SenderMsg]
   }
 }
 
-class SenderAck2 extends Actor[IamKeeypingUp]{
+class SenderAck2 extends TypedActor[IamKeeypingUp]{
     def typedReceive = {
       case IamKeeypingUp(receiver) =>
         receiver ! EHBConstant.DATA
     }
 }
 
-case class Receiver(val gMaster:ActorRef[GroupMsg], var senderLeft:Int) extends Actor[ReceiverMsg]{
+case class Receiver(val gMaster:ActorRef[GroupMsg], var senderLeft:Int) extends TypedActor[ReceiverMsg]{
   val senderCounter = new BenchCounter
   senderCounter.set(senderLeft)
   def typedReceive = {

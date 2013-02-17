@@ -39,7 +39,7 @@ object Props{
    * Returns a Props that has default values except for "creator" which will be a function that creates an instance
    * of the supplied type using the default constructor.
    */
-  def apply[T, A<:Actor[T]] (implicit arg0: ClassTag[A]): Props[T] = {
+  def apply[T, A<:TypedActor[T]] (implicit arg0: ClassTag[A]): Props[T] = {
     val p = akka.actor.Props[A]
     return Props(p)
   }
@@ -48,7 +48,7 @@ object Props{
    * Returns a Props that has default values except for "creator" which will be a function that creates an instance
    * of the supplied class using the default constructor.
    */
-  def apply[T](actorClass: Class[_ <: Actor[T]]): Props[T] = {
+  def apply[T](actorClass: Class[_ <: TypedActor[T]]): Props[T] = {
     val p = akka.actor.Props(actorClass)
     return Props(p)
   }
@@ -57,7 +57,7 @@ object Props{
    * Returns a Props that has default values except for "creator" which will be a function that creates an instance
    * using the supplied thunk.
    */
-  def apply[T](creator: => Actor[T]): Props[T] = {
+  def apply[T](creator: => TypedActor[T]): Props[T] = {
     val p = akka.actor.Props(creator)
     return Props(p)
   }
@@ -77,7 +77,7 @@ object Props{
  * }}}
  */
 case class Props[-T] (props: akka.actor.Props) {
-  def withCreator[T](c: => Actor[T]): Props[T] ={
+  def withCreator[T](c: => TypedActor[T]): Props[T] ={
     val p = akka.actor.Props(c)
     return Props(p)
   }

@@ -11,7 +11,7 @@ Long description: Spawns N processes. Each process generates a list with 10000
 random integers between 1 and 200, sorts the list and then sends its first 
 half to the parent process.
  */
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import akka.remote._
 
 import util.BenchTimer
@@ -23,7 +23,7 @@ case class FibMasterStart(n:Int) extends FibMasterMsg// number of processes
 case class GO(master:ActorRef[WorkerReply])
 case class WorkerReply(worker:ActorRef[GO], res:Int) extends FibMasterMsg
 
-class FIBWorker extends Actor[GO] {
+class FIBWorker extends TypedActor[GO] {
   def fib(n : Int):Int = n match {
     case 0 => 1
     case 1 => 1
@@ -37,7 +37,7 @@ class FIBWorker extends Actor[GO] {
 
 }
 
-class FIBMaster extends Actor[FibMasterMsg] {
+class FIBMaster extends TypedActor[FibMasterMsg] {
   val timer = new BenchTimer
   var n:Int = _
   def typedReceive = {

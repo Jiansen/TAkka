@@ -38,7 +38,7 @@ object FaultHandlingDocSample extends App {
  * Listens on progress from the worker and shuts down the system when enough
  * work has been done.
  */
-class Listener extends Actor[ListenerMessage] with ActorLogging {
+class Listener extends TypedActor[ListenerMessage] with ActorLogging {
   import Worker._
   // If we don't get any progress within 15 seconds then the service is unavailable
   context.setReceiveTimeout(15 seconds)
@@ -74,7 +74,7 @@ object Worker {
  * It will continuously notify the sender of the `Start` message
  * of current ``Progress``. The `Worker` supervise the `CounterService`.
  */
-class Worker extends Actor[WorkerMessage] with ActorLogging {
+class Worker extends TypedActor[WorkerMessage] with ActorLogging {
   import Worker._
   import CounterService._
   implicit val askTimeout = Timeout(5 seconds)
@@ -135,7 +135,7 @@ object CounterService {
  * counter. Replies with `CurrentCount` when it is asked for `CurrentCount`.
  * `CounterService` supervise `Storage` and `Counter`.
  */
-class CounterService extends Actor[CounterServiceMessage] {
+class CounterService extends TypedActor[CounterServiceMessage] {
   import CounterService._
   import Counter._
   import Storage._
@@ -237,7 +237,7 @@ object Counter {
  * value to the `Storage`, if there is any storage
  * available at the moment.
  */
-class Counter(key: String, initialValue: Long) extends Actor[CounterMessage] {
+class Counter(key: String, initialValue: Long) extends TypedActor[CounterMessage] {
   import Counter._
   import CounterService._
   import Storage._
@@ -280,7 +280,7 @@ object Storage {
  * Replies with current value when receiving `Get` message.
  * Will throw StorageException if the underlying data store is out of order.
  */
-class Storage extends Actor[StorageMessage] {
+class Storage extends TypedActor[StorageMessage] {
   import Storage._
  
   val db = DummyDB

@@ -8,11 +8,11 @@ package typed.remote.calculator
  */
 
 import akka.kernel.Bootable
-import takka.actor.{ Props, Actor, ActorSystem }
+import takka.actor.{ Props, TypedActor, ActorSystem }
 import com.typesafe.config.ConfigFactory
 
 //#actor
-class SimpleCalculatorActor extends Actor[CalculatorMessage] {
+class SimpleCalculatorActor extends TypedActor[CalculatorMessage] {
   def typedReceive = {
     case Op(Add(n1, n2), sender) =>
       println("Calculating %d + %d".format(n1, n2))

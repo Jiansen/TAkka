@@ -14,7 +14,7 @@ object MyTimer{
   var end:Long = 0
 }
 
-class Ping(count: Int, pong: ActorRef[(PongMsg, ActorRef[PingMsg])]) extends Actor[PingMsg] {
+class Ping(count: Int, pong: ActorRef[(PongMsg, ActorRef[PingMsg])]) extends TypedActor[PingMsg] {
   var pingsLeft = count - 1  
   
   def typedReceive = {
@@ -33,7 +33,7 @@ class Ping(count: Int, pong: ActorRef[(PongMsg, ActorRef[PingMsg])]) extends Act
   
 }
 
-class Pong extends Actor[(PongMsg, ActorRef[PingMsg])] {
+class Pong extends TypedActor[(PongMsg, ActorRef[PingMsg])] {
   
   def typedReceive = {
     case (Ping, sender) =>

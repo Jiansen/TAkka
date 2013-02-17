@@ -1,10 +1,10 @@
 package sample.barbershop.takka
 
 import collection.immutable.Queue
-import takka.actor.{Actor, ActorRef}
+import takka.actor.{TypedActor, ActorRef}
 import akka.event.Logging // new import: for logging
 
-case class Line(maxLine: Int) extends Actor[LineMessage] with PostStart {
+case class Line(maxLine: Int) extends TypedActor[LineMessage] with PostStart {
 
   def typedReceive = lineReceive(Queue[ActorRef[CustomerMessage]]()) // type become clearer
   val log = Logging(context.system, this) //new val: for logging

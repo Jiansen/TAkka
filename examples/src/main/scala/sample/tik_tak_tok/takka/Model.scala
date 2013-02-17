@@ -2,7 +2,7 @@ package sample.tik_tak_tok.takka
 
 import takka.actor._
 
-final class Model extends Actor[Controller2ModelMessage] {
+final class Model extends TypedActor[Controller2ModelMessage] {
   var controller:ActorRef[Model2ControllerMessage] = _
   
   def typedReceive = {

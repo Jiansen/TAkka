@@ -14,7 +14,7 @@ appropriate receiver. Each receiver receives messages from a specific generator
 and ignores them. Each generator sends N messages to a specific receiver. Each 
 message contains a list of integers between 1 and L.
  */
-import takka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import akka.remote._
 
 import util.BenchTimer
@@ -39,7 +39,7 @@ case class Done(generator:ActorRef[GeneratorMsg]) extends ReceiverMsg
 case class Data(generator:ActorRef[GeneratorMsg], data:List[Int]) extends ReceiverMsg
 case class SetMaster(master:ActorRef[MasterMsg]) extends ReceiverMsg
 
-class Receiver extends Actor[ReceiverMsg] {
+class Receiver extends TypedActor[ReceiverMsg] {
   var master:ActorRef[MasterMsg] = _
   def typedReceive = {
     case SetMaster(master) =>
@@ -51,7 +51,7 @@ class Receiver extends Actor[ReceiverMsg] {
   }
 }
 
-class Dispatcher extends Actor[DispatcherMsg] {
+class Dispatcher extends TypedActor[DispatcherMsg] {
   def typedReceive = {
     case GeneratorDone(generator, recv) =>
       recv ! Done(generator)
@@ -60,7 +60,7 @@ class Dispatcher extends Actor[DispatcherMsg] {
   }
 }
 
-class Generator(recv:ActorRef[ReceiverMsg], disp:ActorRef[DispatcherMsg], n:Int, l:Int) extends Actor[GeneratorMsg] {
+class Generator(recv:ActorRef[ReceiverMsg], disp:ActorRef[DispatcherMsg], n:Int, l:Int) extends TypedActor[GeneratorMsg] {
   val data = (1 to l) toList
   
   def generator_push_loop(recv:ActorRef[ReceiverMsg], disp:ActorRef[DispatcherMsg], n:Int, data:List[Int]):Unit = {    
@@ -80,7 +80,7 @@ class Generator(recv:ActorRef[ReceiverMsg], disp:ActorRef[DispatcherMsg], n:Int,
   }
 }
 
-class PushActor extends Actor[MasterMsg] {
+class PushActor extends TypedActor[MasterMsg] {
   val timer = new BenchTimer
   var p:Int = _
   def typedReceive = {

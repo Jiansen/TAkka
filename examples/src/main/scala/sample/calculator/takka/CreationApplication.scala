@@ -51,7 +51,7 @@ class CreationApplication extends Bootable {
 }
 
 //#actor
-class CreationActor extends Actor[MathResult] {
+class CreationActor extends TypedActor[MathResult] {
   def typedReceive = {
     case Ask(calculator, op) => {
       //calculator ! Op(op, typedSelf.path)
