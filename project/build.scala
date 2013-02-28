@@ -42,7 +42,7 @@ object TAkkaBuild extends Build {
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.examples
                          ))  dependsOn(snapshot)
-/*
+
   lazy val takkasockowebserver = Project(id = "takka-socko-webserver",
                          base = file("takka-socko-webserver"),
                          settings = defaultSettings ++ Seq(
@@ -67,7 +67,7 @@ object TAkkaBuild extends Build {
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.sockoexamples
                          )) dependsOn(sockowebserver)
-*/                         
+
   lazy val scalabilityBenchmark = Project(id = "scalabilityBenchmark",
                          base = file("scalabilityBenchmark"),
                          settings = defaultSettings ++ Seq(
