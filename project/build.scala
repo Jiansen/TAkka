@@ -151,7 +151,7 @@ object Dependencies {
 object Dependency {
   // Versions
   object V {
-    val Akka      = "2.1.0"
+    val Akka      = "2.1.1"
   }
   val scalaSwing = "org.scala-lang" % "scala-swing" % "2.10.0"
   val akkaActor     = "com.typesafe.akka"   % "akka-actor_2.10"  	% V.Akka
