@@ -17,7 +17,9 @@
 package takka.actor
 
 import scala.reflect.runtime.universe._
-
+import takka.chaos._
+import akka.actor.PoisonPill
+  
 /**
  * A stronger typed Actor trait based on akka.actor.Actor.
  * 
@@ -95,6 +97,7 @@ trait TypedActor[M] extends akka.actor.Actor{
       case akka.actor.ReceiveTimeout => systemMessageHandler(ReceiveTimeout)   
     } 
 //    case m:Msg if (typedReceive.isDefinedAt(m)) => typedReceive(m)
+    case chaos:ChaosMessage => chaosHandler(chaos)
     case m:M => typedReceive(m)    
 //    case akka.actor.ReceiveTimeout => receiveTimeout ()
     case x => throw new Exception("Message "+x+" has the wrong type.")
@@ -149,7 +152,26 @@ trait TypedActor[M] extends akka.actor.Actor{
     case _ => 
   }
   
+  /**
+   *  private handler for chaos message
+   */
+  private def chaosHandler:ChaosMessage => Unit = {
+    case Propagation(r) => 
+      println("Propagation Received: "+self)
+      assert (r>=0 && r<=1, {throw new ChaosException("Propagation ratio "+r+"must be bewtten 0 and 1 inclusively")})
+      val random = new scala.util.Random
+      for (c <- context.children){
+        if (random.nextFloat < r){
+          c ! PoisonPill
+        }else{
+          c ! Propagation(r)
+        }
+      }
+  }
   
+  def enableChaos(chaos:ChaosMessage) {
+    self ! chaos
+  }  
 }
 
 
