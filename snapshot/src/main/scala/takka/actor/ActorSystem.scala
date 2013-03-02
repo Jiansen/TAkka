@@ -16,18 +16,21 @@
 
 package takka.actor
 
-import com.typesafe.config.Config
-import com.typesafe.config.ConfigFactory
-import akka.actor.{ActorPath, Extension, ExtensionId}
-import akka.event.LoggingAdapter
-import scala.concurrent.duration.{FiniteDuration, Duration}
-import akka.pattern._
-import akka.actor.Cancellable
-import scala.language.existentials
-import scala.reflect.runtime.universe.typeTag
-import scala.concurrent.{ ExecutionContext, Promise }
-import takka.nameserver.{NameServer, TSymbol}
-import scala.Symbol
+import java.io.Closeable
+import java.util.concurrent.{ ConcurrentHashMap, ThreadFactory, CountDownLatch, TimeoutException, RejectedExecutionException }
+import java.util.concurrent.TimeUnit.MILLISECONDS
+import com.typesafe.config.{ Config, ConfigFactory }
+import akka.event._
+import akka.dispatch._
+import akka.japi.Util.immutableSeq
+import akka.actor.dungeon.ChildrenContainer
+import akka.util._
+import scala.annotation.tailrec
+import scala.collection.immutable
+import scala.concurrent.duration.{ FiniteDuration, Duration }
+import scala.concurrent.{ Await, Awaitable, CanAwait, Future, ExecutionContext }
+import scala.util.{ Failure, Success }
+import scala.util.control.{ NonFatal, ControlThrowable }
 
 object ActorSystem {
   def apply():ActorSystem = new ActorSystem {

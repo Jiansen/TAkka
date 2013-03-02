@@ -151,14 +151,14 @@ object Dependencies {
 object Dependency {
   // Versions
   object V {
-    val Akka      = "2.1.1"
+    val Akka      = "2.2-M1"
   }
   val scalaSwing = "org.scala-lang" % "scala-swing" % "2.10.0"
   val akkaActor     = "com.typesafe.akka"   % "akka-actor_2.10"  	% V.Akka
-  val akkaKernel    = "com.typesafe.akka"   % "akka-kernel_2.10" 	% V.Akka
-  val akkaRemote    = "com.typesafe.akka"   % "akka-remote_2.10" 	% V.Akka
-  val akkaSlf4j     = "com.typesafe.akka"   % "akka-slf4j_2.10"  	% V.Akka
-  val akkaTestKit   = "com.typesafe.akka"   % "akka-testkit_2.10"	% V.Akka
+  val akkaKernel    = "com.typesafe.akka" %% "akka-kernel" % V.Akka
+  val akkaSlf4j     = "com.typesafe.akka"   %% "akka-slf4j"  % V.Akka
+  val akkaRemote    = "com.typesafe.akka"   %% "akka-remote" % V.Akka
+  val akkaTestKit   = "com.typesafe.akka"   %%"akka-testkit" % V.Akka
   val netty         = "io.netty"            % "netty"              % "3.6.1.Final"
   val logback       = "ch.qos.logback"      % "logback-classic"    % "1.0.7"         % "runtime"
   val junit         = "junit"               % "junit"              % "4.10"           % "test"
