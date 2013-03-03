@@ -4,6 +4,7 @@ import takka.actor._
 import scala.concurrent.duration._
 import akka.actor.SupervisorStrategy._
 import akka.actor.OneForOneStrategy
+import takka.chaos._
 
 class SuperActor extends TypedActor[String] {
   import language.postfixOps
@@ -27,6 +28,8 @@ class SuperActor extends TypedActor[String] {
       child1 ! "print"
       child2 ! "print"
   }
+  
+  this.enableChaos(Propagation(0.5))
 }
 
 class ChildActor extends TypedActor[String] {
@@ -42,6 +45,7 @@ object SupervisionStopDemo extends App{
   println("Hello World")
   val system:ActorSystem = ActorSystem("DemoSystem")
   val root =system.actorOf(Props[String, SuperActor], "root")
+  
   root ! "print"
 }
 

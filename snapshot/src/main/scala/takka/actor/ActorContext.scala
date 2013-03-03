@@ -18,6 +18,8 @@ package takka.actor
 import scala.concurrent.duration.Duration
 import scala.reflect.runtime.universe._
 import language.implicitConversions
+import takka.chaos._
+import akka.actor.PoisonPill
 
 /**
  * The actor context - the internal view of the actor cell from the actor itself.
@@ -130,12 +132,30 @@ abstract class ActorContext[M:TypeTag] {
       throw BehaviorUpdateException(smt, mt)
     mt = smt
     untyped_context.become({
-      case x:akka.actor.PossiblyHarmful => possibleHamfulHandler(x)            
+      case x:akka.actor.PossiblyHarmful => possibleHamfulHandler(x)   
+      case x:ChaosMessage => chaosHandler(x)
       case x:SupM => behavior(x)
     })
     new ActorRef[SupM] {
       val untypedRef = untyped_context.self
     }
+  }
+  
+    /**
+   *  private handler for chaos message
+   */
+  private[actor] def chaosHandler:ChaosMessage => Unit = {
+    case Propagation(r) => 
+//      println("Propagation Received: "+self)
+      assert (r>=0 && r<=1, {throw new ChaosException("Propagation ratio "+r+"must be bewtten 0 and 1 inclusively")})
+      val random = new scala.util.Random
+      for (c <- untyped_context.children){
+        if (random.nextFloat < r){
+          c ! PoisonPill
+        }else{
+          c ! Propagation(r)
+        }
+      }
   }
 }
 
