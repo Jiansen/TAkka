@@ -6,7 +6,7 @@ import akka.actor.SupervisorStrategy._
 import akka.actor.OneForOneStrategy
 
 class SuperActor extends TypedActor[String] {
-  
+  import language.postfixOps
   override val supervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
       case e  =>
@@ -41,8 +41,8 @@ class ChildActor extends TypedActor[String] {
 object SupervisionStopDemo extends App{
   println("Hello World")
   val system:ActorSystem = ActorSystem("DemoSystem")
-//  val root =system.actorOf(Props[String, SuperActor], "root")
-//  root ! "print"
+  val root =system.actorOf(Props[String, SuperActor], "root")
+  root ! "print"
 }
 
 /*

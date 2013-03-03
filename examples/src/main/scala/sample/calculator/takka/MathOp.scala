@@ -5,6 +5,7 @@ package typed.remote.calculator
 
 import takka.actor.{TypedActor, ActorRef}
 import akka.actor.ActorPath
+import scala.reflect.runtime.universe._
 
 trait MathOp
 
@@ -33,6 +34,7 @@ case class Op(op:MathOp, sender:ActorRef[MathResult]) extends CalculatorMessage
 case class Ask(calculator:ActorRef[CalculatorMessage], op:MathOp) extends MathResult
 
 class AdvancedCalculatorActor extends TypedActor[CalculatorMessage] {
+  val mt = typeTag[CalculatorMessage]
   def typedReceive = {
     /*
     case Op(Multiply(n1, n2), senderPath) =>

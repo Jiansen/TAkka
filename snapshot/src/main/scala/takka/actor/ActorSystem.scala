@@ -32,13 +32,17 @@ import scala.concurrent.{ Await, Awaitable, CanAwait, Future, ExecutionContext }
 import scala.util.{ Failure, Success }
 import scala.util.control.{ NonFatal, ControlThrowable }
 
+import takka.nameserver._
+import akka.pattern.ask
+import scala.reflect.runtime.universe._
+
 object ActorSystem {
   def apply():ActorSystem = new ActorSystem {
     val system = akka.actor.ActorSystem.apply()
     system.actorOf(akka.actor.Props(new ActorTypeChecker), "ActorTypeChecker")
   }
   def apply(name: String): ActorSystem = new ActorSystem {
-    val system = akka.actor.ActorSystem.apply(name)
+    val system = akka.actor.ActorSystem(name)
     system.actorOf(akka.actor.Props(new ActorTypeChecker), "ActorTypeChecker")
   }
   
@@ -66,77 +70,58 @@ object ActorSystem {
  * Where no name is given explicitly, one will be automatically generated.
  */
 abstract class ActorSystem {
+  import akka.actor.{Extension, ExtensionId}
+  
   val system:akka.actor.ActorSystem
-
-  private implicit val executionContext = system.dispatcher
-  
-//  system.actorOf(akka.actor.Props[ActorTypeChecker])
-  // Abstract Value Members
-  def / (name: Iterable[String]): ActorPath = {
-    system / name
+/*
+  def name: String = {system.name}
+  def logConfiguration(): Unit = system.logConfiguration
+  def /(name: String): akka.actor.ActorPath = system./(name)
+  def child(child: String): akka.actor.ActorPath = /(child)
+  def /(name: Iterable[String]): akka.actor.ActorPath = system./(name)
+  def descendant(names: java.lang.Iterable[String]): akka.actor.ActorPath = /(immutableSeq(names))
+  val startTime: Long = System.currentTimeMillis
+  def uptime: Long = (System.currentTimeMillis - startTime) / 1000
+  def eventStream: EventStream = system.eventStream
+  def log: LoggingAdapter = system.log
+  * 
+  */
+  // use publishas[T] when ActorRef[T] is required
+  def deadLetters : ActorRef[Any] = new ActorRef[Any]{
+    val untypedRef = system.deadLetters
   }
-  
-  def / (name: String): ActorPath = {
-    system / name
-  }
+  //#scheduler
+//  def scheduler: Scheduler = system.scheduler
+  def dispatchers: Dispatchers = system.dispatchers
+  implicit def dispatcher: ExecutionContext = system.dispatcher
+  def registerOnTermination[T](code: => T): Unit = system.registerOnTermination(code)
+  def registerOnTermination(code: Runnable): Unit = system.registerOnTermination(code)
+  def awaitTermination(timeout: Duration): Unit = system.awaitTermination(timeout)
+  def awaitTermination(): Unit =  system.awaitTermination
+  def shutdown(): Unit = system.shutdown
+  def isTerminated: Boolean = system.isTerminated
+  def registerExtension[T <: Extension](ext: ExtensionId[T]): T = system.registerExtension(ext)
+  def extension[T <: Extension](ext: ExtensionId[T]): T = system.extension(ext)
+  def hasExtension(ext: ExtensionId[_ <: Extension]): Boolean = system.hasExtension(ext)
   
   /**
    * Create a top-level actor, with system generated name.
    */  
-  def actorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg] = {
-    val actor = new ActorRef[Msg] { val untypedRef = system.actorOf(props.props) }
-    
-    NameServer.set(TSymbol[ActorRef[Msg]](scala.Symbol(actor.path.toString())), actor)
-    
+  def actorOf[Msg:TypeTag](props:Props[Msg]):ActorRef[Msg] = {
+    val actor = new ActorRef[Msg] { val untypedRef = system.actorOf(props.props) }    
+    NameServer.set(TSymbol[ActorRef[Msg]](scala.Symbol(actor.path.toString())), actor)    
     actor
   }
 
   /**
    * Create a top-level actor. with user specified name.
    */  
-  def actorOf[Msg:Manifest](props:Props[Msg], name:String):ActorRef[Msg] = {
+  def actorOf[Msg:TypeTag](props:Props[Msg], name:String):ActorRef[Msg] = {
     val actor = new ActorRef[Msg] { val untypedRef = system.actorOf(props.props, name) }
     NameServer.set(TSymbol[ActorRef[Msg]](Symbol(actor.path.toString())), actor)
     actor
   }
   
-  def awaitTermination (): Unit = {
-    system.awaitTermination()
-  }
-  
-  def awaitTermination (timeout: Duration): Unit = {
-    system.awaitTermination(timeout)
-  }
-  
-  def eventStream : akka.event.EventStream = {
-    system.eventStream
-  }
-  
-  
-  def extension [T <: Extension] (ext: ExtensionId[T]): T = {
-    system.extension(ext)
-  }
-  
-  // Return true if the system is shutdown
-  def isTerminated : Boolean = { system.isTerminated }
-  
-  def log : LoggingAdapter =  { system.log }
-  
-  def logConfiguration (): Unit = { system.logConfiguration() }
-  
-//  def name : String = { system.name }
-  
-  def registerExtension [T <: Extension] (ext: ExtensionId[T]): T = {
-    system.registerExtension(ext)
-  }
-  
-  def registerOnTermination (code: Runnable): Unit = {
-    system.registerOnTermination(code)
-  }
-  
-  def registerOnTermination [T] (code: => T): Unit = {
-    system.registerOnTermination(code)
-  }
   
   def scheduler : takka.actor.Scheduler = new takka.actor.Scheduler {
     val akkaScheduler = system.scheduler
@@ -145,67 +130,52 @@ abstract class ActorSystem {
       initialDelay: FiniteDuration,
       interval: FiniteDuration,
       receiver: ActorRef[M],
-      message: M)(implicit executor: ExecutionContext, sender: ActorRef[_] = Actor.noSender): Cancellable = {
-      akkaScheduler.schedule(initialDelay, interval, receiver.untypedRef, message)
+      message: M)(implicit executor: ExecutionContext, sender: ActorRef[_] = Actor.noSender): akka.actor.Cancellable = {
+      akkaScheduler.schedule(initialDelay, interval, receiver.untypedRef, message)(executor)
     }
     
     def schedule(
       initialDelay: FiniteDuration,
       interval: FiniteDuration)(f: => Unit)(
-      implicit executor: ExecutionContext): Cancellable = {
+      implicit executor: ExecutionContext): akka.actor.Cancellable = {
       akkaScheduler.schedule(initialDelay, interval)(f)(executor)
     }
 
     def schedule(
       initialDelay: FiniteDuration,
       interval: FiniteDuration,
-      runnable: Runnable)(implicit executor: ExecutionContext): Cancellable = {
+      runnable: Runnable)(implicit executor: ExecutionContext): akka.actor.Cancellable = {
       akkaScheduler.schedule(initialDelay, interval, runnable)(executor)
     }
     
     def scheduleOnce(
       delay: FiniteDuration,
-      runnable: Runnable)(implicit executor: ExecutionContext): Cancellable = {
+      runnable: Runnable)(implicit executor: ExecutionContext): akka.actor.Cancellable = {
       akkaScheduler.scheduleOnce(delay, runnable)(executor) 
       }
     
     def scheduleOnce[M](
       delay: FiniteDuration,
       receiver: ActorRef[M],
-      message: M)(implicit executor: ExecutionContext): Cancellable = {
+      message: M)(implicit executor: ExecutionContext): akka.actor.Cancellable = {
       akkaScheduler.scheduleOnce(delay, receiver.untypedRef, message)(executor)
     }
     
     def scheduleOnce(
       delay: FiniteDuration)(f: => Unit)(
-      implicit executor: ExecutionContext): Cancellable = {
-      akkaScheduler.scheduleOnce(delay)(f)
+      implicit executor: ExecutionContext): akka.actor.Cancellable = {
+      akkaScheduler.scheduleOnce(delay)(f)(executor)
     }
   }
   
-  
-  
-  def settings : akka.actor.ActorSystem.Settings = {system.settings}
-  
-  def shutdown (): Unit = system.shutdown()
-  
-  def stop(actor: ActorRef[_]): Unit = {
-    system.stop(actor.untypedRef)
-  }
-  
   override def toString():String = system.toString()
-  
-  // use publishas[T] when ActorRef[T] is required
-  def deadLetters : ActorRef[Any] = new ActorRef[Any]{
-    val untypedRef = system.deadLetters
-  }
 
   
   // Concrete Value Members
   
   // actorFor  via nameserver !!!	
   // TODO: E is not checked
-  def actorFor[M:Manifest](actorPath: String): ActorRef[M]= {
+  def actorFor[M:TypeTag](actorPath: String): ActorRef[M]= {
     
     //val isRemotePath = ActorPath(actorPath)
     val tmp = new ActorRef[M]{
@@ -214,7 +184,7 @@ abstract class ActorSystem {
     actorFor[M](tmp.path)
   }
   
-  def actorFor[M:Manifest](actorPath: akka.actor.ActorPath): ActorRef[M]= {
+  def actorFor[M:TypeTag](actorPath: akka.actor.ActorPath): ActorRef[M]= {
     val isRemotePath = actorPath.address.host match {
       case None => false
       case Some(_) => true
@@ -239,7 +209,7 @@ abstract class ActorSystem {
             val untypedRef = system.actorFor(actorPath)
           } 
         case NonCompatible => 
-          throw new Exception("ActorRef["+actorPath+"] does not exist or does not have type ActorRef["+manifest[M]+"]")
+          throw new Exception("ActorRef["+actorPath+"] does not exist or does not have type ActorRef["+typeOf[M]+"]")
       }
       result
     }else{
@@ -250,11 +220,6 @@ abstract class ActorSystem {
     }
   }
     
-//  val startTime : Long = system.startTime
-  
-  def uptime : Long = system.uptime
-  
-  
   //  new APIs to support remote ActorRef  
   // TODO: may need to modify when akka 2.1 release (Cluster instead of akka) 
   private def getHostname():String = {
@@ -288,7 +253,7 @@ abstract class ActorSystem {
     }
   }
   
-  def remoteActorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg] = {
+  def remoteActorOf[Msg:TypeTag](props:Props[Msg]):ActorRef[Msg] = {
     val actor = actorOf[Msg](props:Props[Msg])
     val system = this
     new ActorRef[Msg] {
@@ -300,7 +265,7 @@ abstract class ActorSystem {
     }
   }
   
-  def remoteActorOf[Msg:Manifest](props:Props[Msg], name:String):ActorRef[Msg] = {
+  def remoteActorOf[Msg:TypeTag](props:Props[Msg], name:String):ActorRef[Msg] = {
     val actor = actorOf[Msg](props:Props[Msg], name:String)
     val system = this
     new ActorRef[Msg] {
@@ -312,7 +277,7 @@ abstract class ActorSystem {
     }
   }
   
-  
+  import language.existentials
 //  private sealed trait ActorTypeCheckerMsg
   private case class Check(path:akka.actor.ActorPath, t:scala.reflect.runtime.universe.TypeTag[_]) 
   private case object Compatible

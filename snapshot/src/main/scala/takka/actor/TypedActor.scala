@@ -82,10 +82,11 @@ import akka.actor.PoisonPill
  * the name-space clean.
  */
 //trait Actor[-Msg] extends akka.actor.Actor {
-//trait Actor[Msg](implicit msgT:Manifest[Msg]) extends akka.actor.Actor {
-//trait Actor[Msg:Manifest] extends akka.actor.Actor {
-trait TypedActor[M] extends akka.actor.Actor{  
-  implicit val mt:TypeTag[M] = typeTag[M]
+//trait Actor[Msg](implicit msgT:TypeTag[Msg]) extends akka.actor.Actor {
+//trait Actor[Msg:TypeTag] extends akka.actor.Actor {
+//trait TypedActor[M] extends akka.actor.Actor{  
+abstract class TypedActor[M:TypeTag] extends akka.actor.Actor{  
+//  implicit val mt:TypeTag[M] = typeTag[M]
   /**
    * This defines the initial actor behavior, it must return a partial function
    * with the actor logic.
@@ -106,7 +107,7 @@ trait TypedActor[M] extends akka.actor.Actor{
    /**
    * Stores the context for this actor, including typedSelf
    */
-  protected[actor] implicit val typedContext:ActorContext[M] = new ActorContext[M]{
+  protected[actor] implicit val typedContext:ActorContext[M] = new ActorContext[M](){
      val untyped_context = context
      val props:Props[M] = Props(untyped_context.props)
   }

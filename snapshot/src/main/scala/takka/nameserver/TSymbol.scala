@@ -5,7 +5,7 @@ import scala.Symbol
 
 /**
  * A typed symbol is a pair of a symbol and a type descriptor.
- * The type descriptor (Manifest) can be used at run-time for type comparison.
+ * The type descriptor (TypeTag) can be used at run-time for type comparison.
  */
 @SerialVersionUID( 1L )
 case class TSymbol[-T:TypeTag](val symbol:Symbol) {
@@ -18,7 +18,7 @@ case class TSymbol[-T:TypeTag](val symbol:Symbol) {
 }
 
 /**
- * A typed value contains a type descriptor (Manifest) which can be used at run-time.
+ * A typed value contains a type descriptor (TypeTag) which can be used at run-time.
  */
 case class TValue[T:TypeTag](val value:T){
   val t:Type = typeOf[T]

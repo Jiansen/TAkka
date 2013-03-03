@@ -1,6 +1,7 @@
 package sample.takka
 
 import takka.actor._
+import scala.reflect.runtime.universe._
 
 trait PingMsg
 case object Pong extends PingMsg
@@ -15,6 +16,7 @@ object MyTimer{
 }
 
 class Ping(count: Int, pong: ActorRef[(PongMsg, ActorRef[PingMsg])]) extends TypedActor[PingMsg] {
+//  val mt = typeTag[PingMsg]
   var pingsLeft = count - 1  
   
   def typedReceive = {
@@ -34,7 +36,7 @@ class Ping(count: Int, pong: ActorRef[(PongMsg, ActorRef[PingMsg])]) extends Typ
 }
 
 class Pong extends TypedActor[(PongMsg, ActorRef[PingMsg])] {
-  
+  val mt = typeTag[(PongMsg, ActorRef[PingMsg])]
   def typedReceive = {
     case (Ping, sender) =>
         sender ! (Pong)
@@ -48,11 +50,13 @@ class Pong extends TypedActor[(PongMsg, ActorRef[PingMsg])] {
 
 object PingPong extends App{
   val system = ActorSystem("MySystem")
-  val pong = system.actorOf[(PongMsg, ActorRef[PingMsg])](Props(new Pong()), "pong")
+  
+  val pong = system.actorOf(Props[(PongMsg, ActorRef[PingMsg]), Pong], "pong")
   val ping = system.actorOf[PingMsg](Props(new Ping(100000, pong)), "ping")
 
   MyTimer.start = java.util.Calendar.getInstance().getTime().getTime()
   pong ! (Ping, ping)
+
 }
 
 

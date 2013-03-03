@@ -28,10 +28,10 @@ import scala.concurrent.Future
  */
 //@SerialVersion("ActorRef-v-0-1")
 @SerialVersionUID(13L)
-//trait ActorRef[-Msg : Manifest] { // compile error: traits cannot have type parameters with context bounds
+//trait ActorRef[-Msg : TypeTag] { // compile error: traits cannot have type parameters with context bounds
 abstract class ActorRef[-M](implicit mt:TypeTag[M]) extends Serializable {
   val untypedRef:akka.actor.ActorRef 
-//  def typename(implicit m: scala.reflect.Manifest[M]) = m.toString
+//  def typename(implicit m: scala.reflect.TypeTag[M]) = m.toString
   
   /**
    *  Return true if the actor has been shut down 
@@ -67,7 +67,7 @@ abstract class ActorRef[-M](implicit mt:TypeTag[M]) extends Serializable {
   /**
    *  Type safe cast
    */
-  def publishAs[SubM<:M](implicit mt:Manifest[SubM]):ActorRef[SubM] = {
+  def publishAs[SubM<:M](implicit mt:TypeTag[SubM]):ActorRef[SubM] = {
     val preciseRef = this.untypedRef
      new ActorRef[SubM] {
       val untypedRef = preciseRef
@@ -77,7 +77,7 @@ abstract class ActorRef[-M](implicit mt:TypeTag[M]) extends Serializable {
   /**
    *  Send synchronous request.  The current implementation is buggy because it does not restrict SynMessage[R] <: M
    */
-  def ?[R](message: SynMessage[R])(implicit timeout: akka.util.Timeout, mr:Manifest[R]):Future[R] = {    
+  def ?[R:scala.reflect.ClassTag](message: SynMessage[R])(implicit timeout: akka.util.Timeout, mr:TypeTag[R]):Future[R] = {    
     (untypedRef ? message).mapTo[R]
   }
 }

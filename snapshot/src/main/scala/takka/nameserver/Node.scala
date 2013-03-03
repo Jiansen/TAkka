@@ -17,11 +17,11 @@ import scala.concurrent.duration.Duration
 
 /*
 trait NodeEnquiry
-case class getValue(vSymbol:Symbol, vType:Manifest[_])
+case class getValue(vSymbol:Symbol, vType:TypeTag[_])
 
 class SimpleNodeActor extends Actor {
   def receive = {
-    case getValue(vSymbol:TSymbol, vType:Manifest[_]) =>
+    case getValue(vSymbol:TSymbol, vType:TypeTag[_]) =>
       val res = NameServer.get(vSymbol)(vType) match {
         case None => SNone
         case Some(m) => SSome(m)
@@ -71,7 +71,7 @@ class RemoteNode(address:String, port:Int){
   val remoteNodeActor = system.actorFor("akka://NodeSystem@"+address+":"+port+"/user/Node")
   
   // reference to remote node
-  def get[T](name:Symbol)(implicit m: Manifest[T]):SOption[T] = {
+  def get[T](name:Symbol)(implicit m: TypeTag[T]):SOption[T] = {
     implicit val timeout = Timeout(5 seconds)
     val resF = (remoteNodeActor ? getValue(name, m)).mapTo[SOption[T]]
     Await.result(resF, 1 second)

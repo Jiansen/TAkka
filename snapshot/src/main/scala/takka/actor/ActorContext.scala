@@ -40,8 +40,8 @@ import language.implicitConversions
  * }}}
  * Where no name is given explicitly, one will be automatically generated.
  */
-trait ActorContext[M] {
-  implicit private val m:TypeTag[M] = typeTag[M]
+abstract class ActorContext[M:TypeTag] {
+//  implicit val m:TypeTag[M] = typeTag[M]
   implicit var mt : Type = typeOf[M]
 
   val untyped_context:akka.actor.ActorContext
@@ -94,12 +94,12 @@ trait ActorContext[M] {
     
   // actorFor  via nameserver !!!	
   // TODO: Msg is not checked
-  def actorFor[Msg](actorPath: String)(implicit mt:Manifest[Msg]): ActorRef[Msg]= new ActorRef[Msg]{
+  def actorFor[Msg](actorPath: String)(implicit mt:TypeTag[Msg]): ActorRef[Msg]= new ActorRef[Msg]{
     val untypedRef = untyped_context.actorFor(actorPath)
   }
   
   //  new APIs to support remote ActorRef
-  def remoteActorOf[Msg](props:Props[Msg])(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
+  def remoteActorOf[Msg](props:Props[Msg])(implicit mt:TypeTag[Msg]):ActorRef[Msg] = {
     val actor = actorOf[Msg](props:Props[Msg])
     val system = this.system;
     new ActorRef[Msg] {

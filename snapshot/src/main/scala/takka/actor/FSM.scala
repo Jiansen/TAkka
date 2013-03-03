@@ -595,7 +595,7 @@ trait LoggingFSM[S, D, E] extends FSM[S, D, E] { this: TypedActor[E] =>
 
   def logDepth: Int = 0
 
-  private val debugEvent = typedContext.system.settings.FsmDebugEvent
+  private val debugEvent = context.system.settings.FsmDebugEvent
 
   private val events = new Array[Event](logDepth)
   private val states = new Array[AnyRef](logDepth)
