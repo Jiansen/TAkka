@@ -22,34 +22,42 @@ class SuperActor extends TypedActor[String] {
   def typedReceive = {
     case _  =>
       println(self)
-//      child1 ! "print"
-//      child2 ! "print"
-//      context.children foreach ( c => c ! PoisonPill)
       child1 ! "print"
       child2 ! "print"
   }
-  
-  this.enableChaos(Propagation(0.5))
+  this.setChaosLogStream(System.out)
+  this.enableChaos(ChaosChildrenRepeat(0.1, 1 second))
 }
 
 class ChildActor extends TypedActor[String] {
   def typedReceive = {
     case _  =>
       println(self)
-      Thread.sleep(2000)
-      println(self)
   }
+  this.setChaosLogStream(System.out)  
 }
 
 object SupervisionStopDemo extends App{
-  println("Hello World")
   val system:ActorSystem = ActorSystem("DemoSystem")
   val root =system.actorOf(Props[String, SuperActor], "root")
   
   root ! "print"
+  Thread.sleep(2000)
+  root ! "print"  
 }
 
 /*
-Hello World
-
+Actor[akka://DemoSystem/user/root]
+Actor[akka://DemoSystem/user/root/child1]
+Actor[akka://DemoSystem/user/root/child2]
+ChaosChildren Received by: ActorRef[TypeTag[String]]: akka://DemoSystem/user/root
+ChaosChildren Received by: ActorRef[TypeTag[String]]: akka://DemoSystem/user/root/child1
+ChaosChildren Received by: ActorRef[TypeTag[String]]: akka://DemoSystem/user/root/child2
+Actor[akka://DemoSystem/user/root]
+Actor[akka://DemoSystem/user/root/child1]
+Actor[akka://DemoSystem/user/root/child2]
+ChaosChildren Received by: ActorRef[TypeTag[String]]: akka://DemoSystem/user/root
+ChaosChildren Received by: ActorRef[TypeTag[String]]: akka://DemoSystem/user/root/child2
+ChaosChildren	 Received by: ActorRef[TypeTag[String]]: akka://DemoSystem/user/root/child1
+...
 */

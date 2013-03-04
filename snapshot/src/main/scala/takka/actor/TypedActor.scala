@@ -155,7 +155,11 @@ abstract class TypedActor[M:TypeTag] extends akka.actor.Actor{
   
   def enableChaos(chaos:ChaosMessage) {
     self ! chaos
-  }  
+  }
+  
+  def setChaosLogStream(out:java.io.PrintStream) {
+    typedContext.chaosLog = out
+  }
 }
 
 
