@@ -25,8 +25,8 @@ class SuperActor extends TypedActor[String] {
       child1 ! "print"
       child2 ! "print"
   }
-  this.setChaosLogStream(System.out)
-  this.enableChaos(ChaosChildrenRepeat(0.1, 1 second))
+//  this.setChaosLogStream(System.out)
+//  this.enableChaos(ChaosChildrenRepeat(0.1, 1 second))
 }
 
 class ChildActor extends TypedActor[String] {
@@ -34,7 +34,7 @@ class ChildActor extends TypedActor[String] {
     case _  =>
       println(self)
   }
-  this.setChaosLogStream(System.out)  
+//  this.setChaosLogStream(System.out)  
 }
 
 object SupervisionStopDemo extends App{

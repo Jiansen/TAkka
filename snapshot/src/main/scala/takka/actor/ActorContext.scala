@@ -147,39 +147,10 @@ abstract class ActorContext[M:TypeTag] {
    *  private handler for chaos message
    */
   private[actor] def chaosHandler:ChaosMessage => Unit = {
-    case Propagation(r) => 
-      if (chaosLog != null){
-         chaosLog.println("Propagation Received by: "+typedSelf)
-      }
-      assert (r>=0 && r<=1, {throw new ChaosException("Propagation ratio "+r+"must be bewtten 0 and 1 inclusively")})
-      val random = new scala.util.Random
-      if(random.nextFloat < r){
-        untyped_context.self ! PoisonPill
-      }else{
-        for (c <- untyped_context.children){
-          c ! Propagation(r)
-        }        
-      }
-    case PropagationRepeat(ratio, period) =>
-      import scala.concurrent.ExecutionContext.Implicits.global
-      system.system.scheduler.schedule(period, period, untyped_context.self, Propagation(ratio))
+    case ChaosException(e:Exception) => 
+      throw e
+    case ChaosNonTerminate =>
       
-    case ChaosChildren(r) =>
-      if (chaosLog != null){
-         chaosLog.println("ChaosChildren Received by: "+typedSelf)
-      }
-      assert (r>=0 && r<=1, {throw new ChaosException("Propagation ratio "+r+"must be bewtten 0 and 1 inclusively")})
-      val random = new scala.util.Random
-      for (c <- untyped_context.children){
-        if(random.nextFloat < r){
-          c ! PoisonPill
-        }else{
-          c ! ChaosChildren(r)
-        }
-      }      
-    case ChaosChildrenRepeat(ratio, period) =>
-      import scala.concurrent.ExecutionContext.Implicits.global
-      system.system.scheduler.schedule(period, period, untyped_context.self, ChaosChildren(ratio))
   }
 }
 
