@@ -95,7 +95,7 @@ class RequestHandler(server: WebServer) extends SimpleChannelUpstreamHandler wit
       case httpRequest: HttpRequest =>
         var event = HttpRequestEvent(e.getChannel, httpRequest, httpConfig)
 
-        log.debug("HTTP {} CHANNEL={}", event.endPoint, e.getChannel.getId)
+//        log.debug("HTTP {} CHANNEL={}", event.endPoint, e.getChannel.getId)
 
         if (event.request.isChunked) {
           validateFirstChunk(event)
@@ -114,7 +114,7 @@ class RequestHandler(server: WebServer) extends SimpleChannelUpstreamHandler wit
         var event = HttpChunkEvent(e.getChannel, initialHttpRequest.get, httpChunk, httpConfig)
         initialHttpRequest.get.totalChunkContentLength += httpChunk.getContent.readableBytes
 
-        log.debug("CHUNK {} CHANNEL={}", event.endPoint, e.getChannel.getId)
+//        log.debug("CHUNK {} CHANNEL={}", event.endPoint, e.getChannel.getId)
 
         server.routes(event)
 
@@ -125,7 +125,7 @@ class RequestHandler(server: WebServer) extends SimpleChannelUpstreamHandler wit
       case wsFrame: WebSocketFrame =>
         var event = WebSocketFrameEvent(e.getChannel, initialHttpRequest.get, wsFrame, wsConfig)
 
-        log.debug("WS {} CHANNEL={}", event.endPoint, e.getChannel.getId)
+//        log.debug("WS {} CHANNEL={}", event.endPoint, e.getChannel.getId)
 
         if (wsFrame.isInstanceOf[CloseWebSocketFrame]) {
           // This will also close the channel

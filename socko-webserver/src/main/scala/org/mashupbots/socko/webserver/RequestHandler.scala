@@ -20,7 +20,6 @@ import java.util.Calendar
 
 import org.jboss.netty.buffer.ChannelBuffers
 import org.jboss.netty.channel.Channel
-import org.jboss.netty.channel.ChannelFuture
 import org.jboss.netty.channel.ChannelFutureListener
 import org.jboss.netty.channel.ChannelHandlerContext
 import org.jboss.netty.channel.ChannelStateEvent
@@ -28,20 +27,19 @@ import org.jboss.netty.channel.ExceptionEvent
 import org.jboss.netty.channel.MessageEvent
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler
 import org.jboss.netty.handler.codec.frame.TooLongFrameException
-import org.jboss.netty.handler.codec.http.DefaultHttpResponse
-import org.jboss.netty.handler.codec.http.HttpChunk
-import org.jboss.netty.handler.codec.http.HttpChunkAggregator
-import org.jboss.netty.handler.codec.http.HttpHeaders
-import org.jboss.netty.handler.codec.http.HttpRequest
-import org.jboss.netty.handler.codec.http.HttpResponseStatus
-import org.jboss.netty.handler.codec.http.HttpVersion
 import org.jboss.netty.handler.codec.http.websocketx.CloseWebSocketFrame
 import org.jboss.netty.handler.codec.http.websocketx.PingWebSocketFrame
 import org.jboss.netty.handler.codec.http.websocketx.PongWebSocketFrame
 import org.jboss.netty.handler.codec.http.websocketx.WebSocketFrame
-import org.jboss.netty.handler.codec.http.websocketx.WebSocketHandshakeException
 import org.jboss.netty.handler.codec.http.websocketx.WebSocketServerHandshaker
 import org.jboss.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory
+import org.jboss.netty.handler.codec.http.HttpChunkAggregator
+import org.jboss.netty.handler.codec.http.DefaultHttpResponse
+import org.jboss.netty.handler.codec.http.HttpChunk
+import org.jboss.netty.handler.codec.http.HttpHeaders
+import org.jboss.netty.handler.codec.http.HttpRequest
+import org.jboss.netty.handler.codec.http.HttpResponseStatus
+import org.jboss.netty.handler.codec.http.HttpVersion
 import org.jboss.netty.handler.ssl.SslHandler
 import org.jboss.netty.util.CharsetUtil
 import org.mashupbots.socko.events.HttpChunkEvent
@@ -94,16 +92,16 @@ class RequestHandler(server: WebServer) extends SimpleChannelUpstreamHandler wit
   override def messageReceived(ctx: ChannelHandlerContext, e: MessageEvent) {
     e.getMessage match {
       case httpRequest: HttpRequest =>
-        val event = HttpRequestEvent(e.getChannel, httpRequest, httpConfig)
+        var event = HttpRequestEvent(e.getChannel, httpRequest, httpConfig)
 
-        log.debug("HTTP {} CHANNEL={} {}", event.endPoint, e.getChannel.getId, "")
+//        log.debug("HTTP {} CHANNEL={}", event.endPoint, e.getChannel.getId)
 
         if (event.request.isChunked) {
           validateFirstChunk(event)
           server.routes(event)
           initialHttpRequest = Some(new InitialHttpRequestMessage(event.request, event.createdOn))
         } else if (event.request.isWebSocketUpgrade) {
-          val wsctx = WebSocketHandshakeEvent(e.getChannel, httpRequest, httpConfig)
+          var wsctx = WebSocketHandshakeEvent(e.getChannel, httpRequest, httpConfig)
           server.routes(wsctx)
           doWebSocketHandshake(wsctx)
           initialHttpRequest = Some(new InitialHttpRequestMessage(event.request, event.createdOn))
@@ -112,10 +110,10 @@ class RequestHandler(server: WebServer) extends SimpleChannelUpstreamHandler wit
         }
 
       case httpChunk: HttpChunk =>
-        val event = HttpChunkEvent(e.getChannel, initialHttpRequest.get, httpChunk, httpConfig)
+        var event = HttpChunkEvent(e.getChannel, initialHttpRequest.get, httpChunk, httpConfig)
         initialHttpRequest.get.totalChunkContentLength += httpChunk.getContent.readableBytes
 
-        log.debug("CHUNK {} CHANNEL={} {}", event.endPoint, e.getChannel.getId, "")
+//        log.debug("CHUNK {} CHANNEL={}", event.endPoint, e.getChannel.getId)
 
         server.routes(event)
 
@@ -124,9 +122,9 @@ class RequestHandler(server: WebServer) extends SimpleChannelUpstreamHandler wit
         }
 
       case wsFrame: WebSocketFrame =>
-        val event = WebSocketFrameEvent(e.getChannel, initialHttpRequest.get, wsFrame, wsConfig)
+        var event = WebSocketFrameEvent(e.getChannel, initialHttpRequest.get, wsFrame, wsConfig)
 
-        log.debug("WS {} CHANNEL={} {}", event.endPoint, e.getChannel.getId, "")
+//        log.debug("WS {} CHANNEL={}", event.endPoint, e.getChannel.getId)
 
         if (wsFrame.isInstanceOf[CloseWebSocketFrame]) {
           // This will also close the channel
@@ -144,7 +142,7 @@ class RequestHandler(server: WebServer) extends SimpleChannelUpstreamHandler wit
 
   /**
    * Check if it is valid to process chunks and store state information.
-   *
+   * 
    * An exception is thrown if invalid.
    *
    * @param event HTTP request event that is chunked
@@ -190,15 +188,13 @@ class RequestHandler(server: WebServer) extends SimpleChannelUpstreamHandler wit
       case ex: TooLongFrameException => writeErrorResponse(ctx, HttpResponseStatus.BAD_REQUEST, ex)
       // Websockets not supported at this route
       case ex: UnsupportedOperationException => writeErrorResponse(ctx, HttpResponseStatus.BAD_REQUEST, ex)
-      // Websockets handshake error
-      case ex: WebSocketHandshakeException => writeErrorResponse(ctx, HttpResponseStatus.BAD_REQUEST, ex)
       // Catch all
       case ex => {
         try {
           log.debug("Error handling request", ex)
           e.getChannel().close()
         } catch {
-          case ex2: Throwable => log.debug("Error closing channel", ex2)
+          case ex2 => log.debug("Error closing channel", ex2)
         }
       }
     }
@@ -277,19 +273,8 @@ class RequestHandler(server: WebServer) extends SimpleChannelUpstreamHandler wit
       wsFactory.sendUnsupportedWebSocketVersionResponse(event.channel)
       event.writeWebLog(HttpResponseStatus.UPGRADE_REQUIRED.getCode, 0)
     } else {
-      val future = wsHandshaker.handshake(event.channel, event.nettyHttpRequest)
+      wsHandshaker.handshake(event.channel, event.nettyHttpRequest)
       event.writeWebLog(HttpResponseStatus.SWITCHING_PROTOCOLS.getCode, 0)
-
-      // Callback on complete AFTER data sent to the client
-      if (event.onComplete.isDefined) {
-        class OnCompleteListender extends ChannelFutureListener {
-          def operationComplete(future: ChannelFuture) {
-            event.onComplete.get(event)
-          }
-        }
-        future.addListener(new OnCompleteListender())
-      }
-
     }
   }
 
