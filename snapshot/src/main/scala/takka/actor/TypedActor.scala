@@ -106,8 +106,8 @@ abstract class TypedActor[M:TypeTag] extends akka.actor.Actor{
    * Stores the context for this actor, including typedSelf
    */
   protected[actor] implicit val typedContext:ActorContext[M] = new ActorContext[M](){
-     val untyped_context = context
-     val props:Props[M] = Props(untyped_context.props)
+     val untypedContext = context
+     val props:Props[M] = Props(untypedContext.props)
   }
   
   /**

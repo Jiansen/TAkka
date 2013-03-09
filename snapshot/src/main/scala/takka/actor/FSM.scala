@@ -47,7 +47,7 @@ object FSM {
   private[takka] case class Timer[E](name: String, msg: E, repeat: Boolean, generation: Int)(context: ActorContext[_]) {
     private var ref: Option[akka.actor.Cancellable] = _
     private val scheduler = context.system.system.scheduler
-    private implicit val executionContext = context.untyped_context.dispatcher
+    private implicit val executionContext = context.untypedContext.dispatcher
     
     def schedule(actor: ActorRef[E], timeout: FiniteDuration): Unit =
       ref = Some(
