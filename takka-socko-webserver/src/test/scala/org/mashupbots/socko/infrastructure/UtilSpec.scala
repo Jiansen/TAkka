@@ -23,7 +23,7 @@ import java.util.Date
 import java.util.GregorianCalendar
 import java.net.InetSocketAddress
 import org.scalatest.GivenWhenThen
-import akka.util.duration._
+import scala.concurrent.duration._
 import java.util.TimeZone
 import java.util.Calendar
 import java.text.ParseException
