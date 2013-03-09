@@ -17,9 +17,7 @@ object TAkkaBuild extends Build {
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-optimize"),
     javacOptions  ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
     
-    // sbtEclipse - see examples https://github.com/typesafehub/sbteclipse/blob/master/sbteclipse-plugin/src/sbt-test/sbteclipse/02-contents/project/Build.scala
     retrieveManaged := true,
-//    EclipseKeys.createSrc := EclipseCreateSrc.ValueSet(EclipseCreateSrc.Managed, EclipseCreateSrc.Resource),
     EclipseKeys.withSource := true    
   )
     

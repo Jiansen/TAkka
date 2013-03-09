@@ -1,0 +1,33 @@
+[0m[[0mdebug[0m] [0mOther repositories:[0m
+[0m[[0mdebug[0m] [0mDefault repositories:[0m
+[0m[[0mdebug[0m] [0m	Raw(ProjectResolver(inter-project, mapped: snapshot#snapshot_2.10;0.1-SNAPSHOT))[0m
+[0m[[0mdebug[0m] [0m	FileRepository(local,FileConfiguration(true,None),sbt.Patterns@6a519fc2)[0m
+[0m[[0mdebug[0m] [0m	Typesafe Repository: http://repo.typesafe.com/typesafe/releases/[0m
+[0m[[0mdebug[0m] [0m	public: http://repo1.maven.org/maven2/[0m
+[0m[[0mdebug[0m] [0mUsing inline dependencies specified in Scala.[0m
+[0m[[0minfo[0m] [0mResolving snapshot#snapshot_2.10;0.1-SNAPSHOT ...[0m
+[0m[[0minfo[0m] [0mResolving org.scala-lang#scala-library;2.10.0 ...[0m
+[0m[[0minfo[0m] [0mResolving com.typesafe.akka#akka-actor_2.10;2.2-M1 ...[0m
+[0m[[0minfo[0m] [0mResolving com.typesafe.akka#akka-kernel_2.10;2.2-M1 ...[0m
+[0m[[0minfo[0m] [0mResolving com.typesafe.akka#akka-remote_2.10;2.2-M1 ...[0m
+[0m[[0minfo[0m] [0mResolving com.typesafe.akka#akka-slf4j_2.10;2.2-M1 ...[0m
+[0m[[0minfo[0m] [0mResolving com.typesafe.akka#akka-testkit_2.10;2.2-M1 ...[0m
+[0m[[0minfo[0m] [0mResolving io.netty#netty;3.6.2.Final ...[0m
+[0m[[0minfo[0m] [0mResolving org.scala-lang#scala-swing;2.10.0 ...[0m
+[0m[[0minfo[0m] [0mResolving org.scala-lang#scala-compiler;2.10.0 ...[0m
+[0m[[0minfo[0m] [0mResolving org.scala-lang#scala-reflect;2.10.0 ...[0m
+[0m[[0minfo[0m] [0mResolving net.databinder#unfiltered-filter-async_2.10;0.6.7 ...[0m
+[0m[[0minfo[0m] [0mResolving net.databinder#unfiltered-filter_2.10;0.6.7 ...[0m
+[0m[[0minfo[0m] [0mResolving net.databinder#unfiltered_2.10;0.6.7 ...[0m
+[0m[[0minfo[0m] [0mResolving net.databinder#unfiltered-util_2.10;0.6.7 ...[0m
+[0m[[0minfo[0m] [0mResolving org.eclipse.jetty#jetty-continuation;7.6.0.v20120127 ...[0m
+[0m[[0minfo[0m] [0mResolving net.databinder#unfiltered-jetty_2.10;0.6.7 ...[0m
+[0m[[0minfo[0m] [0mResolving org.eclipse.jetty#jetty-webapp;7.6.0.v20120127 ...[0m
+[0m[[0minfo[0m] [0mResolving org.eclipse.jetty#jetty-xml;7.6.0.v20120127 ...[0m
+[0m[[0minfo[0m] [0mResolving org.eclipse.jetty#jetty-util;7.6.0.v20120127 ...[0m
+[0m[[0minfo[0m] [0mResolving org.eclipse.jetty#jetty-servlet;7.6.0.v20120127 ...[0m
+[0m[[0minfo[0m] [0mResolving org.eclipse.jetty#jetty-security;7.6.0.v20120127 ...[0m
+[0m[[0minfo[0m] [0mResolving org.eclipse.jetty#jetty-server;7.6.0.v20120127 ...[0m
+[0m[[0minfo[0m] [0mResolving org.eclipse.jetty#jetty-http;7.6.0.v20120127 ...[0m
+[0m[[0minfo[0m] [0mResolving org.eclipse.jetty#jetty-io;7.6.0.v20120127 ...[0m
+[0m[[0minfo[0m] [0mResolving net.databinder#unfiltered-netty_2.10;0.6.7 ...[0m
