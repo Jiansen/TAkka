@@ -86,6 +86,8 @@ abstract class ActorSystem {
   def log: LoggingAdapter = system.log
   * 
   */
+  
+  def stop(actorRef:ActorRef[_]) = {system.stop(actorRef.untypedRef)}
   // use publishas[T] when ActorRef[T] is required
   def deadLetters : ActorRef[Any] = new ActorRef[Any]{
     val untypedRef = system.deadLetters
