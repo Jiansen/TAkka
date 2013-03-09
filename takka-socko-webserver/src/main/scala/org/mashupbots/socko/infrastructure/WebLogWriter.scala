@@ -18,7 +18,7 @@
 package org.mashupbots.socko.infrastructure
 
 //import akka.actor.Actor
-import takka.actor.Actor
+import takka.actor.TypedActor
 import akka.event.Logging
 
 /**
@@ -29,7 +29,7 @@ import akka.event.Logging
  * 
  * @param format Web log format
  */
-class WebLogWriter(format: WebLogFormat.Value) extends Actor[WebLogEvent] {
+class WebLogWriter(format: WebLogFormat.Value) extends TypedActor[WebLogEvent] {
   private val log = Logging(context.system, this)
 
   /**

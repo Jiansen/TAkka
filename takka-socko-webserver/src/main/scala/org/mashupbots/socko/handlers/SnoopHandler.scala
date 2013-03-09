@@ -32,7 +32,7 @@ import org.mashupbots.socko.events.HttpRequestEvent
 import org.mashupbots.socko.events.WebSocketFrameEvent
 
 import akka.event.Logging
-import takka.actor.Actor //import akka.actor.Actor
+import takka.actor.TypedActor //import akka.actor.Actor
 import org.mashupbots.socko.events.SockoEvent //
 
 /**
@@ -40,7 +40,7 @@ import org.mashupbots.socko.events.SockoEvent //
  * 
  * We use this in our testing of Socko
  */
-class SnoopHandler extends Actor[SockoEvent] {
+class SnoopHandler extends TypedActor[SockoEvent] {
   private val log = Logging(context.system, this) // TODO: use untyped feature here
 
   /**

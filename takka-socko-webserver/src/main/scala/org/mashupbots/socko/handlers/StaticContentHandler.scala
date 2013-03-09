@@ -56,7 +56,7 @@ import org.mashupbots.socko.infrastructure.LocalCache
 import org.mashupbots.socko.infrastructure.MimeTypes
 import org.mashupbots.socko.netty.HttpChunkedFile
 
-import takka.actor.Actor //import akka.actor.Actor
+import takka.actor.TypedActor //import akka.actor.Actor
 import akka.event.Logging //TODO: takka.event.Logging
 
 /**
@@ -176,7 +176,7 @@ import akka.event.Logging //TODO: takka.event.Logging
  *
  * See [[http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html HTTP Header Field Definitions]]
  */
-class StaticContentHandler() extends Actor[StaticContentRequest] {
+class StaticContentHandler() extends TypedActor[StaticContentRequest] {
 
   private val log = Logging(context.system, this)
   private val rootFilePaths = StaticContentHandlerConfig.rootFilePaths

@@ -24,7 +24,7 @@ import org.jboss.netty.handler.codec.http.websocketx.BinaryWebSocketFrame
 import org.jboss.netty.handler.codec.http.websocketx.TextWebSocketFrame
 import org.mashupbots.socko.events.WebSocketHandshakeEvent
 
-import takka.actor.Actor //
+import takka.actor.TypedActor //
 
 /**
  * Broadcasts a message to registered web socket connections.
@@ -42,7 +42,7 @@ import takka.actor.Actor //
  * 
  * For more information, see the example `ChatApp`.
  */
-class WebSocketBroadcaster extends Actor[WebSocketBroadcasterEvent] {
+class WebSocketBroadcaster extends TypedActor[WebSocketBroadcasterEvent] {
   private val socketConnections = new DefaultChannelGroup()
 
   protected def typedReceive = {

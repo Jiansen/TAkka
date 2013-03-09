@@ -94,7 +94,7 @@ class RequestHandler(server: WebServer) extends SimpleChannelUpstreamHandler wit
       case httpRequest: HttpRequest =>
         var event = HttpRequestEvent(e.getChannel, httpRequest, httpConfig)
 
-        log.debug("HTTP {} CHANNEL={}", event.endPoint, e.getChannel.getId)
+        // log.debug("HTTP {} CHANNEL={}", event.endPoint, e.getChannel.getId)
 
         if (event.request.isChunked) {
           validateFirstChunk(event)
