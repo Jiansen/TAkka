@@ -80,6 +80,12 @@ object TAkkaBuild extends Build {
                            libraryDependencies ++= Dependencies.beowulf
                          )) dependsOn(snapshot)
 
+  lazy val EnMAS = Project(id = "EnMAS",
+                         base = file("EnMAS"),
+                         settings = defaultSettings ++ Seq(
+                           libraryDependencies ++= Dependencies.EnMAS 
+                         )) dependsOn(snapshot)
+
   /*
   lazy val scalabilityAWS = Project(id = "scalabilityAWS",
                          base = file("scalabilityAWS"),
@@ -94,6 +100,8 @@ object TAkkaBuild extends Build {
                          )) dependsOn(snapshot)
 
 */
+  lazy val unfilteredScalate =
+    uri("git://github.com/unfiltered/unfiltered-scalate#0.6.7")
 }
 
 // Dependencies
@@ -131,16 +139,12 @@ object Dependencies {
     Dependency.logback
   )
   
-  val scalability = Seq(
-    Dependency.akkaActor, Dependency.logback
-  )
-  
-  val aws = Seq(
-    Dependency.awsJava, Dependency.logback
+  val EnMAS = Seq(
+    Dependency.akkaActor, Dependency.logback, Dependency.unfiltered_async, Dependency.unfiltered_jetty, Dependency.unfiltered_netty
   )
 
-  val gae = Seq(
-    Dependency.logback
+  val scalability = Seq(
+    Dependency.akkaActor, Dependency.logback
   )
 
   val beowulf = Seq(
@@ -165,7 +169,11 @@ object Dependency {
   val scalatest     = "org.scalatest"       %% "scalatest"         % "1.9.1" % "test"
   val scalacheck    = "org.scalacheck"      %% "scalacheck"        % "1.10.0" % "test"
 
-  val awsJava       = "com.amazonaws" %% "aws-java-sdk" % "1.3.9"
   val scala_lib     = "org.scala-lang" % "scala-library" % "2.10.0" % "provided"
   val scala_comp    = "org.scala-lang" % "scala-compiler" % "2.10.0"
+
+  val unfiltered_async = "net.databinder" %% "unfiltered-filter-async" % "0.6.7"
+  val unfiltered_jetty = "net.databinder" %% "unfiltered-jetty" % "0.6.7"
+  val unfiltered_netty = "net.databinder" %% "unfiltered-netty" % "0.6.7"
+
 }

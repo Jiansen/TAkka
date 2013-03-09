@@ -46,58 +46,58 @@ abstract class ActorContext[M:TypeTag] {
 //  implicit val m:TypeTag[M] = typeTag[M]
   implicit var mt : Type = typeOf[M]
 
-  val untyped_context:akka.actor.ActorContext
+  val untypedContext:akka.actor.ActorContext
 
   val props:Props[M]
   
   def actorOf[Msg](props:Props[Msg], name:String)(implicit mt:TypeTag[Msg]):ActorRef[Msg] = {
-    new ActorRef[Msg] { val untypedRef = untyped_context.actorOf(props.props, name) }
+    new ActorRef[Msg] { val untypedRef = untypedContext.actorOf(props.props, name) }
   }
   
   def actorOf[Msg](props:Props[Msg])(implicit mt:TypeTag[Msg]):ActorRef[Msg] = {
-    new ActorRef[Msg] { val untypedRef = untyped_context.actorOf(props.props) }
+    new ActorRef[Msg] { val untypedRef = untypedContext.actorOf(props.props) }
   }
   
   def receiveTimeout : Duration = {
-    untyped_context.receiveTimeout
+    untypedContext.receiveTimeout
   }
   
   lazy val typedSelf:ActorRef[M] = new ActorRef[M]{
-    val untypedRef = untyped_context.self
+    val untypedRef = untypedContext.self
   }
   
   def setReceiveTimeout (timeout: Duration): Unit = {
-    untyped_context.setReceiveTimeout(timeout)
+    untypedContext.setReceiveTimeout(timeout)
   }
   
   def stop (actor: ActorRef[_]): Unit = {
-    untyped_context.stop(actor.untypedRef)
+    untypedContext.stop(actor.untypedRef)
   }
   
   private var internalSystem:ActorSystem = null
   implicit def system : ActorSystem = {
     if (internalSystem == null){
       internalSystem = new ActorSystem {
-        val system = untyped_context.system
+        val system = untypedContext.system
       }
     }
     internalSystem
   }
   
   def unwatch[Msg](subject: ActorRef[Msg]): ActorRef[Msg] = {
-    untyped_context.unwatch(subject.untypedRef)
+    untypedContext.unwatch(subject.untypedRef)
     subject    
   }
   
   def watch[Msg](subject: ActorRef[Msg]): ActorRef[Msg] = {
-    untyped_context.watch(subject.untypedRef)
+    untypedContext.watch(subject.untypedRef)
     subject    
   }
     
   // actorFor  via nameserver !!!	
   // TODO: Msg is not checked
   def actorFor[Msg](actorPath: String)(implicit mt:TypeTag[Msg]): ActorRef[Msg]= new ActorRef[Msg]{
-    val untypedRef = untyped_context.actorFor(actorPath)
+    val untypedRef = untypedContext.actorFor(actorPath)
   }
   
   //  new APIs to support remote ActorRef
@@ -131,13 +131,13 @@ abstract class ActorContext[M:TypeTag] {
     if (!(mt <:< smt))
       throw BehaviorUpdateException(smt, mt)
     mt = smt
-    untyped_context.become({
+    untypedContext.become({
       case x:akka.actor.PossiblyHarmful => possibleHamfulHandler(x)   
       case x:ChaosMessage => chaosHandler(x)
       case x:SupM => behavior(x)
     })
     new ActorRef[SupM] {
-      val untypedRef = untyped_context.self
+      val untypedRef = untypedContext.self
     }
   }
   
