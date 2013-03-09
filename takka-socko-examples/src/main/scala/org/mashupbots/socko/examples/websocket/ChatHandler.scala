@@ -26,13 +26,13 @@ import org.mashupbots.socko.events.WebSocketFrameEvent
 import org.mashupbots.socko.handlers.WebSocketBroadcastText
 
 import akka.actor.actorRef2Scala
-import takka.actor.Actor //
+import takka.actor.TypedActor //
 import akka.event.Logging
 import org.mashupbots.socko.events.SockoEvent
 /**
  * Web Socket processor for chatting
  */
-class ChatHandler extends Actor[SockoEvent] {
+class ChatHandler extends TypedActor[SockoEvent] {
   val log = Logging(context.system, this)
 
   /**

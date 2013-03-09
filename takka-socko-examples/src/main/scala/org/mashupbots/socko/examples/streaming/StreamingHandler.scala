@@ -23,12 +23,12 @@ import java.util.Date
 import org.mashupbots.socko.events.HttpRequestEvent
 import org.mashupbots.socko.infrastructure.CharsetUtil
 
-import takka.actor.Actor //
+import takka.actor.TypedActor //
 
 /**
  * Streams a greeting and stops.
  */
-class StreamingHandler extends Actor[HttpRequestEvent] {
+class StreamingHandler extends TypedActor[HttpRequestEvent] {
   def typedReceive = {
     case event => // : HttpRequestEvent =>
       

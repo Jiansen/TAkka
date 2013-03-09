@@ -33,7 +33,7 @@ import org.mashupbots.socko.webserver.WebServerConfig
 import takka.actor.ActorSystem
 import takka.actor.Props
 import akka.actor.actorRef2Scala
-import takka.actor.Actor
+import takka.actor.TypedActor
 import org.mashupbots.socko.events.HttpRequestEvent
 /**
  * This example shows how to use a custom web log writer
@@ -83,7 +83,7 @@ object CustomWebLogApp extends Logger {
 /**
  * Custom web log writer that just dumps the web log event to the console
  */
-class CustomWebLogWriter() extends Actor[WebLogEvent] {
+class CustomWebLogWriter() extends TypedActor[WebLogEvent] {
   def typedReceive = {
     case evt: WebLogEvent => { System.out.println("CUSTOM WEBLOG WRITER: " + evt.toString) }
   }

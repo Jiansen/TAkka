@@ -19,7 +19,7 @@
 package org.mashupbots.socko.examples.quickstart
 
 import org.mashupbots.socko.events.HttpRequestEvent
-import takka.actor.Actor //
+import takka.actor.TypedActor //
 import java.util.Date
 
 /**
@@ -27,7 +27,7 @@ import java.util.Date
  * 
  * bug found in original example!!! event should have type SockoEvent !!!
  */
-class HelloHandler extends Actor[HttpRequestEvent] {
+class HelloHandler extends TypedActor[HttpRequestEvent] {
   def typedReceive = { 
     case event: HttpRequestEvent =>
       event.response.write("Hello from Socko (" + new Date().toString + ")")

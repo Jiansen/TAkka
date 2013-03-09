@@ -19,13 +19,13 @@
 package org.mashupbots.socko.examples.spdy
 
 import org.mashupbots.socko.events.HttpRequestEvent
-import takka.actor.Actor
+import takka.actor.TypedActor
 import java.util.Date
 
 /**
  * Returns dynamic content
  */
-class DynamicHandler extends Actor[HttpRequestEvent] {
+class DynamicHandler extends TypedActor[HttpRequestEvent] {
   def typedReceive = {
     case event => //: HttpRequestEvent =>
       val content = "<html>\n<body>\nDate and time is " + new Date().toString + "\n</body>\n</html>\n"

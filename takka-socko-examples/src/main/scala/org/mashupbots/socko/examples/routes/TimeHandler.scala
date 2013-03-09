@@ -24,13 +24,13 @@ import java.util.TimeZone
 
 import org.mashupbots.socko.events.HttpRequestEvent
 
-import takka.actor.Actor
+import takka.actor.TypedActor
 import akka.event.Logging
 
 /**
  * Returns the current time in the response
  */
-class TimeHandler extends Actor[TimeRequest] {
+class TimeHandler extends TypedActor[TimeRequest] {
   val log = Logging(context.system, this)
 
   /**

@@ -24,7 +24,7 @@ import java.util.GregorianCalendar
 import org.mashupbots.socko.events.HttpRequestEvent
 import org.mashupbots.socko.events.WebSocketFrameEvent
 
-import takka.actor.Actor //
+import takka.actor.TypedActor //
 import akka.event.Logging
 import org.mashupbots.socko.events.SockoEvent //
 
@@ -32,7 +32,7 @@ import org.mashupbots.socko.events.SockoEvent //
 /**
  * Delivers HTML page to setup web sockets in the browser and echos incoming text frames in upper case.
  */
-class WebSocketHandler extends Actor[SockoEvent] {
+class WebSocketHandler extends TypedActor[SockoEvent] {
   val log = Logging(context.system, this)
 
   /**

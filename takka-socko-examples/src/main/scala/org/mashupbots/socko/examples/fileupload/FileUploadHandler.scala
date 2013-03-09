@@ -27,13 +27,13 @@ import org.jboss.netty.handler.codec.http.multipart.HttpPostRequestDecoder
 import org.mashupbots.socko.events.HttpRequestEvent
 import org.mashupbots.socko.events.HttpResponseStatus
 
-import takka.actor.Actor
+import takka.actor.TypedActor
 import akka.event.Logging
 
 /**
  * Processes file uploads
  */
-class FileUploadHandler extends Actor[FileUploadRequest] {
+class FileUploadHandler extends TypedActor[FileUploadRequest] {
 
   private val log = Logging(context.system, this)
 
