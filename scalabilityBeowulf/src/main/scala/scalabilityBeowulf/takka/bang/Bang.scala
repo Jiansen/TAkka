@@ -8,7 +8,7 @@ package scalabilityBeowulf.takka.bang
  * messages that each sender will send to the receiver.
  */
 
-import akka.actor.{Actor, ActorRef, ActorSystem, Props}
+import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import akka.remote._
 import util.{BenchTimer, BenchCounter}
 import com.typesafe.config.ConfigFactory
@@ -18,20 +18,20 @@ sealed trait BangMessage
 case class BangBench(s:Int, m:Int) extends BangMessage
 case object DummyMessage extends BangMessage
 case object BangDone
-case class Send(receiver:ActorRef, m:Int)
+case class Send(receiver:ActorRef[BangMessage], m:Int)
 
-class Bang extends Actor{  
+class Bang extends TypedActor[BangMessage]{  
   val timer = new BenchTimer
   var counter = new BenchCounter
-  def receive = {
+  def typedReceive = {
     case BangBench(s, m) =>
       counter.set(s*m)
       val senders = (for (i<- 1 to s) yield {
-        context.actorOf(Props[Sender], ProcessNamePrefix+i)
+        typedContext.actorOf(Props[Send, Sender], ProcessNamePrefix+i)
       }).toList
       timer.start
       for (sender <- senders) {
-        sender ! Send(self, m)
+        sender ! Send(typedSelf, m)
       }
     case DummyMessage => 
       counter.decrement
@@ -43,9 +43,9 @@ class Bang extends Actor{
   }
 }
   
-class Sender extends Actor{
+class Sender extends TypedActor[Send]{
   // send m Done messages to receiver
-  def receive = {
+  def typedReceive = {
     case Send(receiver, m) => 
       var i:Int = 0;
       while(i<m){
@@ -61,6 +61,6 @@ object BangBench extends App{
   private val messagess:Int = 2000
 
   private val system = ActorSystem("BangSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
-  val testActor = system.actorOf(Props[Bang], ProcessPathPrefix)
+  val testActor = system.actorOf(Props[BangMessage, Bang], ProcessPathPrefix)
   testActor ! BangBench(processes,messagess)
 }
