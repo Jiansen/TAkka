@@ -60,7 +60,7 @@ class FileUploadHandler extends TypedActor[FileUploadRequest] {
           ctx.response.write(HttpResponseStatus.BAD_REQUEST)
         }
       } catch {
-        case ex => {
+        case ex:Throwable => {
           ctx.response.write(HttpResponseStatus.INTERNAL_SERVER_ERROR, ex.toString)
         }
       }

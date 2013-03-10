@@ -194,7 +194,7 @@ class RequestHandler(server: WebServer) extends SimpleChannelUpstreamHandler wit
           log.debug("Error handling request", ex)
           e.getChannel().close()
         } catch {
-          case ex2 => log.debug("Error closing channel", ex2)
+          case ex2:Throwable => log.debug("Error closing channel", ex2)
         }
       }
     }

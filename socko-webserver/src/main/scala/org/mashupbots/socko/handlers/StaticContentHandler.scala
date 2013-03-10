@@ -602,7 +602,7 @@ class StaticContentHandler() extends Actor {
       }
       true
     } catch {
-      case ex => {
+      case ex:Throwable => {
         log.error(ex, "Compression error")
         false
       }

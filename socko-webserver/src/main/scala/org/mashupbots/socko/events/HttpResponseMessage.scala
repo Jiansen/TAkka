@@ -341,7 +341,7 @@ case class HttpResponseMessage(event: HttpEvent) {
       }
     } catch {
       // If error, then just write without compression
-      case ex => response.setContent(ChannelBuffers.copiedBuffer(content))
+      case ex:Throwable => response.setContent(ChannelBuffers.copiedBuffer(content))
     } finally {
       if (compressedOut != null) {
         compressedOut.close()

@@ -411,7 +411,7 @@ object WebServerConfig extends Logger {
         Some(new File(v))
       }
     } catch {
-      case _ => None
+      case _:Throwable => None
     }
   }
 
@@ -427,7 +427,7 @@ object WebServerConfig extends Logger {
         Some(v)
       }
     } catch {
-      case _ => None
+      case _:Throwable => None
     }
   }
 
@@ -443,7 +443,7 @@ object WebServerConfig extends Logger {
         config.getInt(name)
       }
     } catch {
-      case _ => defaultValue
+      case _:Throwable => defaultValue
     }
   }
 
@@ -459,7 +459,7 @@ object WebServerConfig extends Logger {
         Some(config.getInt(name))
       }
     } catch {
-      case _ => None
+      case _:Throwable => None
     }
   }
 
@@ -475,7 +475,7 @@ object WebServerConfig extends Logger {
         config.getBoolean(name)
       }
     } catch {
-      case _ => defaultValue
+      case _:Throwable => defaultValue
     }
   }
 
@@ -491,7 +491,7 @@ object WebServerConfig extends Logger {
         Some(config.getBoolean(name))
       }
     } catch {
-      case _ => None
+      case _:Throwable => None
     }
   }
 
@@ -510,7 +510,7 @@ object WebServerConfig extends Logger {
       case ex: ConfigException.Missing => {
         new TcpConfig()
       }
-      case ex => {
+      case ex:Throwable => {
         log.error("Error parsing TcpConfig. Defaults will be used.", ex)
         new TcpConfig()
       }
@@ -532,7 +532,7 @@ object WebServerConfig extends Logger {
       case ex: ConfigException.Missing => {
         new HttpConfig()
       }
-      case ex => {
+      case ex:Throwable => {
         log.error("Error parsing HTTPConfig. Defaults will be used.", ex)
         new HttpConfig()
       }
@@ -554,7 +554,7 @@ object WebServerConfig extends Logger {
       case ex: ConfigException.Missing => {
         None
       }
-      case ex => {
+      case ex:Throwable => {
         log.error("Error parsing SSL config. SSL is turned off.", ex)
         None
       }
@@ -576,7 +576,7 @@ object WebServerConfig extends Logger {
       case ex: ConfigException.Missing => {
         None
       }
-      case ex => {
+      case ex:Throwable => {
         log.error("Error parsing WebLogConfig config. Web server activity logging is turned off.", ex)
         None
       }
@@ -603,7 +603,7 @@ object WebServerConfig extends Logger {
         v
       }
     } catch {
-      case _ => defaultCompressibleContentTypes
+      case _:Throwable => defaultCompressibleContentTypes
     }
   }
 }

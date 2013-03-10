@@ -605,7 +605,7 @@ class StaticContentHandler() extends TypedActor[StaticContentRequest] {
       }
       true
     } catch {
-      case ex => {
+      case ex:Throwable => {
         log.error(ex, "Compression error")
         false
       }
