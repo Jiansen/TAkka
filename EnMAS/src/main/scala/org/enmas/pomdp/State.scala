@@ -31,9 +31,9 @@ class State(
     */
   def getAs[T](key: String)(implicit m : Manifest[T]): Option[T] = {
     map.get(key) match {
-      case Some((om: Manifest[_], obj: Any))  ⇒
+      case Some((om: Manifest[_], obj: Any))  =>
         if (om <:< m) Some(obj.asInstanceOf[T]) else None
-      case _  ⇒ None
+      case _  => None
     }
   }
 
@@ -48,8 +48,8 @@ class State(
   def getAs[T <: Any](key: String, prototypeObject: T): T = {
     val clazz = prototypeObject.getClass.asInstanceOf[java.lang.Class[T]]
     getAs(key)(Manifest.classType(clazz)) match {
-      case Some(obj)  ⇒ obj.asInstanceOf[T]
-      case _  ⇒ throw new java.util.NoSuchElementException
+      case Some(obj)  => obj.asInstanceOf[T]
+      case _  => throw new java.util.NoSuchElementException
     }
   }
 

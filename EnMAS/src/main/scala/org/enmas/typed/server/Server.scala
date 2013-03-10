@@ -56,7 +56,7 @@ class Server(pomdp: POMDP) extends TypedActor[ServerMessage] {
   private def takeAction(agentNumber: Int, action: Action) {
     if ((pendingActions filter { _.agentNumber == agentNumber }).isEmpty) {
       getAgent(agentNumber) map {
-        a  ⇒ pendingActions ::= AgentAction(a.agentNumber, a.agentType, action)
+        a  => pendingActions ::= AgentAction(a.agentNumber, a.agentType, action)
       }
       if (
         pomdp.isSatisfiedByAgents(agents.toList map {_.agentType}) &&
@@ -76,21 +76,21 @@ class Server(pomdp: POMDP) extends TypedActor[ServerMessage] {
   private def iterate(state: State, actions: JointAction): State = {
     try {
       val statePrime = pomdp.transitionFunction(state, actions) match {
-        case Left(state)  ⇒ state
-        case Right(distribution)  ⇒ selectState(distribution)
+        case Left(state)  => state
+        case Right(distribution)  => selectState(distribution)
       }
       val reward = pomdp.rewardFunction(state, actions, statePrime)
       val observation = pomdp.observationFunction(state, actions, statePrime)
       var observations = Set[(AgentSpec, Observation)]()
       var rewards = Set[(AgentSpec, Float)]()
 
-      sessions map { cm  ⇒ {
+      sessions map { cm  => {
         val theseAgents = agents.toList.filter(_.sessionID == cm.id)
-        for (a  ← theseAgents) {
+        for (a  <- theseAgents) {
           observations += (a  → observation(a.agentNumber, a.agentType))
           rewards += (a  → reward(a.agentType))
         }
-        messageQueue += cm  → { for (a  ← theseAgents)
+        messageQueue += cm  → { for (a  <- theseAgents)
           yield UpdateAgent(
             a.agentNumber,
             observation(a.agentNumber, a.agentType),
@@ -107,10 +107,10 @@ class Server(pomdp: POMDP) extends TypedActor[ServerMessage] {
       statePrime
     }
     catch {
-      case t: Throwable  ⇒ {
+      case t: Throwable  => {
         t.printStackTrace
-//        sessions map { cm  ⇒ cm.ref ! t } // TODO: check the type
-        sessions map { cm  ⇒ cm.ref ! ClientManagerError(t) }        
+//        sessions map { cm  => cm.ref ! t } // TODO: check the type
+        sessions map { cm  => cm.ref ! ClientManagerError(t) }        
       }
       state
     }
@@ -127,7 +127,7 @@ class Server(pomdp: POMDP) extends TypedActor[ServerMessage] {
 
     val possible = all filter { _._2 > 0 }
     if (possible.size > 0) {
-      val totalWeight = possible.foldLeft(0)((a, b)  ⇒ a + b._2)
+      val totalWeight = possible.foldLeft(0)((a, b)  => a + b._2)
       val randomScalar = (new Random) nextInt totalWeight
       stateAt(possible, randomScalar)
     }
@@ -139,7 +139,7 @@ class Server(pomdp: POMDP) extends TypedActor[ServerMessage] {
     * This method also resets the outbound message queue.
     */
   private def dispatchMessages: Unit = {
-    sessions map { cm  ⇒ { messageQueue.get(cm) map { cm.ref ! MessageBundle(_) }}}
+    sessions map { cm  => { messageQueue.get(cm) map { cm.ref ! MessageBundle(_) }}}
     messageQueue = messageQueue.empty
   }
 
@@ -160,54 +160,54 @@ class Server(pomdp: POMDP) extends TypedActor[ServerMessage] {
     */
   def typedReceive = {
 
-    case Ping  ⇒ sender ! Pong
+    case Ping  => sender ! Pong
 
-    case reg: RegisterHost  ⇒ sender ! registerHost(reg.ref)
+    case reg: RegisterHost  => sender ! registerHost(reg.ref)
 
-    case reg: RegisterAgent  ⇒ getSession(reg.sessionID) map {
-      session  ⇒ sender ! registerAgent(session.id, reg.agentType)
+    case reg: RegisterAgent  => getSession(reg.sessionID) map {
+      session  => sender ! registerAgent(session.id, reg.agentType)
     }
 
-    case TakeAction(agentNumber, action)  ⇒ takeAction(agentNumber, action)
+    case TakeAction(agentNumber, action)  => takeAction(agentNumber, action)
 
-    case Subscribe  ⇒ sessions.find(_.ref.untypedRef == sender) match {
-      case Some(subscriber)  ⇒ 
+    case Subscribe  => sessions.find(_.ref.untypedRef == sender) match {
+      case Some(subscriber)  => 
 //        println("Server: subscriber "+subscriber)
         iterationSubscribers += subscriber
-      case None  ⇒ 
+      case None  => 
 //        println("Server: message from "+sender)
         ()
     }
 
-    case Unsubscribe  ⇒ {
+    case Unsubscribe  => {
       iterationSubscribers = iterationSubscribers filterNot { _.ref == sender }
     }
 
-    case AgentDied(id)  ⇒ {
+    case AgentDied(id)  => {
       agents = agents filterNot { _.agentNumber == id }
       pendingActions = pendingActions filterNot { _.agentNumber == id }
       sessions filterNot { _.ref == sender } map { _.ref ! AgentDied(id) }
       println("An agent died!  [%s] agent(s) left" format agents.size)
     }
 
-    case _  ⇒ ()
+    case _  => ()
   }
   
   override def possiblyHarmfulHandler:akka.actor.PossiblyHarmful => Unit = {
-    case akka.actor.Terminated(deceasedActor)  ⇒ {
-      sessions.find(_.ref == deceasedActor) match { case Some(dead)  ⇒ {
+    case akka.actor.Terminated(deceasedActor)  => {
+      sessions.find(_.ref == deceasedActor) match { case Some(dead)  => {
           sessions find { _ == dead } match {
-            case Some(deadSession)  ⇒ 
+            case Some(deadSession)  => 
               agents = agents filterNot { _.sessionID == deadSession.id }
-            case None  ⇒ ()
+            case None  => ()
           }
           sessions = sessions filterNot { _ == dead }
           iterationSubscribers = iterationSubscribers filterNot { _ == dead }
           println("A session died! [%s] session(s) left" format sessions.size)
         }
-        case None  ⇒ ()
+        case None  => ()
       }
     }
-    case _  ⇒ ()
+    case _  => ()
   }
 }

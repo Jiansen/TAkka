@@ -20,7 +20,7 @@ class ClientGUI(application: ActorRef) extends MainFrame {
 
   private def refreshPOMDPs {
     (application ? GetLocalPOMDPs) onSuccess {
-      case POMDPList(pomdps)  ⇒ {
+      case POMDPList(pomdps)  => {
         ui.leftPanel.pomdpListView.listData = pomdps
       }
     }
@@ -61,23 +61,23 @@ class ClientGUI(application: ActorRef) extends MainFrame {
       val pomdpDetails = new TextArea { editable = false; lineWrap = true; wordWrap = true; }
       val launchServerButton = new Button { action = Action("Request new server with selected") {
         pomdpListView.selection.items.headOption match {
-          case Some(pomdp: POMDP)  ⇒ {
+          case Some(pomdp: POMDP)  => {
 //            println("Send Message: CreateServer")
             application ! CreateServer(rightPanel.serverHostField.text, pomdp.getClass.getName)
             rightPanel.scanButton.doClick
           }
-          case None  ⇒ popup("Server Launch Error", "No POMDP selected!")
+          case None  => popup("Server Launch Error", "No POMDP selected!")
         }
       }}
       launchServerButton.enabled = false
 
-      reactions += { case event: ListSelectionChanged[_]  ⇒ {
+      reactions += { case event: ListSelectionChanged[_]  => {
         pomdpListView.selection.items.headOption match {
-          case Some(pomdp: POMDP)  ⇒ {
+          case Some(pomdp: POMDP)  => {
             pomdpDetails.text = pomdp.description.replaceAll("\\r|\\n", " ").trim
             pomdpDetails.caret.position = 0
           }
-          case None  ⇒ ()
+          case None  => ()
         }
         launchServerButton.enabled = true
       }}
@@ -106,7 +106,7 @@ class ClientGUI(application: ActorRef) extends MainFrame {
         serverDetails.text = ""
         connectButton.enabled = false
         (application ? ScanHost(serverHostField.text.trim)) onComplete {
-          case Success(reply: DiscoveryReply)  ⇒ 
+          case Success(reply: DiscoveryReply)  => 
             if (reply.servers.isEmpty)
               popup("Scan Result", "The host is up but has no active servers.")
             else  serverListView.listData = reply.servers
@@ -123,21 +123,21 @@ class ClientGUI(application: ActorRef) extends MainFrame {
 
       val connectButton = new Button { action = Action("Connect to Selected") {
         serverListView.selection.items.headOption match {
-          case Some(server: ServerSpec)  ⇒ (application ? CreateSession(server)) onFailure {
-            case _  ⇒ popup("Connection Error", "Unable to connect to the specified server.")
+          case Some(server: ServerSpec)  => (application ? CreateSession(server)) onFailure {
+            case _  => popup("Connection Error", "Unable to connect to the specified server.")
           }
-          case None  ⇒ popup("Connection Error", "No server selected!")
+          case None  => popup("Connection Error", "No server selected!")
         }
       }}
       connectButton.enabled = false
 
-      reactions += { case event: ListSelectionChanged[_]  ⇒ {
+      reactions += { case event: ListSelectionChanged[_]  => {
         serverListView.selection.items.headOption match {
-          case Some(server: ServerSpec)  ⇒ {
+          case Some(server: ServerSpec)  => {
             serverDetails.text = server.pomdpDescription.replaceAll("\\r|\\n", " ").trim
             serverDetails.caret.position = 0
           }
-          case None  ⇒ ()
+          case None  => ()
         }
         connectButton.enabled = true
       }}

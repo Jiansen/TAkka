@@ -3,7 +3,7 @@ package org.enmas.typed.client.gui
 import org.enmas.pomdp._, org.enmas.typed.client.ClientManager, org.enmas.typed.messaging._,
        org.enmas.typed.client.Agent, org.enmas.util.voodoo.ClassLoaderUtils._,
        scala.swing._, scala.swing.event._, scala.swing.BorderPanel.Position._,
-       takka.actor._, akka.dispatch._, scala.concurrent.duration._, pattern._,
+       takka.actor._, akka.dispatch._, scala.concurrent.duration._,
        java.net.InetAddress, scala.concurrent.{ ExecutionContext, Promise }, scala.util.{Success, Failure}
 import ExecutionContext.Implicits.global
 
@@ -19,7 +19,7 @@ class ClientGUI(application: ActorRef[ClientManagerMessage]) extends MainFrame {
 
   private def refreshPOMDPs {
     (application ? GetLocalPOMDPs) onSuccess {
-      case POMDPList(pomdps)  ⇒ {
+      case POMDPList(pomdps)  => {
         ui.leftPanel.pomdpListView.listData = pomdps
       }
     }
@@ -60,22 +60,22 @@ class ClientGUI(application: ActorRef[ClientManagerMessage]) extends MainFrame {
       val pomdpDetails = new TextArea { editable = false; lineWrap = true; wordWrap = true; }
       val launchServerButton = new Button { action = Action("Request new server with selected") {
         pomdpListView.selection.items.headOption match {
-          case Some(pomdp: POMDP)  ⇒ {
+          case Some(pomdp: POMDP)  => {
             application ! CreateServer(rightPanel.serverHostField.text, pomdp.getClass.getName)
             rightPanel.scanButton.doClick
           }
-          case None  ⇒ popup("Server Launch Error", "No POMDP selected!")
+          case None  => popup("Server Launch Error", "No POMDP selected!")
         }
       }}
       launchServerButton.enabled = false
 
-      reactions += { case event: ListSelectionChanged[_]  ⇒ {
+      reactions += { case event: ListSelectionChanged[_]  => {
         pomdpListView.selection.items.headOption match {
-          case Some(pomdp: POMDP)  ⇒ {
+          case Some(pomdp: POMDP)  => {
             pomdpDetails.text = pomdp.description.replaceAll("\\r|\\n", " ").trim
             pomdpDetails.caret.position = 0
           }
-          case None  ⇒ ()
+          case None  => ()
         }
         launchServerButton.enabled = true
       }}
@@ -103,13 +103,13 @@ class ClientGUI(application: ActorRef[ClientManagerMessage]) extends MainFrame {
         serverListView.listData = List[ServerSpec]()
         serverDetails.text = ""
         connectButton.enabled = false
-        (application ? ScanHost(serverHostField.text.trim)) onSuccess {
-          case reply: DiscoveryReply  ⇒ {
+        (application ? ScanHost(serverHostField.text.trim)) onComplete {
+          case Success(reply: DiscoveryReply)  => {
             if (reply.servers.isEmpty)
               popup("Scan Result", "The host is up but has no active servers.")
             else  serverListView.listData = reply.servers
           }
-        } onFailure { case _  ⇒ {
+          case Failure(_)  => {
           popup("Scan Result", "Could not find a host at the specified address."); 
         }}
       }}
@@ -122,21 +122,21 @@ class ClientGUI(application: ActorRef[ClientManagerMessage]) extends MainFrame {
 
       val connectButton = new Button { action = Action("Connect to Selected") {
         serverListView.selection.items.headOption match {
-          case Some(server: ServerSpec)  ⇒ (application ? CreateSession(server)) onFailure {
-            case _  ⇒ popup("Connection Error", "Unable to connect to the specified server.")
+          case Some(server: ServerSpec)  => (application ? CreateSession(server)) onFailure {
+            case _  => popup("Connection Error", "Unable to connect to the specified server.")
           }
-          case None  ⇒ popup("Connection Error", "No server selected!")
+          case None  => popup("Connection Error", "No server selected!")
         }
       }}
       connectButton.enabled = false
 
-      reactions += { case event: ListSelectionChanged[_]  ⇒ {
+      reactions += { case event: ListSelectionChanged[_]  => {
         serverListView.selection.items.headOption match {
-          case Some(server: ServerSpec)  ⇒ {
+          case Some(server: ServerSpec)  => {
             serverDetails.text = server.pomdpDescription.replaceAll("\\r|\\n", " ").trim
             serverDetails.caret.position = 0
           }
-          case None  ⇒ ()
+          case None  => ()
         }
         connectButton.enabled = true
       }}

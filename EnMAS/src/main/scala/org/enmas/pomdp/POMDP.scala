@@ -39,10 +39,10 @@ case class POMDP (
     * a new agent should be allowed to connect.
     */
   final def accomodatesAgents(agents: List[AgentType]): Boolean = {
-    val allAllowed = agents.foldLeft(true){ (a,b)  ⇒ {
+    val allAllowed = agents.foldLeft(true){ (a,b)  => {
       a && { agentConstraints map(_.agentType) contains(b) }}}
 
-    val allUnderLimit = agentConstraints.foldLeft(true){ (a,b)  ⇒ {
+    val allUnderLimit = agentConstraints.foldLeft(true){ (a,b)  => {
       a && { agents.filter(_ == b.agentType).length <= b.max }}}
 
     allAllowed && allUnderLimit
@@ -57,7 +57,7 @@ case class POMDP (
     * the current agent set is sufficient to iterate the simulation.
     */
   final def isSatisfiedByAgents(agents: List[AgentType]) : Boolean = {
-    accomodatesAgents(agents) && { agentConstraints.foldLeft(true){ (a,b)  ⇒ {
+    accomodatesAgents(agents) && { agentConstraints.foldLeft(true){ (a,b)  => {
       a && agents.filter(_ == b.agentType).length >= b.min }}}
   }
 

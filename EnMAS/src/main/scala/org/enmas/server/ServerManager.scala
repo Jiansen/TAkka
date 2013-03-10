@@ -18,40 +18,40 @@ class ServerManager extends Actor with Provisionable {
     */
   def createServer(className: String) {
     POMDPs.find(_.getClass.getName == className) match {
-      case Some(pomdp)  ⇒ {
+      case Some(pomdp)  => {
         val ref = system.actorOf(Props(new Server(pomdp)))
         servers ::= ServerSpec(ref, pomdp.getClass.getName, pomdp.name, pomdp.description)
         sender ! ref // TODO: how ref is used?  It is discarded by ClientManager
       }
-      case None  ⇒ ()
+      case None  => ()
     }
   }
 
   /** Destroys the specified server.
     */
   def stopServer(ref: ActorRef) {
-    servers filter { _.ref == ref } map { s  ⇒ context stop s.ref }
+    servers filter { _.ref == ref } map { s  => context stop s.ref }
     servers = servers filterNot { _.ref == ref }
   }
 
   def receive = {
-    case Discovery  ⇒ sender ! DiscoveryReply(servers)
-    case Provision(fileData)  ⇒ {
+    case Discovery  => sender ! DiscoveryReply(servers)
+    case Provision(fileData)  => {
       val jarOption = provision[POMDP](fileData)
-      jarOption map { jar  ⇒ {
+      jarOption map { jar  => {
         JARs ::= jar
         POMDPs ++= findSubclasses[POMDP](jar) filterNot {
-          _.getName contains "$"} map { clazz  ⇒ clazz.newInstance }
+          _.getName contains "$"} map { clazz  => clazz.newInstance }
       }}
     }
-    case RequestProvisions  ⇒ {
-      JARs map { jarFile  ⇒ readFile(jarFile) match {
-        case Some(fd)  ⇒ sender ! Provision(fd)
-        case None  ⇒ ()
+    case RequestProvisions  => {
+      JARs map { jarFile  => readFile(jarFile) match {
+        case Some(fd)  => sender ! Provision(fd)
+        case None  => ()
       }}
     }
-    case CreateServerFor(className)  ⇒ createServer(className)
-    case _  ⇒ ()
+    case CreateServerFor(className)  => createServer(className)
+    case _  => ()
   }
 }
 
