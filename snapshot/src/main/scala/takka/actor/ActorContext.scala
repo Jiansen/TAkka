@@ -156,7 +156,7 @@ abstract class ActorContext[M:TypeTag] {
     case ChaosException(e:Exception) => 
       throw e
     case ChaosNonTerminate =>
-      
+      while(true){}
   }
 }
 
