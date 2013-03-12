@@ -74,26 +74,26 @@ class SessionGUI(session: ActorRef, pomdp: POMDP) extends Frame {
         }}
 
         val agentTypeCombo = new ComboBox(
-          for (c  ← pomdp.agentConstraints) yield c.agentType
+          for (c  <- pomdp.agentConstraints) yield c.agentType
         )
 
         val launchButton = new Button { action = Action("Launch Agent") {
           classListView.selection.items.headOption match {
-            case Some(clazz)  ⇒ {
+            case Some(clazz)  => {
               val agentType = agentTypeCombo.selection.item
               (session ? LaunchAgent(agentType, clazz)) onComplete {
-                case Success( confirmation: ConfirmAgentRegistration)  ⇒ 
+                case Success( confirmation: ConfirmAgentRegistration)  => 
                   bottom.agentListView.listData ++= Seq(confirmation)
-                case Failure (_)  ⇒ popup(
+                case Failure (_)  => popup(
                   "Failure",
                   "Failed to launch the agent.  There was a problem contacting the server."
               )}
             }
-            case None  ⇒ enabled = false
+            case None  => enabled = false
           }
         }}
         launchButton.enabled = false
-        reactions += { case event: ListSelectionChanged[_]  ⇒ {
+        reactions += { case event: ListSelectionChanged[_]  => {
           launchButton.enabled = true
         }}
         layout(new FlowPanel(new Label("Choose JAR to Search for Agents:"), chooseJarButton)) = North
@@ -115,19 +115,19 @@ class SessionGUI(session: ActorRef, pomdp: POMDP) extends Frame {
 
         val killButton = new Button { action = Action("Kill Selected Agent") {
           agentListView.selection.items.headOption match {
-            case Some(item)  ⇒ {
+            case Some(item)  => {
               session ! KillAgent(item.agentNumber)
               agentListView.listData = agentListView.listData filterNot { _ == item }
               enabled = false
             }
-            case None  ⇒ ()
+            case None  => ()
           }
         }}
 
         layout(new Label("Active Agents for this Session:")) = North
         layout(new ScrollPane(agentListView)) = Center
         layout(killButton) = South
-        reactions += { case event: ListSelectionChanged[_]  ⇒ {
+        reactions += { case event: ListSelectionChanged[_]  => {
           killButton.enabled = true
         }}
       }
@@ -154,22 +154,22 @@ class SessionGUI(session: ActorRef, pomdp: POMDP) extends Frame {
 
         val launchButton = new Button { action = Action("Launch Client") {
           classListView.selection.items.headOption match {
-            case Some(clazz)  ⇒ {
+            case Some(clazz)  => {
               (session ? LaunchClient(clazz)) onComplete {
-                case Success(confirmation: ConfirmClientRegistration)  ⇒ {
+                case Success(confirmation: ConfirmClientRegistration)  => {
                   bottom.subscriberListView.listData ++= Seq(confirmation)
                 }
-                case Failure(_)  ⇒ popup(
+                case Failure(_)  => popup(
                   "Failure",
                   "Failed to launch the client."
                 )
               }
             }
-            case None  ⇒ enabled = false
+            case None  => enabled = false
           }
         }}
         launchButton.enabled = false
-        reactions += { case event: ListSelectionChanged[_]  ⇒ {
+        reactions += { case event: ListSelectionChanged[_]  => {
           launchButton.enabled = true
         }}
         layout(new FlowPanel(new Label("Choose JAR to Search for Subscriber Clients:"), chooseJarButton)) = North
@@ -185,19 +185,19 @@ class SessionGUI(session: ActorRef, pomdp: POMDP) extends Frame {
 
         val killButton = new Button { action = Action("Kill Selected Client") {
           subscriberListView.selection.items.headOption match {
-            case Some(item)  ⇒ {
+            case Some(item)  => {
               session ! KillClient(item.clientNumber)
               subscriberListView.listData = subscriberListView.listData filterNot { _ == item }
               enabled = false
             }
-            case None  ⇒ ()
+            case None  => ()
           }
         }}
 
         layout(new Label("Active Subsctriber Clients for this Session:")) = North
         layout(new ScrollPane(subscriberListView)) = Center
         layout(killButton) = South
-        reactions += { case event: ListSelectionChanged[_]  ⇒ {
+        reactions += { case event: ListSelectionChanged[_]  => {
           killButton.enabled = true
         }}
       }

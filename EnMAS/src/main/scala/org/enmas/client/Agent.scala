@@ -49,15 +49,15 @@ abstract class Agent() extends Client {
     * the policy from the implementation.
     */
   private final def defaultMessageHandler: PartialFunction[Any, Unit] = {
-    case ConfirmAgentRegistration(n, t, a)  ⇒ {
+    case ConfirmAgentRegistration(n, t, a)  => {
       aNumber = n
       aType = t
       actionSet = a
       context.become {
-        case t: Throwable  ⇒ handleError(t)
-        case UpdateAgent(_, observation, reward)  ⇒
+        case t: Throwable  => handleError(t)
+        case UpdateAgent(_, observation, reward)  =>
           takeAction(policy(observation, reward))
-        case _  ⇒ ()
+        case _  => ()
       }
     }
   }

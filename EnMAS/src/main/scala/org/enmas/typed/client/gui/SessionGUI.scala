@@ -2,7 +2,7 @@ package org.enmas.typed.client.gui
 
 import org.enmas.pomdp._, org.enmas.typed.client._, org.enmas.typed.messaging._,
        scala.swing._, scala.swing.event._, scala.swing.BorderPanel.Position._,
-       takka.actor._, akka.dispatch._, scala.concurrent.duration._, pattern.ask,
+       takka.actor._, akka.dispatch._, scala.concurrent.duration._, 
        java.io._, scala.concurrent.{ ExecutionContext, Promise }, scala.util.{Success, Failure}
 import ExecutionContext.Implicits.global
 
@@ -74,31 +74,27 @@ class SessionGUI(session: ActorRef[ClientManagerMessage], pomdp: POMDP) extends 
         }}
 
         val agentTypeCombo = new ComboBox(
-          for (c  ← pomdp.agentConstraints) yield c.agentType
+          for (c  <- pomdp.agentConstraints) yield c.agentType
         )
 
         val launchButton = new Button { action = Action("Launch Agent") {
           classListView.selection.items.headOption match {
-            case Some(clazz)  ⇒ {
+            case Some(clazz)  => {
               val agentType = agentTypeCombo.selection.item
-              (session ? LaunchAgent(agentType, clazz)) onSuccess {
-                case confirmation: ConfirmAgentRegistration  ⇒ {
+              (session ? LaunchAgent(agentType, clazz)) onComplete {
+                case Success(confirmation: ConfirmAgentRegistration)  => {
                   bottom.agentListView.listData ++= Seq(confirmation)
                 }
-                case _  ⇒ popup(
-                  "Failure",
-                  "The server declined to admit an agent of type "+agentType+"."
-                )
-              } onFailure { case _  ⇒ popup(
+                case Failure(_)  => popup(
                 "Failure",
                 "Failed to launch the agent.  There was a problem contacting the server."
               )}
             }
-            case None  ⇒ enabled = false
+            case None  => enabled = false
           }
         }}
         launchButton.enabled = false
-        reactions += { case event: ListSelectionChanged[_]  ⇒ {
+        reactions += { case event: ListSelectionChanged[_]  => {
           launchButton.enabled = true
         }}
         layout(new FlowPanel(new Label("Choose JAR to Search for Agents:"), chooseJarButton)) = North
@@ -120,19 +116,19 @@ class SessionGUI(session: ActorRef[ClientManagerMessage], pomdp: POMDP) extends 
 
         val killButton = new Button { action = Action("Kill Selected Agent") {
           agentListView.selection.items.headOption match {
-            case Some(item)  ⇒ {
+            case Some(item)  => {
               session ! KillAgent(item.agentNumber)
               agentListView.listData = agentListView.listData filterNot { _ == item }
               enabled = false
             }
-            case None  ⇒ ()
+            case None  => ()
           }
         }}
 
         layout(new Label("Active Agents for this Session:")) = North
         layout(new ScrollPane(agentListView)) = Center
         layout(killButton) = South
-        reactions += { case event: ListSelectionChanged[_]  ⇒ {
+        reactions += { case event: ListSelectionChanged[_]  => {
           killButton.enabled = true
         }}
       }
@@ -159,25 +155,21 @@ class SessionGUI(session: ActorRef[ClientManagerMessage], pomdp: POMDP) extends 
 
         val launchButton = new Button { action = Action("Launch Client") {
           classListView.selection.items.headOption match {
-            case Some(clazz)  ⇒ {
-              (session ? LaunchClient(clazz)) onSuccess {
-                case confirmation: ConfirmClientRegistration  ⇒ {
+            case Some(clazz)  => {
+              (session ? LaunchClient(clazz)) onComplete {
+                case Success(confirmation: ConfirmClientRegistration)  => {
                   bottom.subscriberListView.listData ++= Seq(confirmation)
                 }
-                case _  ⇒ popup(
-                  "Failure",
-                  "Failed to launch the client."
-                )
-              } onFailure { case _  ⇒ popup(
+                case Failure(_)  => popup(
                 "Failure",
                 "Failed to launch the client."
               )}
             }
-            case None  ⇒ enabled = false
+            case None  => enabled = false
           }
         }}
         launchButton.enabled = false
-        reactions += { case event: ListSelectionChanged[_]  ⇒ {
+        reactions += { case event: ListSelectionChanged[_]  => {
           launchButton.enabled = true
         }}
         layout(new FlowPanel(new Label("Choose JAR to Search for Subscriber Clients:"), chooseJarButton)) = North
@@ -193,19 +185,19 @@ class SessionGUI(session: ActorRef[ClientManagerMessage], pomdp: POMDP) extends 
 
         val killButton = new Button { action = Action("Kill Selected Client") {
           subscriberListView.selection.items.headOption match {
-            case Some(item)  ⇒ {
+            case Some(item)  => {
               session ! KillClient(item.clientNumber)
               subscriberListView.listData = subscriberListView.listData filterNot { _ == item }
               enabled = false
             }
-            case None  ⇒ ()
+            case None  => ()
           }
         }}
 
         layout(new Label("Active Subsctriber Clients for this Session:")) = North
         layout(new ScrollPane(subscriberListView)) = Center
         layout(killButton) = South
-        reactions += { case event: ListSelectionChanged[_]  ⇒ {
+        reactions += { case event: ListSelectionChanged[_]  => {
           killButton.enabled = true
         }}
       }

@@ -23,8 +23,11 @@ class ChaosMonkey(victims:List[ActorRef[_]], exceptions:List[Exception]){
   import Status._
   private var mode:ChaosMode = Random
   private var status:Status = OFF
+  private var debugMode:Boolean = false
   
   def setMode(mode:ChaosMode) = {this.mode = mode}
+  def enableDebug() = {this.debugMode = true}
+  def disableDebug() = {this.debugMode = false}
   
   def start(period:FiniteDuration) = status match {
     case ON => 
@@ -58,13 +61,17 @@ class ChaosMonkey(victims:List[ActorRef[_]], exceptions:List[Exception]){
     val victim = scala.util.Random.shuffle(victims).head
     tempMode match {
       case PoisonKill =>
+        if(this.debugMode) {println("sending PoisonPill to "+victim)}
         victim.untypedRef ! akka.actor.PoisonPill
       case Kill =>
+        if(this.debugMode) {println("sending Kill to "+victim)}        
         victim.untypedRef ! akka.actor.Kill
       case Exception =>
         val e = scala.util.Random.shuffle(exceptions).head
-        victim.untypedRef ! akka.actor.Kill
+        if(this.debugMode) {println("raising "+e+" at "+victim)}        
+        victim.untypedRef ! ChaosException(e)
       case NonTerminate =>
+        if(this.debugMode) {println("running non-ternimatable calculation at "+victim)}        
         victim.untypedRef ! ChaosNonTerminate
     }
   }

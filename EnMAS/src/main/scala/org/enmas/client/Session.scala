@@ -28,12 +28,12 @@ class Session(server: ActorRef, pomdp: POMDP) extends Actor {
   private def registerSelf(): Either[Int, Boolean] = {
     var result: Either[Int, Boolean] = Right(false)
     try { Await.result(server ? RegisterHost(self), timeout.duration) match {
-      case c: ConfirmHostRegistration  ⇒ {
+      case c: ConfirmHostRegistration  => {
         uniqueID = c.id
         result = Left(uniqueID)
       }
     }}
-    catch { case _:Throwable  ⇒ () }
+    catch { case _:Throwable  => () }
     result
   }
 
@@ -52,14 +52,14 @@ class Session(server: ActorRef, pomdp: POMDP) extends Actor {
   ) {
     val replyTo = sender
     (server ? RegisterAgent(uniqueID, agentType)) onComplete {
-      case Success(confirmation: ConfirmAgentRegistration)  ⇒ {
+      case Success(confirmation: ConfirmAgentRegistration)  => {
         val agent = actorOf(Props(clazz.newInstance repliesTo self))
         watch(agent)
         agents += (confirmation.agentNumber  → (agentType, agent))
         agent forward confirmation
         replyTo ! confirmation
       }
-      case Failure(_)  ⇒ replyTo ! false }
+      case Failure(_)  => replyTo ! false }
   }
 
   private def registerClient(clazz: java.lang.Class[_ <: IterationClient]) {
@@ -75,82 +75,82 @@ class Session(server: ActorRef, pomdp: POMDP) extends Actor {
       server ! Subscribe
       sender ! ConfirmClientRegistration(clientId, clazz.getName)
     }
-    catch { case _:Throwable  ⇒ sender ! false }
+    catch { case _:Throwable  => sender ! false }
   }
 
   def receive = {
 
-    case Ping  ⇒ {
+    case Ping  => {
       def doPoll {
         try { Thread.sleep(1000) }
-        catch { case _:Throwable  ⇒ () }
+        catch { case _:Throwable  => () }
         finally { self ! Ping }
       }
       (server ? Ping) onComplete {
-        case Success(_)  ⇒ 
+        case Success(_)  => 
         gui.StatusBar.connected
         doPoll
-        case Failure(_)  ⇒ {
+        case Failure(_)  => {
         gui.StatusBar.noResponse
         doPoll
       }}
     }
 
-    case 'Init  ⇒ sender ! registerSelf
+    case 'Init  => sender ! registerSelf
 
-    case m: LaunchAgent  ⇒ registerAgent(m.agentType, m.clazz)
+    case m: LaunchAgent  => registerAgent(m.agentType, m.clazz)
     
-    case m: LaunchClient  ⇒ registerClient(m.clazz)
+    case m: LaunchClient  => registerClient(m.clazz)
 
-    case iteration: POMDPIteration  ⇒ { clients map { _._2 ! iteration }}
+    case iteration: POMDPIteration  => { clients map { _._2 ! iteration }}
 
-    case MessageBundle(content)  ⇒ {
+    case MessageBundle(content)  => {
       if (sender == server) content map {
-        c  ⇒ agents.find(_._1 == c.agentNumber) map { a  ⇒ a._2._2 ! c }}
+        c  => agents.find(_._1 == c.agentNumber) map { a  => a._2._2 ! c }}
     }
 
-    case t: TakeAction  ⇒ {
+    case t: TakeAction  => {
       if (! (agents contains t.agentNumber)) sender ! PoisonPill
-      agents.get(t.agentNumber) map { tuple  ⇒
+      agents.get(t.agentNumber) map { tuple  =>
         if (sender == tuple._2) server forward t else sender ! PoisonPill }
     }
 
-    case Terminated(deceasedActor)  ⇒ {
+    case Terminated(deceasedActor)  => {
       if (deceasedActor == server) { // the server died
-        agents map { a  ⇒ { unwatch(a._2._2); stop(a._2._2) }}
-        clients map { c  ⇒ { unwatch(c._2); stop(c._2) }}
+        agents map { a  => { unwatch(a._2._2); stop(a._2._2) }}
+        clients map { c  => { unwatch(c._2); stop(c._2) }}
         stop(self)
       }
       else {
         agents.find(_._2._2 == deceasedActor) match {
-          case Some(deadAgent)  ⇒ { // one of this session's agents died
+          case Some(deadAgent)  => { // one of this session's agents died
             server ! AgentDied(deadAgent._1)
             agents = agents filterNot { _ == deadAgent }
           }
-          case None  ⇒ ()
+          case None  => ()
         }
         clients find (_._2 == deceasedActor) match {
-          case Some(deadClient)  ⇒ { // one of this session's clients died
+          case Some(deadClient)  => { // one of this session's clients died
             clients = clients filterNot { _ == deadClient }
             if (clients.isEmpty) server ! Unsubscribe
           }
-          case None  ⇒ ()
+          case None  => ()
         }
       }
     }
 
-    case AgentDied(id)  ⇒ {
+    case AgentDied(id)  => {
       // not sure if this alert is beneficial...
       println("An agent on another host (number "+id+") has died.")
     }
 
-    case KillAgent(number)  ⇒
+    case KillAgent(number)  =>
       agents filter { _._1 == number } map { _._2._2 ! Kill }
  
-    case KillClient(number)  ⇒
+    case KillClient(number)  =>
       clients filter { _._1 == number } map { _._2 ! Kill }
 
-    case _  ⇒ () // ignore unhandled messages
+    case _  => () // ignore unhandled messages
   }
 }
 

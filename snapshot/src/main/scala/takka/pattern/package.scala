@@ -41,6 +41,6 @@ import scala.concurrent.duration.Duration
  * ask(actor, message);
  * }}}
  */
-package object pattern extends takka.pattern.PipeToSupport with takka.pattern.AskSupport with akka.pattern.GracefulStopSupport {
+// package object pattern extends takka.pattern.PipeToSupport with takka.pattern.AskSupport with akka.pattern.GracefulStopSupport with akka.pattern.FutureTimeoutSupport{
 
-}
+// }

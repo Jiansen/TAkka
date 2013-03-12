@@ -18,7 +18,7 @@ object ClassLoaderUtils {
       (implicit m: scala.reflect.Manifest[T])
     : Option[File] = {
       verifyFileData(fileData) match {
-        case Some(data)  ⇒ {
+        case Some(data)  => {
           val file = File.createTempFile("provisioned", null)
           file.deleteOnExit
           val fout = new FileOutputStream(file)
@@ -26,7 +26,7 @@ object ClassLoaderUtils {
           fout.flush
           Some(file)
         }
-        case None  ⇒ None
+        case None  => None
       }
     }
   }
@@ -44,7 +44,7 @@ object ClassLoaderUtils {
           clazz.asSubclass(m.erasure)
           subclasses :+= clazz.asInstanceOf[java.lang.Class[_ <: T]]
         }
-        catch { case t: Throwable  ⇒ () }
+        catch { case t: Throwable  => () }
       }
     }
     subclasses
@@ -58,13 +58,13 @@ object ClassLoaderUtils {
   private def addURL(u: URL): Unit = {
     val loader = procureUrlLoader()
     val urls = loader.getURLs
-    var alreadyHasURL = urls.contains { url: URL  ⇒ url.toString.equalsIgnoreCase(u.toString) }
+    var alreadyHasURL = urls.contains { url: URL  => url.toString.equalsIgnoreCase(u.toString) }
     if (! alreadyHasURL) {
-      loader.getClass.getMethods.filter{ method  ⇒ {
+      loader.getClass.getMethods.filter{ method  => {
         method.getName == "addURL" || method.getName == "attachURL"
       }}.headOption match {
-        case Some(m)  ⇒ { m setAccessible true; m.invoke(loader, u) }
-        case None  ⇒ println("Big problems... the class loader does not support addURL!!!")
+        case Some(m)  => { m setAccessible true; m.invoke(loader, u) }
+        case None  => println("Big problems... the class loader does not support addURL!!!")
       }
     }
   }
@@ -85,14 +85,14 @@ object ClassLoaderUtils {
     */
   private def procureUrlLoader(): URLClassLoader = {
     val loaders = getClassLoaderChain(getClass().getClassLoader)
-    val urlLoaders = loaders filter { cl: ClassLoader  ⇒ {
+    val urlLoaders = loaders filter { cl: ClassLoader  => {
       var accept = false
       try {
         val possibility = cl.asInstanceOf[URLClassLoader]
         accept = possibility.getClass.getName.contains("URL") &&
                  ! possibility.getClass.getMethods.filter{ _.getName == "addURL" }.isEmpty
       }
-      catch { case _:Throwable  ⇒ () }
+      catch { case _:Throwable  => () }
       accept
     }}
     (urlLoaders.headOption getOrElse DefaultLoader).asInstanceOf[URLClassLoader]
@@ -106,8 +106,8 @@ object ClassLoaderUtils {
 
   private def getClassLoaderChain(loader: ClassLoader): List[ClassLoader] = {
     loader.getParent match {
-      case null  ⇒ List(loader)
-      case p: ClassLoader  ⇒ loader :: getClassLoaderChain(p)
+      case null  => List(loader)
+      case p: ClassLoader  => loader :: getClassLoaderChain(p)
     }
   }
 

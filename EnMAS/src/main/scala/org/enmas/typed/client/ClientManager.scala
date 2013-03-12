@@ -17,14 +17,14 @@ class ClientManager extends TypedActor[ClientManagerMessage] with Provisionable 
   loadUserPOMDPs
 
   private def loadUserPOMDPs { if (pomdpDir.isDirectory) {
-    for (f  ← pomdpDir.listFiles) if (f.getName.endsWith(".jar")) {
+    for (f  <- pomdpDir.listFiles) if (f.getName.endsWith(".jar")) {
       POMDPs ++= loadPOMDPsFromFile(f)
     }
   }}
 
   private def loadPOMDPsFromFile(jar: File): List[LocallyAvailablePOMDP] = {
     findSubclasses[POMDP](jar).filterNot { _.getName contains "$"} map {
-      clazz  ⇒
+      clazz  =>
         LocallyAvailablePOMDP(clazz.newInstance, jar)
     }
   }
@@ -35,15 +35,15 @@ class ClientManager extends TypedActor[ClientManagerMessage] with Provisionable 
     )
     host ! RequestProvisions
     (host ? Discovery) onSuccess {
-      case reply: DiscoveryReply  ⇒ replyTo ! reply
+      case reply: DiscoveryReply  => replyTo ! reply
     }
   }
 
   private def createServer(address: String, pomdpClassName: String) {
     POMDPs.find(_.pomdp.getClass.getName == pomdpClassName) match {
-      case Some(availablePOMDP)  ⇒ {
+      case Some(availablePOMDP)  => {
         readFile(availablePOMDP.jar) match {
-          case Some(fileData)  ⇒ {
+          case Some(fileData)  => {
             val host = actorFor[ServerManagerMessage](
               "akka://enmasServer@"+address+":"+serverPort+"/user/serverManager"
             )
@@ -52,84 +52,84 @@ class ClientManager extends TypedActor[ClientManagerMessage] with Provisionable 
 //            println("WAWA "+CreateServerFor(pomdpClassName))            
             host ! CreateServerFor(pomdpClassName)
           }
-          case None  ⇒ ()
+          case None  => ()
         }
       }
-      case None  ⇒ ()
+      case None  => ()
     }
   }
 
   private def createSession(server: ServerSpec) {
     val replyTo = sender
     POMDPs.find( _.pomdp.getClass.getName == server.pomdpClassName) match {
-      case Some(availablePOMDP)  ⇒ {
+      case Some(availablePOMDP)  => {
         val sessionRef = actorOf[ClientManagerMessage](Props(new Session(server.ref, availablePOMDP.pomdp)))
         watch(sessionRef) // subscribe to Terminated(sessionRef)
-        (sessionRef ? Init) onSuccess {
-          case e: Either[_,_]  ⇒ e match {
-            case Left(obj)  ⇒ obj match { case id: Int  ⇒ {
+        (sessionRef ? Init) onComplete {
+          case Success(e: Either[_,_])  => e match {
+            case Left(obj)  => obj match { case id: Int  => {
               sessions = (ActiveSession(sessionRef, id, server) :: sessions)
               replyTo ! true
             }}
-            case _  ⇒ ()
+            case _ => replyTo ! false  
           }
-        } onFailure { case _  ⇒ replyTo ! false }
+            case Failure(_)  => replyTo ! false }
       }
-      case None  ⇒ replyTo ! false
+      case None  => replyTo ! false
     }
   }
 
   
   def typedReceive = {
 
-    case LoadPOMDPsFromFile(f)  ⇒ {
+    case LoadPOMDPsFromFile(f)  => {
       POMDPs ++= loadPOMDPsFromFile(f) 
     }
 
-    case GetLocalPOMDPs  ⇒ {
+    case GetLocalPOMDPs  => {
       sender ! POMDPList(POMDPs.toList map { _.pomdp }) 
     }
 
-    case Provision(fileData: FileData)  ⇒ {
+    case Provision(fileData: FileData)  => {
       val jarOption = provision[POMDP](fileData)
-      jarOption map { jar  ⇒ { POMDPs ++= loadPOMDPsFromFile(jar) }}
+      jarOption map { jar  => { POMDPs ++= loadPOMDPsFromFile(jar) }}
     }
 
-    case ScanHost(serverHost)  ⇒ {
+    case ScanHost(serverHost)  => {
      //scanHost(serverHost, sender) //TODO:  do something
      val senderRef = new ActorRef[ClientManagerMessage]{
-       val untyped_ref = sender
+       val untypedRef = sender
      }
      scanHost(serverHost, senderRef)
     }
 
-    case CreateServer(serverHost, pomdpClassName)  ⇒ {
+    case CreateServer(serverHost, pomdpClassName)  => {
 //      println("received message: create server "+serverHost)
       createServer(serverHost, pomdpClassName)      
     }
 
 
-//    case e: Error  ⇒ e.cause.printStackTrace
+//    case e: Error  => e.cause.printStackTrace
 
-    case m: CreateSession  ⇒ createSession(m.server)
+    case m: CreateSession  => createSession(m.server)
 
-    case GetSessions  ⇒ sender ! ActiveSessionList(sessions)
+    case GetSessions  => sender ! ActiveSessionList(sessions)
 
-//    case error: Throwable  ⇒ { println(
+//    case error: Throwable  => { println(
 //      "Error received from [%s]:\n%s".format(sender, error.getMessage)
 //    )}
 
-    case m  ⇒ println("unhandled message + "+ m) ; () // ignore unhandled messages
+    case m  => println("unhandled message + "+ m) ; () // ignore unhandled messages
   }
   
-  override def possiblyHarmfulHandler = {
-    case akka.actor.Terminated(deceasedActor)  ⇒ {
+  override def possiblyHarmfulHandler:akka.actor.PossiblyHarmful => Unit = {
+    case akka.actor.Terminated(deceasedActor)  => {
       println("Received notice of some dead session")
-      sessions.find(_.ref == deceasedActor) match { case Some(deadSession)  ⇒ {
+      sessions.find(_.ref == deceasedActor) match { case Some(deadSession)  => {
           sessions = sessions filterNot { _ == deadSession }
           unwatch(deadSession.ref)
         }
-        case None  ⇒ ()
+        case None  => ()
       }
     }
   }
@@ -152,8 +152,8 @@ object ClientManager extends App {
   // tuple representing a POMDP and the JAR file containing its bytecode
   sealed case class LocallyAvailablePOMDP(pomdp: POMDP, jar: File) {
     override def equals(obj: Any): Boolean = obj match {
-      case other: LocallyAvailablePOMDP  ⇒ pomdp.name == other.pomdp.name
-      case _  ⇒ false
+      case other: LocallyAvailablePOMDP  => pomdp.name == other.pomdp.name
+      case _  => false
     }
   }
 

@@ -96,7 +96,8 @@ abstract class TypedActor[M:TypeTag] extends akka.actor.Actor{
   def receive = {
     case hmsg:akka.actor.PossiblyHarmful => hmsg match {
       case akka.actor.ReceiveTimeout => systemMessageHandler(ReceiveTimeout)   
-    } 
+      case m => possiblyHarmfulHandler(m)
+    }
     case chaos:ChaosMessage => typedContext.chaosHandler(chaos)
     case m:M => typedReceive(m)    
     case x => throw new Exception("Message "+x+" has the wrong type.")
@@ -150,16 +151,9 @@ abstract class TypedActor[M:TypeTag] extends akka.actor.Actor{
   def systemMessageHandler:SystemMessage => Unit = {
     case _ => 
   }
-  /*
-  def enableChaos(chaos:ChaosMessage) {
-    self ! chaos
-  }
+  
+  def possiblyHarmfulHandler:akka.actor.PossiblyHarmful => Unit = { case _ =>  }
 
-  def setChaosLogStream(out:java.io.PrintStream) {
-    typedContext.chaosLog = out
-  }
-  *   
-  */
 }
 
 

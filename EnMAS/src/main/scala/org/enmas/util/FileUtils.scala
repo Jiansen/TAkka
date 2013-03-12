@@ -27,7 +27,7 @@ object FileUtils {
       fin.read(data, 0, data.length)
       result = Some(FileData(data, md5.digest))
     }
-    catch { case _:Throwable  ⇒ None }
+    catch { case _:Throwable  => None }
     finally { fin.close }
     result
   }

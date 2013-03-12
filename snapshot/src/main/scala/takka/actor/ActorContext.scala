@@ -124,15 +124,21 @@ abstract class ActorContext[M:TypeTag] {
       val untypedRef = system.system.actorFor(remotePathStr)
     }
   }
-  
-  def become[SupM >: M](behavior: SupM => Unit, possibleHamfulHandler:akka.actor.PossiblyHarmful => Unit)(implicit smtTag:TypeTag[SupM]):ActorRef[SupM] = {
+  def become[SupM >: M](behavior: SupM => Unit, systemMessageHandler:SystemMessage=>Unit)(implicit smtTag:TypeTag[SupM]):ActorRef[SupM] ={
+    become(behavior, systemMessageHandler, {case _ => })   
+  }
+    
+  def become[SupM >: M](behavior: SupM => Unit, systemMessageHandler:SystemMessage=>Unit, possiblyHarmfulHandler:akka.actor.PossiblyHarmful => Unit)(implicit smtTag:TypeTag[SupM]):ActorRef[SupM] = {
 //  def become[SupM, M <: SupM](behavior: SupM => Unit, possibleHamfulHandler:akka.actor.PossiblyHarmful => Unit):Unit = {
     val smt = typeOf[SupM]
     if (!(mt <:< smt))
       throw BehaviorUpdateException(smt, mt)
     mt = smt
     untypedContext.become({
-      case x:akka.actor.PossiblyHarmful => possibleHamfulHandler(x)   
+      case hmsg:akka.actor.PossiblyHarmful => hmsg match {
+        case akka.actor.ReceiveTimeout => systemMessageHandler(ReceiveTimeout)   
+        case m => possiblyHarmfulHandler(m)
+      }
       case x:ChaosMessage => chaosHandler(x)
       case x:SupM => behavior(x)
     })
@@ -150,7 +156,7 @@ abstract class ActorContext[M:TypeTag] {
     case ChaosException(e:Exception) => 
       throw e
     case ChaosNonTerminate =>
-      
+      while(true){}
   }
 }
 

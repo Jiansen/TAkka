@@ -88,7 +88,7 @@ class Bundler extends MainFrame {
           StatusBar.success
           results.text += "\nDone!"
         }
-        catch { case t: Throwable  ⇒ 
+        catch { case t: Throwable  => 
           StatusBar.failure
           results.text += "\n%s:\n%s".format(t.getClass.getName, t.getMessage)
         }

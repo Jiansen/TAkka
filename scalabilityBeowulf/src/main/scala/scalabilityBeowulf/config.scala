@@ -66,7 +66,9 @@ object BeowulfConfig {
         provider = "akka.remote.RemoteActorRefProvider"
       }
       remote {
-        netty {
+        startup-timeout = 200 s
+        enabled-transports = ["akka.remote.netty.tcp"]
+        netty.tcp{
           hostname = """" + node(nodeID).ip + """"
           port = """ + node(nodeID).port + """
         }

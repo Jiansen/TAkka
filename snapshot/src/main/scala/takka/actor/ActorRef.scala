@@ -75,10 +75,10 @@ abstract class ActorRef[-M](implicit mt:TypeTag[M]) extends Serializable {
   }
   
   /**
-   *  Send synchronous request.  The current implementation is buggy because it does not restrict SynMessage[R] <: M
+   *  Send synchronous request.
    */
-  def ?[R:scala.reflect.ClassTag](message: SynMessage[R])(implicit timeout: akka.util.Timeout, mr:TypeTag[R]):Future[R] = {    
-    (untypedRef ? message).mapTo[R]
+  def ?(message: M)(implicit timeout: akka.util.Timeout):Future[Any] = {    
+    (untypedRef ? message)
   }
 }
 
@@ -112,4 +112,4 @@ object SynTest extends App{
 }
  *  }}}
  */
-trait SynMessage[M]
+//trait SynMessage[M]
