@@ -6,7 +6,7 @@ final class Model extends TypedActor[Controller2ModelMessage] {
   var controller:ActorRef[Model2ControllerMessage] = _
   
   def typedReceive = {
-    case ModelsetController(control) => controller = control
+    case ModelSetController(control) => controller = control
     case MoveAt(row:Int, col:Int) =>
       try{
         

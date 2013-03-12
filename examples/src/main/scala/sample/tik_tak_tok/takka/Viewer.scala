@@ -5,13 +5,13 @@ import scala.swing._
 import scala.swing.event._
 import javax.swing.JOptionPane
 
-final class Viewer extends TypedActor[Controller2ViewerMessage]{
-   private var controller:ActorRef[Viewer2ControllerMessage] = _
+final class View extends TypedActor[Controller2ViewMessage]{
+   private var controller:ActorRef[View2ControllerMessage] = _
    
    private var guiApp:GUIApplication = _;
       
    def typedReceive = {
-     case ViewersetController(control) =>
+     case ViewSetController(control) =>
        assert(controller == null, "controller has been set")
        controller = control
        guiApp = new GUIApplication(controller)
@@ -33,7 +33,7 @@ final class Viewer extends TypedActor[Controller2ViewerMessage]{
 }
 
 
-class GUIApplication(controller:ActorRef[Viewer2ControllerMessage]) extends SimpleSwingApplication {
+class GUIApplication(controller:ActorRef[View2ControllerMessage]) extends SimpleSwingApplication {
   def draw(row:Int, col:Int, isCross:Boolean){
       if(isCross){
         grids(row)(col).text = "X"
@@ -110,7 +110,7 @@ class GUIApplication(controller:ActorRef[Viewer2ControllerMessage]) extends Simp
         editable = false
       }
       contents += new Button("Model")
-      contents += new Button("Viewer")
+      contents += new Button("<=")
       contents += new Button("Controller")
     }
   }

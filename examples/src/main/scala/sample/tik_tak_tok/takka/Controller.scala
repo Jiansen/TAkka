@@ -2,26 +2,26 @@ package sample.tik_tak_tok.takka
 
 import takka.actor._
 
-final class Controller(model:ActorRef[Controller2ModelMessage], viewer:ActorRef[Controller2ViewerMessage]) extends TypedActor[ControllerMessage] {
+final class Controller(model:ActorRef[Controller2ModelMessage], view:ActorRef[Controller2ViewMessage]) extends TypedActor[ControllerMessage] {
   def typedReceive = {
     case ButtonClickedAt(row, col) =>
       model ! MoveAt(row, col)
     case GridNotEmpty(row, col) =>
-      viewer ! DisplyError("grid "+row+" , "+col+" is not empty")
+      view ! DisplyError("grid "+row+" , "+col+" is not empty")
     case PlayedCross(row, col) =>
-      viewer ! DrawCross(row, col)
+      view ! DrawCross(row, col)
     case PlayedO(row, col) =>
-      viewer ! DrawO(row:Int, col:Int)
+      view ! DrawO(row:Int, col:Int)
     case NextMove(move) =>
-      viewer ! DisplayNextMove(move)
+      view ! DisplayNextMove(move)
     case Winner(move) =>
-      viewer ! AnnounceWinner(move)
+      view ! AnnounceWinner(move)
   }
   
   override def preStart() = {
-//    model ! ModelsetController(typedSelf) //pass?
-//    viewer ! ViewersetController(typedSelf) //pass?
-    model ! ModelsetController(typedSelf.publishAs[Model2ControllerMessage])
-    viewer ! ViewersetController(typedSelf.publishAs[Viewer2ControllerMessage])
+//    model ! ModelsetController(typedSelf) //pass
+//    view ! ViewSetController(typedSelf) //pass
+    model ! ModelSetController(typedSelf.publishAs[Model2ControllerMessage])
+    view ! ViewSetController(typedSelf.publishAs[View2ControllerMessage])
   }
 }
