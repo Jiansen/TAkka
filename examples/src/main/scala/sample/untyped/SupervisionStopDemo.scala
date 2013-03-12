@@ -23,7 +23,7 @@ class SuperActor extends Actor {
       println(self)
 //      child1 ! "print"
 //      child2 ! "print"
-      context.children foreach ( c => c ! PoisonPill)
+      context.children foreach ( c => c ! Kill)
       child1 ! "print"
       child2 ! "print"
   }
