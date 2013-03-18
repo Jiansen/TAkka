@@ -43,7 +43,9 @@ object SupervisionStopDemo extends App{
   val child1=system.actorFor[String]("akka://DemoSystem/user/root/child1")
   val child2=system.actorFor[String]("akka://DemoSystem/user/root/child2")  
 
+  import takka.chaos.ChaosMode._
   val chaos = ChaosMonkey(List(child1, child2))
+  chaos.setMode(Random)
   chaos.enableDebug
   chaos.start(1 second)
 }
