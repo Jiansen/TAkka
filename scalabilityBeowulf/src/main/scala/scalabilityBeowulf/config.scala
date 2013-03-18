@@ -29,7 +29,7 @@ object BeowulfConfig {
         val depNode:Int = calnode(i, nodes)
           result +=
             """/"""+processPathPrefix+"""/"""+processNamePrefix+i+""" {
-              remote = "akka://"""+workerNodePrefix+depNode+"@"+node(depNode).ip+""":"""+node(depNode).port+""""
+              remote = "akka.tcp://"""+workerNodePrefix+depNode+"@"+node(depNode).ip+""":"""+node(depNode).port+""""
             }
             """
       }
@@ -48,7 +48,7 @@ object BeowulfConfig {
         }
       }
           
-      remote.netty.port = 2554
+      netty.tcp.port = 2554
     }
     """  
     
