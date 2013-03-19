@@ -1,4 +1,4 @@
-package takka
+package sample.takka
 
 import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import akka.event.Logging
