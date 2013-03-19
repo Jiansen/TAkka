@@ -56,7 +56,7 @@ object BeowulfConfig {
     }
     """  
     
-          println("config is: "+configStr)
+//          println("config is: "+configStr)
     ConfigFactory.parseString(configStr)
   }
   
