@@ -31,7 +31,7 @@ class Bang extends Actor{
       }).toList
       timer.start
       for (sender <- senders) {
-println("sending message form "+self+" to "+sender)        
+//println("sending message form "+self+" to "+sender)        
         sender ! Send(self, m)
       }
     case DummyMessage => 
@@ -50,7 +50,7 @@ class Sender extends Actor{
     case Send(receiver, m) => 
       var i:Int = 0;
       while(i<m){
-println(self+" reply message to "+receiver)        
+//println(self+" reply message to "+receiver)        
         receiver ! DummyMessage
         i += 1
       }
@@ -63,8 +63,9 @@ object BangBench extends App{
   private val messagess:Int = 2000
 
   private val system = ActorSystem("BangSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
+// println("OK?"+nodes)
+
   val testActor = system.actorOf(Props[Bang], ProcessPathPrefix)
   testActor ! BangBench(processes,messagess)
 // println("System configuration: \n"+masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))  
-  
 }

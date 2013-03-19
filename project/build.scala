@@ -24,8 +24,8 @@ object TAkkaBuild extends Build {
   // Projects
   lazy val root = Project(id = "takka",
                           base = file("."),
-                          settings = defaultSettings) aggregate(snapshot, examples,
-                                          scalabilityBenchmark, scalabilityBeowulf)
+                          settings = defaultSettings) aggregate(snapshot, scalabilityBeowulf)
+// examples, scalabilityBenchmark)
 //                                                                takkasockowebserver, takkasockoexamples,
 //	                                                                sockowebserver, sockoexamples)
 
