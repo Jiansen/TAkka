@@ -41,6 +41,10 @@ object BeowulfConfig {
     
     val configStr = """      
     akka {
+      serializers {
+        proto = "akka.remote.serialization.ProtobufSerializer"
+        daemon-create = "akka.remote.serialization.DaemonMsgCreateSerializer"
+      }      
       actor {
         provider = "akka.remote.RemoteActorRefProvider"
         deployment { 
@@ -48,8 +52,10 @@ object BeowulfConfig {
         }
       }
       remote {
-        enabled-transports = ["akka.remote.netty.tcp"]
-        netty.tcp {
+//        enabled-transports = ["akka.remote.netty.tcp"]
+//        netty.tcp {
+        transport = "akka.remote.netty.NettyRemoteTransport"
+        netty {          
           hostname = "137.195.143.132"
           port = 2552
         }
