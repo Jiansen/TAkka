@@ -30,7 +30,8 @@ object BeowulfConfig {
         val depNode:Int = calnode(i, nodes)
           result +=
             """/"""+processPathPrefix+"""/"""+processNamePrefix+i+""" {
-              remote = "akka.tcp://"""+workerNodePrefix+depNode+"@"+node(depNode).ip+""":"""+node(depNode).port+""""
+//              remote = "akka.tcp://"""+workerNodePrefix+depNode+"@"+node(depNode).ip+""":"""+node(depNode).port+""""
+              remote = "akka://"""+workerNodePrefix+depNode+"@"+node(depNode).ip+""":"""+node(depNode).port+""""
             }
             """
       }
@@ -49,7 +50,7 @@ object BeowulfConfig {
       remote {
         enabled-transports = ["akka.remote.netty.tcp"]
         netty.tcp {
-          hostname = "127.0.0.1"
+          hostname = "137.195.143.132"
           port = 2552
         }
       }
@@ -71,8 +72,10 @@ object BeowulfConfig {
       }
       remote {
         startup-timeout = 200 s
-        enabled-transports = ["akka.remote.netty.tcp"]
-        netty.tcp{
+//        enabled-transports = ["akka.remote.netty.tcp"]
+        transport = "akka.remote.netty.NettyRemoteTransport"
+//        netty.tcp{
+        netty {
           hostname = """" + node(nodeID).ip + """"
           port = """ + node(nodeID).port + """
         }
