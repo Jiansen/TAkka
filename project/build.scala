@@ -11,7 +11,7 @@ object TAkkaBuild extends Build {
   lazy val defaultSettings = Defaults.defaultSettings ++ Seq(
     resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
 
-    scalaVersion := "2.10.0",
+    scalaVersion := "2.10.1",
 
     // Compile options
     scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-optimize"),
@@ -153,9 +153,9 @@ object Dependencies {
 object Dependency {
   // Versions
   object V {
-    val Akka      = "2.2-M1"
+    val Akka      = "2.1.2"
   }
-  val scalaSwing = "org.scala-lang" % "scala-swing" % "2.10.0"
+  val scalaSwing = "org.scala-lang" % "scala-swing" % "2.10.1"
   val akkaActor     = "com.typesafe.akka"   %% "akka-actor"  	% V.Akka
   val akkaKernel    = "com.typesafe.akka"   %% "akka-kernel" % V.Akka
   val akkaSlf4j     = "com.typesafe.akka"   %% "akka-slf4j"  % V.Akka
@@ -167,8 +167,8 @@ object Dependency {
   val scalatest     = "org.scalatest"       %% "scalatest"         % "1.9.1" % "test"
   val scalacheck    = "org.scalacheck"      %% "scalacheck"        % "1.10.0" % "test"
 
-  val scala_lib     = "org.scala-lang" % "scala-library" % "2.10.0" % "provided"
-  val scala_comp    = "org.scala-lang" % "scala-compiler" % "2.10.0"
+  val scala_lib     = "org.scala-lang" % "scala-library" % "2.10.1" % "provided"
+  val scala_comp    = "org.scala-lang" % "scala-compiler" % "2.10.1"
 
   val unfiltered_async = "net.databinder" %% "unfiltered-filter-async" % "0.6.7"
   val unfiltered_jetty = "net.databinder" %% "unfiltered-jetty" % "0.6.7"

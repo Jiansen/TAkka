@@ -35,7 +35,7 @@ class NowTime extends Actor {
         context.actorOf(Props[LoopActor], ProcessNamePrefix+i)
       }  
       for (pid <- pids) {
-        pid ! (self, n)
+        pid ! Loop(self, n)
       }
     case Result(_, _) =>
       counter.decrement
@@ -73,5 +73,5 @@ object ParallelBench extends App{
   
   private val system = ActorSystem("ParallelSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))  
   val master = system.actorOf(Props[NowTime], ProcessPathPrefix)
-  master ! Start(6000, processes)
+  master ! Start(10000, processes)
 }

@@ -10,10 +10,11 @@ class Echo extends Actor{
   def receive = {
     case m =>
       val replyTo = sender
-      val actor = context.actorOf(Props[DoubleEcho])
+      val actor = context.actorOf(Props[DoubleEcho], "double")
       (actor ? m) onSuccess{
         case x => 
           println("sender: "+sender)        
+          println("double: "+actor)
           println("replyTo: "+replyTo)
           sender ! x
       }
@@ -23,6 +24,7 @@ class Echo extends Actor{
 class DoubleEcho extends Actor{
   def receive = {
     case m => {
+      println("sending from "+self+" to "+sender)
       sender ! m+" "+m
     }
   }
@@ -41,7 +43,9 @@ object ReplyDemo extends App {
 }
 
 /*
+sending from Actor[akka://mysystem/user/echo/double] to Actor[akka://mysystem/temp/$a]
 sender: Actor[akka://mysystem/deadLetters]
-replyTo: Actor[akka://mysystem/temp/$a]
+double: Actor[akka://mysystem/user/echo/double]
+replyTo: Actor[akka://mysystem/temp/$b]
 akka.pattern.AskTimeoutException: Timed out
 */
