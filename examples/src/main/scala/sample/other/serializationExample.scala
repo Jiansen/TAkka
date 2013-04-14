@@ -21,3 +21,20 @@ object serializationExample extends App {
  
     println(bar)
 }
+
+/*
+test on REFL
+* 
+class Foo(m: String) extends scala.Serializable {
+        val message = m
+}
+ 
+// val foo = new Foo("qweqwe")
+val foo = typeTag[Foo]  
+
+val output = new ObjectOutputStream(new FileOutputStream("test.obj"))
+output.writeObject(foo)
+output.close
+
+* 
+*/
