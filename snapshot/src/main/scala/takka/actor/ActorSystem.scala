@@ -34,7 +34,8 @@ import scala.util.control.{ NonFatal, ControlThrowable }
 
 import takka.nameserver._
 import akka.pattern.ask
-import scala.reflect.runtime.universe._
+// import scala.reflect.runtime.universe._
+import scala.reflect.Manifest
 
 object ActorSystem {
   def apply():ActorSystem = new ActorSystem {
@@ -109,7 +110,7 @@ abstract class ActorSystem {
   /**
    * Create a top-level actor, with system generated name.
    */  
-  def actorOf[Msg:TypeTag](props:Props[Msg]):ActorRef[Msg] = {
+  def actorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg] = {
     val actor = new ActorRef[Msg] { val untypedRef = system.actorOf(props.props) }    
     NameServer.set(TSymbol[ActorRef[Msg]](scala.Symbol(actor.path.toString())), actor)    
     actor
@@ -118,7 +119,7 @@ abstract class ActorSystem {
   /**
    * Create a top-level actor. with user specified name.
    */  
-  def actorOf[Msg:TypeTag](props:Props[Msg], name:String):ActorRef[Msg] = {
+  def actorOf[Msg:Manifest](props:Props[Msg], name:String):ActorRef[Msg] = {
     val actor = new ActorRef[Msg] { val untypedRef = system.actorOf(props.props, name) }
     NameServer.set(TSymbol[ActorRef[Msg]](Symbol(actor.path.toString())), actor)
     actor
@@ -177,7 +178,7 @@ abstract class ActorSystem {
   
   // actorFor  via nameserver !!!	
   // TODO: E is not checked
-  def actorFor[M:TypeTag](actorPath: String): ActorRef[M]= {
+  def actorFor[M:Manifest](actorPath: String): ActorRef[M]= {
     
     //val isRemotePath = ActorPath(actorPath)
     val tmp = new ActorRef[M]{
@@ -186,7 +187,7 @@ abstract class ActorSystem {
     actorFor[M](tmp.path)
   }
   
-  def actorFor[M:TypeTag](actorPath: akka.actor.ActorPath): ActorRef[M]= {
+  def actorFor[M:Manifest](actorPath: akka.actor.ActorPath): ActorRef[M]= {
     val isRemotePath = actorPath.address.host match {
       case None => false
       case Some(_) => true
@@ -203,7 +204,7 @@ abstract class ActorSystem {
                               +actorPath.address.host.get+":"
                               +actorPath.address.port.get+"/user/ActorTypeServer")
       implicit val timeout = new akka.util.Timeout(10000) // 10 seconds
-      val checkResult = remoteChecker ? Check(actorPath, typeTag[M]) 
+      val checkResult = remoteChecker ? Check(actorPath, manifest[M]) 
       var result:ActorRef[M] = null
       checkResult onSuccess {
         case Compatible => 
@@ -211,7 +212,7 @@ abstract class ActorSystem {
             val untypedRef = system.actorFor(actorPath)
           } 
         case NonCompatible => 
-          throw new Exception("ActorRef["+actorPath+"] does not exist or does not have type ActorRef["+typeOf[M]+"]")
+          throw new Exception("ActorRef["+actorPath+"] does not exist or does not have type ActorRef["+manifest[M]+"]")
       }
       result
     }else{
@@ -255,7 +256,7 @@ abstract class ActorSystem {
     }
   }
   
-  def remoteActorOf[Msg:TypeTag](props:Props[Msg]):ActorRef[Msg] = {
+  def remoteActorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg] = {
     val actor = actorOf[Msg](props:Props[Msg])
     val system = this
     new ActorRef[Msg] {
@@ -267,7 +268,7 @@ abstract class ActorSystem {
     }
   }
   
-  def remoteActorOf[Msg:TypeTag](props:Props[Msg], name:String):ActorRef[Msg] = {
+  def remoteActorOf[Msg:Manifest](props:Props[Msg], name:String):ActorRef[Msg] = {
     val actor = actorOf[Msg](props:Props[Msg], name:String)
     val system = this
     new ActorRef[Msg] {
@@ -281,7 +282,7 @@ abstract class ActorSystem {
   
   import language.existentials
 //  private sealed trait ActorTypeCheckerMsg
-  private case class Check(path:akka.actor.ActorPath, t:scala.reflect.runtime.universe.TypeTag[_]) 
+  private case class Check(path:akka.actor.ActorPath, t:Manifest[_]) 
   private case object Compatible
   private case object NonCompatible // type error or isDeadLetter
 

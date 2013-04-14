@@ -17,7 +17,8 @@
 package takka.actor
 
 import akka.pattern.ask
-import scala.reflect.runtime.universe._
+// import scala.reflect.runtime.universe._
+import scala.reflect.Manifest
 import takka.util._
 import scala.concurrent.Future
 
@@ -29,7 +30,7 @@ import scala.concurrent.Future
 //@SerialVersion("ActorRef-v-0-1")
 @SerialVersionUID(13L)
 //trait ActorRef[-Msg : TypeTag] { // compile error: traits cannot have type parameters with context bounds
-abstract class ActorRef[-M](implicit mt:TypeTag[M]) extends Serializable {
+abstract class ActorRef[-M](implicit mt:Manifest[M]) extends Serializable {
   val untypedRef:akka.actor.ActorRef 
 //  def typename(implicit m: scala.reflect.TypeTag[M]) = m.toString
   
@@ -67,7 +68,7 @@ abstract class ActorRef[-M](implicit mt:TypeTag[M]) extends Serializable {
   /**
    *  Type safe cast
    */
-  def publishAs[SubM<:M](implicit mt:TypeTag[SubM]):ActorRef[SubM] = {
+  def publishAs[SubM<:M](implicit mt:Manifest[SubM]):ActorRef[SubM] = {
     val preciseRef = this.untypedRef
      new ActorRef[SubM] {
       val untypedRef = preciseRef

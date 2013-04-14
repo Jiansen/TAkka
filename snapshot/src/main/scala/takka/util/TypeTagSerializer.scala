@@ -1,3 +1,4 @@
+/*
 package takka.util
 import scala.reflect.runtime.universe._
 import takka.nameserver.TSymbol
@@ -34,3 +35,4 @@ object TSymbolSerializer{
     TSymbol(s.symbol)(TypeTagSerializer.deserialize(s.tagString))
   }
 }
+*/

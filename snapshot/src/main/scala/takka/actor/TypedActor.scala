@@ -16,7 +16,8 @@
 
 package takka.actor
 
-import scala.reflect.runtime.universe._
+// import scala.reflect.runtime.universe._
+import scala.reflect.Manifest
 import takka.chaos._
 
   
@@ -85,7 +86,7 @@ import takka.chaos._
 //trait Actor[Msg](implicit msgT:TypeTag[Msg]) extends akka.actor.Actor {
 //trait Actor[Msg:TypeTag] extends akka.actor.Actor {
 //trait TypedActor[M] extends akka.actor.Actor{  
-abstract class TypedActor[M:TypeTag] extends akka.actor.Actor{  
+abstract class TypedActor[M:Manifest] extends akka.actor.Actor{  
 //  implicit val mt:TypeTag[M] = typeTag[M]
   /**
    * This defines the initial actor behavior, it must return a partial function

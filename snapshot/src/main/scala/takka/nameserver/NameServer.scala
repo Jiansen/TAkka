@@ -1,6 +1,7 @@
 package takka.nameserver
 
-import scala.reflect.runtime.universe.{TypeTag}
+// import scala.reflect.runtime.universe._
+import scala.reflect.Manifest
 import scala.language.existentials
 
 /**
@@ -46,7 +47,7 @@ object NameServer {
    * the name has been used by the name server.
    */
   @throws(classOf[NamesHasBeenRegisteredException])
-  def set[T:TypeTag](name:TSymbol[T], value:T):Boolean = synchronized {
+  def set[T:Manifest](name:TSymbol[T], value:T):Boolean = synchronized {
     val tValue = TValue[T](value)
     if (nameMap.contains(name)){
       return false

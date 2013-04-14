@@ -16,8 +16,9 @@
 
 package takka.actor
 
-import scala.reflect.runtime.universe._
-import scala.reflect.ClassTag
+// import scala.reflect.runtime.universe._
+import scala.reflect.Manifest
+//import scala.reflect.ClassTag
 
 /**
  * Factory for Props instances.
@@ -39,7 +40,7 @@ object Props{
    * Returns a Props that has default values except for "creator" which will be a function that creates an instance
    * of the supplied type using the default constructor.
    */
-  def apply[T, A<:TypedActor[T]] (implicit arg0: ClassTag[A]): Props[T] = {
+  def apply[T, A<:TypedActor[T]] (implicit arg0: Manifest[A]): Props[T] = {
     val p = akka.actor.Props[A]
     return Props(p)
   }

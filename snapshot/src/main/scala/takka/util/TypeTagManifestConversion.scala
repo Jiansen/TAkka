@@ -1,3 +1,4 @@
+/*
 package takka.util
 
 import scala.reflect.runtime.universe._
@@ -73,3 +74,4 @@ object SerializationTest extends App {
 //  println(sub2 <:< sup2)
   
 }
+*/

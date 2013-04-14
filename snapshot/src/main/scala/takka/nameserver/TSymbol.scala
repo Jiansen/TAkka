@@ -1,6 +1,8 @@
 package takka.nameserver
 
-import scala.reflect.runtime.universe.{TypeTag, Type, typeOf}
+// import scala.reflect.runtime.universe.{TypeTag, Type, typeOf}
+// import scala.reflect.runtime.universe._
+import scala.reflect.Manifest
 import scala.Symbol
 
 /**
@@ -8,8 +10,8 @@ import scala.Symbol
  * The type descriptor (TypeTag) can be used at run-time for type comparison.
  */
 @SerialVersionUID( 1L )
-case class TSymbol[-T:TypeTag](val symbol:Symbol) {
-  private [takka] val t:Type = typeOf[T]
+case class TSymbol[-T:Manifest](val symbol:Symbol) {
+  private [takka] val t:Manifest[_] = manifest[T]
   /**
    * To support subtyping enquiry in typed name server,
    * the hash of a '''TSymbol''' only considers the symbol representation.
@@ -20,8 +22,8 @@ case class TSymbol[-T:TypeTag](val symbol:Symbol) {
 /**
  * A typed value contains a type descriptor (TypeTag) which can be used at run-time.
  */
-case class TValue[T:TypeTag](val value:T){
-  val t:Type = typeOf[T]
+case class TValue[T:Manifest](val value:T){
+  private [takka] val t:Manifest[_] = manifest[T]
 }
 
 /*

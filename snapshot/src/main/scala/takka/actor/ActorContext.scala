@@ -16,7 +16,8 @@
 package takka.actor
 
 import scala.concurrent.duration.Duration
-import scala.reflect.runtime.universe._
+// import scala.reflect.runtime.universe._
+import scala.reflect.Manifest
 import language.implicitConversions
 import takka.chaos._
 import akka.actor.PoisonPill
@@ -42,19 +43,19 @@ import akka.actor.PoisonPill
  * }}}
  * Where no name is given explicitly, one will be automatically generated.
  */
-abstract class ActorContext[M:TypeTag] {
+abstract class ActorContext[M:Manifest] {
 //  implicit val m:TypeTag[M] = typeTag[M]
-  implicit var mt : Type = typeOf[M]
+  implicit var mt:Manifest[_]  = manifest[M]
 
   val untypedContext:akka.actor.ActorContext
 
   val props:Props[M]
   
-  def actorOf[Msg](props:Props[Msg], name:String)(implicit mt:TypeTag[Msg]):ActorRef[Msg] = {
+  def actorOf[Msg](props:Props[Msg], name:String)(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
     new ActorRef[Msg] { val untypedRef = untypedContext.actorOf(props.props, name) }
   }
   
-  def actorOf[Msg](props:Props[Msg])(implicit mt:TypeTag[Msg]):ActorRef[Msg] = {
+  def actorOf[Msg](props:Props[Msg])(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
     new ActorRef[Msg] { val untypedRef = untypedContext.actorOf(props.props) }
   }
   
@@ -96,12 +97,12 @@ abstract class ActorContext[M:TypeTag] {
     
   // actorFor  via nameserver !!!	
   // TODO: Msg is not checked
-  def actorFor[Msg](actorPath: String)(implicit mt:TypeTag[Msg]): ActorRef[Msg]= new ActorRef[Msg]{
+  def actorFor[Msg](actorPath: String)(implicit mt:Manifest[Msg]): ActorRef[Msg]= new ActorRef[Msg]{
     val untypedRef = untypedContext.actorFor(actorPath)
   }
   
   //  new APIs to support remote ActorRef
-  def remoteActorOf[Msg](props:Props[Msg])(implicit mt:TypeTag[Msg]):ActorRef[Msg] = {
+  def remoteActorOf[Msg](props:Props[Msg])(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
     val actor = actorOf[Msg](props:Props[Msg])
     val system = this.system;
     new ActorRef[Msg] {
@@ -113,7 +114,7 @@ abstract class ActorContext[M:TypeTag] {
     }
   }
   
-  def remoteActorOf[Msg](props:Props[Msg], name:String)(implicit mt:TypeTag[Msg]):ActorRef[Msg] = {
+  def remoteActorOf[Msg](props:Props[Msg], name:String)(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
     val actor = actorOf[Msg](props:Props[Msg], name:String)
     val system = this.system
     new ActorRef[Msg] {
@@ -124,15 +125,16 @@ abstract class ActorContext[M:TypeTag] {
       val untypedRef = system.system.actorFor(remotePathStr)
     }
   }
-  def become[SupM >: M](behavior: SupM => Unit, systemMessageHandler:SystemMessage=>Unit)(implicit smtTag:TypeTag[SupM]):ActorRef[SupM] ={
+  def become[SupM >: M](behavior: SupM => Unit, systemMessageHandler:SystemMessage=>Unit)(implicit smtTag:Manifest[SupM]):ActorRef[SupM] ={
     become(behavior, systemMessageHandler, {case _ => })   
   }
     
-  def become[SupM >: M](behavior: SupM => Unit, systemMessageHandler:SystemMessage=>Unit, possiblyHarmfulHandler:akka.actor.PossiblyHarmful => Unit)(implicit smtTag:TypeTag[SupM]):ActorRef[SupM] = {
+  def become[SupM >: M](behavior: SupM => Unit, systemMessageHandler:SystemMessage=>Unit, possiblyHarmfulHandler:akka.actor.PossiblyHarmful => Unit)(implicit smtTag:Manifest[SupM]):ActorRef[SupM] = {
 //  def become[SupM, M <: SupM](behavior: SupM => Unit, possibleHamfulHandler:akka.actor.PossiblyHarmful => Unit):Unit = {
-    val smt = typeOf[SupM]
+    val smt = manifest[SupM]
     if (!(mt <:< smt))
       throw BehaviorUpdateException(smt, mt)
+    
     mt = smt
     untypedContext.become({
       case hmsg:akka.actor.PossiblyHarmful => hmsg match {
@@ -160,4 +162,4 @@ abstract class ActorContext[M:TypeTag] {
   }
 }
 
-case class BehaviorUpdateException(smt:Type, mt:Type) extends Exception(smt + "must be a supertype of "+mt+".")
+case class BehaviorUpdateException(smt:Manifest[_], mt:Manifest[_]) extends Exception(smt + "must be a supertype of "+mt+".")
