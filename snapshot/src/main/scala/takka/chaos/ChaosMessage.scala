@@ -29,13 +29,13 @@ class ChaosMonkey(victims:List[ActorRef[_]], exceptions:List[Exception]){
   def enableDebug() = {this.debugMode = true}
   def disableDebug() = {this.debugMode = false}
   
-  def start(period:FiniteDuration) = status match {
+  def start(interval:FiniteDuration) = status match {
     case ON => 
       throw new ChaosMonkeyException("ChaosMonkey is running: turn it off before restart it.") 
     case OFF =>
       setOn
       scala.concurrent.future {
-        repeat(period)
+        repeat(interval)
       }
   }
   
@@ -93,7 +93,7 @@ class ChaosMonkey(victims:List[ActorRef[_]], exceptions:List[Exception]){
  *   Exception: raise an Exception in a random actor
  *   InfiniteLoop: compute an non-terminatable calculation in a random actor
  */
-private[chaos] object ChaosMode extends Enumeration {
+object ChaosMode extends Enumeration {
     type ChaosMode = Value
     val Random, PoisonKill, Kill, Exception, NonTerminate  = Value
 }

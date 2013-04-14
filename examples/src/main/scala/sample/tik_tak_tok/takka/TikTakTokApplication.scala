@@ -3,10 +3,8 @@ package sample.tik_tak_tok.takka
 import takka.actor._
 
 object TikTakTokApplication extends App {
-  // println("Hello World")
-    
   val system = ActorSystem("LocalTikTakTok")
   val model = system.actorOf(Props[Controller2ModelMessage, Model], "model")
-  val viewer = system.actorOf(Props[Controller2ViewerMessage, Viewer], "viewer")
-  val controller = system.actorOf(Props(new Controller(model, viewer)), "controller")  
+  val view = system.actorOf(Props[Controller2ViewMessage, View], "view")
+  val controller = system.actorOf(Props(new Controller(model, view)), "controller")  
 }

@@ -3,30 +3,77 @@ package sample.tik_tak_tok.takka
 import takka.actor._
 import scala.swing._
 import scala.swing.event._
+import javax.swing.JOptionPane
 
-final class Viewer extends TypedActor[Controller2ViewerMessage]{
-   var controller:ActorRef[Viewer2ControllerMessage] = _
+final class View extends TypedActor[Controller2ViewMessage]{
+   private var controller:ActorRef[View2ControllerMessage] = _
    
-   val guiApp:GUIApplication = new GUIApplication
+   private var guiApp:GUIApplication = _;
       
    def typedReceive = {
-     case ViewersetController(control) =>
+     case ViewSetController(control) =>
+       assert(controller == null, "controller has been set")
        controller = control
-       guiApp.main(Array(""))       
+       guiApp = new GUIApplication(controller)
+       guiApp.main(Array(""))              
+     case DisplyError(err) =>
+       guiApp.displayError(err)
+     case DrawCross(row, col) =>
+       guiApp.draw(row, col, true)
+     case DrawO(row, col) =>
+       guiApp.draw(row, col, false)
+     case DisplayNextMove(move) =>
+       guiApp.showNextMove(move)
+     case AnnounceWinner(winner:Move) => winner match{
+       case X => guiApp.announceWinner(true)
+       case O => guiApp.announceWinner(false)
+     }
        
    }
 }
 
 
-class GUIApplication extends SimpleSwingApplication {
+class GUIApplication(controller:ActorRef[View2ControllerMessage]) extends SimpleSwingApplication {
+  def draw(row:Int, col:Int, isCross:Boolean){
+      if(isCross){
+        grids(row)(col).text = "X"
+      }else{
+        grids(row)(col).text = "O" 
+      }
+  }
+    
+  def showNextMove(move:Move) = {
+    NextMoveButton.showNextMove(move)
+  }
+  
+  def displayError(err:String) {
+      JOptionPane.showMessageDialog(null, err);
+  }
+  
+  def announceWinner(isCross:Boolean) {
+    if(isCross){
+      JOptionPane.showMessageDialog(null, "X wins");
+    }else{
+      JOptionPane.showMessageDialog(null, "O wins");
+    }
+  }
+    
+  // grids on gameboard
+  val grids:Array[Array[GameButton]] = Array.ofDim(3,3)
+  
+  protected class GameButton(val row:Int, val col:Int) extends Button
+  protected object NextMoveButton extends Button {
+    this.text = "X"
+      
+    def showNextMove(move:Move) = move match {
+      case X => text = "X"
+      case O => text = "O"
+    }
+  }
+  
   def top = new MainFrame { 
     title = "Tik Tak Tok" 
-    //size  = new Dimension(600,600) 
-    
-    // grids on gameboard
-    val grids:Array[Array[GameButton]] = Array.ofDim(3,3)
-    
-    
+
     contents = new BorderPanel() {
       this.add(gameboard, BorderPanel.Position.Center)
       this.add(nextPanel, BorderPanel.Position.West)
@@ -45,22 +92,15 @@ class GUIApplication extends SimpleSwingApplication {
       }
 
       reactions += {
-        case ButtonClicked(b:GameButton) =>
-          b.text = b.row.toString()
+        case ButtonClicked(b:GameButton) =>          
+          // b.text = b.row.toString()
+          controller ! ButtonClickedAt(b.row, b.col)
       }
-      
-      
-      //contents(3).asInstanceOf[Button].text = "hi"
-    }
-    
-    private class GameButton(val row:Int, val col:Int) extends Button {
-      // text = row +" , "+ col
-      // this.size = new Dimension(100,100)
     }
     
     // the next move
     object nextPanel extends BoxPanel(Orientation.Vertical){
-      contents += new Button("X")
+      contents += NextMoveButton
     }
 
     // raise exceptions
@@ -70,10 +110,8 @@ class GUIApplication extends SimpleSwingApplication {
         editable = false
       }
       contents += new Button("Model")
-      contents += new Button("Viewer")
+      contents += new Button("<=")
       contents += new Button("Controller")
     }
-    
-
   }
 }
