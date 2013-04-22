@@ -107,7 +107,7 @@ object Dependencies {
   import Dependency._
 
   val snapshot = Seq(
-    Dependency.akkaActor, Dependency.akkaKernel, Dependency.akkaRemote, Dependency.akkaSlf4j, Dependency.akkaTestKit,
+    Dependency.akkaActor, Dependency.akkaKernel, Dependency.akkaRemote, Dependency.akkaSlf4j, Dependency.akkaTestKit, Dependency.akkaCluster, 
     Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalaSwing, Dependency.scalacheck,
     Dependency.scala_lib, Dependency.scala_comp
   )
@@ -161,6 +161,7 @@ object Dependency {
   val akkaSlf4j     = "com.typesafe.akka"   %% "akka-slf4j"  % V.Akka
   val akkaRemote    = "com.typesafe.akka"   %% "akka-remote" % V.Akka
   val akkaTestKit   = "com.typesafe.akka"   %% "akka-testkit" % V.Akka
+  val akkaCluster   = "com.typesafe.akka" %% "akka-cluster-experimental" % V.Akka
   val netty         = "io.netty"            % "netty"              % "3.6.2.Final"
   val logback       = "ch.qos.logback"      % "logback-classic"    % "1.0.9"         % "runtime"
   val junit         = "junit"               % "junit"              % "4.10"           % "test"

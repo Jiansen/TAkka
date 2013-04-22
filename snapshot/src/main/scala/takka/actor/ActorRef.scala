@@ -68,7 +68,7 @@ abstract class ActorRef[-M](implicit mt:Manifest[M]) extends Serializable {
   /**
    *  Type safe cast
    */
-  def publishAs[SubM<:M](implicit mt:Manifest[SubM]):ActorRef[SubM] = {
+  def publishAs[SubM<:M](implicit smt:Manifest[SubM]):ActorRef[SubM] = {
     val preciseRef = this.untypedRef
      new ActorRef[SubM] {
       val untypedRef = preciseRef
