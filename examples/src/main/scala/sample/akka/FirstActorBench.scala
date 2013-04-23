@@ -25,7 +25,7 @@ object FirstActorBench extends App {
   timer.start
   var i = 0
   while (i<10000){
-    untypedsystem.actorOf(Props[sample.untyped.MyActor])
+    untypedsystem.actorOf(Props[sample.akka.MyActor])
     i = i+1
   }
   timer.finish

@@ -107,13 +107,13 @@ object Dependencies {
   import Dependency._
 
   val snapshot = Seq(
-    Dependency.akkaActor, Dependency.akkaKernel, Dependency.akkaRemote, Dependency.akkaSlf4j, Dependency.akkaTestKit, Dependency.akkaCluster,
+    Dependency.akkaActor, Dependency.akkaKernel, Dependency.akkaRemote, Dependency.akkaSlf4j, Dependency.akkaTestKit,
     Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalaSwing, Dependency.scalacheck,
     Dependency.scala_lib, Dependency.scala_comp
   )
   
   val examples = Seq(
-    Dependency.logback
+    Dependency.logback, Dependency.akkaCluster
   ) 
   
 
