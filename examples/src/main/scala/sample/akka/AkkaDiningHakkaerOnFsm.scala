@@ -2,7 +2,7 @@
  * Copyright (C) 2009-2010 Typesafe Inc. <http://www.typesafe.com>.
  */
 //package sample.fsm.dining.fsm
-package sample.untyped
+package sample.akka
 
 import akka.actor._
 import akka.actor.FSM._
