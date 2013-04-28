@@ -24,10 +24,17 @@ object TAkkaBuild extends Build {
   // Projects
   lazy val root = Project(id = "takka",
                           base = file("."),
-                          settings = defaultSettings) aggregate(snapshot, scalabilityBeowulf)
-// examples, scalabilityBenchmark)
+<<<<<<< HEAD
+                          settings = defaultSettings) aggregate(snapshot, scalabilityBeowulf,
+ examples, scalabilityBenchmark,
+                                                                takkasockowebserver, takkasockoexamples,
+	                                                                sockowebserver, sockoexamples)
+=======
+                          settings = defaultSettings) aggregate(snapshot, examples)//, 
+//                              scalabilityBeowulf, scalabilityBenchmark,
 //                                                                takkasockowebserver, takkasockoexamples,
 //	                                                                sockowebserver, sockoexamples)
+>>>>>>> 12e48a85a5e559a4af164e3d964278c6e17526f8
 
   lazy val snapshot = Project(id = "snapshot",
                          base = file("snapshot"),
@@ -39,7 +46,7 @@ object TAkkaBuild extends Build {
                          base = file("examples"),
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.examples
-                         ))  dependsOn(snapshot)
+                         ))  dependsOn(snapshot % "compile->compile")
 
   lazy val takkasockowebserver = Project(id = "takka-socko-webserver",
                          base = file("takka-socko-webserver"),
@@ -107,20 +114,20 @@ object Dependencies {
   import Dependency._
 
   val snapshot = Seq(
-    Dependency.akkaActor, Dependency.akkaKernel, Dependency.akkaRemote, Dependency.akkaSlf4j, Dependency.akkaTestKit, Dependency.akkaCluster, 
+    Dependency.akkaActor, Dependency.akkaKernel, Dependency.akkaRemote, Dependency.akkaSlf4j, Dependency.akkaTestKit, // Dependency.akkaCluster, 
     Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalaSwing, Dependency.scalacheck,
     Dependency.scala_lib, Dependency.scala_comp
   )
   
   val examples = Seq(
-    Dependency.logback
+    Dependency.logback, Dependency.akkaCluster
   ) 
   
 
   // socko webserver in takka
   val takkasockowebserver = Seq(
     Dependency.akkaSlf4j, Dependency.akkaTestKit,
-    Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalatest
+    Dependency.netty, Dependency.logback, Dependency.junit // , Dependency.scalatest
   )
   
   // socko webserver examples in takka
@@ -130,7 +137,7 @@ object Dependencies {
 
   val sockowebserver = Seq(
     Dependency.akkaActor, Dependency.akkaSlf4j, Dependency.akkaTestKit,
-    Dependency.netty, Dependency.logback, Dependency.junit, Dependency.scalatest
+    Dependency.netty, Dependency.logback, Dependency.junit // , Dependency.scalatest
   )
   
   val sockoexamples = Seq(
@@ -161,18 +168,27 @@ object Dependency {
   val akkaSlf4j     = "com.typesafe.akka"   %% "akka-slf4j"  % V.Akka
   val akkaRemote    = "com.typesafe.akka"   %% "akka-remote" % V.Akka
   val akkaTestKit   = "com.typesafe.akka"   %% "akka-testkit" % V.Akka
+<<<<<<< HEAD
   val akkaCluster   = "com.typesafe.akka" %% "akka-cluster-experimental" % V.Akka
   val netty         = "io.netty"            % "netty"              % "3.6.2.Final"
   val logback       = "ch.qos.logback"      % "logback-classic"    % "1.0.9"         % "runtime"
   val junit         = "junit"               % "junit"              % "4.10"           % "test"
+=======
+  
+  val akkaCluster   = "com.typesafe.akka" %% "akka-cluster-experimental" % V.Akka
+  
+  val netty         = "io.netty"            % "netty"              % "3.6.5.Final"
+  val logback       = "ch.qos.logback"      % "logback-classic"    % "1.0.11"         % "runtime"
+  val junit         = "junit"               % "junit"              % "4.11"           % "test"
+>>>>>>> 12e48a85a5e559a4af164e3d964278c6e17526f8
   val scalatest     = "org.scalatest"       %% "scalatest"         % "1.9.1" % "test"
   val scalacheck    = "org.scalacheck"      %% "scalacheck"        % "1.10.0" % "test"
 
   val scala_lib     = "org.scala-lang" % "scala-library" % "2.10.1" % "provided"
   val scala_comp    = "org.scala-lang" % "scala-compiler" % "2.10.1"
 
-  val unfiltered_async = "net.databinder" %% "unfiltered-filter-async" % "0.6.7"
-  val unfiltered_jetty = "net.databinder" %% "unfiltered-jetty" % "0.6.7"
-  val unfiltered_netty = "net.databinder" %% "unfiltered-netty" % "0.6.7"
+  val unfiltered_async = "net.databinder" %% "unfiltered-filter-async" % "0.6.8"
+  val unfiltered_jetty = "net.databinder" %% "unfiltered-jetty" % "0.6.8"
+  val unfiltered_netty = "net.databinder" %% "unfiltered-netty" % "0.6.8"
 
 }

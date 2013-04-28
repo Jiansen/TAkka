@@ -1,3 +1,4 @@
+package sample.akka;
 import scala.concurrent.{ Promise, Future, Await }
 import scala.concurrent.duration._
 import akka.actor.{ ActorContext, TypedActor, TypedProps, TypedActorExtension }
