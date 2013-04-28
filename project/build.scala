@@ -25,11 +25,14 @@ object TAkkaBuild extends Build {
   lazy val root = Project(id = "takka",
                           base = file("."),
 <<<<<<< HEAD
+<<<<<<< HEAD
                           settings = defaultSettings) aggregate(snapshot, scalabilityBeowulf,
  examples, scalabilityBenchmark,
                                                                 takkasockowebserver, takkasockoexamples,
 	                                                                sockowebserver, sockoexamples)
 =======
+=======
+>>>>>>> 12e48a85a5e559a4af164e3d964278c6e17526f8
                           settings = defaultSettings) aggregate(snapshot, examples)//, 
 //                              scalabilityBeowulf, scalabilityBenchmark,
 //                                                                takkasockowebserver, takkasockoexamples,
@@ -169,17 +172,23 @@ object Dependency {
   val akkaRemote    = "com.typesafe.akka"   %% "akka-remote" % V.Akka
   val akkaTestKit   = "com.typesafe.akka"   %% "akka-testkit" % V.Akka
 <<<<<<< HEAD
+<<<<<<< HEAD
   val akkaCluster   = "com.typesafe.akka" %% "akka-cluster-experimental" % V.Akka
   val netty         = "io.netty"            % "netty"              % "3.6.2.Final"
   val logback       = "ch.qos.logback"      % "logback-classic"    % "1.0.9"         % "runtime"
   val junit         = "junit"               % "junit"              % "4.10"           % "test"
 =======
+=======
+>>>>>>> 12e48a85a5e559a4af164e3d964278c6e17526f8
   
   val akkaCluster   = "com.typesafe.akka" %% "akka-cluster-experimental" % V.Akka
   
   val netty         = "io.netty"            % "netty"              % "3.6.5.Final"
   val logback       = "ch.qos.logback"      % "logback-classic"    % "1.0.11"         % "runtime"
   val junit         = "junit"               % "junit"              % "4.11"           % "test"
+<<<<<<< HEAD
+>>>>>>> 12e48a85a5e559a4af164e3d964278c6e17526f8
+=======
 >>>>>>> 12e48a85a5e559a4af164e3d964278c6e17526f8
   val scalatest     = "org.scalatest"       %% "scalatest"         % "1.9.1" % "test"
   val scalacheck    = "org.scalacheck"      %% "scalacheck"        % "1.10.0" % "test"
