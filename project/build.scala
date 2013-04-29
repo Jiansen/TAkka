@@ -174,8 +174,8 @@ object Dependency {
   val scala_lib     = "org.scala-lang" % "scala-library" % "2.10.1" % "provided"
   val scala_comp    = "org.scala-lang" % "scala-compiler" % "2.10.1"
 
-  val unfiltered_async = "net.databinder" %% "unfiltered-filter-async" % "0.6.8"
-  val unfiltered_jetty = "net.databinder" %% "unfiltered-jetty" % "0.6.8"
-  val unfiltered_netty = "net.databinder" %% "unfiltered-netty" % "0.6.8"
+  val unfiltered_async = "net.databinder" %% "unfiltered-filter-async" % "0.6.7"
+  val unfiltered_jetty = "net.databinder" %% "unfiltered-jetty" % "0.6.7"
+  val unfiltered_netty = "net.databinder" %% "unfiltered-netty" % "0.6.7"
 
 }
