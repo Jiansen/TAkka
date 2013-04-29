@@ -22,15 +22,15 @@ object TAkkaBuild extends Build {
   )
     
   // Projects
-  lazy val root = Project(id = "takka",
+  lazy val root = Project(id = "takka_root",
                           base = file("."),
-                          settings = defaultSettings) aggregate(snapshot, scalabilityBeowulf,
- examples, scalabilityBenchmark,
-                                                                takkasockowebserver, takkasockoexamples,
-	                                                                sockowebserver, sockoexamples)
+                          settings = defaultSettings) aggregate(takka, scalabilityBeowulf,
+ examples, scalabilityBenchmark)//,
+//                                                                takkasockowebserver, takkasockoexamples,
+//	                                                                sockowebserver, sockoexamples)
 
-  lazy val snapshot = Project(id = "snapshot",
-                         base = file("snapshot"),
+  lazy val takka = Project(id = "takka",
+                         base = file("takka"),
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.snapshot
                       ))
@@ -39,13 +39,13 @@ object TAkkaBuild extends Build {
                          base = file("examples"),
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.examples
-                         ))  dependsOn(snapshot % "compile->compile")
+                         ))  dependsOn(takka % "compile->compile")
 
   lazy val takkasockowebserver = Project(id = "takka-socko-webserver",
                          base = file("takka-socko-webserver"),
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.takkasockowebserver
-                         )) dependsOn(snapshot)
+                         )) dependsOn(takka)
 
   lazy val takkasockoexamples = Project(id = "takka-socko-examples",
                          base = file("takka-socko-examples"),
@@ -70,32 +70,32 @@ object TAkkaBuild extends Build {
                          base = file("scalabilityBenchmark"),
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.scalability
-                         )) dependsOn(snapshot)
+                         )) dependsOn(takka)
 
   lazy val scalabilityBeowulf = Project(id = "scalabilityBeowulf",
                          base = file("scalabilityBeowulf"),
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.beowulf
-                         )) dependsOn(snapshot)
+                         )) dependsOn(takka)
 
   lazy val EnMAS = Project(id = "EnMAS",
                          base = file("EnMAS"),
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.EnMAS 
-                         )) dependsOn(snapshot)
+                         )) dependsOn(takka)
 
   /*
   lazy val scalabilityAWS = Project(id = "scalabilityAWS",
                          base = file("scalabilityAWS"),
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.aws
-                         )) dependsOn(snapshot)
+                         )) dependsOn(takka)
 
   lazy val scalabilityGAE = Project(id = "scalabilityGAE",
                          base = file("scalabilityGAE"),
                          settings = defaultSettings ++ Seq(
                            libraryDependencies ++= Dependencies.gae
-                         )) dependsOn(snapshot)
+                         )) dependsOn(takka)
 
 */
   lazy val unfilteredScalate =
