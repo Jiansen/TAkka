@@ -11,6 +11,8 @@ package scalability.takka.bang
 import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import util.{BenchTimer, BenchCounter}
 
+import takka.chaos._
+
 sealed trait BangMessage
 case class BangBench(s:Int, m:Int) extends BangMessage
 case object DummyMessage extends BangMessage
@@ -59,4 +61,17 @@ object BangBench extends App{
   private val system = ActorSystem("BangSystem")
   val testActor = system.actorOf(Props[BangMessage, Bang], "BangBenchActor")
   testActor ! BangBench(processes,messagess)
+}
+
+object BangBenchChaos extends App {
+  private val processes:Int = 600
+  private val messagess:Int = 2000
+
+  private val system = ActorSystem("BangSystem")
+  val testActor = system.actorOf(Props[BangMessage, Bang], "BangBenchActor")
+  testActor ! BangBench(processes,messagess)
+  
+//  val victims = system
+//  private val chaos = new ChaosMonkey()
+  
 }
