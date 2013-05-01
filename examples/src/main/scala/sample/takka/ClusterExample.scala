@@ -3,7 +3,7 @@ package sample.takka
 import com.typesafe.config.{ConfigFactory, Config}
 
 import takka.actor._
-import akka.cluster.Cluster
+import takka.clusterwrapper.Cluster
 import akka.cluster.ClusterEvent._
 
 object ClusterConfig {
@@ -61,5 +61,5 @@ object TAkkClusterExample extends App {
     val system = ActorSystem("ClusterSystem", ClusterConfig.getConfig)
     val clusterListener = system.actorOf(Props[ClusterDomainEvent, ClusterListener], name = "clusterListener")
  
-    Cluster(system.system).subscribe(clusterListener.untypedRef, classOf[ClusterDomainEvent])
+    Cluster(system).subscribe(clusterListener, classOf[ClusterDomainEvent])
 }

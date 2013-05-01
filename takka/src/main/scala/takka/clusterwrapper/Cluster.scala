@@ -8,6 +8,12 @@ import akka.cluster.ClusterEvent.ClusterDomainEvent
 
 import takka.actor.{ActorSystem, ActorRef}
 
+object Cluster {
+  def apply(system: takka.actor.ActorSystem):Cluster = {
+    new Cluster(system)
+  }
+}
+
 class Cluster(system: takka.actor.ActorSystem) {
   
   val akkacluster = akka.cluster.Cluster(system.system)
