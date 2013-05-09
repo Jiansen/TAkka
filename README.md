@@ -49,11 +49,14 @@ Source code in this repository is either original or derivative works of open so
 * We use [sbt-assembly](https://github.com/sbt/sbt-assembly) to package all requried files in a single jar, so that the benchmark application can be run as standard JAVA application
 * the bash script for running the benchmark are given at ***
 
-$ sbt
-> project scalabilityBeowulf
-> assembly
+$ sbt "project scalabilityBeowulf" "assembly"
 
-java -cp /home/jiansen/TAkka/scalabilityBeowulf/target/scala-2.10/scalabilityBeowulf-assembly-0.1-SNAPSHOT.jar scalabilityBeowulf.takka.TAkkaWorkerNode 01
+* start node
+
+$ java -cp ./scalabilityBeowulf/target/scala-2.10/scalabilityBeowulf-assembly-0.1-SNAPSHOT.jar scalabilityBeowulf.takka.TAkkaWorkerNode 01
+
+
+* run bench
 
 ## Getting Help
 
