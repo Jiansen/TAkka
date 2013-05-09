@@ -6,6 +6,9 @@ import sbt._
 import Keys._
 import com.typesafe.sbteclipse.plugin.EclipsePlugin._
 import sbt.Project.Initialize
+import sbtassembly.Plugin._
+import AssemblyKeys._
+
 
 object TAkkaBuild extends Build {
   lazy val defaultSettings = Defaults.defaultSettings ++ Seq(
@@ -18,13 +21,17 @@ object TAkkaBuild extends Build {
     javacOptions  ++= Seq("-Xlint:unchecked", "-Xlint:deprecation"),
     
     retrieveManaged := true,
-    EclipseKeys.withSource := true    
+    EclipseKeys.withSource := true
+
   )
-    
+   
+
+ 
   // Projects
   lazy val root = Project(id = "takka_root",
                           base = file("."),
-                          settings = defaultSettings) aggregate(takka, scalabilityBeowulf,
+                          settings = defaultSettings
+                         ) aggregate(takka, scalabilityBeowulf,
  examples, scalabilityBenchmark)//,
 //                                                                takkasockowebserver, takkasockoexamples,
 //	                                                                sockowebserver, sockoexamples)
@@ -74,7 +81,7 @@ object TAkkaBuild extends Build {
 
   lazy val scalabilityBeowulf = Project(id = "scalabilityBeowulf",
                          base = file("scalabilityBeowulf"),
-                         settings = defaultSettings ++ Seq(
+                         settings = defaultSettings ++ assemblySettings ++ Seq(
                            libraryDependencies ++= Dependencies.beowulf
                          )) dependsOn(takka)
 
