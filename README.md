@@ -21,9 +21,9 @@ Source code in this repository is either original or derivative works of open so
 
 ## Editing the Source Code
 
-* We are currently using [Eclipse 3.7 Indigo](http://www.eclipse.org/downloads/packages/eclipse-ide-javascript-web-developers/indigosr2) 
+* We are currently using [Eclipse 3.8 Juno](http://projects.eclipse.org/releases/juno) 
   with [Scala IDE nightly build](http://scala-ide.org/download/nightly.html)
-* We are currently using Scala 2.9.1 and JDK7.
+* We are currently using Scala 2.10 and JDK7.
 
 * copy to a local working folder. $ git clone git@github.com:Jiansen/TAkka.git
 * (read-only copy.  $ git clone git://github.com/Jiansen/TAkka.git)
@@ -41,6 +41,19 @@ Source code in this repository is either original or derivative works of open so
   * Select the `TAkka` source code directory as the root
   * Should see `snapshot` etc. under `Projects`
   * Click `Finish`
+
+
+## Testing on Beowulf
+
+* running sbt on different beowulf nodes may re-compile the code.  BUG?
+* We use [sbt-assembly](https://github.com/sbt/sbt-assembly) to package all requried files in a single jar, so that the benchmark application can be run as standard JAVA application
+* the bash script for running the benchmark are given at ***
+
+$ sbt
+> project scalabilityBeowulf
+> assembly
+
+java -cp /home/jiansen/TAkka/scalabilityBeowulf/target/scala-2.10/scalabilityBeowulf-assembly-0.1-SNAPSHOT.jar scalabilityBeowulf.takka.TAkkaWorkerNode 01
 
 ## Getting Help
 
