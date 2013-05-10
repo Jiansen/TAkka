@@ -16,6 +16,8 @@ import scalabilityBeowulf.BeowulfConfig._
 import takka.chaos._
 import scala.concurrent.duration._
 
+import akka.actor.SupervisorStrategy._
+import akka.actor.OneForOneStrategy
 
 sealed trait BangMessage
 case class BangBench(s:Int, m:Int) extends BangMessage
@@ -24,6 +26,13 @@ case object BangDone
 case class Send(receiver:ActorRef[BangMessage], m:Int)
 
 class Bang extends TypedActor[BangMessage]{  
+  override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case e  =>
+        println("Error: "+e)
+        Restart    
+  }
+  
   val timer = new BenchTimer
   var counter = new BenchCounter
   def typedReceive = {
@@ -32,6 +41,15 @@ class Bang extends TypedActor[BangMessage]{
       val senders = (for (i<- 1 to s) yield {
         typedContext.actorOf(Props[Send, Sender], ProcessNamePrefix+i)
       }).toList
+      
+      if(true){
+        import takka.chaos.ChaosMode._
+        val chaos = ChaosMonkey(senders)
+        chaos.setMode(Kill)
+        chaos.enableDebug
+        chaos.start(1 second)
+      }
+      
       timer.start
       for (sender <- senders) {
         sender ! Send(typedSelf, m)
@@ -69,24 +87,24 @@ object BangBench extends App{
   testActor ! BangBench(processes,messagess)
 }
 
-object ChaosBangBench extends App{
-  private val nodes:Int = args(0).toInt
-  private val processes:Int = 600
-  private val messagess:Int = 2000
-
-  private val system = ActorSystem("BangSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
-  val testActor = system.actorOf(Props[BangMessage, Bang], ProcessPathPrefix)
-  testActor ! BangBench(processes,messagess)
-
-  import takka.chaos.ChaosMode._
-  
-  val vitims = (for (i <- 1 to processes) yield {
-    system.actorFor[Send](WorkerProcessAddress(i, nodes))
-  }).toList
-  
-  val chaos = ChaosMonkey(vitims)
-  chaos.setMode(Kill)
-  chaos.enableDebug
-  chaos.start(1 second)
-}
+//object ChaosBangBench extends App{
+//  private val nodes:Int = args(0).toInt
+//  private val processes:Int = 600
+//  private val messagess:Int = 2000
+//
+//  private val system = ActorSystem("BangSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
+//  val testActor = system.actorOf(Props[BangMessage, Bang], ProcessPathPrefix)
+//  testActor ! BangBench(processes,messagess)
+//
+//  import takka.chaos.ChaosMode._
+//  
+//  val vitims = (for (i <- 1 to processes) yield {
+//    system.actorFor[Send](WorkerProcessAddress(i, nodes))
+//  }).toList
+//  
+//  val chaos = ChaosMonkey(vitims)
+//  chaos.setMode(Kill)
+//  chaos.enableDebug
+//  chaos.start(1 second)
+//}
 
