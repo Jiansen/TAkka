@@ -106,6 +106,9 @@ abstract class ActorSystem {
   def registerExtension[T <: Extension](ext: ExtensionId[T]): T = system.registerExtension(ext)
   def extension[T <: Extension](ext: ExtensionId[T]): T = system.extension(ext)
   def hasExtension(ext: ExtensionId[_ <: Extension]): Boolean = system.hasExtension(ext)
+
+  def settings: akka.actor.ActorSystem.Settings = system.settings
+  def name:String = system.name
   
   /**
    * Create a top-level actor, with system generated name.

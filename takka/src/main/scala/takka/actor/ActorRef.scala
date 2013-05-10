@@ -81,6 +81,18 @@ abstract class ActorRef[-M](implicit mt:Manifest[M]) extends Serializable {
   def ?(message: M)(implicit timeout: akka.util.Timeout):Future[Any] = {    
     (untypedRef ? message)
   }
+  
+  
+  /**
+   * 
+   */
+  def kill:Unit = {
+    untypedRef ! akka.actor.Kill
+  } 
+  
+  def poisonPill:Unit = {
+    untypedRef ! akka.actor.PoisonPill
+  } 
 }
 
 
