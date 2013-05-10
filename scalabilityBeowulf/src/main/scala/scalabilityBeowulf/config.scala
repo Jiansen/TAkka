@@ -57,7 +57,7 @@ object BeowulfConfig {
         transport = "akka.remote.netty.NettyRemoteTransport"
         netty {          
           hostname = "137.195.143.132"
-          port = 2552
+          port = 2553
         }
       }
     }
