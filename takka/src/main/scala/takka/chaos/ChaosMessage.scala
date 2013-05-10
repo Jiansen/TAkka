@@ -93,11 +93,13 @@ class ChaosMonkey(victims:List[ActorRef[_]], exceptions:List[Exception]){
  *   Exception: raise an Exception in a random actor
  *   InfiniteLoop: compute an non-terminatable calculation in a random actor
  */
+@serializable
 object ChaosMode extends Enumeration {
     type ChaosMode = Value
     val Random, PoisonKill, Kill, Exception, NonTerminate  = Value
 }
 
+@serializable
 private[chaos] object Status extends Enumeration {
   type Status = Value
   val ON, OFF = Value

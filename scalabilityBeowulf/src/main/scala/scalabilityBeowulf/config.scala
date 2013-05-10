@@ -91,6 +91,16 @@ object BeowulfConfig {
     )
   }
   
+  def WorkerProcessAddress(processID:Int, nodes:Int):String = {
+    def calnode(i:Int,n:Int):Int = i % n match {
+        case 0 => n
+        case x => x
+      }
+    val depNode:Int = calnode(processID, nodes)
+    
+    """akka://"""+WorkerNodePrefix+depNode+"""@"""+node(depNode).ip+""":"""+node(depNode).port
+  }
+  
   val WorkerNodePrefix = "WorkerNode"
   val ProcessPathPrefix = "MasterActor"
   val ProcessNamePrefix = "Process"    

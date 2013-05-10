@@ -42,16 +42,16 @@ object ActorSystem {
     val system = akka.actor.ActorSystem.apply()
     system.actorOf(akka.actor.Props(new ActorTypeChecker), "ActorTypeChecker")
   }
-  def apply(name: String): ActorSystem = new ActorSystem {
-    val system = akka.actor.ActorSystem(name)
+  def apply(sysname: String): ActorSystem = new ActorSystem {
+    val system = akka.actor.ActorSystem(sysname)
     system.actorOf(akka.actor.Props(new ActorTypeChecker), "ActorTypeChecker")
   }
   
-  def create(name: String): ActorSystem = apply(name)
-  def create(name: String, config: Config): ActorSystem = apply(name, config)
-  def apply(name: String, config: Config): ActorSystem = new ActorSystem {
-//    println(name + "  "+ config +"  ")
-    val system = akka.actor.ActorSystem.apply(name, config)
+  def create(sysname: String): ActorSystem = apply(sysname)
+  def create(sysname: String, config: Config): ActorSystem = apply(sysname, config)
+  def apply(sysname: String, config: Config): ActorSystem = new ActorSystem {
+//    println(sysname + "  "+ config +"  ")
+    val system = akka.actor.ActorSystem.apply(sysname, config)
     system.actorOf(akka.actor.Props(new ActorTypeChecker), "ActorTypeChecker")
   }
 
@@ -122,8 +122,8 @@ abstract class ActorSystem {
   /**
    * Create a top-level actor. with user specified name.
    */  
-  def actorOf[Msg:Manifest](props:Props[Msg], name:String):ActorRef[Msg] = {
-    val actor = new ActorRef[Msg] { val untypedRef = system.actorOf(props.props, name) }
+  def actorOf[Msg:Manifest](props:Props[Msg], aname:String):ActorRef[Msg] = {
+    val actor = new ActorRef[Msg] { val untypedRef = system.actorOf(props.props, aname) }
     NameServer.set(TSymbol[ActorRef[Msg]](Symbol(actor.path.toString())), actor)
     actor
   }
@@ -271,8 +271,8 @@ abstract class ActorSystem {
     }
   }
   
-  def remoteActorOf[Msg:Manifest](props:Props[Msg], name:String):ActorRef[Msg] = {
-    val actor = actorOf[Msg](props:Props[Msg], name:String)
+  def remoteActorOf[Msg:Manifest](props:Props[Msg], aname:String):ActorRef[Msg] = {
+    val actor = actorOf[Msg](props:Props[Msg], aname:String)
     val system = this
     new ActorRef[Msg] {
       val localPathStr = actor.path.toString()

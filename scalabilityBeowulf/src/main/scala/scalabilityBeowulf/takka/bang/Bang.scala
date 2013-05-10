@@ -13,6 +13,9 @@ import akka.remote._
 import util.{BenchTimer, BenchCounter}
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
+import takka.chaos._
+import scala.concurrent.duration._
+
 
 sealed trait BangMessage
 case class BangBench(s:Int, m:Int) extends BangMessage
@@ -45,6 +48,7 @@ class Bang extends TypedActor[BangMessage]{
   
 class Sender extends TypedActor[Send]{
   // send m Done messages to receiver
+  print(self)
   def typedReceive = {
     case Send(receiver, m) => 
       var i:Int = 0;
@@ -64,3 +68,25 @@ object BangBench extends App{
   val testActor = system.actorOf(Props[BangMessage, Bang], ProcessPathPrefix)
   testActor ! BangBench(processes,messagess)
 }
+
+object ChaosBangBench extends App{
+  private val nodes:Int = args(0).toInt
+  private val processes:Int = 600
+  private val messagess:Int = 2000
+
+  private val system = ActorSystem("BangSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
+  val testActor = system.actorOf(Props[BangMessage, Bang], ProcessPathPrefix)
+  testActor ! BangBench(processes,messagess)
+
+  import takka.chaos.ChaosMode._
+  
+  val vitims = (for (i <- 1 to processes) yield {
+    system.actorFor[Send](WorkerProcessAddress(i, nodes))
+  }).toList
+  
+  val chaos = ChaosMonkey(vitims)
+  chaos.setMode(Kill)
+  chaos.enableDebug
+  chaos.start(1 second)
+}
+
