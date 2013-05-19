@@ -12,6 +12,12 @@ import akka.remote._
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
 
+import takka.chaos._
+import scala.concurrent.duration._
+import akka.actor.SupervisorStrategy._
+import akka.actor.OneForOneStrategy
+
+
 sealed trait PingerMsg
 sealed trait ReporterMsg
 case class BigBench(processes:Int) extends ReporterMsg
@@ -41,6 +47,13 @@ class Pinger extends TypedActor[PingerMsg]{
 }
 
 class Reporter extends TypedActor[ReporterMsg]{
+  override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case e  =>
+        println("Error: "+e)
+        Restart    
+  }
+  
   private val timer = new BenchTimer
   val counter = new BenchCounter
   def typedReceive = {
@@ -49,6 +62,15 @@ class Reporter extends TypedActor[ReporterMsg]{
       val procs = (for (i<-1 to n) yield {
         typedContext.actorOf(Props[PingerMsg, Pinger], ProcessNamePrefix+i)
       }).toList
+      
+      if(util.Configuration.EnableChaos){
+        import takka.chaos.ChaosMode._
+        val chaos = ChaosMonkey(procs)
+        chaos.setMode(Kill)
+        chaos.enableDebug
+        chaos.start(1 second)
+      }
+      
       timer.start
       for (p<-procs){  p ! BigProcs(procs, typedSelf)  }
     }

@@ -29,7 +29,7 @@ object EHBConstant {
   val ACK = 20
   val DATA = DummyDATA(List("a", "b", "c", "d", "e", "f", "g",
                   "h", "i", "j", "k", "l") )
-  val GSIZE = 10
+  val GSIZE = 20
 }
 
 
@@ -167,7 +167,7 @@ case class Receiver(val gMaster:ActorRef, var senderLeft:Int) extends Actor{
 
 object EHBBench extends App{
   private val nodes:Int = args(0).toInt
-  private val groups = 128
+  private val groups = 32
   
   private val system = ActorSystem("EHBSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, groups, nodes))  
   val master = system.actorOf(Props[MasterActor], ProcessPathPrefix)

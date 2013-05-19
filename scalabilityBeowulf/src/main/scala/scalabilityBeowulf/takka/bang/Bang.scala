@@ -42,7 +42,7 @@ class Bang extends TypedActor[BangMessage]{
         typedContext.actorOf(Props[Send, Sender], ProcessNamePrefix+i)
       }).toList
       
-      if(true){
+      if(util.Configuration.EnableChaos){
         import takka.chaos.ChaosMode._
         val chaos = ChaosMonkey(senders)
         chaos.setMode(Kill)

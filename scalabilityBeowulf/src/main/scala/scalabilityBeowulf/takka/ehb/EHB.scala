@@ -13,6 +13,12 @@ import akka.remote._
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
 
+import takka.chaos._
+import scala.concurrent.duration._
+import akka.actor.SupervisorStrategy._
+import akka.actor.OneForOneStrategy
+
+
 sealed trait GroupMsg
 sealed trait MasterMsg
 sealed trait ReceiverMsg
@@ -40,6 +46,15 @@ case class GroupReady(g:ActorRef[GroupMsg]) extends MasterMsg
 case class GroupDone(g:ActorRef[GroupMsg]) extends MasterMsg
 
 class MasterActor extends TypedActor[MasterMsg]{
+  
+  override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case e  =>
+        println("Error: "+e)
+        Restart    
+  }
+    
+    
   val master = typedSelf
   val timer = new BenchTimer
   var gs:List[ActorRef[GroupMsg]] = _
@@ -52,12 +67,22 @@ class MasterActor extends TypedActor[MasterMsg]{
       gs = (for (gid <- 1 to groups) yield {
         typedContext.actorOf(Props[GroupMsg, GroupActor], ProcessNamePrefix+gid)
       }).toList
+      
       for (g <- gs) {
         g ! GroupInit(master, loops)
       }
     case GroupReady(g) =>   
       readyCounter.decrement
       if(readyCounter.isZero){
+        
+        if(util.Configuration.EnableChaos){
+        import takka.chaos.ChaosMode._
+        val chaos = ChaosMonkey(gs)
+        chaos.setMode(Kill)
+        chaos.enableDebug
+        chaos.start(1 second)
+        }
+        
         timer.start
        for (g<-gs) {
          g ! GroupGO
@@ -160,14 +185,14 @@ case class Receiver(val gMaster:ActorRef[GroupMsg], var senderLeft:Int) extends 
         gMaster ! ReceiverDone(typedSelf)        
     case RUKeepingUp(from) =>
       from ! IamKeeypingUp(typedSelf)
-    case _ => // do nothing
+    case _ => // do nothing	
   }
 }
 
 
 object EHBBench extends App{
   private val nodes:Int = args(0).toInt
-  private val groups = 3
+  private val groups = 32
   
   private val system = ActorSystem("EHBSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, groups, nodes))  
   val master = system.actorOf(Props[MasterMsg, MasterActor], ProcessPathPrefix)

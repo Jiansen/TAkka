@@ -11,6 +11,6 @@ class BenchTimer{
     finishTime = System.currentTimeMillis()
   }
   def report = {
-    println("elapse: "+(finishTime - startTime)+" milliseconds.");
+    println("\n elapse: "+(finishTime - startTime)+" milliseconds.\n");
   }
 }

@@ -26,12 +26,12 @@ object FaultHandlingDocSample extends App {
     """)
  
   val system = ActorSystem("FaultToleranceSample", config)
-  val worker = system.actorOf(Props[WorkerMessage, Worker], name = "worker")
-  val listener = system.actorOf(Props[ListenerMessage, Listener], name = "listener")
+//  val worker = system.actorOf(Props[WorkerMessage, Worker], name = "worker")
+//  val listener = system.actorOf(Props[ListenerMessage, Listener], name = "listener")
   // start the work and listen on progress
   // note that the listener is used as sender of the tell,
   // i.e. it will receive replies from the worker
-  worker ! Start(listener)
+//  worker ! Start(listener)
 }
  
 /**
