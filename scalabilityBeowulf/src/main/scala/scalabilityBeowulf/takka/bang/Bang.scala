@@ -29,7 +29,7 @@ class Bang extends TypedActor[BangMessage]{
   override val supervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
       case e  =>
-        println("Error: "+e)
+//        println("Error: "+e)
         Restart    
   }
   
@@ -46,7 +46,7 @@ class Bang extends TypedActor[BangMessage]{
         import takka.chaos.ChaosMode._
         val chaos = ChaosMonkey(senders)
         chaos.setMode(Kill)
-        chaos.enableDebug
+//        chaos.enableDebug
         chaos.start(1 second)
       }
       
@@ -66,7 +66,7 @@ class Bang extends TypedActor[BangMessage]{
   
 class Sender extends TypedActor[Send]{
   // send m Done messages to receiver
-  print(self)
+//  print(self)
   def typedReceive = {
     case Send(receiver, m) => 
       var i:Int = 0;

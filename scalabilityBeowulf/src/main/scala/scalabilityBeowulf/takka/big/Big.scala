@@ -50,7 +50,7 @@ class Reporter extends TypedActor[ReporterMsg]{
   override val supervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
       case e  =>
-        println("Error: "+e)
+//        println("Error: "+e)
         Restart    
   }
   
@@ -67,7 +67,7 @@ class Reporter extends TypedActor[ReporterMsg]{
         import takka.chaos.ChaosMode._
         val chaos = ChaosMonkey(procs)
         chaos.setMode(Kill)
-        chaos.enableDebug
+//        chaos.enableDebug
         chaos.start(1 second)
       }
       
