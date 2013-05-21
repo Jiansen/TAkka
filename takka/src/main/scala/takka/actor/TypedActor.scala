@@ -19,7 +19,7 @@ package takka.actor
 // import scala.reflect.runtime.universe._
 import scala.reflect.Manifest
 import takka.chaos._
-
+import takka.treechart.ChartTreeRequest
   
 /**
  * A stronger typed Actor trait based on akka.actor.Actor.
@@ -100,6 +100,7 @@ abstract class TypedActor[M:Manifest] extends akka.actor.Actor{
       case m => possiblyHarmfulHandler(m)
     }
     case chaos:ChaosMessage => typedContext.chaosHandler(chaos)
+    case chartMsg:ChartTreeRequest => typedContext.chartHandler(chartMsg)
     case m:M => typedReceive(m)    
     case x => throw new Exception("Message "+x+" has the wrong type.")
   }

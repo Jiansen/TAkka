@@ -20,7 +20,9 @@ import scala.concurrent.duration.Duration
 import scala.reflect.Manifest
 import language.implicitConversions
 import takka.chaos._
+import takka.treechart.{ChartTreeRequest, ChartTreeResponse}
 import akka.actor.PoisonPill
+
 
 /**
  * The actor context - the internal view of the actor cell from the actor itself.
@@ -159,6 +161,19 @@ abstract class ActorContext[M:Manifest] {
       throw e
     case ChaosNonTerminate =>
       while(true){}
+  }
+  
+  /**
+   *  private handler for chart message
+   */
+  private[actor] def chartHandler:takka.treechart.ChartTreeRequest => Unit = {
+    case ChartTreeRequest(id, master) => 
+      val childrenPath = (for(c <- untypedContext.children) yield {
+        c ! ChartTreeRequest(id, master)
+        c.path
+      }) toList
+            
+      master ! ChartTreeResponse(id, typedSelf.path, childrenPath)
   }
 }
 
