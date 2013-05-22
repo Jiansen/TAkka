@@ -3,19 +3,36 @@ package takka.treechart
 import scala.concurrent.duration._
 import takka.actor.{TypedActor, ActorSystem, ActorRef, Props}
 import akka.actor.ActorPath
+import com.typesafe.config.Config
 
 import scala.collection.mutable._
 
 import java.util.Date
 
-
-class ChartTreeMaster(val topnodes:List[ActorRef[_]], interval:FiniteDuration) {
-
-  private val system = ActorSystem(); // name?
+object ChartTreeMaster{
+  def apply(name:String, config: Config, topnodes:List[ActorRef[_]], interval:FiniteDuration):ChartTreeMaster = {
+    new ChartTreeMaster(name, config, topnodes, interval)
+  }
   
+  def apply(name:String, topnodes:List[ActorRef[_]], interval:FiniteDuration):ChartTreeMaster = {
+    new ChartTreeMaster(name, null, topnodes, interval)
+  }
+  
+  def apply(topnodes:List[ActorRef[_]], interval:FiniteDuration):ChartTreeMaster = {
+    new ChartTreeMaster("default", null, topnodes, interval)
+  }
+}
+
+private[takka] class ChartTreeMaster(name:String, config: Config, topnodes:List[ActorRef[_]], interval:FiniteDuration) {
+  private val system = if(config == null){
+    ActorSystem(name);
+  }else{
+    ActorSystem(name, config);    
+  }
+
   import system.dispatcher
   
-  private val recorder = system.actorOf(Props[ChartRecorderMessage, ChartRecorder])
+  private val recorder = system.actorOf(Props[ChartRecorderMessage, ChartRecorder], "recorder")
   
   private def newID():Long = {
     System.currentTimeMillis()
@@ -27,6 +44,7 @@ class ChartTreeMaster(val topnodes:List[ActorRef[_]], interval:FiniteDuration) {
     		  interval,
     		  new Runnable {
     	  		def run() {
+//    	  		  println("sending request to "+node);
     	  			node.untypedRef ! ChartTreeRequest(new java.util.Date(System.currentTimeMillis()), recorder);
     	  		}
       		  })
@@ -59,7 +77,7 @@ private [treechart] class ChartRecorder extends TypedActor[ChartRecorderMessage]
         val newSet = new TreeSet()(ActorPathOrdering)
     	record += ((id, newSet+=node))
       }
-      println("id: "+id +" record:"+record);
+//      println("id: "+id +" record:"+record);
     }
     case ReportTo(drawer) =>{
       drawer ! record

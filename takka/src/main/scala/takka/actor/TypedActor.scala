@@ -102,7 +102,7 @@ abstract class TypedActor[M:Manifest] extends akka.actor.Actor{
     case chaos:ChaosMessage => typedContext.chaosHandler(chaos)
     case chartMsg:ChartTreeRequest => typedContext.chartHandler(chartMsg)
     case m:M => typedReceive(m)    
-    case x => throw new Exception("Message "+x+" has the wrong type.")
+    case x => throw new Exception(typedSelf+": message "+x+" has the wrong type.")
   }
 
    /**

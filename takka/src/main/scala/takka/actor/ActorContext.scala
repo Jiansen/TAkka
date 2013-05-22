@@ -173,7 +173,8 @@ abstract class ActorContext[M:Manifest] {
    */
   private[actor] def chartHandler:takka.treechart.ChartTreeRequest => Unit = {
     case ChartTreeRequest(id, master) => 
-      val childrenPath = (for(c <- untypedContext.children) yield {
+//        println("===== Message "+id+" from "+master )      
+      val childrenPath:List[akka.actor.ActorPath] = (for(c <- untypedContext.children) yield {
         c ! ChartTreeRequest(id, master)
         c.path
       }) toList
