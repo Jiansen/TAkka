@@ -32,7 +32,7 @@ private[takka] class ChartTreeMaster(name:String, config: Config, topnodes:List[
 
   import system.dispatcher
   
-  private val recorder = system.actorOf(Props[ChartRecorderMessage, ChartRecorder], "recorder")
+  private val recorder = system.actorOf(Props[MasterMessage, ChartRecorder], "recorder")
   
   private def newID():Long = {
     System.currentTimeMillis()
@@ -45,7 +45,7 @@ private[takka] class ChartTreeMaster(name:String, config: Config, topnodes:List[
     		  new Runnable {
     	  		def run() {
 //    	  		  println("sending request to "+node);
-    	  			node.untypedRef ! ChartTreeRequest(new java.util.Date(System.currentTimeMillis()), recorder);
+    	  			node.untypedRef ! TreeChartRequest(new java.util.Date(System.currentTimeMillis()), recorder);
     	  		}
       		  })
     }
@@ -65,11 +65,11 @@ private[takka] class ChartTreeMaster(name:String, config: Config, topnodes:List[
 // send message to nodes
 // send responses to visualiser
 // invoke visualiser
-private [treechart] class ChartRecorder extends TypedActor[ChartRecorderMessage]{    
+private [treechart] class ChartRecorder extends TypedActor[MasterMessage]{    
   val record : Map[Date, TreeSet[NodeRecord]] = HashMap()
   
   def typedReceive = {
-    case ChartTreeResponse(id:Date, reportorPath:ActorPath, childrenPath:List[ActorPath]) =>{
+    case TreeChartResponse(id:Date, reportorPath:ActorPath, childrenPath:List[ActorPath]) =>{
       val node = NodeRecord(new java.util.Date(System.currentTimeMillis()), reportorPath, childrenPath)
       if(record.contains(id)){
         record(id).add(node)

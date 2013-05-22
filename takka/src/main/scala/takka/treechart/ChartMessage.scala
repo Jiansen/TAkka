@@ -12,10 +12,10 @@ import akka.actor.ActorPath
 //private [takka] case object ChaosNonTerminate extends ChaosMessage
 
 
-case class ChartTreeRequest(id:Date, master:ActorRef[ChartTreeResponse])
+case class TreeChartRequest(id:Date, master:ActorRef[TreeChartResponse])
 
-sealed trait ChartRecorderMessage
-case class ChartTreeResponse(id:Date, reportorPath:ActorPath, childrenPath:List[ActorPath]) extends ChartRecorderMessage
-case class ReportTo(drawer:ActorRef[Map[Date, TreeSet[NodeRecord]]]) extends ChartRecorderMessage
+sealed trait MasterMessage
+case class TreeChartResponse(id:Date, reportorPath:ActorPath, childrenPath:List[ActorPath]) extends MasterMessage
+case class ReportTo(drawer:ActorRef[Map[Date, TreeSet[NodeRecord]]]) extends MasterMessage
 
 case class NodeRecord(receiveTime:Date, node:ActorPath, childrenPath:List[ActorPath]) 

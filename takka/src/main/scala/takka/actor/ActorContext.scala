@@ -20,7 +20,7 @@ import scala.concurrent.duration.Duration
 import scala.reflect.Manifest
 import language.implicitConversions
 import takka.chaos._
-import takka.treechart.{ChartTreeRequest, ChartTreeResponse}
+import takka.treechart.{TreeChartRequest, TreeChartResponse}
 import akka.actor.PoisonPill
 
 
@@ -171,15 +171,15 @@ abstract class ActorContext[M:Manifest] {
   /**
    *  private handler for chart message
    */
-  private[actor] def chartHandler:takka.treechart.ChartTreeRequest => Unit = {
-    case ChartTreeRequest(id, master) => 
+  private[actor] def chartHandler:TreeChartRequest => Unit = {
+    case TreeChartRequest(id, master) => 
 //        println("===== Message "+id+" from "+master )      
       val childrenPath:List[akka.actor.ActorPath] = (for(c <- untypedContext.children) yield {
-        c ! ChartTreeRequest(id, master)
+        c ! TreeChartRequest(id, master)
         c.path
       }) toList
             
-      master ! ChartTreeResponse(id, typedSelf.path, childrenPath)
+      master ! TreeChartResponse(id, typedSelf.path, childrenPath)
   }
 }
 
