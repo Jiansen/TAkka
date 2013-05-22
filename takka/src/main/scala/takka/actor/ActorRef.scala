@@ -84,7 +84,7 @@ abstract class ActorRef[-M](implicit mt:Manifest[M]) extends Serializable {
   
   
   /**
-   * 
+   * System Message
    */
   def kill:Unit = {
     untypedRef ! akka.actor.Kill

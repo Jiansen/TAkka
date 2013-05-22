@@ -97,6 +97,11 @@ abstract class ActorContext[M:Manifest] {
     subject    
   }
     
+  
+  def dispatcher: akka.dispatch.MessageDispatcher = {
+    untypedContext.dispatcher
+  }
+  
   // actorFor  via nameserver !!!	
   // TODO: Msg is not checked
   def actorFor[Msg](actorPath: String)(implicit mt:Manifest[Msg]): ActorRef[Msg]= new ActorRef[Msg]{

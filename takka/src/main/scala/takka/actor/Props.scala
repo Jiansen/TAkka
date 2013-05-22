@@ -18,6 +18,7 @@ package takka.actor
 
 // import scala.reflect.runtime.universe._
 import scala.reflect.Manifest
+import takka.routing._
 //import scala.reflect.ClassTag
 
 /**
@@ -83,8 +84,8 @@ case class Props[-T] (props: akka.actor.Props) {
     return Props(p)
   }
   
-  def withRouter(r: akka.routing.RouterConfig): Props[T] = {
-    val p = props.withRouter(r)
+  def withRouter[T](r: takka.routing.RouterConfig[T]): Props[T] = {
+    val p = props.withRouter(r.toAkkaRouterConfig)
     return Props(p)
   }
 
@@ -92,4 +93,8 @@ case class Props[-T] (props: akka.actor.Props) {
     val p = props.withDispatcher(d)
     return Props(p)
   }
+
+//  val routerConfig: takka.routing.RouterConfig[T] = new takka.routing.RouterConfig[T](
+//      fromAkkaRouterConfig = akka.routing.NoRouter
+//  );
 }
