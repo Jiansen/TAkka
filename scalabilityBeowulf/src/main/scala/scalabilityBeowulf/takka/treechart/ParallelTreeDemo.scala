@@ -130,6 +130,16 @@ class ParallelRandomActor extends TypedActor[Unit]{
   
   var state = "LIVE"
   
+  override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case e  =>
+        if(ran.nextInt(4) >1){
+          Restart    
+        }else{
+          Stop
+        }
+  }
+  
   override def preStart() {
     if (ran.nextBoolean){
       val child1 = typedContext.actorOf(Props[Unit, RandomActor])
