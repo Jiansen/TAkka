@@ -155,7 +155,7 @@ class ParallelRandomActor extends TypedActor[Unit]{
       case 1 =>
         state = "BLOCKED"
       case 2 => 
-        state = "DEAD"
+//        state = "DEAD"
     }
     
     
@@ -163,8 +163,8 @@ class ParallelRandomActor extends TypedActor[Unit]{
       case "LIVE" =>
       case "BLOCKED" =>
       	fib(30) // create a block
-      case "DEAD" =>
-        self ! akka.actor.PoisonPill
+//      case "DEAD" =>
+//        self ! akka.actor.PoisonPill
     }
 
     val delay = 3000 // in ms     
