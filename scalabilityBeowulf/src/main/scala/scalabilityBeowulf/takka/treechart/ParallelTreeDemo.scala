@@ -1,7 +1,7 @@
 package scalabilityBeowulf.takka.treechart
 
 import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
-import takka.treechart._
+import takka.supervisionview._
 import akka.remote._
 import scala.concurrent.duration._
 import com.typesafe.config.ConfigFactory
@@ -46,8 +46,8 @@ object ParallelTreeDemo extends App {
     )
   }
   
-  val chart = ChartTreeMaster("chart", config, List(root), 2 seconds)
-  val drawer = system.actorOf(Props[Map[Date, TreeSet[NodeRecord]], PlainChartDrawer])
+  val chart = ViewMaster("chart", config, List(root), 2 seconds)
+  val drawer = system.actorOf(Props[Map[Date, TreeSet[NodeRecord]], PlainViewDrawer])
   
   root ! Start(processes)
   

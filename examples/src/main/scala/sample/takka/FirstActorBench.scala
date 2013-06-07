@@ -20,7 +20,7 @@ class BenchTimer{
 
 object FirstActorBench extends App {
   val typedsystem = ActorSystem("TypedSystem")
-  val numberOfActors:Int = args(0).toInt
+  val numberOfActors:Int = 1000
   val timer = new BenchTimer
   
   timer.start

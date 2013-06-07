@@ -20,7 +20,7 @@ import scala.concurrent.duration.Duration
 import scala.reflect.Manifest
 import language.implicitConversions
 import takka.chaos._
-import takka.treechart.{TreeChartRequest, TreeChartResponse}
+import takka.supervisionview.{SupervisionViewRequest, SupervisionViewResponse}
 import akka.actor.PoisonPill
 
 
@@ -171,15 +171,15 @@ abstract class ActorContext[M:Manifest] {
   /**
    *  private handler for chart message
    */
-  private[actor] def chartHandler:TreeChartRequest => Unit = {
-    case TreeChartRequest(id, master) => 
+  private[actor] def chartHandler:SupervisionViewRequest => Unit = {
+    case SupervisionViewRequest(id, master) => 
 //        println("===== Message "+id+" from "+master )      
       val childrenPath:List[akka.actor.ActorPath] = (for(c <- untypedContext.children) yield {
-        c ! TreeChartRequest(id, master)
+        c ! SupervisionViewRequest(id, master)
         c.path
       }) toList
             
-      master ! TreeChartResponse(id, typedSelf.path, childrenPath)
+      master ! SupervisionViewResponse(id, typedSelf.path, childrenPath)
   }
 }
 

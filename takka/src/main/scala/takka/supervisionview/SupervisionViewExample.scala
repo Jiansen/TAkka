@@ -1,61 +1,29 @@
-package scalabilityBeowulf.takka.treechart
+package takka.supervisionview
 
-import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
-import takka.supervisionview._
-import akka.remote._
 import scala.concurrent.duration._
-import com.typesafe.config.ConfigFactory
-import scalabilityBeowulf.BeowulfConfig._
+import takka.actor.{TypedActor, ActorSystem, ActorRef, Props}
+import akka.actor.ActorPath
+
+import scala.collection.mutable._
 
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import akka.actor.SupervisorStrategy._
-import akka.actor.OneForOneStrategy
-import scala.collection.mutable._
+object SupervisionViewExample extends App{
 
-import com.typesafe.config.Config
-
-object TreeDemo extends App {
-  private val nodes:Int = args(0).toInt
-  private val processes:Int = 5
-  private val system = ActorSystem("TreeDemo", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
-  val root = system.actorOf(Props[Start, RootActor], ProcessPathPrefix)
-
-  val config:Config = {
-    ConfigFactory.parseString(
-    """
-        include "common"
-    akka {
-      actor {
-        provider = "akka.remote.RemoteActorRefProvider"
-      }
-      remote {
-        startup-timeout = 200 s
-//        enabled-transports = ["akka.remote.netty.tcp"]
-        transport = "akka.remote.netty.NettyRemoteTransport"
-//        netty.tcp{
-        netty {
-          hostname = "137.195.143.132"
-          port = 2555
-        }
-      }
-    } 
-    """
-    )
-  }
+  val system = ActorSystem("TreeChartExample")
   
+  val rootRef = system.actorOf(Props[Unit, RandomActor], "root")
   
+  val chart = ViewMaster(List(rootRef), 2 seconds)
   
-  
-  val chart = ViewMaster("chart", config, List(root), 2 seconds)
   val drawer = system.actorOf(Props[Map[Date, TreeSet[NodeRecord]], PlainViewDrawer])
   
-  root ! Start(processes)
   
   chart.start
-    // report the result after a delay
+  
+  // report the result after a delay
   val delay = 20000;// in ms 
   val timer = new Timer();
 
@@ -65,26 +33,6 @@ object TreeDemo extends App {
        chart.stop
     }
   }, delay);
-  
-}
-
-
-case class Start(processes:Int)
-
-class RootActor extends TypedActor[Start]{  
-  override val supervisorStrategy =
-    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
-      case e  =>
-//        println("Error: "+e)
-        Restart    
-  }
-  
-  def typedReceive = {
-    case Start(processes) =>
-      for ( i <- 1 to processes){
-        val child = typedContext.actorOf(Props[Unit, RandomActor], ProcessNamePrefix+i)
-      }
-  }
 }
 
 
@@ -98,7 +46,7 @@ class RootActor extends TypedActor[Start]{
  * In the DEAD state, the actor will not reply to any message.
  * 
  * 
- * The actor randomly change its state every 5 seconds
+ * The actor randomly change
  * 
  * 
  * During the initialization stage, the actor has 50% chance
@@ -117,9 +65,11 @@ class RandomActor extends TypedActor[Unit]{
   override def preStart() {
     if (ran.nextBoolean){
       val child1 = typedContext.actorOf(Props[Unit, RandomActor])
+      println(self+"child1")
     }
     if (ran.nextBoolean){
       val child2 = typedContext.actorOf(Props[Unit, RandomActor])
+      println(self+"child1")      
     }
     
     changeState()
@@ -145,7 +95,7 @@ class RandomActor extends TypedActor[Unit]{
     state match {
       case "LIVE" =>
       case "BLOCKED" =>
-      	fib(30) // create a block
+        fib(30) // create a block
       case "DEAD" =>
         self ! akka.actor.PoisonPill
     }
@@ -157,10 +107,13 @@ class RandomActor extends TypedActor[Unit]{
     	  changeState()
       }
     }, delay);
-  } 
+  }
+  
   
   private def fib(n:Int):Int = {
     if(n<=1) {1}
     else {fib(n-1)+fib(n-2)}
   }
+  
+  
 }
