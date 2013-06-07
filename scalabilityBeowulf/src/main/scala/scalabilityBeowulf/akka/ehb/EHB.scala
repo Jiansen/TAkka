@@ -29,7 +29,7 @@ object EHBConstant {
   val ACK = 20
   val DATA = DummyDATA(List("a", "b", "c", "d", "e", "f", "g",
                   "h", "i", "j", "k", "l") )
-  val GSIZE = 20
+  val GSIZE = 10
 }
 
 

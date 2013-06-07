@@ -19,12 +19,12 @@ class BenchTimer{
 
 object FirstActorBench extends App {
   val untypedsystem = ActorSystem("UntypedSystem")
-  
+  val numberOfActors:Int = args(0).toInt
   val timer = new BenchTimer
   
   timer.start
   var i = 0
-  while (i<10000){
+  while (i<numberOfActors){
     untypedsystem.actorOf(Props[sample.akka.MyActor])
     i = i+1
   }
