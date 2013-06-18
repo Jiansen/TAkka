@@ -32,7 +32,7 @@ private[takka] class ViewMaster(name:String, config: Config, topnodes:List[Actor
 
   import system.dispatcher
   
-  private val recorder = system.actorOf(Props[SupervisionViewMessage, ViewRecorder], "recorder")
+  private val master = system.actorOf(Props[SupervisionViewMessage, ViewRecorder], "master")
   
   private def newID():Long = {
     System.currentTimeMillis()
@@ -45,20 +45,20 @@ private[takka] class ViewMaster(name:String, config: Config, topnodes:List[Actor
     		  new Runnable {
     	  		def run() {
 //    	  		  println("sending request to "+node);
-    	  			node.untypedRef ! SupervisionViewRequest(new java.util.Date(System.currentTimeMillis()), recorder);
+    	  			node.untypedRef ! SupervisionViewRequest(new java.util.Date(System.currentTimeMillis()), master);
     	  		}
       		  })
     }
   }
   
   def stop = {
-    system.stop(recorder)
-//    println(recorder.path)
-//    println(recorder.isTerminated)
+    system.stop(master)
+//    println(master.path)
+//    println(master.isTerminated)
   }
   
   def reportTo(drawer:ActorRef[Map[Date, TreeSet[NodeRecord]]]) = {
-    recorder ! ReportViewTo(drawer)
+    master ! ReportViewTo(drawer)
   }
 }
 

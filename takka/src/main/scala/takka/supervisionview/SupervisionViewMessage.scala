@@ -12,10 +12,10 @@ import akka.actor.ActorPath
 //private [takka] case object ChaosNonTerminate extends ChaosMessage
 
 
-case class SupervisionViewRequest(id:Date, master:ActorRef[SupervisionViewResponse])
+case class SupervisionViewRequest(date:Date, master:ActorRef[SupervisionViewResponse])
 
 sealed trait SupervisionViewMessage
-case class SupervisionViewResponse(id:Date, reportorPath:ActorPath, childrenPath:List[ActorPath]) extends SupervisionViewMessage
+case class SupervisionViewResponse(date:Date, reportorPath:ActorPath, childrenPath:List[ActorPath]) extends SupervisionViewMessage
 case class ReportViewTo(drawer:ActorRef[Map[Date, TreeSet[NodeRecord]]]) extends SupervisionViewMessage
 
 case class NodeRecord(receiveTime:Date, node:ActorPath, childrenPath:List[ActorPath]) 

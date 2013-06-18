@@ -3,36 +3,32 @@ package sample.takka
 import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import akka.event.Logging
 
-class MyActor extends TypedActor[String] {
+class ServerActor extends TypedActor[String] {
   def typedReceive = {
-    case "test" => self ! "test2"; println("received test")
-    case m      => println("received unknown message: "+m)
+    case m:String => println("received message: "+m)
   }
 }
 
-object FirstActorTest extends App {
-  val system = ActorSystem("MySystem")
-  val myActor = system.actorOf(Props[String](new MyActor),"myactor")
-  myActor ! "test"
-  myActor ! "hello"
+object ServerTest extends App {
+  val system = ActorSystem("ServerTest")
+  val server = system.actorOf(Props[String, ServerActor], "server")
   
-  import takka.nameserver.{NameServer, TSymbol}
+  server ! "Hello World"
+//  server ! 3
   
-  NameServer.set(TSymbol[ActorRef[String]]('myActor), myActor)
-  val i = NameServer.get(TSymbol[ActorRef[String]]('myActor))
-  println(i)
-  
+  val serverString = system.actorFor[String]("akka://ServerTest/user/server")
+  serverString ! "Hello World"
+  val serverInt = system.actorFor[Int]("akka://ServerTest/user/server")
+  serverInt ! 3
 }
-
 /*
 > sbt run
 
-Enter number: [FirstActorTest]
+Enter number: [ServerTest]
 
 Output:
-Some(ActorRef[Nothing]: akka://MySystem/user/myactor)
-received test
-received unknown message: hello
-received unknown message: test2
-
- */
+received message: Hello World
+received message: Hello World
+[error] (run-main) java.lang.Exception: ActorRef[akka://ServerTest/user/server] does not exist or does not have type ActorRef[Int]
+...
+ */	

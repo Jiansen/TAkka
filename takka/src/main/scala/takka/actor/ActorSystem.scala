@@ -179,10 +179,8 @@ abstract class ActorSystem {
   
   // Concrete Value Members
   
-  // actorFor  via nameserver !!!	
-  // TODO: E is not checked
+  // actorFor  via nameserver
   def actorFor[M:Manifest](actorPath: String): ActorRef[M]= {
-    
     //val isRemotePath = ActorPath(actorPath)
     val tmp = new ActorRef[M]{
       val untypedRef = system.actorFor(actorPath)
@@ -212,7 +210,7 @@ abstract class ActorSystem {
       checkResult onSuccess {
         case Compatible => 
           result = new ActorRef[M]{
-            val untypedRef = system.actorFor(actorPath)
+            val untypedRef = untyped_ref
           } 
         case NonCompatible => 
           throw new Exception("ActorRef["+actorPath+"] does not exist or does not have type ActorRef["+manifest[M]+"]")
@@ -220,9 +218,15 @@ abstract class ActorSystem {
       result
     }else{
       // local actor reference, fetch from local name server
-      new ActorRef[M]{
-        val untypedRef = system.actorFor(actorPath)
-      }    
+      NameServer.get(TSymbol[ActorRef[M]](scala.Symbol(actorPath.toString))) match {
+        case None => 
+          throw new Exception("ActorRef["+actorPath+"] does not exist or does not have type ActorRef["+manifest[M]+"]")
+        case Some(ref) => 
+          new ActorRef[M]{
+        	  val untypedRef = system.actorFor(actorPath)
+           //   println("lala: "+untypedRef);
+          }
+      }
     }
   }
     
