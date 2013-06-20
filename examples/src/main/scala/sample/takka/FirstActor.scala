@@ -29,6 +29,7 @@ Enter number: [ServerTest]
 Output:
 received message: Hello World
 received message: Hello World
-[error] (run-main) java.lang.Exception: ActorRef[akka://ServerTest/user/server] does not exist or does not have type ActorRef[Int]
-...
+Exception in thread "main" java.lang.Exception: ActorRef[akka://ServerTest/user/server] does not exist or does not have type ActorRef[Int]
+	at takka.actor.ActorSystem.actorFor(ActorSystem.scala:223)
+	...
  */	
