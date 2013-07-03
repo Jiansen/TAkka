@@ -46,14 +46,18 @@ object ActorSystem {
     val system = akka.actor.ActorSystem(sysname)
     system.actorOf(akka.actor.Props(new ActorTypeChecker), "ActorTypeChecker")
   }
-  
-  def create(sysname: String): ActorSystem = apply(sysname)
-  def create(sysname: String, config: Config): ActorSystem = apply(sysname, config)
   def apply(sysname: String, config: Config): ActorSystem = new ActorSystem {
 //    println(sysname + "  "+ config +"  ")
     val system = akka.actor.ActorSystem.apply(sysname, config)
     system.actorOf(akka.actor.Props(new ActorTypeChecker), "ActorTypeChecker")
   }
+  def apply(sysname: String, config: Config, classLoader: ClassLoader): ActorSystem = new ActorSystem {
+     val system = akka.actor.ActorSystem(sysname, config, classLoader)
+    system.actorOf(akka.actor.Props(new ActorTypeChecker), "ActorTypeChecker")
+  }
+  def create(sysname: String): ActorSystem = apply(sysname)
+  def create(sysname: String, config: Config): ActorSystem = apply(sysname, config)
+  def create(sysname: String, config: Config, classLoader: ClassLoader): ActorSystem = apply(sysname, config, classLoader)
 
 }
 
