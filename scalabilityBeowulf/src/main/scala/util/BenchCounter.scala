@@ -14,4 +14,5 @@ class BenchCounter{
     def isZero:Boolean = synchronized {
       return (n == 0)
     }
+    def get:Int = {return n;}
 }
