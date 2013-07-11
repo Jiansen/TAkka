@@ -167,7 +167,7 @@ case class Receiver(val gMaster:ActorRef, var senderLeft:Int) extends Actor{
 
 object EHBBench extends App{
   private val nodes:Int = args(0).toInt
-  private val groups = 32
+  private val groups = 128
   
   private val system = ActorSystem("EHBSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, groups, nodes))  
   val master = system.actorOf(Props[MasterActor], ProcessPathPrefix)

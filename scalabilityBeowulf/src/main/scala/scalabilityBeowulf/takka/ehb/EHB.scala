@@ -35,7 +35,7 @@ object EHBConstant {
   val ACK = 20
   val DATA = DummyDATA(List("a", "b", "c", "d", "e", "f", "g",
                   "h", "i", "j", "k", "l") )
-  val GSIZE = 20
+  val GSIZE = 10
 }
 
 
@@ -50,8 +50,8 @@ class MasterActor extends TypedActor[MasterMsg]{
   override val supervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
       case e  =>
-        println("Error: "+e)
-        Restart    
+//        println("Error: "+e)
+        Resume    
   }
     
     
@@ -79,7 +79,7 @@ class MasterActor extends TypedActor[MasterMsg]{
         import takka.chaos.ChaosMode._
         val chaos = ChaosMonkey(gs)
         chaos.setMode(Kill)
-        chaos.enableDebug
+//        chaos.enableDebug
         chaos.start(1 second)
         }
         
@@ -90,7 +90,7 @@ class MasterActor extends TypedActor[MasterMsg]{
       }
     case GroupDone(g) =>
       doneCounter.decrement
-//      println("FINISH " + doneCounter.isZero) 
+//        println("Remaining Groups: "+doneCounter.get)
       if(doneCounter.isZero){
         timer.finish
         timer.report
@@ -102,19 +102,24 @@ class MasterActor extends TypedActor[MasterMsg]{
 class GroupActor extends TypedActor[GroupMsg] {
   val gMaster = typedSelf
   val receiverDoneCounter = new BenchCounter
-  receiverDoneCounter.set(EHBConstant.GSIZE)
+
   val rs:List[ActorRef[ReceiverMsg]] = (for (rid <- 1 to EHBConstant.GSIZE) yield {
     typedContext.actorOf(Props[ReceiverMsg].withCreator(new Receiver(gMaster, EHBConstant.GSIZE)), "receiver_"+rid)
   }).toList
   var ss:List[ActorRef[SenderMsg]] = _
   var master:ActorRef[MasterMsg] = _
+  var loops:Int =  _
   def typedReceive = {
     case GroupInit(master, loops) => {
+      this.master = master
+      this.loops = loops
+      
+      receiverDoneCounter.set(EHBConstant.GSIZE)
       this.ss = (for (sid <- 1 to EHBConstant.GSIZE) yield {
         typedContext.actorOf(Props[SenderMsg].withCreator(new Sender(rs, loops)), "sender_"+sid)
       }).toList
-      this.master = master
       master ! GroupReady(typedSelf)      
+      
     }
     case GroupGO =>
       for (s<-ss) {
@@ -122,10 +127,15 @@ class GroupActor extends TypedActor[GroupMsg] {
       }
     case ReceiverDone(r) =>
       receiverDoneCounter.decrement
+//      println("Group "+typedSelf+" has "+receiverDoneCounter.get+" remaining receivers to be finished.")
       if(receiverDoneCounter.isZero){
         master ! GroupDone(typedSelf)
       }
   }
+  
+//  override def postRestart(reason: Throwable): Unit = {
+//     typedSelf ! GroupInit(master, loops)
+//  }
 }
 
 case class SenderGo(master:ActorRef[GroupMsg]) extends SenderMsg
@@ -192,7 +202,7 @@ case class Receiver(val gMaster:ActorRef[GroupMsg], var senderLeft:Int) extends 
 
 object EHBBench extends App{
   private val nodes:Int = args(0).toInt
-  private val groups = 32
+  private val groups = 128
   
   private val system = ActorSystem("EHBSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, groups, nodes))  
   val master = system.actorOf(Props[MasterMsg, MasterActor], ProcessPathPrefix)

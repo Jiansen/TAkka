@@ -56,6 +56,7 @@ class Bang extends TypedActor[BangMessage]{
       }
     case DummyMessage => 
       counter.decrement
+//        println("Remaining messages"+counter.get)
         if (counter.isZero){
         timer.finish
         timer.report
