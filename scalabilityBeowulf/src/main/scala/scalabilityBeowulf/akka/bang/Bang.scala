@@ -20,7 +20,18 @@ case object DummyMessage extends BangMessage
 case object BangDone
 case class Send(receiver:ActorRef, m:Int)
 
+import scala.concurrent.duration._
+import akka.actor.SupervisorStrategy._
+import akka.actor.OneForOneStrategy
+import akka.chaos._
+
 class Bang extends Actor{  
+   override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case e  =>
+        Resume    
+  }
+    
   val timer = new BenchTimer
   val counter = new BenchCounter
   def receive = {
@@ -29,6 +40,15 @@ class Bang extends Actor{
       val senders = (for (i<- 1 to s) yield {
         context.actorOf(Props[Sender], ProcessNamePrefix+i)
       }).toList
+      
+      if(util.Configuration.EnableChaos){
+        import akka.chaos.ChaosMode._
+        val chaos = ChaosMonkey(senders)
+        chaos.setMode(Kill)
+//        chaos.enableDebug
+        chaos.start(1 second)
+      }
+      
       timer.start
       for (sender <- senders) {
 //println("sending message form "+self+" to "+sender)        
@@ -36,7 +56,10 @@ class Bang extends Actor{
       }
     case DummyMessage => 
       counter.decrement
-        if (counter.isZero){
+      if(util.Configuration.TraceProgress){
+        println("Remaining messages"+counter.get)
+      }
+      if (counter.isZero){
         timer.finish
         timer.report
         sys.exit

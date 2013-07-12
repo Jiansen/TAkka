@@ -17,10 +17,15 @@ message contains a list of integers between 1 and L.
 import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import akka.remote._
 
-import util.BenchTimer
+import util.{BenchTimer, BenchCounter}
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
 import language.postfixOps
+
+import takka.chaos._
+import scala.concurrent.duration._
+import akka.actor.SupervisorStrategy._
+import akka.actor.OneForOneStrategy
 
 sealed trait DispatcherMsg
 sealed trait ReceiverMsg
@@ -82,10 +87,17 @@ class Generator(recv:ActorRef[ReceiverMsg], disp:ActorRef[DispatcherMsg], n:Int,
 
 class PushActor extends TypedActor[MasterMsg] {
   val timer = new BenchTimer
-  var p:Int = _
+  val counter = new BenchCounter
+  
+    override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case e  =>
+        Resume    
+  }
+  
   def typedReceive = {
     case Push(p, n, l) => {
-      this.p = p
+      counter.set(p)
       
       val recvs:List[ActorRef[ReceiverMsg]] = (for (i<-1 to p) yield {
         typedContext.actorOf(Props[ReceiverMsg, Receiver], ProcessNamePrefix+i)
@@ -100,12 +112,23 @@ class PushActor extends TypedActor[MasterMsg] {
         typedContext.actorOf(Props[GeneratorMsg, Generator].withCreator(new Generator(recv, disp, n, l)))
       }).toList
       
+      if(util.Configuration.EnableChaos){
+        import takka.chaos.ChaosMode._
+        val chaos = ChaosMonkey(gens)
+        chaos.setMode(Kill)
+//        chaos.enableDebug
+        chaos.start(1 second)
+      }
+      
       this.timer.start
       for (gen <- gens) {gen ! Do(typedSelf)}
     }
     case RecvDone(recv) =>
-      this.p -= 1
-      if (this.p == 0) {
+      counter.decrement
+      if(util.Configuration.TraceProgress){
+          println("Remaining processes: "+counter.get)
+        }
+      if (counter.isZero) {
         this.timer.finish
         this.timer.report
         sys.exit()

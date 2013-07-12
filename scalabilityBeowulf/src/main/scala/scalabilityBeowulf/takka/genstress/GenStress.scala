@@ -64,16 +64,16 @@ class GenStressServerActor extends TypedActor[ServerMessage] {
   override val supervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
       case e  =>
-        println("Error: "+e)
-        Restart    
+//        println("Error: "+e)
+        Resume    
   }
   
-  var np:Int = 0
+  var counter = new BenchCounter
   val timer = new BenchTimer
   var clients:List[ActorRef[ClientMessage]] = _
   def typedReceive = {
     case GenStressTestMsg(np, n, cqueue) =>
-      this.np = np
+      counter.set(np)
      
       this.clients = (for (i<- 1 to np) yield {
         typedContext.actorOf(Props[ClientMessage, GenStressClientActor], ProcessNamePrefix+i)        
@@ -84,7 +84,7 @@ class GenStressServerActor extends TypedActor[ServerMessage] {
         import takka.chaos.ChaosMode._
         val chaos = ChaosMonkey(clients)
         chaos.setMode(Kill)
-        chaos.enableDebug
+//        chaos.enableDebug
         chaos.start(1 second)
       }
       
@@ -96,8 +96,11 @@ class GenStressServerActor extends TypedActor[ServerMessage] {
     case ServerMsg(client, msg) =>
       client ! Echo(typedSelf, msg)      
     case ClientEcho(_) =>
-      np = np-1
-      if (np == 0) {
+      counter.decrement
+      if(util.Configuration.TraceProgress){
+            println("Wating another : "+counter.get+" processes to finish.")
+      }
+      if (counter.isZero) {
         timer.finish
         timer.report
         

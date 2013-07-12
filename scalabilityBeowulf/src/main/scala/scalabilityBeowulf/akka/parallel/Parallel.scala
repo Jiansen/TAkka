@@ -14,6 +14,11 @@ import akka.remote._
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
 
+import akka.chaos._
+import scala.concurrent.duration._
+import akka.actor.SupervisorStrategy._
+import akka.actor.OneForOneStrategy
+
 case object OK
 sealed trait MasterMsg
 case class Start(n:Int, m:Int) extends MasterMsg
@@ -25,15 +30,30 @@ class NowTime extends Actor {
   
   val timer = new BenchTimer  
   
+  override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case e  =>
+        Resume    
+  }
+  
   def receive = {
     case Start(n:Int, m:Int) =>
       counter.set(m)
       val me = self
       val base = for (_ <- 1 to m) yield OK      
       timer.start
-      val pids = for (i <- 1 to m) yield {
+      val pids = (for (i <- 1 to m) yield {
         context.actorOf(Props[LoopActor], ProcessNamePrefix+i)
-      }  
+      }  ).toList
+      
+      if(util.Configuration.EnableChaos){
+          import akka.chaos.ChaosMode._
+          val chaos = ChaosMonkey(pids)
+          chaos.setMode(Kill)
+//          chaos.enableDebug
+          chaos.start(1 second)
+        }
+      
       for (pid <- pids) {
         pid ! Loop(self, n)
       }

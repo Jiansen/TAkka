@@ -90,7 +90,9 @@ class MasterActor extends TypedActor[MasterMsg]{
       }
     case GroupDone(g) =>
       doneCounter.decrement
-//        println("Remaining Groups: "+doneCounter.get)
+      if(util.Configuration.TraceProgress){
+        println("Remaining Groups: "+doneCounter.get)
+      }
       if(doneCounter.isZero){
         timer.finish
         timer.report
@@ -127,7 +129,11 @@ class GroupActor extends TypedActor[GroupMsg] {
       }
     case ReceiverDone(r) =>
       receiverDoneCounter.decrement
-//      println("Group "+typedSelf+" has "+receiverDoneCounter.get+" remaining receivers to be finished.")
+      
+      if(util.Configuration.TraceProgress){
+            println("Group "+typedSelf+" has "+receiverDoneCounter.get+" remaining receivers to be finished.")  
+      }
+      
       if(receiverDoneCounter.isZero){
         master ! GroupDone(typedSelf)
       }

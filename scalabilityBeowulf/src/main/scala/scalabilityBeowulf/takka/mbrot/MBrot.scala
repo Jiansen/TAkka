@@ -19,6 +19,11 @@ sealed trait WorkerMsg
 case class GO(n:Int, np:Int) extends SupMsg
 case class Work(n:Int, master:ActorRef[SupMsg]) extends WorkerMsg
 
+import takka.chaos._
+import scala.concurrent.duration._
+import akka.actor.SupervisorStrategy._
+import akka.actor.OneForOneStrategy
+
 object MBrotCons{
   val MAXITER = 255
   val LIM_SQR = 4.0
@@ -27,22 +32,42 @@ object MBrotCons{
 }
 
 class WorkerSup extends TypedActor[SupMsg]{
+  
+  override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case e  =>
+        Resume    
+  }
+  
   val counter = new BenchCounter
   val timer = new BenchTimer
   
   def typedReceive = {
       case GO(n, np) =>{
         counter.set(np)
-        timer.start
+        
         val workers = (for(i<-1 to np) yield {
           typedContext.actorOf(Props[WorkerMsg, Worker], ProcessNamePrefix+i)
         }).toList
+        
+        if(util.Configuration.EnableChaos){
+          import takka.chaos.ChaosMode._
+          val chaos = ChaosMonkey(workers)
+          chaos.setMode(Kill)
+//          chaos.enableDebug
+          chaos.start(1 second)
+        }
+        
+        timer.start
         for (worker <- workers) {
           worker ! Work(n, typedSelf)
         }
       }
       case Done(_) =>
         counter.decrement
+        if(util.Configuration.TraceProgress){
+          println("Remaining processes: "+counter.get)
+        }
         if(counter.isZero){
           timer.finish
           timer.report

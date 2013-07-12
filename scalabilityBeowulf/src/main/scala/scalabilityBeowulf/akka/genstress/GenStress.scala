@@ -20,6 +20,12 @@ import akka.remote._
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
 
+import akka.chaos._
+import scala.concurrent.duration._
+import akka.actor.SupervisorStrategy._
+import akka.actor.OneForOneStrategy
+
+
 sealed trait TestorMsg
  /*
     Arguments: np ( the number of clients ),
@@ -60,6 +66,14 @@ class GenStressServerActor extends Actor {
   var np:Int = 0
   val timer = new BenchTimer
   var clients:List[ActorRef] = _
+  
+    override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case e  =>
+//        println("Error: "+e)
+        Resume    
+  }
+  
   def receive = {
     case GenStressTestMsg(np, n, cqueue) =>
       this.np = np
@@ -68,6 +82,15 @@ class GenStressServerActor extends Actor {
         context.actorOf(Props[GenStressClientActor], ProcessNamePrefix+i)        
       }).toList
     
+      
+      if(util.Configuration.EnableChaos){
+        import akka.chaos.ChaosMode._
+        val chaos = ChaosMonkey(clients)
+        chaos.setMode(Kill)
+//        chaos.enableDebug
+        chaos.start(1 second)
+      }
+      
       timer.start
       
       for (client <- clients) {

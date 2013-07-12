@@ -1,5 +1,7 @@
 package util
 
 object Configuration {
-  val EnableChaos = false
+  val EnableChaos = true
+  
+  val TraceProgress = false
 }

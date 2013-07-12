@@ -16,7 +16,7 @@ import takka.actor.{TypedActor, ActorRef, ActorSystem, Props}
 import takka.actor.ReceiveTimeout
 import akka.remote._
 import scala.concurrent.duration._
-import util.BenchTimer
+import util.{BenchTimer, BenchCounter}
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
 import language.postfixOps
@@ -87,11 +87,11 @@ class NoWheelHandler extends TypedActor[WheelMsg] {//without timeout
 
 class TimerWheelActor extends TypedActor[MasterMsg] {
   val timer = new BenchTimer
-  var n:Int = _
+  val counter = new BenchCounter
   
   def typedReceive = {
     case Wheel(n) =>
-      this.n = n
+      counter.set(n)
       // val me = self
       val pids = (for (i <- 1 to n) yield 
           typedContext.actorOf(Props[WheelMsg, WheelHandler], ProcessNamePrefix+i)) toList
@@ -105,7 +105,7 @@ class TimerWheelActor extends TypedActor[MasterMsg] {
       } 
       
     case NoWheel(n) =>      
-      this.n = n
+      counter.set(n)
       // val me = self
       val pids = (for (i <- 1 to n) yield 
           typedContext.actorOf(Props[WheelMsg, NoWheelHandler], ProcessNamePrefix+i)) toList
@@ -119,8 +119,11 @@ class TimerWheelActor extends TypedActor[MasterMsg] {
       }       
       
     case Done(pid) =>
-      this.n -= 1
-      if (this.n == 0) {
+      counter.decrement
+      if(util.Configuration.TraceProgress){
+          println("Remaining processes: "+counter.get)
+        }
+      if (counter.isZero) {
         this.timer.finish
         this.timer.report
         sys.exit()

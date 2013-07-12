@@ -27,7 +27,7 @@ case class BigPing(from:ActorRef[PingerMsg]) extends PingerMsg
 case object BigPong extends PingerMsg
 
 class Pinger extends TypedActor[PingerMsg]{
-  private var n = new BenchCounter
+  private val n = new BenchCounter
   private var reporter:ActorRef[ReporterMsg] = _
   def typedReceive = {
     case BigProcs(procs, reporter) =>
@@ -50,8 +50,7 @@ class Reporter extends TypedActor[ReporterMsg]{
   override val supervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
       case e  =>
-//        println("Error: "+e)
-        Restart    
+        Resume    
   }
   
   private val timer = new BenchTimer
@@ -74,8 +73,14 @@ class Reporter extends TypedActor[ReporterMsg]{
       timer.start
       for (p<-procs){  p ! BigProcs(procs, typedSelf)  }
     }
-    case BigDone(_) =>
+    case BigDone(sender) =>
+      
       counter.decrement
+      if(util.Configuration.TraceProgress){
+        println("Sender: "+sender+" Done.")
+        println("Wating another : "+counter.get+" messages.")        
+      }
+
       if (counter.isZero) {
         timer.finish
         timer.report

@@ -14,10 +14,15 @@ half to the parent process.
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.remote._
 
-import util.BenchTimer
+import util.{BenchTimer, BenchCounter}
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
 import language.postfixOps
+
+import akka.chaos._
+import scala.concurrent.duration._
+import akka.actor.SupervisorStrategy._
+import akka.actor.OneForOneStrategy
 
 case class RANTestMsg(n:Int)// number of processes
 case class GO(testor:ActorRef)
@@ -42,21 +47,40 @@ class RANProcess extends Actor {
 
 class RANTestActor extends Actor {
   val timer = new BenchTimer
-  var n:Int = _
+  val counter = new BenchCounter
+  
+  override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case e  =>
+        Resume    
+  }
+  
   def receive = {
     case RANTestMsg(n) =>
-      this.n = n
+      counter.set(n)
       val plist = (for (i<- 1 to n) yield {
         context.actorOf(Props[RANProcess], ProcessNamePrefix+i)
       }).toList
+      
+      if(util.Configuration.EnableChaos){
+        import akka.chaos.ChaosMode._
+        val chaos = ChaosMonkey(plist)
+        chaos.setMode(Kill)
+//        chaos.enableDebug
+        chaos.start(1 second)
+      }
+      
       timer.start
       
       for (p<-plist){
         p ! GO(self)
       }
     case RANReply(_, _) =>
-      this.n -= 1
-      if (this.n == 0) {
+      counter.decrement
+      if(util.Configuration.TraceProgress){
+          println("Remaining processes: "+counter.get)
+        }
+      if (counter.isZero) {
         timer.finish
         timer.report
         sys.exit

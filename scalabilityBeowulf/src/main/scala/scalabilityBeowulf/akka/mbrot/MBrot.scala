@@ -14,6 +14,11 @@ import akka.remote._
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
 
+import akka.chaos._
+import scala.concurrent.duration._
+import akka.actor.SupervisorStrategy._
+import akka.actor.OneForOneStrategy
+
 sealed trait SupMsg
 sealed trait WorkerMsg
 case class GO(n:Int, np:Int) extends SupMsg
@@ -30,13 +35,28 @@ class WorkerSup extends Actor{
   val counter = new BenchCounter
   val timer = new BenchTimer
   
+  override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case e  =>
+        Resume    
+  }
+  
   def receive = {
       case GO(n, np) =>{
         counter.set(np)
-        timer.start
+        
         val workers = (for(i<-1 to np) yield {
           context.actorOf(Props[Worker], ProcessNamePrefix+i)
         }).toList
+        
+        if(util.Configuration.EnableChaos){
+          import akka.chaos.ChaosMode._
+          val chaos = ChaosMonkey(workers)
+          chaos.setMode(Kill)
+//          chaos.enableDebug
+          chaos.start(1 second)
+        }
+        timer.start
         for (worker <- workers) {
           worker ! Work(n, self)
         }

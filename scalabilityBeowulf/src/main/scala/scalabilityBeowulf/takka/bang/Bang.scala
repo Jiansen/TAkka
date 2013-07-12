@@ -30,11 +30,11 @@ class Bang extends TypedActor[BangMessage]{
     OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
       case e  =>
 //        println("Error: "+e)
-        Restart    
+        Resume    
   }
   
   val timer = new BenchTimer
-  var counter = new BenchCounter
+  val counter = new BenchCounter
   def typedReceive = {
     case BangBench(s, m) =>
       counter.set(s*m)
@@ -56,8 +56,10 @@ class Bang extends TypedActor[BangMessage]{
       }
     case DummyMessage => 
       counter.decrement
-//        println("Remaining messages"+counter.get)
-        if (counter.isZero){
+      if(util.Configuration.TraceProgress){
+        println("Remaining messages"+counter.get)
+      }
+      if (counter.isZero){
         timer.finish
         timer.report
         sys.exit
@@ -88,24 +90,4 @@ object BangBench extends App{
   testActor ! BangBench(processes,messagess)
 }
 
-//object ChaosBangBench extends App{
-//  private val nodes:Int = args(0).toInt
-//  private val processes:Int = 600
-//  private val messagess:Int = 2000
-//
-//  private val system = ActorSystem("BangSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
-//  val testActor = system.actorOf(Props[BangMessage, Bang], ProcessPathPrefix)
-//  testActor ! BangBench(processes,messagess)
-//
-//  import takka.chaos.ChaosMode._
-//  
-//  val vitims = (for (i <- 1 to processes) yield {
-//    system.actorFor[Send](WorkerProcessAddress(i, nodes))
-//  }).toList
-//  
-//  val chaos = ChaosMonkey(vitims)
-//  chaos.setMode(Kill)
-//  chaos.enableDebug
-//  chaos.start(1 second)
-//}
 

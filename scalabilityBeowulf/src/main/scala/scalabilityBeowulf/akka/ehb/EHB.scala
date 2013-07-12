@@ -13,6 +13,11 @@ import akka.remote._
 import com.typesafe.config.ConfigFactory
 import scalabilityBeowulf.BeowulfConfig._
 
+import akka.chaos._
+import scala.concurrent.duration._
+import akka.actor.SupervisorStrategy._
+import akka.actor.OneForOneStrategy
+
 sealed trait GroupMsg
 sealed trait MasterMsg
 sealed trait ReceiverMsg
@@ -45,6 +50,15 @@ class MasterActor extends Actor{
   var gs:List[ActorRef] = _
   val readyCounter = new BenchCounter
   val doneCounter = new BenchCounter
+  
+    override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case e  =>
+//        println("Error: "+e)
+        Resume    
+  }
+    
+  
   def receive = {
     case MasterGO(groups, loops) =>
       readyCounter.set(groups)
@@ -52,11 +66,23 @@ class MasterActor extends Actor{
       gs = (for (gid <- 1 to groups) yield {
         context.actorOf(Props[GroupActor], ProcessNamePrefix+gid)
       }).toList
+      
+      
       for (g <- gs) {
         g ! GroupInit(master, loops)
       }
     case GroupReady(g) =>   
       readyCounter.decrement
+      
+      if(util.Configuration.EnableChaos){
+        import akka.chaos.ChaosMode._
+        val chaos = ChaosMonkey(gs)
+        chaos.setMode(Kill)
+//        chaos.enableDebug
+        chaos.start(1 second)
+        }
+      
+      
       if(readyCounter.isZero){
         timer.start
        for (g<-gs) {
