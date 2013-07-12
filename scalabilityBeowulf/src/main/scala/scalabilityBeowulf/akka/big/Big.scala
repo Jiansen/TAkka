@@ -66,7 +66,7 @@ class Reporter extends Actor{
         val chaos = ChaosMonkey(procs)
         chaos.setMode(Kill)
 //        chaos.enableDebug
-        chaos.start(1 second)
+        chaos.start(500 millisecond)
       }
       
       timer.start
