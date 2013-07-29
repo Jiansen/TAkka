@@ -149,6 +149,15 @@ $ as-update-auto-scaling-group MyGroup --launch-configuration MyLC --availabilit
 OK-Updated AutoScalingGroup
 
 
+## Set Load Balancer
+
+[AWS Console](https://console.aws.amazon.com/ec2)
+
+
+check for 
+- DNS Name: e.g. MyLoadBalancer-360063211.eu-west-1.elb.amazonaws.com
+- Port Configuration
+
 
 
 
