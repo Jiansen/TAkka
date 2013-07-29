@@ -88,7 +88,7 @@ http://www.robertsindall.co.uk/blog/how-to-use-amazons-auto-scaling-groups/
 
 $ export AWS_CREDENTIAL_FILE=/home/jiansen/AWS/aws-credentials.txt
 
-$ as-create-launch-config AutoScaleLC --image-id ami-a9f8e6dd --region eu-west-1 --instance-type t1.micro --group awseb-e-ictxp7cjjz-stack-AWSEBSecurityGroup-YAXYRWU3MQO8 -key autokey
+$ as-create-launch-config AutoScaleLC --image-id ami-a9f8e6dd --region eu-west-1 --instance-type t1.micro --group awseb-e-ictxp7cjjz-stack-AWSEBSecurityGroup-YAXYRWU3MQO8 --key autokey
 OK-Created launch config
 
  (Ubuntu 13.04 t1.mociro eu-west-1)
