@@ -152,4 +152,13 @@ OK-Updated AutoScalingGroup
 
 
 
+# Other online post
+
+http://www.cardinalpath.com/autoscaling-your-website-with-amazon-web-services-part-1/
+
+http://www.cardinalpath.com/autoscaling-your-website-with-amazon-web-services-part-2/
+
+
+
+
 
