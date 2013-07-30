@@ -162,7 +162,7 @@ import akka.actor.Extension
  */
 case class WebServerConfig(
   serverName: String = "WebServer",
-  hostname: String = "localhost",
+  hostname: String = "0.0.0.0",
   port: Int = 8888,
   webLog: Option[WebLogConfig] = None,
   ssl: Option[SslConfig] = None,

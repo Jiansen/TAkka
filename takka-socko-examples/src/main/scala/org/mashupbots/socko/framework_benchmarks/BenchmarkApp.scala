@@ -53,6 +53,8 @@ object BenchmarkApp extends Logger {
   })
 
   def main(args: Array[String]) {
+    val config = WebServerConfig()
+    
     val webServer = new WebServer(WebServerConfig(), routes, actorSystem)
     webServer.start()
 
