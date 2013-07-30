@@ -56,7 +56,7 @@ object TAkkaBuild extends Build {
 
   lazy val takkasockoexamples = Project(id = "takka-socko-examples",
                          base = file("takka-socko-examples"),
-                         settings = defaultSettings ++ Seq(
+                         settings = defaultSettings ++ assemblySettings ++ Seq(
                            libraryDependencies ++= Dependencies.takkasockoexamples
                          )) dependsOn(takkasockowebserver)  
 

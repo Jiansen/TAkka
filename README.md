@@ -44,7 +44,6 @@ Source code in this repository is either original or derivative works of open so
 
 
 ## Testing on Beowulf
-
 * running sbt on different beowulf nodes may re-compile the code.  BUG?
 * We use [sbt-assembly](https://github.com/sbt/sbt-assembly) to package all requried files in a single jar, so that the benchmark application can be run as standard JAVA application
 * the bash script for running the benchmark are given at ***
@@ -58,12 +57,18 @@ $ java -cp ./scalabilityBeowulf/target/scala-2.10/scalabilityBeowulf-assembly-0.
 
 * run bench
 
-## Getting Help
+## Testing Socko on EC2 with Auto Scaling
 
-Section under construction
+* build application
 
-## Links
+$ sbt "project takka-socko-examples" "assembly"
 
-Section under construction
+* start application
+
+$ java -cp ./takka-socko-examples/target/scala-2.10/takka-socko-examples-assembly-0.1-SNAPSHOT.jar org.mashupbots.socko.framework_benchmarks.BenchmarkApp
+
+
+* run bench
+http://hostname:8888/json
 
 
