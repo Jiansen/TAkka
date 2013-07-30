@@ -127,7 +127,7 @@ object Dependencies {
   // socko webserver in takka
   val takkasockowebserver = Seq(
     Dependency.akkaSlf4j, Dependency.akkaTestKit,
-    Dependency.netty, Dependency.logback, Dependency.junit // , Dependency.scalatest
+    Dependency.netty, Dependency.logback, Dependency.junit , Dependency.scalatest
   )
   
   // socko webserver examples in takka
@@ -137,7 +137,7 @@ object Dependencies {
 
   val sockowebserver = Seq(
     Dependency.akkaActor, Dependency.akkaSlf4j, Dependency.akkaTestKit,
-    Dependency.netty, Dependency.logback, Dependency.junit // , Dependency.scalatest
+    Dependency.netty, Dependency.logback, Dependency.junit , Dependency.scalatest
   )
   
   val sockoexamples = Seq(

@@ -27,18 +27,21 @@ import akka.routing.Router
 
 case class Destination[M:Manifest](sender: ActorRef[_], recipient: ActorRef[M]) extends Product with Serializable
 
-trait RouterConfig[M]{
+abstract class RouterConfig[M]{
   private var akkaConfig:akka.routing.RouterConfig = _
   
-  def fromAkkaRouterConfig[M](config:akka.routing.RouterConfig) = {
-    this.akkaConfig = config
-  }
+  
   def toAkkaRouterConfig = this.akkaConfig
   
-  def createRoute(routeeProvider: RouteeProvider[M]): Route[M]
+//  def createRoute(routeeProvider: RouteeProvider[M]): Route[M]
   
 }
 
+object RouterConfig{
+  def fromAkkaRouterConfig[M](config:akka.routing.RouterConfig):RouterConfig[M] = new RouterConfig[M]{
+    this.akkaConfig = config
+  }  
+}
 
 class RouteeProvider[M]{
   

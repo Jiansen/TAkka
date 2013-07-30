@@ -84,8 +84,8 @@ case class Props[-T] (props: akka.actor.Props) {
     return Props(p)
   }
   
-  def withRouter[T](r: takka.routing.RouterConfig[T]): Props[T] = {
-    val p = props.withRouter(r.toAkkaRouterConfig)
+  def withRouter[T](r: akka.routing.RouterConfig): Props[T] = {
+    val p = props.withRouter(r)
     return Props(p)
   }
 

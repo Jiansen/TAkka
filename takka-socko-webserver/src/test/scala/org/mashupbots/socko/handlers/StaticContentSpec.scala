@@ -36,19 +36,13 @@ import org.scalatest.BeforeAndAfterAll
 import org.scalatest.GivenWhenThen
 import org.scalatest.WordSpec
 import com.typesafe.config.ConfigFactory
-/*
-import akka.actor.actorRef2Scala
-import akka.actor.ActorRef
-import akka.actor.ActorSystem
-import akka.actor.Props
-*/
-// import akka.actor.actorRef2Scala //TODO: check
 import takka.actor.ActorRef
 import takka.actor.ActorSystem
 import takka.actor.Props
-
 import akka.routing.FromConfig
 import org.mashupbots.socko.events.HttpRequestEvent
+import takka.routing.RouterConfig
+
 
 @RunWith(classOf[JUnitRunner])
 class StaticContentSpec
@@ -110,9 +104,9 @@ class StaticContentSpec
     StaticContentHandlerConfig.browserCacheTimeoutSeconds = 60
     StaticContentHandlerConfig.serverCacheTimeoutSeconds = 2
 
-    // Start routers
+    
     router = actorSystem.actorOf(Props[StaticContentRequest, StaticContentHandler]
-      .withRouter(FromConfig()).withDispatcher("my-pinned-dispatcher"), "my-router")
+      .withRouter[StaticContentRequest](FromConfig()).withDispatcher("my-pinned-dispatcher"), "my-router")
 
     // Start web server
     webServer = new WebServer(WebServerConfig(port = port), routes, actorSystem)
