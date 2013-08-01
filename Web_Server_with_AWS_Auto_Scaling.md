@@ -102,6 +102,7 @@ ami-a9f8e6dd is the AMI ID of the created EBS AMI.
 
 $ as-describe-launch-configs --headers --region eu-west-1 --max-records 50
 
+<pre><code>
 
 LAUNCH-CONFIG NAME IMAGE-ID TYPE 
 
@@ -111,7 +112,7 @@ LAUNCH-CONFIG  AutoScaleLC          ami-a9f8e6dd  t1.micro
 LAUNCH-CONFIG  AutoScaleTAkkaPlay   ami-699d831d  t1.micro
 LAUNCH-CONFIG  AutoScaleTAkkaSocko  ami-cb9688bf  t1.micro
 
-
+</code></pre>
 
 ### set auto scale group
 
@@ -124,7 +125,7 @@ OK-Created AutoScalingGroup
 ### check auto scale  group
 
 $ as-describe-auto-scaling-groups --headers --region eu-west-1
-
+<pre><code>
 
 AUTO-SCALING-GROUP  GROUP-NAME                LAUNCH-CONFIG        AVAILABILITY-ZONES                MIN-SIZE  MAX-SIZE  DESIRED-CAPACITY
 AUTO-SCALING-GROUP  auto-scaling-akka-play    AutoScaleAkkaPlay    eu-west-1a                        0         0         0               
@@ -133,7 +134,7 @@ AUTO-SCALING-GROUP  auto-scaling-group        AutoScaleLC          eu-west-1a,eu
 AUTO-SCALING-GROUP  auto-scaling-takka-play   AutoScaleTAkkaPlay   eu-west-1a                        0         0         0               
 AUTO-SCALING-GROUP  auto-scaling-takka-socko  AutoScaleTAkkaSocko  eu-west-1a                        0         0         0 
 
-
+</code></pre>
 
 ### edit instance details from the console
 
