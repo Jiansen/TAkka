@@ -102,16 +102,21 @@ ami-a9f8e6dd is the AMI ID of the created EBS AMI.
 
 $ as-describe-launch-configs --headers --region eu-west-1 --max-records 50
 
+<pre><code>
 
 LAUNCH-CONFIG NAME IMAGE-ID TYPE 
 
-LAUNCH-CONFIG AutoScaleLC ami-a9f8e6dd t1.micro
+LAUNCH-CONFIG  AutoScaleAkkaPlay    ami-0f9d837b  t1.micro
+LAUNCH-CONFIG  AutoScaleAkkaSocko   ami-db9688af  t1.micro
+LAUNCH-CONFIG  AutoScaleLC          ami-a9f8e6dd  t1.micro
+LAUNCH-CONFIG  AutoScaleTAkkaPlay   ami-699d831d  t1.micro
+LAUNCH-CONFIG  AutoScaleTAkkaSocko  ami-cb9688bf  t1.micro
 
-
+</code></pre>
 
 ### set auto scale group
 
-$ as-create-auto-scaling-group auto-scaling-group --region eu-west-1 --availability-zones eu-west-1a eu-west-1b eu-west-1c --launch-configuration AutoScaleLC 1 --max-size 10 --min-size 1
+$ as-create-auto-scaling-group auto-scaling-group --region eu-west-1 --availability-zones eu-west-1a --launch-configuration AutoScaleX 0 --max-size 0 --min-size 0
 
 OK-Created AutoScalingGroup
 
@@ -120,17 +125,16 @@ OK-Created AutoScalingGroup
 ### check auto scale  group
 
 $ as-describe-auto-scaling-groups --headers --region eu-west-1
+<pre><code>
 
+AUTO-SCALING-GROUP  GROUP-NAME                LAUNCH-CONFIG        AVAILABILITY-ZONES                MIN-SIZE  MAX-SIZE  DESIRED-CAPACITY
+AUTO-SCALING-GROUP  auto-scaling-akka-play    AutoScaleAkkaPlay    eu-west-1a                        0         0         0               
+AUTO-SCALING-GROUP  auto-scaling-akka-socko   AutoScaleAkkaSocko   eu-west-1a                        0         0         0               
+AUTO-SCALING-GROUP  auto-scaling-group        AutoScaleLC          eu-west-1a,eu-west-1b,eu-west-1c  0         0         0               
+AUTO-SCALING-GROUP  auto-scaling-takka-play   AutoScaleTAkkaPlay   eu-west-1a                        0         0         0               
+AUTO-SCALING-GROUP  auto-scaling-takka-socko  AutoScaleTAkkaSocko  eu-west-1a                        0         0         0 
 
-AUTO-SCALING-GROUP GROUP-NAME LAUNCH-CONFIG AVAILABILITY-ZONES MIN-SIZE MAX-SIZE DESIRED-CAPACITY
-
-AUTO-SCALING-GROUP auto-scaling-group AutoScaleLC eu-west-1a,eu-west-1b,eu-west-1c 1 10 1 
-
-INSTANCE INSTANCE-ID AVAILABILITY-ZONE STATE STATUS LAUNCH-CONFIG
-
-INSTANCE i-ed9650a3 eu-west-1b InService Healthy AutoScaleLC
-
-
+</code></pre>
 
 ### edit instance details from the console
 
@@ -139,7 +143,7 @@ https://console.aws.amazon.com/ec2
 
 
 ### After use, set zero instances in the Auto Scaling Group?
-$as-update-auto-scaling-group auto-scaling-group --desired-capacity 0 --max-size 0 --min-size 0 --region eu-west-1
+$as-update-auto-scaling-group auto-scaling-X-X --desired-capacity 0 --max-size 0 --min-size 0 --region eu-west-1
 
 
 
