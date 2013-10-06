@@ -1,4 +1,4 @@
-package sample.scala
+package sample.scala.parametertype
 
 class Super
 class Middle extends Super

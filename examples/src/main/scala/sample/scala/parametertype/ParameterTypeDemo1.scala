@@ -1,4 +1,4 @@
-package sample.scala
+package sample.scala.parametertype
 
 class Base1[A, B]{
   def p(a:A, b:B){
