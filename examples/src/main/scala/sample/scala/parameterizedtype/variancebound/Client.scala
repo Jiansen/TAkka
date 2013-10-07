@@ -11,8 +11,10 @@ object Client extends App {
     case (top, stack) =>
 //      println(stack)  
       assert(top == 3 && stack.toString().equals("stack(2, 1, 0)"))
-      val reverse = Stacks.reverse(stack)
+      val reverse:Stack[Integer] = Stacks.reverse(stack)
 //  println(reverse)  
-      assert(reverse.toString().equals("stack(0, 1, 2)"))      
+      assert(reverse.toString().equals("stack(0, 1, 2)"))
+      val anystack:Stack[Any] = reverse.push(3.0)
+      assert(anystack.toString().equals("stack(3.0, 0, 1, 2)"))
   }
 }
