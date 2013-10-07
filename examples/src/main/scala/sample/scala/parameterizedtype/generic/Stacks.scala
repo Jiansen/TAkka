@@ -1,4 +1,4 @@
-package sample.scala.generic
+package sample.scala.parameterizedtype.generic
 
 object Stacks {
   def reverse[T](in:Stack[T]):Stack[T] = {

@@ -1,4 +1,4 @@
-package sample.scala.generic
+package sample.scala.parameterizedtype.generic
 
 trait Stack[E] {
   def empty():Boolean
