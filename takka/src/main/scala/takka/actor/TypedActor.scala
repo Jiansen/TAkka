@@ -63,7 +63,7 @@ import takka.supervisionview.SupervisionViewRequest
  *                                      // just to demonstrate how to stop yourself
  *     case Shutdown                 => typedContext.stop(typedSelf)
  *
- *                                      // error kernel with child replying directly to ���customer���
+ *                                      // error kernel with child replying directly to ���������customer���������
  *     case Dangerous(j, sender)     => typedContext.actorOf(Props[ReplyToOriginWorker]).tell(PerformWork(j), sender)
  *
  *                                      // error kernel with reply going through us
@@ -78,7 +78,7 @@ import takka.supervisionview.SupervisionViewRequest
  * allow direct reply if that is what makes sense, or round-trip the sender
  * as shown with the fictitious JobRequest/JobReply message pair.
  *
- * If you don���t like writing `typedContext` you can always `import typedContext._` to get
+ * If you don't like writing `typedContext` you can always `import typedContext._` to get
  * direct access to `actorOf`, `stop` etc. This is not default in order to keep
  * the name-space clean.
  */
@@ -92,7 +92,7 @@ abstract class TypedActor[M:Manifest] extends akka.actor.Actor{
    * This defines the initial actor behavior, it must return a partial function
    * with the actor logic.
    */
-  protected def typedReceive:PartialFunction[M, Unit]
+  protected def typedReceive:Function[M, Unit]
   
   def receive = {
     case hmsg:akka.actor.PossiblyHarmful => hmsg match {

@@ -192,7 +192,7 @@ abstract class ActorSystem {
     actorFor[M](tmp.path)
   }
   
-  def actorFor[M:Manifest](actorPath: akka.actor.ActorPath): ActorRef[M]= {
+  private def actorFor[M:Manifest](actorPath: akka.actor.ActorPath): ActorRef[M]= {
     val isRemotePath = actorPath.address.host match {
       case None => false
       case Some(_) => true
