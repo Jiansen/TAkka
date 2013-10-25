@@ -3,6 +3,7 @@ package takka.nameserver
 // import scala.reflect.runtime.universe._
 import scala.reflect.Manifest
 import scala.language.existentials
+import scala.collection.mutable.HashMap
 
 /**
   * A local typed name server.  
@@ -38,7 +39,7 @@ import scala.language.existentials
   * }}}
   */  
 object NameServer {
-  private val nameMap = new scala.collection.mutable.HashMap[TSymbol[_], TValue[_]]
+  private val nameMap = new HashMap[TSymbol[_], TValue[_]]
   
   /**
    * Register a typed symbol with a value of corresponding type.
