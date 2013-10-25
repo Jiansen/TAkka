@@ -51,15 +51,15 @@ abstract class ActorContext[M:Manifest] {
 
   val untypedContext:akka.actor.ActorContext
 
-  val props:Props[M]
+  def props:Props[M] = {Props[M](untypedContext.props)}  
   
   def actorOf[Msg](props:Props[Msg], name:String)(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
     new ActorRef[Msg] { val untypedRef = untypedContext.actorOf(props.props, name) }
-  }
-  
+  }  
   def actorOf[Msg](props:Props[Msg])(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
     new ActorRef[Msg] { val untypedRef = untypedContext.actorOf(props.props) }
   }
+  
   
   def receiveTimeout : Duration = {
     untypedContext.receiveTimeout
@@ -107,6 +107,10 @@ abstract class ActorContext[M:Manifest] {
   def actorFor[Msg](actorPath: String)(implicit mt:Manifest[Msg]): ActorRef[Msg]= new ActorRef[Msg]{
     val untypedRef = untypedContext.actorFor(actorPath)
   }
+  def actorFor[Msg](actorPath: akka.actor.ActorPath)(implicit mt:Manifest[Msg]): ActorRef[Msg]= new ActorRef[Msg]{
+    val untypedRef = untypedContext.actorFor(actorPath)
+  }
+  
   
   //  new APIs to support remote ActorRef
   def remoteActorOf[Msg](props:Props[Msg])(implicit mt:Manifest[Msg]):ActorRef[Msg] = {
@@ -132,6 +136,11 @@ abstract class ActorContext[M:Manifest] {
       val untypedRef = system.system.actorFor(remotePathStr)
     }
   }
+  
+  def become[SupM >: M](behavior: SupM => Unit)(implicit smtTag:Manifest[SupM]):ActorRef[SupM] ={
+    become(behavior, {case _ => }, {case _ => })   
+  }
+  
   def become[SupM >: M](behavior: SupM => Unit, systemMessageHandler:SystemMessage=>Unit)(implicit smtTag:Manifest[SupM]):ActorRef[SupM] ={
     become(behavior, systemMessageHandler, {case _ => })   
   }

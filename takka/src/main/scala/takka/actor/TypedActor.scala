@@ -89,7 +89,7 @@ import takka.supervisionview.SupervisionViewRequest
 abstract class TypedActor[M:Manifest] extends akka.actor.Actor{  
 //  implicit val mt:TypeTag[M] = typeTag[M]
   /**
-   * This defines the initial actor behavior, it must return a partial function
+   * This defines the initial actor behavior, it must return a function
    * with the actor logic.
    */
   protected def typedReceive:Function[M, Unit]
@@ -110,7 +110,6 @@ abstract class TypedActor[M:Manifest] extends akka.actor.Actor{
    */
   protected[actor] implicit val typedContext:ActorContext[M] = new ActorContext[M](){
      val untypedContext = context
-     val props:Props[M] = Props(untypedContext.props)
   }
   
   /**

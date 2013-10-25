@@ -1,4 +1,4 @@
-package sample.scala.parameterizedtype.variancebound
+package sample.scala.parameterizedtype.contravariance
 
 object Client extends App {
   var stack:Stack[Integer] = new ArrayStack[Integer](Nil)

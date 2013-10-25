@@ -1,4 +1,4 @@
-package sample.scala.parameterizedtype.variancebound
+package sample.scala.parameterizedtype.contravariance
 
 object Stacks {
   def reverse[T](in:Stack[T]):Stack[T] = {

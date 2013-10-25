@@ -1,4 +1,4 @@
-package sample.scala.parameterizedtype.variancebound
+package sample.scala.parameterizedtype.contravariance
 
 trait Stack[+E] {
   def empty():Boolean
