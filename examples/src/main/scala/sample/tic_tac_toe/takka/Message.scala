@@ -1,4 +1,4 @@
-package sample.tik_tak_tok.takka
+package sample.tic_tac_toe.takka
 
 import takka.actor._
 //sealed trait Message

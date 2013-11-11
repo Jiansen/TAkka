@@ -1,4 +1,4 @@
-package sample.takka
+package sample.takka.SafeCalculator
 
 import takka.actor.ActorRef
 import takka.actor.ActorSystem
@@ -7,6 +7,7 @@ import takka.actor.TypedActor
 import akka.actor.SupervisorStrategy._
 import akka.actor.OneForOneStrategy
 import scala.concurrent.duration._
+import scala.language.postfixOps
 
 sealed trait Operation
 case class Multiplication(m:Int, n:Int) extends Operation
