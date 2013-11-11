@@ -192,7 +192,7 @@ abstract class ActorSystem {
     actorFor[M](tmp.path)
   }
   
-  private def actorFor[M:Manifest](actorPath: akka.actor.ActorPath): ActorRef[M]= {
+  def actorFor[M:Manifest](actorPath: akka.actor.ActorPath): ActorRef[M]= {
     val isRemotePath = actorPath.address.host match {
       case None => false
       case Some(_) => true
@@ -239,8 +239,8 @@ abstract class ActorSystem {
   private def getHostname():String = {
     system.settings.config.getConfig("akka").getConfig("remote").getConfig("netty").getValue("hostname").render()
   }
-  
-  def isLocalSystem():Boolean = {
+    
+  private def isLocalSystem():Boolean = {
     val host = getHostname()
     host == "\"\"" || host.startsWith("\"127.")
   }
@@ -267,28 +267,34 @@ abstract class ActorSystem {
     }
   }
   
+  @throws(classOf[NotRemoteSystemException])
   def remoteActorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg] = {
-    val actor = actorOf[Msg](props:Props[Msg])
-    val system = this
-    new ActorRef[Msg] {
-      val localPathStr = actor.path.toString()
+    val akkaactor = actorOf[Msg](props:Props[Msg])
+    val takka_system = this
+    val actor = new ActorRef[Msg] {
+      val localPathStr = akkaactor.path.toString()
       val sys_path = localPathStr.split("@")
-      val remotePathStr = sys_path(0)+"@"+system.host+":"+system.port+sys_path(1)
+      val remotePathStr = sys_path(0)+"@"+takka_system.host+":"+takka_system.port+sys_path(1)
 //akka://RemoteCreation@129.215.91.195:2554/user/...
-      val untypedRef = system.system.actorFor(remotePathStr)
+      val untypedRef = system.actorFor(remotePathStr)
     }
+    NameServer.set(TSymbol[ActorRef[Msg]](scala.Symbol(actor.path.toString())), actor)
+    actor
   }
   
+  @throws(classOf[NotRemoteSystemException])
   def remoteActorOf[Msg:Manifest](props:Props[Msg], aname:String):ActorRef[Msg] = {
-    val actor = actorOf[Msg](props:Props[Msg], aname:String)
+    val akkaactor = actorOf[Msg](props:Props[Msg], aname:String)
     val system = this
-    new ActorRef[Msg] {
-      val localPathStr = actor.path.toString()
+    val actor = new ActorRef[Msg] {
+      val localPathStr = akkaactor.path.toString()
       val sys_path = localPathStr.split("@")
       val remotePathStr = sys_path(0)+"@"+system.host+":"+system.port+sys_path(1)
 //akka://RemoteCreation@129.215.91.195:2554/user/...
       val untypedRef = system.system.actorFor(remotePathStr)
     }
+    NameServer.set(TSymbol[ActorRef[Msg]](scala.Symbol(actor.path.toString())), actor)    
+    actor
   }
   
   import language.existentials

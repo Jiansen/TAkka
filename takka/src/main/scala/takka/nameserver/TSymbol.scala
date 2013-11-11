@@ -10,7 +10,7 @@ import scala.Symbol
  * The type descriptor (TypeTag) can be used at run-time for type comparison.
  */
 @SerialVersionUID( 1L )
-case class TSymbol[-T:Manifest](val symbol:Symbol) {
+case class TSymbol[T:Manifest](val symbol:Symbol) {
   private [takka] val t:Manifest[_] = manifest[T]
   /**
    * To support subtyping enquiry in typed name server,
