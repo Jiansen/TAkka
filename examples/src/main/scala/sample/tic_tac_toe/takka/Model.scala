@@ -8,11 +8,7 @@ final class Model extends TypedActor[Controller2ModelMessage] {
   def typedReceive = {
     case ModelSetController(control) => controller = control
     case MoveAt(row:Int, col:Int) =>
-      try{
-        
-      }
-      model.setStatus(row, col)
-      
+      model.setStatus(row, col)      
   }
   
   
@@ -22,33 +18,33 @@ final class Model extends TypedActor[Controller2ModelMessage] {
     case object XModelMove extends GridStatus
     case object OModelMove extends GridStatus // Uppercase O
     
-    var nextMove:Boolean = true // true->X false->O
+    var nextXMove:Boolean = true // true->X false->O
     
     val status:Array[Array[GridStatus]] = Array(Array(Empty, Empty, Empty),
                                                 Array(Empty, Empty, Empty),
                                                 Array(Empty, Empty, Empty))
     
-    def setStatus(row:Int, col:Int) = {      
-      nextMove match {
-        case true =>
+    def setStatus(row:Int, col:Int) = {   
+      if(nextXMove){
           if (status(row)(col) == Empty) {
             status(row)(col) = XModelMove
             controller ! PlayedCross(row, col)
-            nextMove = false
+            nextXMove = false
             controller ! NextMove(O)
           }else{
             controller ! GridNotEmpty(row, col)
           }
-        case false =>
+      }else{
           if (status(row)(col) == Empty) {
             status(row)(col) = OModelMove
             controller ! PlayedO(row, col)
-            nextMove = true
+            nextXMove = true
             controller ! NextMove(X)
           }else{
             controller ! GridNotEmpty(row, col)
-          }
-        }
+          }     
+      }
+
       checkWinner match {
         case Empty =>
         case XModelMove =>

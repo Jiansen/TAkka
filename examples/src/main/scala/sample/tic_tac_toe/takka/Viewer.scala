@@ -72,7 +72,7 @@ class GUIApplication(controller:ActorRef[View2ControllerMessage]) extends Simple
   }
   
   def top = new MainFrame { 
-    title = "Tik Tak Tok" 
+    title = "Tic Tac Toe" 
 
     contents = new BorderPanel() {
       this.add(gameboard, BorderPanel.Position.Center)
