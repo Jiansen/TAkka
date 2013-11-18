@@ -63,7 +63,7 @@ class FIBMaster extends TypedActor[FibMasterMsg] {
 
 object FIB extends App {
   private val nodes:Int = args(0).toInt
-  private val processes:Int = 200
+  private val processes:Int = 256
 
   private val system = ActorSystem("FIBSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))
   val testActor = system.actorOf(Props[FibMasterMsg, FIBMaster], ProcessPathPrefix)
