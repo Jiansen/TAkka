@@ -5,13 +5,13 @@ import scala.swing.event._
 import javax.swing.JOptionPane
 
 final class GameView extends Viewer{
-   var controller:ControllerForView
+   var controller:ControllerForView = _
    
    private var guiApp:GUIApplication = _;
    
    
    def setController(controller:ControllerForView): Unit = {
-       assert(controller == null, "controller has been set")
+//       assert(controller == null, "controller has been set")
        this.controller = controller
        guiApp = new GUIApplication(controller)
        guiApp.main(Array(""))  
@@ -100,7 +100,7 @@ class GUIApplication(controller:ControllerForView) extends SimpleSwingApplicatio
       reactions += {
         case ButtonClicked(b:GameButton) =>          
           // b.text = b.row.toString()
-          controller ! ButtonClickedAt(b.row, b.col)
+          controller.buttonClickedAt(b.row, b.col)
       }
     }
     

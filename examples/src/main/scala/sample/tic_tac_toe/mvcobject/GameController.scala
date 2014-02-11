@@ -1,7 +1,7 @@
 package sample.tic_tac_toe.mvcobject
 
 
-final class GameController(model:Model, view:View) extends Controller{
+final class GameController(model:Model, view:Viewer) extends Controller{
   
   def buttonClickedAt(row:Int, col:Int):Unit = {
     model.moveAt(row, col)
@@ -19,7 +19,7 @@ final class GameController(model:Model, view:View) extends Controller{
     view.displayNextMove(move)
   }
   def winner(move:Move):Unit= {
-    view.announceWinner(winner)
+    view.announceWinner(move)
   }
   
   model.setController(this)

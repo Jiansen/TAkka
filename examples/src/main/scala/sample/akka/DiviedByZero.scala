@@ -36,6 +36,8 @@ class Calculator extends Actor {
 
 class SafeCalculator extends Actor {
   import language.postfixOps
+  
+  
   override val supervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
       case _: ArithmeticException  =>
