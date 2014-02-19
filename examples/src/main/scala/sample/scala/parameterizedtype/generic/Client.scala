@@ -1,7 +1,7 @@
 package sample.scala.parameterizedtype.generic
 
 object Client extends App {
-  val stack:Stack[Integer] = new ArrayStack[Integer]
+  val stack:Stack[Integer] = new ListStack[Integer]
   
   var i = 0
   for(i <- 0 until 4) stack.push(i)

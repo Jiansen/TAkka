@@ -1,6 +1,6 @@
 package sample.scala.parameterizedtype.generic
 
-class ArrayStack[E] extends Stack[E]{
+class ListStack[E] extends Stack[E]{
   private var list:List[E] = Nil
   
   def empty():Boolean = {
