@@ -9,9 +9,9 @@ object ArrayCopy extends App{
   
   val objs:Array[Any] = Array(new Integer(2), 3.14, "four");
   val ints:Array[Integer] = Array(new Integer(5), new Integer(6));
-  
-  copy[Object, Any, Integer](objs, ints)
-  
-  println(objs.deep.mkString(", "))
-  
+
+  copy[Object, Any, Integer](objs, ints)  
+//  copy[Object, Any, Integer](objs, ints)
+
+  assert(objs.deep.mkString(", ").equals("5, 6, four")) 
 }
