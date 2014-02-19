@@ -1,7 +1,7 @@
 package sample.scala.parameterizedtype.covariance
 
 object Client extends App {
-  var stack:Stack[Integer] = new ArrayStack[Integer](Nil)
+  var stack:Stack[Integer] = new ListStack[Integer](Nil)
   
   var i = 0
   for(i <- 0 until 4) { stack = stack.push(new Integer(i)) }
@@ -17,4 +17,6 @@ object Client extends App {
       val anystack:Stack[Any] = reverse.push(3.0)
       assert(anystack.toString().equals("stack(3.0, 0, 1, 2)"))
   }
+  
+  var stack2:Stack[Any] = stack
 }
