@@ -1,4 +1,4 @@
-package sample.scala.parameterizedtype.contravariance
+package sample.scala.parameterizedtype.covariance
 class ArrayStack[+E](protected val list:List[E]) extends Stack[E]{  
   def empty():Boolean = {
     return list.size == 0
