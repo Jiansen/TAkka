@@ -1,4 +1,4 @@
-package sample.scala.parameterizedtype.variance
+package sample.scala.parameterizedtype.covariance
 
 object ArrayCopy extends App{
   def copy[E, T>:E, S<:E](des:Array[T], src:Array[S]):Unit = {

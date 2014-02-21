@@ -12,7 +12,9 @@ object Stacks {
     return out
   }
   
-  def pushAll[E, T>:E, S<:E](des:Stack[T], src:Stack[S]):Unit = {
+  def move[E, T>:E, S<:E](des:Stack[T], src:Stack[S]):Unit = {
+    
+    
 //    for( i <- 0 until src.length){
 //      des(i) = src(i)
 //    }

@@ -20,4 +20,12 @@ object Client extends App {
   
   //type mismatch; found : sample.scala.parameterizedtype.generic.Stack[Integer] required: sample.scala.parameterizedtype.generic.Stack[Any] 
 //  Note: Integer <: Any, but trait Stack is invariant in type E. You may wish to define E as +E instead. (SLS 4.5)
+  
+  
+//  class Super
+//  class Sub extends Super
+//  
+//  val stacksuper :Stack[Super] = new ListStack[Super]
+//  stacksuper.push(new Super())
+//  stacksuper.push(new Sub())  
 }
