@@ -42,17 +42,21 @@ class SafeCalculator extends TypedActor[Operation] {
 object SupervisorTest extends App{
   val system = ActorSystem("MySystem")
   val calculator:ActorRef[Operation] = system.actorOf(Props[Operation, Calculator], "calculator")
-  val multiplicator = calculator.publishAs[Multiplication]
+  val multiple = calculator.publishAs[Multiplication]  // explicit type conversion 
+  val divide:ActorRef[Division] = calculator  // contravariance
   
   calculator ! Multiplication(3, 2)
-  multiplicator ! Multiplication(3, 3)
-//  multiplicator ! Division(6, 2)  
+  multiple ! Multiplication(3, 3)
+//  multiple ! Division(6, 2)  
   //Compiler Error: type mismatch; found : sample.takka.Division required: 
 //	 sample.takka.Multiplication
+  divide ! Division(6, 2)  
+  
 }
 
 /*
 Terminal Output:
 3 * 2 = 6
 3 * 3 = 9
+6 / 2 = 3
 */
