@@ -13,7 +13,7 @@ object ManifestExample extends App {
   assert(NoManifest.toString.equals("<?>"))
   
   assert(manifest[List[Int]].toString.equals("scala.collection.immutable.List[Int]"))
-  assert(manifest[List[Int]].erasure.toString.equals("class scala.collection.immutable.List"))
+  assert(classOf[List[Int]].toString.equals("class scala.collection.immutable.List"))
   
   def typeName[T](x: T)(implicit m: Manifest[T]): String  = {
     m.toString
