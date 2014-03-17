@@ -32,7 +32,9 @@ class FIBWorker extends Actor {
   
   def receive = {
     case GO(master) =>
-      master ! WorkerReply(self, fib(40))
+//      master ! WorkerReply(self, fib(40))
+      master ! WorkerReply(self, fib(20))
+//      master ! WorkerReply(self, fib(40))
   }
 
 }
