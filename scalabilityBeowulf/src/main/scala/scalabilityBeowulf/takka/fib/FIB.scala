@@ -32,7 +32,9 @@ class FIBWorker extends TypedActor[GO] {
   
   def typedReceive = {
     case GO(master) =>
-      master ! WorkerReply(typedSelf, fib(40))
+//      master ! WorkerReply(typedSelf, fib(40))
+      master ! WorkerReply(typedSelf, fib(30))
+//      master ! WorkerReply(typedSelf, fib(35))      
   }
 
 }
