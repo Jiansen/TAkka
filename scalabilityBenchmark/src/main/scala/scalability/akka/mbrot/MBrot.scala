@@ -96,5 +96,5 @@ object MBrot extends App {
     system.actorOf(Props().withCreator(new WorkerSup(timer, n, np)))
   }
   
-  go(400, 200)
+  go(10, 256)
 }

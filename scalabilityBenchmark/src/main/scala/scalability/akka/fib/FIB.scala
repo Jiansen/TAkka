@@ -26,7 +26,7 @@ class FIBWorker extends Actor {
   
   def receive = {
     case GO(master) =>
-      master ! WorkerReply(self, fib(40))
+      master ! WorkerReply(self, fib(35))
   }
 
 }
@@ -56,7 +56,7 @@ class FIBMaster extends Actor {
 }
 
 object FIB extends App {
-  private val processes:Int = 100
+  private val processes:Int = 200
  
   private val system = ActorSystem("RANSystem")
   val testActor = system.actorOf(Props[FIBMaster], "FibMaster")
