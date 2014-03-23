@@ -121,5 +121,5 @@ object MBrotBench extends App{
   
   private val system = ActorSystem("MBrotSystem", masterNodeConfig(WorkerNodePrefix, ProcessPathPrefix, ProcessNamePrefix, processes, nodes))  
   val master = system.actorOf(Props[WorkerSup], ProcessPathPrefix)
-  master ! GO(10000, processes)
+  master ! GO(1000, processes)
 }
