@@ -165,7 +165,7 @@ class NQueenMaster extends Actor {
       
       // delegate to child processes
       val plist = (for (i<- 1 to nodes) yield {
-        context.actorOf(Props[NQueenDFS], ProcessNamePrefix+i)        
+        context.actorOf(Props[NQueenDFS], ProcessNamePrefix+i)
       })
       
       this.n_partial_solutions = partial_solutions.size 
