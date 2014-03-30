@@ -26,6 +26,7 @@ import akka.actor.ActorRef
 case class NQueenMasterStart(n:Int, nodes:Int)
 case class Search(board:Board, master:ActorRef)
 case class Solutions(boards:List[Board])
+case class NSolutions(number:Int)
 
 case class Board(val queens:List[Int], val n:Int){
   
@@ -137,9 +138,16 @@ object NQueen {
 
 class NQueenDFS extends Actor {
   def receive = {
+    
+    // example I: report all solutions
+//    case Search(board:Board, master:ActorRef) => {
+//      master ! Solutions(NQueen.depth_first_solutions(board))
+//    }
+    // example II: report number of solutions
     case Search(board:Board, master:ActorRef) => {
-      master ! Solutions(NQueen.depth_first_solutions(board))
+      master ! NSolutions(NQueen.depth_first_solutions(board).size)
     }
+    
   }
   
 }
@@ -150,6 +158,7 @@ class NQueenMaster extends Actor {
   var n_partial_solutions = 0
   var solutions:List[Board] = Nil
   
+  var n_solutions:Int = 0;
   
   def receive = {
     case NQueenMasterStart(n, nodes) =>
@@ -181,14 +190,25 @@ class NQueenMaster extends Actor {
       if (this.n_partial_solutions == 0) {
         complete(solutions)
       }
+      
+    case NSolutions(n) =>
+      this.n_solutions += n
+      this.n_partial_solutions -= 1
+      if (this.n_partial_solutions == 0) {
+        complete(n_solutions)
+      }      
   }
   
   def complete(solutions:List[Board]) = {
     timer.finish
-    timer.report
-    
-    println("\n "+solutions.size+" solutions found.\n");
-    
+    timer.report    
+    println("\n "+solutions.size+" solutions found.\n");    
+    sys.exit
+  }
+  def complete(n_solutions:Int) = {
+    timer.finish
+    timer.report    
+    println("\n "+n_solutions+" solutions found.\n");    
     sys.exit
   }
   
