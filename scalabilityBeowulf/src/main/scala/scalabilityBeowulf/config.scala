@@ -54,10 +54,11 @@ object BeowulfConfig {
       remote {
 //        enabled-transports = ["akka.remote.netty.tcp"]
 //        netty.tcp {
-        transport = "akka.remote.netty.NettyRemoteTransport"
+        transport = "akka.remote.netty.NettyRemoteTransport"          
         netty {          
           hostname = "137.195.143.132"
           port = 2553
+          message-frame-size = 1 MiB          
         }
       }
     }
@@ -84,6 +85,7 @@ object BeowulfConfig {
         netty {
           hostname = """" + node(nodeID).ip + """"
           port = """ + node(nodeID).port + """
+          message-frame-size = 1 MiB
         }
       }
     } 
