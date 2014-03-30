@@ -58,7 +58,7 @@ object BeowulfConfig {
         netty {          
           hostname = "137.195.143.132"
           port = 2553
-          message-frame-size = 1 MiB          
+          message-frame-size = 100 MiB          
         }
       }
     }
@@ -85,7 +85,7 @@ object BeowulfConfig {
         netty {
           hostname = """" + node(nodeID).ip + """"
           port = """ + node(nodeID).port + """
-          message-frame-size = 1 MiB
+          message-frame-size = 100 MiB
         }
       }
     } 
