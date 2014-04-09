@@ -7,17 +7,27 @@ TAkka is Open Source and available under the Apache 2 License.
 ## Source Code in This Repository ##
 Source code in this repository is either original or derivative works of open source project.  Work in this reporsitory are licensed under the Apache License, Version 2.0.
 
-* snapshot: the developer version of the takka framework.
+* HWbwlfscript: shell script for running scalability benchmarks on the Beowulf cluster at Heriot-Watt University
 
-* examples: small takka and akka examples
+* EnMAS: TAkka implementation of EnMAS (https://github.com/EnMAS/EnMAS-Framework) project.
+
+* examples: small takka and akka examples.
+
+* scalabilityBenchmark: scalability Benchmarks on a signle machine.
+
+* scalabilityBeowulf: scalability Benchmark on Beowulf cluster, tested on the cluster at Heriot-Watt University.
 
 * socko-webserver: source code of the [socko webserver project](http://sockoweb.org/).  Retrieved on 24 June 2012 
 
 * socko-examples: examples of socko.  Retrieved on 24 June 2012
 
-* takka-socko-webserver: rewrite socko using takka.
+* takka-gatling: TAkka implementation of the [Gatling](https://github.com/excilys/gatling) project.
 
-* takka-socko-examples: rewrite socko examples using takka-socko.
+* takka-socko-webserver: TAkka implementation of Socko[https://github.com/mashupbots/socko]
+
+* takka-socko-examples: TAkka implementation of Socko examples
+
+* takka: source code of the TAkka library.
 
 ## Editing the Source Code
 
@@ -44,7 +54,10 @@ Source code in this repository is either original or derivative works of open so
 
 
 ## Testing on Beowulf
-* running sbt on different beowulf nodes may re-compile the code.  BUG?
+
+Modify the script used in this project or create your own script according to the following guidance.
+
+* running sbt on different beowulf nodes may re-compile the code.
 * We use [sbt-assembly](https://github.com/sbt/sbt-assembly) to package all requried files in a single jar, so that the benchmark application can be run as standard JAVA application
 * the bash script for running the benchmark are given at ***
 
