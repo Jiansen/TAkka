@@ -1,0 +1,10 @@
+Clear TAkka folder
+
+git clone git://github.com/Jiansen/TAkka.git
+
+cd TAkka
+
+./bin/sbt
+
+
+// do rest

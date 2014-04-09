@@ -1,0 +1,2 @@
+cd ./TAkka
+sbt "project scalabilityBeowulf" "assembly"

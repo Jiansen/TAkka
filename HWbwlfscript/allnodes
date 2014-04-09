@@ -1,0 +1,34 @@
+(             ./sshbwlfnode 01) &
+(sleep   1 && ./sshbwlfnode 02) &
+(sleep   2 && ./sshbwlfnode 03) &
+(sleep   3 && ./sshbwlfnode 04) &
+(sleep   4 && ./sshbwlfnode 05) &
+(sleep   5 && ./sshbwlfnode 06) &
+(sleep   6 && ./sshbwlfnode 07) &
+(sleep   7 && ./sshbwlfnode 08) &
+(sleep   8 && ./sshbwlfnode 09) &
+(sleep   9 && ./sshbwlfnode 10) &
+(sleep  10 && ./sshbwlfnode 11) &
+(sleep  11 && ./sshbwlfnode 12) &
+(sleep  12 && ./sshbwlfnode 13) &
+(sleep  13 && ./sshbwlfnode 14) &
+(sleep  14 && ./sshbwlfnode 15) &
+(sleep  15 && ./sshbwlfnode 16) &
+(sleep  16 && ./sshbwlfnode 17) &
+(sleep  17 && ./sshbwlfnode 18) &
+(sleep  18 && ./sshbwlfnode 19) &
+(sleep  19 && ./sshbwlfnode 20) &
+(sleep  20 && ./sshbwlfnode 21) &
+(sleep  21 && ./sshbwlfnode 22) &
+(sleep  22 && ./sshbwlfnode 23) &
+(sleep  23 && ./sshbwlfnode 24) &
+(sleep  24 && ./sshbwlfnode 25) &
+(sleep  25 && ./sshbwlfnode 26) &
+(sleep  26 && ./sshbwlfnode 27) &
+(sleep  27 && ./sshbwlfnode 28) &
+(sleep  28 && ./sshbwlfnode 29) &
+(sleep  29 && ./sshbwlfnode 30) &
+(sleep  30 && ./sshbwlfnode 31) &
+(sleep  31 && ./sshbwlfnode 32) &
+
+wait

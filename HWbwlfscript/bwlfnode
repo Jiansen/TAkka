@@ -1,0 +1,6 @@
+
+case ${HOSTNAME} in
+  bwlf*) node=${HOSTNAME:4} ;;
+esac
+
+java -cp ./TAkka/scalabilityBeowulf/target/scala-2.10/scalabilityBeowulf-assembly-0.1-SNAPSHOT.jar scalabilityBeowulf.takka.TAkkaWorkerNode $node
