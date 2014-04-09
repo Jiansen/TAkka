@@ -110,7 +110,7 @@ class GUIApplication(controller:ActorRef[View2ControllerMessage]) extends Simple
         editable = false
       }
       contents += new Button("Model")
-      contents += new Button("<=")
+      contents += new Button("View")
       contents += new Button("Controller")
     }
   }
