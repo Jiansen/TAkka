@@ -70,6 +70,10 @@ $ java -cp ./scalabilityBeowulf/target/scala-2.10/scalabilityBeowulf-assembly-0.
 
 * run bench
 
+## Setting up EC2 with Auto Scaling
+
+Follow instructions given in [Web_Server_with_AWS_Auto_Scaling.md](https://github.com/Jiansen/TAkka/blob/master/Web_Server_with_AWS_Auto_Scaling.md)
+
 ## Testing Socko on EC2 with Auto Scaling
 
 * build application
