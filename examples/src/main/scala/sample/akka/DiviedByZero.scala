@@ -4,15 +4,15 @@ import akka.actor._
 import scala.concurrent.duration._
 import akka.actor.SupervisorStrategy._
 
-case class Multiplication(m:Int, n:Int)
-case class Division(m:Int, n:Int)
+case class Mul(m:Int, n:Int)
+case class Div(m:Int, n:Int)
 case class GCD(m:Int, n:Int)
 
 class Calculator extends Actor {
   def receive = {
-    case Multiplication(m:Int, n:Int) =>
+    case Mul(m:Int, n:Int) =>
       println(m +" * "+ n +" = "+ (m*n))    
-    case Division(m, n) =>
+    case Div(m, n) =>
       println(m +" / "+ n +" = "+ (m/n))
     case GCD(m, n) =>
      println("GCD of "+m+" and "+n+" is "+gcd(m,n)) 
@@ -56,14 +56,14 @@ object SupervisorTest extends App{
   val system = ActorSystem("MySystem")
   val calculator:ActorRef = system.actorOf(Props[SafeCalculator], "safecalculator")
 
-  calculator ! Multiplication(3, 2)
-  calculator ! Division(10, 0)
-  calculator ! Division(10, 5)
-  calculator ! Division(10, 0)
-  calculator ! Multiplication(3, 2)
+  calculator ! Mul(3, 2)
+  calculator ! Div(10, 0)
+  calculator ! Div(10, 5)
+  calculator ! Div(10, 0)
+  calculator ! Mul(3, 2)
 //  actorRef ! GCD(0, 72)
-  calculator ! Division(10, 0)  
-  calculator ! Multiplication(3, 2)
+  calculator ! Div(10, 0)  
+  calculator ! Mul(3, 2)
 
 }
 

@@ -4,8 +4,6 @@ import takka.actor.ActorRef
 import takka.actor.ActorSystem
 import takka.actor.Props
 import takka.actor.TypedActor
-import sample.takka.SafeCalculator.Operation
-import sample.takka.SafeCalculator.Multiplication
 
 trait Operation
 trait BasicOperation extends Operation
