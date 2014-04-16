@@ -42,7 +42,7 @@ object CalculatorUpgrade extends App {
    val advancedCal = system.actorFor[BasicOperation]("akka://CalculatorSystem/user/calculator")      
    advancedCal ! Multiplication(5, 3)
    advancedCal ! Divison(10, 3)
-   advancedCal ! Upgrade(advancedCalculator)
+   advancedCal ! Upgrade(advancedCalculator) 
 }
 
 
