@@ -5,8 +5,8 @@ import takka.actor.ActorSystem
 import takka.actor.Props
 import takka.actor.TypedActor
 
-trait Operation
-trait BasicOperation extends Operation
+//trait Operation
+trait BasicOperation // extends Operation
 case class Multiplication(m:Int, n:Int) extends BasicOperation
 case class Upgrade[Op >: BasicOperation](advancedCalculator:Op=>Unit) extends BasicOperation 
 
@@ -25,9 +25,10 @@ object CalculatorUpgrade extends App {
   val simpleCal:ActorRef[BasicOperation] = system.actorOf(Props[BasicOperation, CalculatorServer], "calculator")
     
   simpleCal ! Multiplication(5, 1)
-  case class Divison(m:Int, n:Int) extends Operation
+  case class Divison(m:Int, n:Int) extends BasicOperation // Operation
    
-  def advancedCalculator:Operation=>Unit = {
+//  def advancedCalculator:Operation=>Unit = {
+  def advancedCalculator:BasicOperation=>Unit = {  
     case Multiplication(m:Int, n:Int) => 
       println(m +" * "+ n +" = "+ (m*n))
     case Divison(m:Int, n:Int) => 
@@ -37,7 +38,8 @@ object CalculatorUpgrade extends App {
   }  
      
    simpleCal ! Upgrade(advancedCalculator)    
-   val advancedCal = system.actorFor[Operation]("akka://CalculatorSystem/user/calculator")   
+//   val advancedCal = system.actorFor[Operation]("akka://CalculatorSystem/user/calculator")   
+   val advancedCal = system.actorFor[BasicOperation]("akka://CalculatorSystem/user/calculator")      
    advancedCal ! Multiplication(5, 3)
    advancedCal ! Divison(10, 3)
    advancedCal ! Upgrade(advancedCalculator)
