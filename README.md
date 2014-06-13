@@ -29,6 +29,11 @@ Source code in this repository is either original or derivative works of open so
 
 * takka: source code of the TAkka library.
 
+
+## Related Code in Other Repository ##
+* [TAkka Play](https://github.com/Jiansen/TAkka-Play)
+* The ATM example and the Elavator example are ported from commercial courses used at QuivQ and Erlang Solutions.   They are saved in a private repository.   If you would like to have an access to the code, please contact me first or directly contact QuviQ.com and Erlang Solutions for their permissions.
+
 ## Editing the Source Code
 
 * We are currently using [Eclipse 3.8 Juno](http://projects.eclipse.org/releases/juno) 
