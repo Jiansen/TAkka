@@ -1,0 +1,295 @@
+\documentclass[11pt, a4paper, authoryear]{article}
+%% \documentclass[coverpage]{myproposal}
+
+\title{Distributed Programming\\ with Types and Supervision Tree: 
+\\ Third Year PhD Progress Report}
+\author{Jiansen HE}
+
+
+\usepackage{comment}
+\usepackage{natbib} 
+%% \usepackage[style=alphabetic]{biblatex}
+%% \usepackage[authoryear]{natbib}
+%% \PassOptionsToPackage{authoryear}{natbib}
+%% \usepackage{caption}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{subcaption}
+\usepackage{url}
+
+\usepackage{paralist}
+\usepackage[pdfpagelabels]{hyperref}
+\usepackage[all]{hypcap}
+\usepackage{verbatim}
+\usepackage{array}
+\usepackage{float}
+\usepackage{multirow}
+% \usepackage{rotating}
+\usepackage{multicol}
+\usepackage{longtable}
+\usepackage{pdfpages}
+
+\usepackage{listings} 	
+% "define" Scala
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,%
+    do,else,extends,false,final,finally,%
+    for,if,implicit,import,match,mixin,%
+    new,null,object,override,package,%
+    private,protected,requires,return,sealed,%
+    super,this,throw,trait,true,try,%
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
+
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+ 
+% Default settings for code listings
+\lstset{frame=tb,
+  language=scala,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left, % none,
+  numbersep=2pt,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  frame=none, % single,
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  captionpos=b
+}
+
+
+
+\begin{document}
+
+%% \title{Distributed Programming with Types and OTP Design Principles: \\ Second Year Review}
+%% \author{Jiansen HE}
+%% \author{ \hspace{2.8 cm} Jiansen HE\newline \\  Supervised by\\ Professor Philip Wadler \\ Professor Phil Trinder \ \ \         \\ \ \ \ Professor Donald Sannella}
+%% \institutes{The Laboratory for Foundations of Computer Science}
+% \date{31 Aug 2013}
+\maketitle
+%% \tableofcontents
+%% aim&objectives 	progress 		research problems & solution	evaluation	plan
+
+
+\abstract{This report reviews objectives and progress of my PhD project.  
+Main research problems have been solved during the process of designing and 
+implementing the TAkka library.  The TAkka library has been evaluated in terms 
+of correctness, expressiveness, and scalability.  To help the design of 
+applications with a high reliability, the TAkka library is also shipped with 
+tools for debugging and monitoring purposes.
+
+Statistic analysis shows that it is impractical to measure the reliabilities 
+of a system with low failure rate.  I propose to extend the scope of this 
+research to include a formal specification of supervision tree. The 
+specification gives a methodology to derive the reliability of a system built 
+using supervision tree from the dependencies of nodes and the reliabilities of 
+individual nodes.}
+
+
+
+\section{Project Motivation and Objectives}
+
+The aim of this PhD project is to {\it study how types and the 
+supervision principle can be merged to help the construction of reliable 
+distributed systems }.  This project intends to explore factors that encourage 
+programmers to employ types and good programming principles.  To this end, the 
+following iterative and incremental tasks are set.
+
+\begin{enumerate}
+  \item To identify some applications implemented in Erlang or Akka using the 
+supervision principles.  Those examples will be served as references to 
+evaluate frameworks that support distributed programming.  Candidate examples 
+shall cover a wide range of aspects in distributed programming, including but 
+not limited to 
+    \begin{inparaenum} [(a)]
+      \item transmitting messages and potentially computation closures, 
+      \item modular composition of distributed components, 
+      \item default and extensible failure recovery mechanism, and
+      \item dynamic topology and hot code swapping.
+    \end{inparaenum}
+    
+  \item To implement a library, TAkka, that supports actor programming and the 
+supervision principles in a strongly typed setting.  Basic components of the 
+library may be built on top of Akka\citep{akka_doc} in the case that repeated 
+implementation could be avoided.  Comparing to the Akka library, the new library 
+should be able to prevent more forms of type errors at earlier development 
+stages.
+    
+  \item To re-implement identified applications using the library developed in 
+task 2.  The primary purpose of this task is to be aware of the strengths and 
+limitations of using strongly and weakly typed supervision libraries.  As a 
+research which contains certain levels of overlaps with other existing and 
+evolving frameworks, this research should distinguish itself from others by 
+devised solutions to some problems which are difficult to be solved by 
+alternatives.
+
+  \item To evaluate how different supervision libraries meet the demands of 
+distributed programming.  This project suggests evaluating libraries with
+respects to efficiency, scalability, and reliability.
+\end{enumerate}
+
+
+%% Progress Overview
+\section{Progress Review}
+
+The main topic of this research was set as the result of the background study 
+in the first year.  During the second year, the research objectives and the 
+design of the TAkka library were refined in quarterly reviews.  By the end of 
+the second year, I had
+\begin{inparaenum}[\itshape a\upshape)]
+\item implemented key components of the TAkka library;
+\item proposed and implemented a novel typed nameserver that maps each typed 
+symbol to typed a value of corresponding type;
+\item demonstrated how to solve the type pollution problem using 
+type-parameterized actor and subtyping; and 
+\item proposed a methodology for evaluating libraries supporting the 
+supervision principle.
+\end{inparaenum} 
+
+The third year is focused on the methodology for evaluating TAkka and other 
+libraries that support the supervision principle.  In short,
+
+
+\begin{itemize}
+  \item The correctness and the expressiveness of the TAkka library is 
+evaluated by porting a selection of small and medium sized applications written 
+in Erlang and Akka.
+  \item The scalability of sample applications written in TAkka and Akka is 
+compared regarding to speed-up and throughput increases.  Benchmark examples 
+for speed-up measurement are selected from the Bencherl project and tested on 
+the Beowulf cluster at the Heriot-Watt University.  The example for throughput 
+measurement is selected from the Techempower web framework benchmarks
+\citep{techempower} and is tested using Amazon EC2 instances with a Load 
+Balancer.
+  \item The reliability of a TAkka application can be tested by using the 
+ChaosMonkey library and the SupervisionView library.  A chaos monkey test 
+assesses the robustness of a TAkka application by randomly kills actors.  The 
+SupervisionView library can be used to monitor dynamical changes of a 
+supervision tree.
+\end{itemize}
+
+The design, implementation, and evaluation of TAkka libraries are elaborated in 
+the attached paper.
+
+
+
+\section{Measuring Reliability}
+
+Due to the nature of library development, we cannot assure the reliability of 
+applications built using the supervision principle; nor the achieved high 
+reliability of large Erlang applications can indicate that a newly implemented 
+application using the supervision principle will have a desired reliability.  
+To help software developers identifying bugs of their applications, 
+the ChaosMonkey library and the SupervisionView library are shipped with TAkka. 
+ However, a quantitative measurement of software reliability under operational 
+environment is still desired in practice.  To solve this problem, two 
+approaches are discussed in the attached research proposal.
+
+The first approach is measuring the target system as black-box.  Unfortunately, 
+\citep{Littlewood93} shows that even a long time failure-free observation 
+itself does not suggest the software system will achieve a high reliability in 
+the future.  I attempted to replace \citep{Littlewood93}'s single-run experiment 
+by 
+iterative experiment so that the required experiment time for some applications 
+can be reduced.  Unfortunately, in most cases, predicting the reliability of a 
+system with low failure rate is still impractical.  Therefore, I proposed the 
+second approach which focuses on applications built using the supervision 
+principle.
+
+The second approach is giving a specification of actor-based supervision tree 
+and measuring the reliability of a supervision tree as the accumulated result 
+of reliabilities of its sub-trees. 
+By eliminating language features not related to supervision, both the worker 
+node and the supervisor node in a supervision tree can be modelled as  
+Deterministic Finite Automata.  Analysis shows that various of
+supervision trees can be modelled by a supervision tree that only contains 
+simple worker node and simple supervisor node.  More importantly, the 
+reliability of a node in the proposed model is simply defined as the possibility 
+that the node is in its {\bf Free} state, in which it can react to a request.  
+To accomplish this study, following problems need to be solved:
+\begin{itemize}
+  \item What are possible dependencies between nodes? For each dependency,
+what is the algebraic relationship between the reliability of a sub-tree
+and reliabilities of individual nodes?
+  \item Based on the above result, how to calculate the overall reliabilities
+of a supervision tree? When will the reliability be improved by using
+supervising tree, and when will not?
+  \item Given the reliabilities of individual workers and constraints between
+them, is there an algorithm to give a supervision tree which gives a desired 
+reliability?  If not, can we determine if the desired reliability is not
+achievable?
+\end{itemize}
+
+
+\newpage
+
+\section{Timeline for Completing Researches}
+
+
+\paragraph{September 2013}
+
+\begin{itemize}
+  \item Complete the TAkka paper.  The target venue will be ECOOP. The deadline 
+for ECOOP14 Research Papers has not been announced. The deadline for ECOOP13 
+Research Papers is 22 Dec 2012.
+  \item Write a technical memo about the proposed specification of 
+supervision tree.  The specification will focus on actor-based systems.  
+Candidate Erlang and Akka examples will be identified to check the coverage of 
+the specification.
+\end{itemize}
+
+\paragraph{December 2013}
+\begin{itemize}
+  \item Document the design, implementation, and evaluation of the TAkka 
+library in thesis format.
+  \item Complete the specification for supervision tree.  The specification 
+will includes a comprehensive study on the relationship between system 
+reliability and common dependencies between actors.
+  \item Write a brief proposal on extending the scope of the specification for 
+supervision tree so that it can model a wider range of systems.  The proposal 
+will include the target scope of the generalisation, any modifications to the 
+specification for actor-based system, and examples for the evaluation process.
+  \item Write up a quarterly review report about the above tasks.  The purpose 
+of the quarterly review is tracking the direction and progress of my PhD 
+research project.  The review report will discuss whether extending the scope 
+of the specification for supervision tree should be part of the PhD research.
+\end{itemize}
+
+
+\paragraph{March 2014}
+\begin{itemize}
+  \item Document the specification for supervision tree in thesis format. 
+\end{itemize}
+
+\paragraph{June 2014}
+\begin{itemize}
+  \item Complete the thesis writing.
+\end{itemize}
+
+\bibliographystyle{abbrvnat}
+\bibliography{Aug2013}
+
+\appendix
+%\include{takka}
+\includepdf[pages={1-20}]{takka.pdf}
+\includepdf[pages={1-14}]{reliability.pdf}
+
+\end{document}

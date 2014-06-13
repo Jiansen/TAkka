@@ -1,0 +1,40 @@
+\BOOKMARK [0][-]{chapter.1}{Chapter Introduction}{}% 1
+\BOOKMARK [0][-]{chapter.2}{Chapter Background and Related Work}{}% 2
+\BOOKMARK [1][-]{section.2.1}{The Actor Programming Model}{chapter.2}% 3
+\BOOKMARK [1][-]{section.2.2}{The Supervision Principle}{chapter.2}% 4
+\BOOKMARK [1][-]{section.2.3}{Erlang and OTP Design Principles}{chapter.2}% 5
+\BOOKMARK [1][-]{section.2.4}{The Akka Library}{chapter.2}% 6
+\BOOKMARK [1][-]{section.2.5}{The Scala Type System}{chapter.2}% 7
+\BOOKMARK [1][-]{section.2.6}{Summing Up}{chapter.2}% 8
+\BOOKMARK [0][-]{chapter.3}{Chapter TAkka: Design and Implementation}{}% 9
+\BOOKMARK [1][-]{section.3.1}{TAkka Example: a String Counter}{chapter.3}% 10
+\BOOKMARK [1][-]{section.3.2}{Type-parameterized Actor}{chapter.3}% 11
+\BOOKMARK [1][-]{section.3.3}{Type-parameterized Actor Reference}{chapter.3}% 12
+\BOOKMARK [1][-]{section.3.4}{Type Parameterized Props}{chapter.3}% 13
+\BOOKMARK [1][-]{section.3.5}{Type Parameterized Actor Context}{chapter.3}% 14
+\BOOKMARK [1][-]{section.3.6}{Backward Compatible Behaviour Upgrade}{chapter.3}% 15
+\BOOKMARK [1][-]{section.3.7}{Typed Name Server}{chapter.3}% 16
+\BOOKMARK [1][-]{section.3.8}{Look up Typed Actor References via Actor System}{chapter.3}% 17
+\BOOKMARK [1][-]{section.3.9}{Supervisor Strategies}{chapter.3}% 18
+\BOOKMARK [1][-]{section.3.10}{Handling System Messages}{chapter.3}% 19
+\BOOKMARK [1][-]{section.3.11}{Case Study: A Distributed Calculator}{chapter.3}% 20
+\BOOKMARK [1][-]{section.3.12}{Design Alternatives}{chapter.3}% 21
+\BOOKMARK [1][-]{section.3.13}{Summing Up}{chapter.3}% 22
+\BOOKMARK [0][-]{chapter.4}{Chapter Evolution, Not Revolution }{}% 23
+\BOOKMARK [1][-]{section.4.1}{TAkka Service with Akka Client}{chapter.4}% 24
+\BOOKMARK [1][-]{section.4.2}{Akka Service with TAkka Client}{chapter.4}% 25
+\BOOKMARK [0][-]{chapter.5}{Chapter TAkka: Evaluation}{}% 26
+\BOOKMARK [1][-]{section.5.1}{The Type Pollution Problem}{chapter.5}% 27
+\BOOKMARK [1][-]{section.5.2}{Expressiveness}{chapter.5}% 28
+\BOOKMARK [1][-]{section.5.3}{Throughput}{chapter.5}% 29
+\BOOKMARK [1][-]{section.5.4}{Efficiency and Scalability}{chapter.5}% 30
+\BOOKMARK [1][-]{section.5.5}{Assessing System Reliability and Availability}{chapter.5}% 31
+\BOOKMARK [1][-]{section.5.6}{Summing Up}{chapter.5}% 32
+\BOOKMARK [0][-]{chapter.6}{Chapter Future Work}{}% 33
+\BOOKMARK [1][-]{section.6.1}{Supervision and Typed Actor in Other Systems}{chapter.6}% 34
+\BOOKMARK [1][-]{section.6.2}{Benchmark Results from Large Real Applications}{chapter.6}% 35
+\BOOKMARK [1][-]{section.6.3}{Supervision Tree that Supports Software Rejuvenation}{chapter.6}% 36
+\BOOKMARK [1][-]{section.6.4}{Measuring and Predicting System Reliability}{chapter.6}% 37
+\BOOKMARK [0][-]{chapter.7}{Chapter Thesis Summary}{}% 38
+\BOOKMARK [1][-]{section.7.1}{Overview of Contributions}{chapter.7}% 39
+\BOOKMARK [1][-]{section.7.2}{Conclusion}{chapter.7}% 40

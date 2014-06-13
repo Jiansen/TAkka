@@ -1,0 +1,204 @@
+\section{Numerical Illustrations}
+
+\subsection{Examples from \citep{huang1995software}}
+
+\subsubsection{Example A}
+\begin{itemize}
+  \item Mean Time Between Failures (MTBF): $12 \times 30 \times 24$ hours
+  \item failure repair time:  30 minutes
+  \item base longevity interval:  $7 \times 24$ hours
+  \item rejuvenation time: 20 minutes
+  \item average cost of unscheduled downtime: \$1700 / hour
+  \item average cost of scheduled downtime: \$40 / hour  
+\end{itemize}
+
+\begin{table}[h]
+\begin{tabular}{ | l || c | c | c | }
+  \hline
+   \multicolumn{4}{|c|}{For $12 \times 30 \times 24 $ hours } \\
+  \hline                       
+    & no rejuvenation & once every 3 weeks & once every two weeks \\
+   \hline     
+  Hours of Down Time  & 0.49 & 5.965 & 8.727 \\
+  \hline    
+  \$Cost of Down Time & 490  & 554 & 586 \\
+  \hline 
+\end{tabular}
+  \caption{Huang etc's estimation for Example A}
+\end{table}  
+  
+
+
+\subsubsection{Example B}
+\begin{itemize}
+  \item Mean Time Between Failures (MTBF): $3 \times 30 \times 24$ hours
+  \item failure repair time:  30 minutes
+  \item base longevity interval:  $3 \times 24$ hours
+  \item rejuvenation time: 10 minutes
+  \item average cost of unscheduled downtime: \$5000 / hour
+  \item average cost of scheduled downtime: \$5 / hour  
+\end{itemize}
+
+\begin{table}[h]
+\begin{tabular}{ | l || c | c | c | }
+  \hline
+   \multicolumn{4}{|c|}{For $12 \times 30 \times 24 $ hours } \\
+  \hline                       
+    & no rejuvenation & once every 2 weeks & once a week \\
+   \hline     
+  Hours of Down Time  & 1.94 & 5.70 & 9.52 \\
+  \hline    
+  \$Cost of Down Time & 9675.25  & 7672.43 & 5643.31 \\
+  \hline  
+\end{tabular}
+  \caption{Huang etc's estimation for Example B}
+\end{table}  
+  
+
+\begin{figure}[h]
+     \begin{center}
+     \subfigure[]{
+\includegraphics[scale=0.18]{./plot/Huang1995B2/accumulated_cost_day.png}
+        }
+\subfigure[]{
+\includegraphics[scale=0.18]{./plot/Huang1995B2/accumulated_cost_month.png}
+        }\\
+        \subfigure[]{            
+\includegraphics[scale=0.18]{./plot/Huang1995B3/accumulated_cost_day.png}
+        }
+	\subfigure[]{            
+\includegraphics[scale=0.18]{./plot/Huang1995B3/accumulated_downtime_month.png}
+        }\\ 
+        
+        \subfigure[]{
+\includegraphics[scale=0.18]{./plot/Huang1995B2/availability_day.png}
+        }
+\subfigure[]{
+\includegraphics[scale=0.18]{./plot/Huang1995B2/availability_month.png}
+        }\\
+        \subfigure[]{            
+\includegraphics[scale=0.18]{./plot/Huang1995B3/availability_day.png}
+        }
+	\subfigure[]{            
+\includegraphics[scale=0.18]{./plot/Huang1995B3/availability_month.png}
+        }\\ 
+        
+             \subfigure[]{
+\includegraphics[scale=0.18]{./plot/Huang1995B2/acc_rej_time_day.png}
+        }
+\subfigure[]{
+\includegraphics[scale=0.18]{./plot/Huang1995B2/acc_rej_time_month.png}
+        }\\
+        \subfigure[]{            
+\includegraphics[scale=0.18]{./plot/Huang1995B3/acc_rej_time_day.png}
+        }
+	\subfigure[]{            
+\includegraphics[scale=0.18]{./plot/Huang1995B3/acc_rej_time_month.png}
+        }\\
+
+    \end{center}
+     \caption{Example B}
+   \label{throughput}
+\end{figure}
+
+\subsubsection{Example C}
+\begin{itemize}
+  \item Mean Time Between Failures (MTBF): $3 \times 30 \times 24$ hours
+  \item failure repair time:  $2$ hours
+  \item base longevity interval (BLI):  $10 \times 24$ hours
+  \item rejuvenation time: 10 minutes
+  \item average cost of unscheduled downtime: \$5000 / hour
+  \item average cost of scheduled downtime: \$5 / hour  
+\end{itemize}
+
+\begin{table}[h]
+\begin{tabular}{ | l || c | c | c | }
+  \hline
+   \multicolumn{4}{|c|}{For $12 \times 30 \times 24 $ hours } \\
+  \hline                       
+    & no rejuvenation & once every 2 weeks & once a week \\
+   \hline     
+  Hours of Down Time  & 7019 & 6.83 & 6.36 \\
+  \hline    
+  \$Cost of Down Time & 3.6K  & 2.48K & 1.11K \\
+  \hline  
+\end{tabular}
+  \caption{Huang etc's estimation for Example C}
+\end{table}  
+  
+
+\begin{figure}[h]
+     \begin{center}
+     \subfigure[]{
+\includegraphics[scale=0.18]{./plot/Huang1995C2/accumulated_cost_day.png}
+        }
+\subfigure[]{
+\includegraphics[scale=0.18]{./plot/Huang1995C2/accumulated_cost_month.png}
+        }\\
+%        \subfigure[]{            
+%\includegraphics[scale=0.18]{./plot/Huang1995C3/accumulated_cost_day.png}
+%        }
+%	\subfigure[]{            
+%\includegraphics[scale=0.18]{./plot/Huang1995C3/accumulated_downtime_month.png}
+%        }\\ 
+        
+        \subfigure[]{
+\includegraphics[scale=0.18]{./plot/Huang1995C2/availability_day.png}
+        }
+\subfigure[]{
+\includegraphics[scale=0.18]{./plot/Huang1995C2/availability_month.png}
+        }\\
+%        \subfigure[]{            
+% \includegraphics[scale=0.18]{./plot/Huang1995C3/availability_day.png}
+%        }
+%	\subfigure[]{            
+% \includegraphics[scale=0.18]{./plot/Huang1995C3/availability_month.png}
+%        }\\ 
+        
+             \subfigure[]{
+\includegraphics[scale=0.18]{./plot/Huang1995C2/acc_rej_time_day.png}
+        }
+\subfigure[]{
+\includegraphics[scale=0.18]{./plot/Huang1995C2/acc_rej_time_month.png}
+        }\\
+%        \subfigure[]{            
+%\includegraphics[scale=0.18]{./plot/Huang1995C3/acc_rej_time_day.png}
+%        }
+%	\subfigure[]{            
+%\includegraphics[scale=0.18]{./plot/Huang1995C3/acc_rej_time_month.png}
+%        }\\   
+    \end{center}
+     \caption{Example C}
+\end{figure}
+
+
+\subsubsection{Simulation Results}
+
+\begin{itemize}
+  \item 4 experiments for each example: two different rejuvenation schedules, 
+two simulated longevity (1 year and 20 years)
+  \item basic time unit: 10 minutes
+  \item failure distribution: uniform distributio, $U(BLI, 2\times MTBF-BLI)$
+\end{itemize}
+
+
+
+
+
+\subsubsection{Observations}
+
+
+\begin{itemize}
+  \item In each of the above examples, it takes more than 1.5 years to reach steady-state (see availability graph).
+  the property of a reliable system 1.5 years from now is less valuable as the its property now.
+  \item The cost for the first year is lower than the expected annual cost
+  \item For a reliable system, the main cost is the rejuvenation cost.
+\end{itemize}
+
+
+
+\subsection{Examples from Dohi}
+
+Use the same parameter used in the paper, assume weibull distribution as in the paper
+
+

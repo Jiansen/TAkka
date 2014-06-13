@@ -1,0 +1,149 @@
+\documentclass[coverpage]{inftechrep}
+
+\usepackage{comment}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{url}
+
+\usepackage{paralist}
+\usepackage{hyperref}
+\usepackage[all]{hypcap}
+\usepackage{verbatim}
+\usepackage{array}
+\usepackage{float}
+\usepackage{multirow}
+% \usepackage{rotating}
+\usepackage{multicol}
+\usepackage{longtable}
+\usepackage{changepage}
+
+\usepackage{color}
+\usepackage{listings}   
+% "define" Scala
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,%
+    do,else,extends,false,final,finally,%
+    for,if,implicit,import,match,mixin,%
+    new,null,object,override,package,%
+    private,protected,requires,return,sealed,%
+    super,this,throw,trait,true,try,%
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
+% A comment in a draft (shouldn't appear in the final version).
+\newcommand{\mycomment}[1]{\(\spadesuit\){\bf #1 }\(\spadesuit\)}
+% Comment this out in the draft
+% \newcommand{\mycomment}[1]{}
+\newcommand{\pmcomment}[1]{\comment{PM}{#1}}
+\newcommand{\pwtcomment}[1]{\comment{PT}{#1}}
+\newcommand{\rscomment}[1]{\comment{RS}{#1}}
+
+% line break in table.  e.g.
+% Foo bar & \specialcell{Foo\\bar} & Foo bar \\    % vertically centered
+% Foo bar & \specialcell[t]{Foo\\bar} & Foo bar \\ % aligned with top rule
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
+  
+
+\begin{document}
+\title{Statically Typed Reliability \\Type-parametrized Actors and Their
+Supervision (v.0)
+}
+\author{Jiansen HE}
+% \reportnumber{25}
+% \reportyear{1999}
+% \reportmonth{5}
+\keywords{actor, type, supervision tree, nameserver}
+% \published{Presented at the WITCH99 Conference, Debrecen, Hungary, May 1999.}
+\institutes{
+  Laboratory for Foundations of Computer Science}
+\maketitle
+
+\begin{abstract}
+Building robust concurrent programs, especially in distributed settings, is
+challenging as it often involves complex program structures and dynamic
+behaviours.  The robustness of concurrent programs could be improved by
+\begin{inparaenum}[(i)]
+ \item using static type checking to prevent certain data misuses, or
+ \item employing failure recovery mechanisms such as supervision tree.
+\end{inparaenum}
+An important open question is to what extent those approaches could be merged.
+
+This paper presents the design, implementation and preliminary evaluation
+results of the TAkka library, where types of actor related components are
+statically typed and operations are type checked at the earliest possibility.
+We introduce actors parametrized by the type of messages they expect to
+receive. We show that it is straightforward to construct
+supervision trees of type-parametrized actors. We minimize the number of system
+messages that may be handled by general users by providing standard supervision
+strategies.
+
+We evaluate the TAkka library by re-implementing 19 examples from other
+OTP-like libraries.  our results show that TAkka has small runtime and
+code size overheads compared with Akka. Finally, TAkka programs have similar
+scalability comparing
+to their Akka equivalent.
+
+\mycomment{rewrite the abstract to reflect the purpose of this technical report.}
+
+\mycomment{Let's show how static and dynamic type checking improve actor
+programming}
+
+\end{abstract}
+
+\input{intro}
+\input{background}
+\input{actor}
+\input{implementation}
+\input{evaluation}
+
+
+\section{Conclusion}
+
+Programs written in Actor Model should be easy to reason their intentions
+\cite{Hewitt:1973}.  Unfortunately, actors in Erlang and Akka accept
+dynamically typed messages and therefore have vague contracts with their outside
+world.  The TAkka library introduces a type-parameter for actor-related class.
+The additional type-parameter specifies the intention of that actor's solo
+communication interface. More importantly, with the help of type-parametrized
+actors, the implementation of an actor can be statically checked against the
+intention of that actor.
+
+In addition to eliminating programming bugs and type errors, programmers would
+like to have reliable failure recovery mechanisms for unexpected run-time
+errors.  Supervision tree \cite{OTP} is such a mechanism that has improved the
+reliability of a large telecom system written in Erlang.  We are glad to see
+that type-parametrized actors can form supervision trees in the same way as
+regular actors.
+
+Lastly, tests show that building type-parametrized actor on top of Akka actor
+does not introduce significant overheads, respecting to program size,
+efficiency, and scalability.  The above test result is encouraging in the sense
+that a large amount of previous actor library implementation could be re-used.
+We expect similar results could be obtained in other OTP-like libraries such as
+the future version of CloudHaskell.
+
+
+% \acks
+
+% Acknowledgments
+
+
+
+\bibliographystyle{plain}
+\bibliography{Jiansen}
+
+\appendix
+%\include{api}
+%%\include{plan}
+
+\end{document}

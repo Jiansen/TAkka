@@ -1,0 +1,23 @@
+\section{Project Aim and Objectives}
+
+\subsection{Project Aim}
+\label{aim}
+The aim of this project is to {\it{build a library that supports OTP design principles in a typed setting}}. This project intends to explore factors that encourage programmers to employ good programming principles.  This project will demonstrate how types and appropriate models help the construction of distributed systems.
+
+\subsection{Project Objectives}
+\label{objectives}
+
+\begin{enumerate}
+  \item To identify some medium-sized applications implemented in Erlang using OTP principles.  Those examples will be served as references to evaluate frameworks that support distributed programming.  Candidate examples shall cover a wide range of aspects in distributed programming, including but not limited to 
+    \begin{inparaenum} [(a)]
+      \item transmitting messages and potentially computation closures, 
+      \item modular composition of distributed components, 
+      \item default and extensible failure recovery mechanism, 
+      \item eventually consistency model for shared states, and 
+      \item dynamic topology configuration and hot code swapping.
+    \end{inparaenum} 
+  \item To re-implement and compare identified applications within existing frameworks.  The primitives purpose of this work is to be aware of prominent features and limitations of existing frameworks.  As a research which contains certain level of overlaps with other existing and evolving frameworks, this research should distinguish itself from others by devised solutions to some problems which are difficult to be solved by alternatives.  Moreover, the evaluation component formalised in this work is likely to be novel for comparing frameworks aiming at supporting distributed computation.  The same evaluation component will be used for evaluating our later developed library as well.
+  \item To implement a library that supports OTP design principles in a typed setting.  This will be an iterative and incremental work in parallel with works on objective 1 and 2.  The library could be built either on top of existing frameworks or with lower level constructs.  It is important to note that the library might be based on an abstraction that is more general than the actor model.  Although OTP design principles were proposed for the Erlang language, which is based on the Actor model, we believe that it should be possible to rephrase those good programming principles in other models.  To demonstrate the wide applications of OTP design principles, the library interface should provide a certain level of generality so that it could be implemented by and used within different models.
+  \item To evaluate how the proposed library meets the demands of distributed programming.  At this stage, the proposed library will be used to (a) demonstrate how to write small programs aiming at different requirements; (b) demonstrate its scalability of programming in the large by re-implementing applications used in objective 1 and 2.  The evaluation phase does not suggest the end of this project.  The library will be published to programming communities for feedbacks before we conclude.
+
+\end{enumerate}

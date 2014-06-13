@@ -1,0 +1,240 @@
+\section{APIs of the Type-parametrised Actor Library and the Akka Library}
+
+\subsection{Actor}
+\begin{table}[h]\footnotesize
+  \caption{The Actor Class}
+  \label{actor_class}
+  \centering
+  \begin{tabular}{ l ||  l }
+abstract class Actor[Msg:Manifest]  &  
+trait Actor\\
+
+protected def typedReceive:PartialFunction[Msg, Unit] &
+protected def receive:PartialFunction[Any, Unit]\\
+
+protected[actor] implicit val typedContext:ActorContext[Msg]&
+protected[akka.actor] implicit val context:ActorContext\\
+
+implicit final val typedSelf:ActorRef[Msg]&
+implicit final val self:ActorRef\\
+
+final lazy val typedRemoteSelf:ActorRef[Msg]&\\
+
+def possiblyHarmfulHandler:akka.actor.PossiblyHarmful $\Rightarrow$ Unit &\\
+
+def preStart (): Unit & def preStart (): Unit\\
+
+def postStop (): Unit & def postStop (): Unit\\
+
+def preRestart (reason: Throwable, message: Option[Any]): Unit & def preRestart (reason: Throwable, message: Option[Any]): Unit\\
+
+def postRestart (reason: Throwable): Unit & def postRestart (reason: Throwable): Unit\\
+
+& def sender : ActorRef\\
+
+  \end{tabular}
+\end{table}
+
+%% Table-\ref{actor_class} gives the APIs of the Actor class 
+
+
+\subsection{ActorRef}
+\begin{table}[h]\footnotesize
+  \caption{The ActorRef Class}
+  \label{actorRef_class}
+  \centering
+  \begin{tabular}{ l ||  l }
+abstract class ActorRef[-Msg : Manifest] &  
+class ActorRef\\
+
+tell (msg: Msg): Unit &
+tell (msg: Any): Unit\\
+
+final def compareTo (other: ActorRef[$\_$]): Int &
+final def compareTo (other: ActorRef): Int\\
+
+
+def isTerminated : Boolean &
+def isTerminated : Boolean\\
+
+def path : akka.actor.ActorPath &
+def path : ActorPath\\
+
+& def forward (message: Any)(implicit context: ActorContext): Unit\\
+
+  \end{tabular}
+\end{table}
+
+\subsection{ActorContext}
+
+\begin{table}[h]\footnotesize
+  \caption{The ActorContext Class}
+  \label{actorContext_class}
+  \centering
+  \begin{tabular}{ l ||  l }
+abstract class ActorContext[M:Manifest] &  
+trait ActorContext\\
+
+def typedSelf : ActorRef[M] & def self : ActorRef\\
+
+val props:Props[M] &
+def props : Props\\
+
+def actorOf[Msg:Manifest]& \multirow{2}{*}  {def actorOf (props: Props, name: String): ActorRef}\\
+\hspace{1.3 cm} (props:Props[Msg],  name: String):ActorRef[Msg]\\
+
+def actorOf[Msg:Manifest]& \multirow{2}{*}  {def actorOf (props: Props): ActorRef}\\
+\hspace{1.3 cm} (props:Props[Msg]):ActorRef[Msg]\\
+
+def remoteActorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg]\\
+def remoteActorOf[Msg:Manifest](props:Props[Msg], \\
+\hspace{1.3 cm} name:String):ActorRef[Msg]\\
+
+def stop (actor: ActorRef[$\_$]): Unit & def stop (actor: ActorRef): Unit\\
+
+implicit def system : ActorSystem & implicit def system : ActorSystem\\
+
+def watch[Msg](subject: ActorRef[Msg]): ActorRef[Msg] & def watch (subject: ActorRef): ActorRef\\
+def unwatch[Msg](subject: ActorRef[Msg]): ActorRef[Msg] & def unwatch (subject: ActorRef): ActorRef\\
+
+def actorFor[E:Manifest](actorPath: String): ActorRef[E] &
+def actorFor (path: String): ActorRef\\
+
+def become[SupM>:M](behavior: SupM$\Rightarrow$Unit,&
+def become (behavior: Any$\Rightarrow$Unit,\\
+\hspace{1.5 cm} pHH:akka.actor.PossiblyHarmful$\Rightarrow$Unit)& \hspace{1.5 cm} discardOld: Boolean = true):Unit\\
+\hspace{1.5 cm} (implicit arg:Manifest[SupM]):ActorRef[SupM])\\
+
+def receiveTimeout : Option[Duration] & def receiveTimeout : Option[Duration]\\
+
+def resetReceiveTimeout (): Unit & de resetReceiveTimeout (): Unit\\
+
+def setReceiveTimeout (timeout: Duration): Unit & def setReceiveTimeout (timeout: Duration): Unit\\
+
+& sender : ActorRef\\
+& def children : Iterable[ActorRef ]\\
+& def parent : ActorRef\\
+& def unbecome (): Unit\\
+
+  \end{tabular}
+\end{table}
+\subsection{ActorSystem}
+
+\begin{table}[h]\footnotesize
+  \caption{The ActorSystem Object}
+  \label{actorSystem_object}
+  \centering
+  \begin{tabular}{ l ||  l }
+%% abstract class ActorSystem &  
+%% abstract class ActorSystem\\
+object ActorSystem & object ActorSystem \\
+def apply():ActorSystem & def apply():ActorSystem \\
+def apply(name:String):ActorSystem &def apply(name:String):ActorSystem\\
+def apply(name:String, config:Config) & def apply(name:String, config:Config) \\
+  \end{tabular}
+\end{table}
+
+\begin{table}[h]\footnotesize
+  \caption{The ActorSystem Class}
+  \label{actorSystem_class}
+  \centering
+  \begin{tabular}{ l ||  l }
+%% abstract class ActorSystem &  
+%% abstract class ActorSystem\\
+abstract class ActorSystem & abstract class ActorSystem \\
+def actorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg]&
+def actorOf(props:Props):ActorRef\\
+
+def actorOf[Msg:Manifest](props:Props[Msg], &
+def actorOf(props:Props, name:String):ActorRef\\
+\hspace{1.3 cm} name:String):ActorRef[Msg]\\
+
+def remoteActorOf[Msg:Manifest]\\
+\hspace{1.3 cm} (props:Props[Msg]):ActorRef[Msg]\\
+def remoteActorOf[Msg:Manifest]\\
+\hspace{1.3 cm} (props:Props[Msg], name:String):ActorRef[Msg]\\
+
+def actorFor[Msg:Manifest](actorPath:String):ActorRef[Msg]&
+def actorFor(actorPath:String):ActorRef\\
+
+def actorFor[Msg:Manifest]&
+def actorFor(actorPath:ActorPath):ActorRef\\
+\hspace{1.3 cm} (actorPath:akka.actor.ActorPath):ActorRef[Msg]\\
+
+def deadLetters:ActorRef[Any] & def deadLetters:ActorRef\\
+
+def isLocalSystem():Boolean\\
+def host:String\\
+def port:Int\\
+
+\multicolumn{2}{l} {\hspace{4 cm}def awaitTermination (): Unit}\\
+\multicolumn{2}{l} {\hspace{4 cm}def awaitTermination (timeout: Duration): Unit }\\
+\multicolumn{2}{l} {\hspace{4 cm}def eventStream : akka.event.EventStream}\\
+\multicolumn{2}{l} {\hspace{4 cm}def extension [T $<:$ Extension] (ext: ExtensionId[T]): T }\\
+\multicolumn{2}{l} {\hspace{4 cm}def isTerminated : Boolean}\\
+\multicolumn{2}{l} {\hspace{4 cm}def log : LoggingAdapter }\\
+\multicolumn{2}{l} {\hspace{4 cm}def logConfiguration (): Unit}\\
+\multicolumn{2}{l} {\hspace{4 cm}def name : String}\\
+\multicolumn{2}{l} {\hspace{4 cm}def registerExtension [T $<:$ Extension] (ext: ExtensionId[T]): T  }\\
+\multicolumn{2}{l} {\hspace{4 cm}def registerOnTermination (code: Runnable): Unit}\\
+\multicolumn{2}{l} {\hspace{4 cm}def registerOnTermination [T] (code: $\Rightarrow$ T): Unit}\\
+\multicolumn{2}{l} {\hspace{4 cm}def scheduler : akka.actor.Scheduler}\\
+\multicolumn{2}{l} {\hspace{4 cm}def settings : akka.actor.ActorSystem.Settings}\\
+\multicolumn{2}{l} {\hspace{4 cm}def shutdown (): Unit}\\
+\multicolumn{2}{l} {\hspace{4 cm}override def toString():String}\\
+\multicolumn{2}{l} {\hspace{4 cm}def uptime : Long = system.uptime }\\
+
+
+  \end{tabular}
+\end{table}
+
+\subsection{Props}
+
+\begin{table}[h]\footnotesize
+  \caption{The Props Object}
+  \label{props_object}
+  \centering
+  \begin{tabular}{ l ||  l }
+def apply[T, A$<$:Actor[T]] (implicit at: ClassManifest[A]): Props[T] &  
+def apply[T $<$: Actor: ClassManifest]: Props
+\\
+
+def apply[T](actorClass: Class[$\_ <$: Actor[T]]): Props[T]&
+def apply(actorClass: Class[$\_ <$: Actor]): Props\\
+
+def apply[T](creator:$\Rightarrow$ Actor[T]): Props[T]&
+def apply(creator: $\Rightarrow$ Actor): Props\\
+
+
+  \end{tabular}
+\end{table}
+
+
+\begin{comment}
+
+\subsection{ActorRef}
+\begin{table}[h]\footnotesize
+  \caption{The ActorRef Class}
+  \label{actorRef_class}
+  \centering
+  \begin{tabular}{ l ||  l }
+abstract class ActorRef[-Msg : Manifest] &  
+class ActorRef\\
+
+  \end{tabular}
+\end{table}
+
+
+\subsection{ActorRef}
+\begin{table}[h]\footnotesize
+  \caption{The ActorRef Class}
+  \label{actorRef_class}
+  \centering
+  \begin{tabular}{ l ||  l }
+abstract class ActorRef[-Msg : Manifest] &  
+class ActorRef\\
+
+  \end{tabular}
+\end{table}
+
+\end{comment}

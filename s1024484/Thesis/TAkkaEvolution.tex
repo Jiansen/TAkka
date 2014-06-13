@@ -1,0 +1,138 @@
+\chapter{Evolution, Not Revolution }
+\label{evolution}
+
+\begin{center}
+(This chapter is expanded from the companion paper, Chapter 5)
+\end{center}
+\vspace{12 pt}
+
+Akka systems can be smoothly migrated to TAkka systems. In other words, 
+existing systems can evolve to introduce more types, rather than requiring a 
+revolution where all actors and interactions must be typed.
+The above property is analogous to adding generics to Java programs.  Java 
+generics are carefully designed so that programs without generic types can be 
+partially replaced by an equivalent generic version (evolution), rather than 
+requiring generic types everywhere (revolution) \citep{JGC}.
+
+Figure~\ref{akka_supervised_calculator} and Figure~\ref{takka_safe_calculator} 
+presents how to define and use a safe calculator
+in the Akka and TAkka systems respectively.  Think of a {\tt SafeCalculator} actor
+as a service and its reference as a client interface.  The following sections show how to upgrade
+the Akka version to the TAkka version gradually, either upgrading the 
+service implementation first or the client interface.
+
+
+\section{TAkka Service with Akka Client}
+
+It is often the case that an actor-based service is implemented by one 
+organization but used in a client application implemented by another.  
+Let us assume that a developer decides to upgrade the service 
+using TAkka actors, for example, by upgrading the Socko Web Server 
+\citep{SOCKO}, the Gatling stress testing tool \citep{Gatling}, or the core 
+library of Play \citep{play_doc}, as we do in Section~\ref{expressiveness}.  
+Will the upgrade affect legacy client applications
+built using the Akka library?  Fortunately, no changes are required at all.
+
+As the TAkka {Actor} class inherits the Akka {\tt Actor} class, it can be used 
+to create an Akka actor.  For example, the object {\tt akkaCal}, created at line 
+5 in Figure~\ref{takkaINakka}, is created from a TAkka actor and used as an Akka
+actor reference.  After the service developer has upgraded all actors to equivalent 
+TAkka versions, the developer may want to start a TAkka actor system.  Until that
+time, the developer can create TAkka actor references but publish their untyped
+version to users who are working in the Akka environment (line 19).
+As a result, no changes are required for a client 
+application that uses Akka actor references.  Because an Akka actor reference 
+accepts messages of any type, messages of unexpected type may be sent to TAkka actors.  
+As a result, handlers for the {\tt UnhandledMessage} event is required in a
+careful design (line 10 and 20).
+
+
+\begin{figure}[h]
+      \begin{lstlisting}[language=scala, escapechar=?]
+import sample.?\textcolor{blue}{takka}?.SafeCalculator.SafeCalculator      
+      
+object TSAC extends App {
+  val akkasystem = ?\textcolor{blue}{akka}?.actor.ActorSystem("AkkaSystem")
+  val akkaCal = akkasystem.actorOf(
+    ?\textcolor{blue}{akka}?.actor.Props[SafeCalculator], "acal")
+  ?\textcolor{blue}{val handler = akkasystem.actorOf(}?
+    ?\textcolor{blue}{akka.actor.Props(new MessageHandler(akkasystem)))}?
+  
+  ?\textcolor{blue}{akkasystem.eventStream.subscribe(handler,}?
+     ?\textcolor{blue}{classOf[UnhandledMessage]);}?
+  akkaCal ! Multiplication(3, 1)     
+  ?\textcolor{blue}{akkaCal ! "Hello Akka"}?
+  
+  val takkasystem = ?\textcolor{blue}{takka}?.actor.ActorSystem("TAkkaSystem")
+  val takkaCal = takkasystem.actorOf(
+     takka.actor.Props[?\textcolor{blue}{String,}? TAkkaStringActor], "tcal")
+  
+  val untypedCal= takkaCal.?\textcolor{blue}{untypedRef}?  
+  ?\textcolor{blue}{takkasystem.system.eventStream.subscribe(}?
+    ?\textcolor{blue}{handler,classOf[UnhandledMessage]);}?  
+  untypedCal ! Multiplication(3, 2)     
+  untypedCal ! "Hello TAkka"
+}
+/* Terminal output:
+3 * 1 = 3
+unhandled message:Hello Akka
+3 * 2 = 6
+unhandled message:Hello TAkka
+*/
+    \end{lstlisting}
+    \caption{TAkka Service with Akka Client}
+\label{takkaINakka}    
+\end{figure}
+
+
+% \vspace{-5pt}
+\section{Akka Service with TAkka Client}
+
+Sometimes developers want to update the client code or API before 
+upgrading the service implementation. For example, a developer may not have access to 
+the service implementation; or the service implementation may be large, so the 
+developer may want to upgrade the library gradually.
+
+Users can initialize a TAkka actor reference by providing an Akka actor 
+reference and a type parameter.  In Figure~\ref{akkaINtakka}, we re-use the 
+Akka calculator, initialise it in an Akka actor system, and obtain an Akka 
+actor reference.  Then, we wrap the Akka actor reference as a TAkka 
+actor reference, {\tt takkaCal}, which only accepts messages of type
+{\tt Operation}.
+
+\begin{figure}[h]
+      \begin{lstlisting}[language=scala, escapechar=?]
+import sample.?\textcolor{blue}{takka}?.SafeCalculator.SafeCalculator      
+      
+object TSAC extends App {
+  val akkasystem = ?\textcolor{blue}{akka}?.actor.ActorSystem("AkkaSystem")
+  val akkaCal = akkasystem.actorOf(
+    ?\textcolor{blue}{akka}?.actor.Props[SafeCalculator], "acal")
+  ?\textcolor{blue}{val handler = akkasystem.actorOf(}?
+    ?\textcolor{blue}{akka.actor.Props(new MessageHandler(akkasystem)))}?
+  
+  ?\textcolor{blue}{akkasystem.eventStream.subscribe(handler,}?
+     ?\textcolor{blue}{classOf[UnhandledMessage]);}?
+  akkaCal ! Multiplication(3, 1)     
+  ?\textcolor{blue}{akkaCal ! "Hello Akka"}?
+  
+  val takkasystem = ?\textcolor{blue}{takka}?.actor.ActorSystem("TAkkaSystem")
+  val takkaCal = takkasystem.actorOf(
+     takka.actor.Props[?\textcolor{blue}{String,}? TAkkaStringActor], "tcal")
+  
+  val untypedCal= takkaCal.?\textcolor{blue}{untypedRef}?  
+  ?\textcolor{blue}{takkasystem.system.eventStream.subscribe(}?
+    ?\textcolor{blue}{handler,classOf[UnhandledMessage]);}?  
+  untypedCal ! Multiplication(3, 2)     
+  untypedCal ! "Hello TAkka"
+}
+/* Terminal output:
+3 * 1 = 3
+unhandled message:Hello Akka
+3 * 2 = 6
+unhandled message:Hello TAkka
+*/
+    \end{lstlisting}
+    \caption{TAkka Service with Akka Client}
+\label{akkaINtakka}
+\end{figure}

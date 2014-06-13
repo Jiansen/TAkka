@@ -1,0 +1,7 @@
+# TEST	AKKA Play trans/sec	TAKKA Play trans/sec	TAKKA Socko trans/sec
+
+1 	1.96	2.05	2.32	2.51
+2 	2.92	2.88	3.88	3.92
+4 	3.84	3.56	4.21	4.54
+8 	7.68	7.81	8.28	8.06
+16      8.26	8.67	8.84

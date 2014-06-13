@@ -1,0 +1,66 @@
+This is BibTeX, Version 0.99d (TeX Live 2012/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: Jiansen.aux
+The style file: apalike.bst
+Database file #1: Jiansen.bib
+I was expecting a `,' or a `}'---line 1260 of file Jiansen.bib
+ :   
+ :   note = {Accessed on May 2014}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+I was expecting a `,' or a `}'---line 1268 of file Jiansen.bib
+ :   
+ :   note = {Accessed on May 2014}
+(Error may have been on previous line)
+I'm skipping whatever remains of this entry
+Warning--empty journal in actor_transition_semantic
+Warning--empty publisher in allen2009zend
+Warning--empty journal in acot_laws
+Warning--empty journal in actor_denotational_semantics
+Warning--empty journal in actor_operational_semantics
+Warning--empty journal in Act1
+Warning--empty chapter and pages in JGC
+Warning--empty journal in reenskaug2003model
+Warning--empty journal in reenskaug1979original
+You've used 75 entries,
+            1935 wiz_defined-function locations,
+            846 strings with 13651 characters,
+and the built_in function-call counts, 25172 in all, are:
+= -- 2554
+> -- 937
+< -- 75
++ -- 330
+- -- 300
+* -- 1822
+:= -- 4561
+add.period$ -- 246
+call.type$ -- 75
+change.case$ -- 514
+chr.to.int$ -- 67
+cite$ -- 84
+duplicate$ -- 1033
+empty$ -- 1661
+format.name$ -- 411
+if$ -- 4899
+int.to.chr$ -- 9
+int.to.str$ -- 0
+missing$ -- 48
+newline$ -- 387
+num.names$ -- 229
+pop$ -- 422
+preamble$ -- 1
+purify$ -- 522
+quote$ -- 0
+skip$ -- 837
+stack$ -- 0
+substring$ -- 1406
+swap$ -- 123
+text.length$ -- 13
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 430
+warning$ -- 9
+while$ -- 202
+width$ -- 0
+write$ -- 965
+(There were 2 error messages)

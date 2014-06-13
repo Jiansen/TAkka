@@ -1,0 +1,36 @@
+\section{Examples}
+This appendix lists examples ported from other projects.  When applicable, for each example, the number of modified lines and the total number of lines in the Akka version are given in the brackets following the example name. 
+
+
+\subsection{Examples Ported from Quviq Training Examples}
+Following two examples are ported from examples of a Quviq course.  Quviq is a quickcheck tool for Erlang programs.  The Erlang version of following two examples are commercial products that shall not be published.  To avoid unintentional leak of their Erlang design. Akka and TAkka implementation for those examples are not published to public repositories.
+
+ATM simulator (199/1148): A GUI simulator of a bank ATM terminal.
+
+Elevator Controller (172/1850): A system that monitors and schedules a number of elevators.
+
+
+\subsection{Examples from Akka documentation}
+Following examples are selected to check that the TAkka library could provide Akka equivalent services.  Those examples are:
+
+Ping Pong (13/67): A simple message passing application.
+
+Dining Philosophers (23/189): A application that simulate the dining philosophers problem using Finite State Machine (FSM) model.
+
+Distributed Calculator (43/250): An application that examines distribution and hot code swap.
+
+Fault Tolerance (69/274): An application that demonstrate how system responses to component failures.
+
+\subsection{Other Examples from Open Source Akka Applications}
+Following examples are selected to the TAkka library meets the demand of real applications building on top of Akka.  Those examples are:
+
+Barber Shop (104 / 754): The implementation of famous Barber Shop example in Akka.
+
+EnMAS (213/1916): An environment and simulation framework for multi-agent and team-based artificial intelligence research
+
+Socko Web Server: \lq\lq{} lightweight and embeddable Scala web server that can serve static files and support RESTful APIs to our business logic implemented in Akka.\rq\rq{}
+
+Gatling: A stress testing tool.  Most Gatling components are implemented using its own DSL.  Therefore, changes are only made to 27 core files, where 111 out of 1635 lines of code are modified.
+
+
+

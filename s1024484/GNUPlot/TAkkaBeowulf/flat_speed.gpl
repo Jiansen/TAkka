@@ -1,0 +1,16 @@
+set term png
+set output "flat_speed.png"
+
+set title "speedup"
+set xlabel 'Number of Nodes'
+set ylabel 'speed-up'
+set xtics (1, 4, 8, 12, 16, 20, 24, 28, 32)
+plot "GenStress.dat" using 1:6 with lines  title 'GenStress  Akka Speedup' ,\
+     "GenStress.dat" using 1:7 with lines  title 'GenStress TAkka Speedup',\
+     "Parallel.dat" using 1:6 with lines  title 'Parallel  Akka Speedup' ,\
+     "Parallel.dat" using 1:7 with lines  title 'Parallel TAkka Speedup',\
+     "SerialMsg.dat" using 1:6 with lines  title 'SerialMsg  Akka Runtime' ,\
+     "SerialMsg.dat" using 1:7 with lines  title 'SerialMsg TAkka Runttime'
+
+
+set output

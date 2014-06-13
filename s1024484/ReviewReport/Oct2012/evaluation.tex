@@ -1,0 +1,48 @@
+\section{Methodology for Library Evaluation}
+
+The three dimensions of library evaluation are (i)efficiency, (ii)scalability, and (iii)reliability.    The overall evaluation of the library is the geometric mean of numerical measurements of each dimension.  Standard numerical measurements  for evaluating efficiency has been found in literature.  A similar approach may apply to the evaluation of scalability.  A numerical measure of reliability, unfortunately, requires further study.  The first section of this part will review methodology of hardware efficiency evaluation, which I believe applies to software efficiency evaluation as well.  In the rest three sections of this part, approaches to evaluate each dimension will be examined respectively.
+
+\subsection{Measuring Hardware Efficiency}
+In practice, hardware efficiency is measured by its performance regarding to a benchmark suite, which contains a set of test programs.  Performance is defined as the reciprocal of mean execution time of all tests\cite{HePa06}.  This project will use geometric mean instead of weighted arithmetic mean for three reasons.
+
+Firstly and most importantly, as proved by Fleming and Wallace \cite{Fleming}, geometric mean is the only correct average of normalised measurements.  As users often compare the performance of one system to another, performance is usually normalised to a reference system.  
+
+\begin{comment}
+ Precisely, let the benchmark suite has $n$ tests indexed from $1$ to $n$, performance of system A is calculated as:
+
+ $performance_A$ 
+= $\frac{time_{ref}}{time_{A}}$
+= $\frac{\sqrt[n]{\prod^{n}_{i=1} time_{ref_i}}}{\sqrt[n]{\prod^{n}_{i=1} time_{A_i}}}$
+= $\sqrt[n]{\prod^{n}_{i=1}{\frac{time_{ref_i}}{time_{A_i}}}}$
+
+\hspace{0.8 cm}where $time_{S_i}$ is the execution time of program $i$ on system $S$, 
+
+\hspace{1.0 cm} and $time_{S}$ is the time measurement of system $S$.
+\end{comment}
+
+Secondly, the order of calculating means and normalisation is flexible in practice.  Therefore, the suite developer will only implement a generic tool for measuring unnormalised execution time. The work of comparing performance of two interested platforms will be left to users.  Besides, users are free to extend the benchmark suite.  When new tests are added to the benchmark suite, performance measure for old examples becomes a valid partial measure.
+
+Finally, statistic tools could be employed to verify the soundness of chosen suite.  For example, the geometric standard deviations is an indicator to assess the variability of the chosen suite.
+
+
+\subsection{Measuring Library Efficiency}
+The Methodology of measuring hardware efficiency also applies to measuring library efficiency, where both the library implementation and the running platform may differ.  
+
+To test the efficiency of different distributed programming libraries, a set of benchmarking examples need to be identified.  To avoid unintentional optimisation in the TAkka implementation, benchmarks are scrupulously selected from existing applications written in other OTP-like libraries and modifications are made at the minimal level.  
+
+Theoretically, any program that involves a time measurement could be a candidate efficiency test.  Such examples could be easily found in both the correctness test suite and the scalability test suite.  However, we would like to exclude examples whose results significantly determine the overall measure.  To this end, statistic methods such as principal component analysis will be employed.
+
+\subsection{Measuring Scalability}
+
+To assess the scalability of different OTP-like libraries, suitable examples from the BenchErl suite\cite{RELEASE} have been reimplemented using Akka and TAkka.  A summary of selected examples will be given at \S\ref{scalability}.
+
+Similar to efficiency evaluation, geometric mean of scalability measures of all examples could be the indicator of the library scalability.  Unfortunately, numerical evaluation for scalability is not found in the literature.  This project will use linear regression techniques to analysis the scalability of an OTP-like library in two aspects: (i) the degrees to which the performance speedup deviate from the ideal linear relationship regarding to the number of active CPU cores.  (ii) the slope of the linear equation, assuming that the relationship between performance speedup and the number of active CPU cores is linear.
+
+Finally, scalability of OTP-like libraries will be tested on a variety of platforms.  The three candidate platforms are Beowulf cluster, Google App Engine, and Amazon EC2.
+
+
+\subsection{Measuring Reliability}
+
+Identify types of failures and their impact is a crucial part of reliability evaluation.  The next two months will be devoted to the study of possible failures that could be handled at the language level.  Methodology for numerically evaluating reliability requires more studies and careful verifications.
+
+

@@ -1,0 +1,11 @@
+set term png
+set output "bang_speed.png"
+
+set title "Bang: Speedup"
+set xlabel 'Number of Nodes'
+set ylabel 'speed-up'
+set xtics (1, 4, 8, 12, 16, 20, 24, 28, 32)
+plot "Bang.dat" using 1:6 with lines  title 'Akka Speedup' ,\
+     "Bang.dat" using 1:7 with lines  title 'TAkka Speedup'
+
+set output

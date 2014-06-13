@@ -1,0 +1,40 @@
+\section{Project Progress and Plans}
+
+\subsection{Progress Achieved since the First Panel Review}
+
+With suggestions from panel members, I have been working on the more focused aim stated in \S\ref{aim}.  Research objectives are also tailored to more specific tasks accordingly.  Meanwhile, I studied more related works on concurrent programming and type theories.
+
+Before the new year, three medium-sized applications has been identified.  Both the ATM example and the main application of the elevator controller example have been ported into Scala using akka libraries.  The later example contains an interface for properties checking using QuickCheck.  I am working on porting QuickCheck properties specified in the Erlang version to my Scala implementation.  The porting of a larger example, Riak, will be started soon.
+
+For the work of implementing a prototype Scala library that supports OTP principles, I found a way of mimicking hot code swap via object delegation.  However, this strategy requires at least one non-swappable wrapper process, which is not needed in the Erlang/OTP platform.  I also identified some problems of implementing actors which have a type parameter that specifies the type of expecting messages.  To overcome the bottleneck of solving those problems, I postponed this work for learning lessons from the design of existing frameworks.
+
+In the last report, I mentioned Walder's “type pollution” problem when using the Actor model to construct layered systems.  One solution is using subtyping on the type parameter of the reference to a typed actor.  However, this solution is awkward and does not cope with the dynamic configuration of distributed systems.  To improve this situation, I recently proposed using union types to plot a type in a type hierarchy on the fly. At the meantime, Professor Walder pointed out that another solution could be using session types, where each channel is only used for the communication between two parties.
+
+\subsection{Plan for the Second Year}
+In the rest of the second year, I will port the Riak example and summarise problems that I encountered when translating the three examples into Scala using akka.  More translation exercises will be done if proper examples are found.
+
+Based on the summary, I shall started the the design and implementation of library that supports OTP principles.  This work will require iterative and incremental development on requirement analysis, interface design, functionality implementation, and system evaluation.  In addtion, a flexible plan should be given in advance to guide and monitor the pace of progress.
+
+\subsection{Plan for the Third Year}
+The beginning of the third year will continue the work of library implementation. After that, the library will be published with a technical report that covers:  
+\begin{inparaenum}[(i)]
+  \item functionalities provided by the library,
+  \item alternative choices of library design and reasons for adopting the chosen design,
+  \item benchmark results of selected canonical distributed applications.
+\end{inparaenum}  
+
+In the meantime of receiving feedbacks from programming communities, I will re-implement the selected applications with the new library.  Testing results for the new implementation will be published in an updated version of library documentation.
+
+Finally, as promised in the research objectives, a more comprehensive summary of common challenges in distributed programming and their solutions will be given.  The summary will reveal how language libraries, which is used for practical purposes, are related to their theoretical guidance underneath.  It may also plot research blanks for future study.
+
+
+\subsection{Potential Risks}
+As a novel and ambitious research, some tasks may be tougher than my expectation.  Also, results of some tasks may differ from my intuition.  Risk analyses for planed objectives are given below.d
+
+Firstly, sample applications used in the first and second objectives, which are the basis of research problems specification and results evaluation, must be carefully selected.  It would be better to select open-source applications implemented in high-quality code.  For a candidate application, we need to analysis the proportion of implementation for OTP features to the implementation for other problems out of our main research interests.  Fortunately, we have identified three appropriate applications.
+
+Secondly, some research problems rooted in the center of distributed programming, and therefore is inevitably also investigated by other researchers.  Although it seems feasible to re-implement identified applications in other frameworks and then identify problems of using those frameworks, our chosen comparing frameworks are vigorous and evolving quickly.  For example, significant changes have been made to the actor model in the new akka library (version 2.0).  The evolving of comparing frameworks contributes to plausible solutions to some research problems as well as pressures of providing devised simpler solutions for tough problems.  In addition, since there is no uniform model for distributed programming, it would be hard to evaluate to what extend our library interface is a general framework for distributed programming.
+
+Lastly, apart from above general difficulties, I also encountered implementation difficulties listed in \S\ref{problems}.  At the time of this writing, it is not clear to me how those problems could be solved in a neat way.  I anticipate that new problems will be added to the list when I write more programs in type safe-less environment.
+
+Despite the identified and potential troubles which may distract this research from a perfect result, none of above risks should be the principle hindrance of achieving the main objectives listed in \S\ref{objectives}.  With proper plans, wide sources of suggestions, and the commitment to research objectives, the proposed research should be suitable for a PhD project.

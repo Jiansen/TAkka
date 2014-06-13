@@ -1,0 +1,42 @@
+\section{Project Progress and Plans}
+
+\subsection{Report on Progress}
+
+The first academic year was mainly spent on background reading and programming skills enhancing.  Besides, I attended lectures and seminars on concurrency and other aspects of informatics.  Moreover, I went to several courses of the Transferable Skills Programme, offered by the Informatics Graduate School.
+
+In the first three months(Sep/2010 - Dec/2010), I systematically studied the theoretical aspects and implementation techniques of types and concurrent programming.   For theories on types and programming languages, I studied \cite{TPL} in detail and skimmed main topics in \cite{ATTAPL}.  I learned concurrent programming models and their implementation strategies from \cite{roy}.  I also scanned recent papers in Concur and PPoPP to develop awareness on topics and trends in the area of concurrent and distributed programming.
+
+During the same period, I did two programming tasks to investigate potential practical issues of concurrent and distributed programming within current main stream technologies.  My first task was to write small programs in Scala, Erlang and JoCaml to demonstrate common tasks in a client-server model.  I paid particular attention to passing functions between web nodes.  After that, I spent a lot of time solving the concordance problem in the Phase I of the SICSA MultiCore Challenge\cite{MultiCore}.  Although the problem is later proved as IO bounded and limited parallizable, I gained personal benefits from practicing parallel algorithm analysis and implementing parallel algorithms in Scala, JoCaml, Erlang, Haskell, and MPI in C.  I attended the full day workshop hosted by the Department of Computer Science, Heriot-Watt University on 13th Dec, 2010.
+
+In the next two months(Dec/2010 - Jan/2011), I focused on the study of process calculi.  After summarizing topics in \cite{25year}, I studied the main results in $\pi$-calculus\cite{pi_paper, pi_book}, join-calculus\cite{RCHAM, jocaml_lan}, ambient calculus\cite{MobileAmbients, TypeMobileAmbients}, fusion calculus\cite{fusion} and bigraphs\cite{bigraph_book}.  I wrote a short survey on $\pi$-calculus, fusion calculus, and join-calculus.  Those tasks raised my particular interest in the join-calculus for its programmability.  Meanwhile, I studied works on extending languages to support join patterns \cite{join_csharp, scala_joins, join-fsharp}. 
+
+During the beginning of  2011(Jan/2011 - April/2011), research directions presented in this proposal became clearer.  As a preparing work for further research, I replaced the old Erlang style concurrency in the Links programming language by a join-calculus style one.  By doing this, I built a typed join-calculus platform which is under my control.  
+
+In early May 2011, my supervisor, Professor Philip Wadler, and I discussed the formal specification of research objectives.  We  finally agreed on objectives listed in \S\ref{objectives} and their feasibility.  The rest of May was spent on writing the first draft of this report.
+
+In the last two months(Jun/2011 - July/2011) , I reviewed distribution, failure, notification, and exception handling models in both the join calculus and its different implementations.  Meanwhile, I proposed a more straightforward implementation for realising join patterns, called neural network.  I compared its efficiency with FSM-based and extractor-based implementations.  Although the straightforward implementation is more efficient than the extractor-based implementation in theory, the improved extractor-based implementation (Appendix \ref{app_lib}) turns to be a more adequate library for its simple syntax and reasonable efficiency.
+
+\subsection{Plan for the Second Year}
+The second year will be dedicated to working on the first and second objectives in order.  The first a few months will be spent on building a library that support the OTP design principles in a typed language.  A suitable host platform would be my Scala library which supports join patterns.  After that, a technical report will be produced to document the designed library.  The report will cover
+\begin{inparaenum}[(i)]
+  \item the functionality provided by the library with moderate size examples;
+  \item alternative choices of library design and reasons for my decisions;
+  \item benchmark results of selected canonical distributed applications.
+\end{inparaenum}  
+Later, a formalised model will be defined and verified.  The formalism will be based on the join-calculus.  The criteria for model verification will include both correctness and reliability.
+
+
+\subsection{Plan for the Third Year}
+The third year will be dedicated to working on the last objective (extend the model with primitives from other models).  The purpose of this work is to demonstrate the extensibility of proposed model.  New primitives will be added only when it will significantly reduce the effort of encoding some tasks (e.g. sending function closure).  Finally, a dissertation as planed in \S\ref{DToutline} will be produced.
+
+\subsection{Potential Risks}
+
+As a novel and ambitious research, some tasks may be tougher than my expectation.  Also, results of some tasks may differ from my intuition.  Risk analyses for each objective are given as follows:
+
+\begin{itemize}
+  \item The difficulty of the first objective depends on how specific host language consist with the OTP design principles.  Both Scala and F\# support multi-paradigm programming, which provides more ways for library implementation.  Besides, the large friendly communities of those two languages will be the back support when encountering  difficulties related to language details.  I prefer to start the work in Scala because my join library built in that language overcomes some limitations found in other current platforms which support join patterns.  Nevertheless, F\# is still a good alternative platform if the Scala language turns to not well support the OTP design principles at a certain point.  Moreover, the Links languages would be another backup platform which is completely under my control. 
+  \item For the second objective, it is not clear what changes should be made to the join-calculus.  As stated in early sections, new features will be added only when the old model is incapable to support crucial concepts in the OTP design principles.  It is possible that the join-calculus may be consistent with all principles without making any changes.  Regardless of whether new model should be defined or not, it would be a novelty of this project to formalise an approach to evaluate distributed programming models.
+  \item Decisions of adding new primitives to the join-calculus might be subjective to some extent.  Therefore, criteria for evaluating the new model should be specified in advance.  To be more objective, arguments given in this task should be supported by empirical results.
+\end{itemize}  
+
+To the best of my knowledge, none of above risks should be the principle hindrance of achieving the three objectives listed in \S\ref{objectives}.  With proper plans and the commitment to each objective, the proposed research should be suitable for a PhD project.

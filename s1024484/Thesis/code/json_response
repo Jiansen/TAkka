@@ -1,0 +1,7 @@
+HTTP/1.1 200 OK
+Content-Type: application/json; charset=UTF-8
+Content-Length: 28
+Server: Example
+Date: Wed, 17 Apr 2013 12:00:00 GMT
+
+{"message":"Hello, World!"}

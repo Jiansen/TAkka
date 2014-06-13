@@ -1,0 +1,328 @@
+%%% Informatics.cls (Version 1.2)
+%%% 28/03/2007 update information for all institutes. Revised by Tiejun Ma
+
+%%% Add Jane Hillston and WenFei Fan as LFCS Professors 03/08/2006
+
+%%% 6/03/2006 revised by Tiejun Ma, checked by Alex Judd
+ 
+%%%DEPUTY HEADS (replace Stuart Anderson with) Steve Renals
+%%%
+%%%FHaddress
+%%%Telephone (replace 0131 650 3090 with) 0131 650 3100
+%%%
+%%%SBaddress (though this file should probably be renamed to ATaddress...)
+%%%Telephone (replace 0131 650 2700 with) 0131 650 2690
+%%%Fax (replace 0131 650 6516 with) 0131 651 1426
+%%%
+%%%BPaddress
+%%%Telephone (replace 0131 650 4667 with) 0131 650 4665
+%%%Fax (replace 0131 650 6626 with) 0131 650 4587
+%%%
+%%%CISA
+%%%Telephone  (replace 0131 650 2700 with) 0131 650 2708
+%%%Fax  (replace 0131 650 6516 with) 0131 650 6513
+%%%%Email: cisa@ed.ac.uk 
+%%%LFCS
+%%%Telephone (replace 0131 650 5128 with) 0131 650 5132
+%%%Email (replace informatics@ed.ac.uk with) lfcs-admin@informatics.ed.ac.uk
+%%%DEPUTY DIRECTOR (replace Dr Kousha Etessami with) Dr David Aspinall
+%%%
+%%%IANC
+%%%Telephone (replace 0131 650 3090 with) 0131 650 3099
+%%%Email (replace informatics@ed.ac.uk with) info@anc.ed.ac.uk
+%%%DIRECTOR (replace Professor David Willshaw with) Professor Chris Williams
+%%%
+%%%ICCS
+%%%Telephone (replace 0131 650 4667 with) 0131 650 4665
+%%%Email (replace informatics@ed.ac.uk with) info@cogsci.ed.ac.uk
+%%%
+%%%ICSA
+%%%Telephone (replace 0131 650 5128 with) 0131 650 5116
+%%%Email (replace informatics@ed.ac.uk with) icsa-sec@informatics.ed.ac.uk
+%%%DIRECTOR  (replace Nigel Topham with) Professor Nigel Topham
+%%%
+%%%IGS
+%%%Telephone (replace 0131 650 5128 with) 0131 651 7174
+%%%Email (replace informatics@ed.ac.uk with) igs@inf.ed.ac.uk
+%%%
+%%%IPAB
+%%%Telephone (replace 0131 650 5128 with) 0131 651 3443
+%%%Fax (replace 0131 667 7209 with) 0131 651 3435
+%%%Email (replace informatics@ed.ac.uk with) ipab-sec@informatics.ed.ac.uk
+%%%DIRECTOR (replace Dr Bob Fisher with) Dr Sethu Vijayakumar
+%%%
+%%%IRR
+%%%Please delete this file as the Institute for Representation and Reasoning no longer exists.
+%%%
+%%%ITO
+%%%Telephone (replace 0131 650 5128 with) 0131 650 5194
+%%%Email (replace informatics@ed.ac.uk with) ito@inf.ed.ac.uk
+%%%Delete the entire line DEPUTY DIRECTOR of TEACHING Dr Qiang Shen
+%%%DEPUTY DIRECTOR of TEACHING (please add) Dr Mary Cryan
+
+
+%%% Informatics.cls (Version 1.1)
+%%% 6 Mar 2006: updated Institute address, head, email, tel, fax.
+%%% 8 Mar 2005: changed director of LFCS - CC
+%%% 4 Feb 2003: changed directors of ICSA and ITO -- CMS
+%%% 12 Oct: changed director of LFCS and ICSA -- MEF
+%%% 26 Oct: changed title of others in LFCS from "Co-Directors" to
+%%%         "Professors" -- MEF
+%%% 13 Feb: Changed title of ITO people to ``DIRECTOR of TEACHING''
+%%%         Removed heads of schools
+%%% 14/10/2001: Some administrative updates (incl new HoD, CISA option).
+%%%             Also added "international" option.
+%%% 21/11/2001: Merge changes from cms; add Gordon Brebner as head of ICSA -- MEF
+%%%
+%%% Derived from Infletr.cls
+%%%
+%%% Addresses and names for use in all informatics documents.
+
+
+\newcommand{\@unit}{}
+
+\newcommand{\@deptname}{%
+  \textit{The\/} UNIVERSITY \textit{of\/} EDINBURGH
+}%
+
+\newcommand{\@tmpdeptaddress}{%
+  Old College\\
+  South Bridge\\
+  Edinburgh EH8 9YL}
+
+\gdef\@code{%
+    \if@international{+44 (0)131}%
+    \else{0131}\fi}
+
+\newcommand{\code}[1]{\gdef\@code{#1}}
+\newcommand{\extn}[1]{\gdef\@extn{#1}}
+\newcommand{\phone}[1]{\gdef\@phone{#1}}
+\newcommand{\secy}[1]{\gdef\@secy{#1}}
+\newcommand{\fax}[1]{\gdef\@fax{#1}}
+\newcommand{\telex}[1]{\gdef\@telex{#1}}
+\newcommand{\email}[1]{\gdef\@email{#1}}
+\newcommand{\href}[1]{\gdef\@href{#1}}
+
+% Dignitaries at bottom of letters
+\newcommand{\@onetitle}{}       % number ones' title
+\gdef\@onetitle{}
+\newcommand{\@ones}{}           % list of number ones
+\newcommand{\@twotitle}{}       % number twos' title
+\gdef\@twotitle{}
+\newcommand{\@twos}{}           % list of number twos
+\newcommand{\@threetitle}{}     % number threes' title
+\gdef\@threetitle{}
+\newcommand{\@threes}{}         % list of number threes
+
+
+%%% Set up variables defined above
+% \code{(0131)}                 % could use +44 131
+\phone{650 1000}                % main phone number
+\secy{}                         % secretary
+\fax{}                          % fax number
+\telex{727442 (UNIVED G)}       % main telex number
+\email{informatics@ed.ac.uk}    % electronic mail
+\href{}                         % web page URL
+
+
+
+% ----------------------------------
+%    Main code
+% ----------------------------------
+
+% Name of the School
+\renewcommand{\@deptname}{SCHOOL \textit{of} INFORMATICS}
+
+
+% Set up \@deptaddress to be the address as specified as an option.
+\ifBP
+   \renewcommand{\@tmpdeptaddress}{%
+     The University of Edinburgh\\
+     2 Buccleuch Place\\
+     Edinburgh EH8 9LW
+   }
+   \phone{650 4665}
+   \fax{650 4587}
+\else\ifFH
+   \renewcommand{\@tmpdeptaddress}{%
+     The University of Edinburgh\\
+     5 Forrest Hill\\
+     Edinburgh EH1 2QL
+   }
+   \phone{650 3100}
+   \fax{650 6899}
+\else\ifAT %%revised SB to AT     6 Mar 2006
+   \renewcommand{\@tmpdeptaddress}{%
+     The University of Edinburgh\\
+     Appleton Tower\\
+     Crichton St\\
+     Edinburgh EH8 9LE
+     
+   }
+   \phone{650 2690}
+   \fax{650 1426}
+\else   %% Default to King's Buildings
+   \renewcommand{\@tmpdeptaddress}{%
+     The University of Edinburgh\\
+     James Clerk Maxwell Building\\
+     The King's Buildings\\
+     Mayfield Road\\
+     Edinburgh EH9 3JZ
+   }
+   \phone{650 5128}
+   \fax{667 7209}
+\fi\fi\fi
+
+\if@international
+    \newcommand{\@deptaddress}{%
+        \@tmpdeptaddress \\
+        UNITED KINGDOM}
+\else
+    \newcommand{\@deptaddress}{\@tmpdeptaddress}
+\fi
+
+
+% Tailor to unit within Divison of Informatics
+\ifIGS
+   \renewcommand{\@unit}{INFORMATICS GRADUATE SCHOOL}
+   \renewcommand{\@onetitle}{DIRECTOR}
+   \renewcommand{\@ones}{Professor Donald Sannella}
+   \renewcommand{\@twotitle}{DEPUTY DIRECTOR}
+   \renewcommand{\@twos}{Professor Robert Fisher}
+   %% added 6/03/2006
+    \phone{651 7174}
+    \email{igs@inf.ed.ac.uk}
+\else\ifITO
+   \renewcommand{\@unit}{INFORMATICS TEACHING ORGANISATION}
+   \renewcommand{\@onetitle}{DIRECTOR of TEACHING}
+   \renewcommand{\@ones}{Mr Stuart Anderson}
+   \renewcommand{\@twotitle}{DEPUTY DIRECTOR of TEACHING}
+   \renewcommand{\@twos}{Dr Mary Cryan} 
+    %% added 6/03/2006
+    \phone{650 5194}
+    \fax{667 7209}
+    \email{ito@inf.ed.ac.uk}
+\else\ifLFCS
+   \renewcommand{\@unit}{LABORATORY FOR FOUNDATIONS OF COMPUTER SCIENCE}
+   \renewcommand{\@onetitle}{DIRECTOR}
+   \renewcommand{\@ones}{Dr Julian Bradfield}
+   \renewcommand{\@twotitle}{DEPUTY DIRECTOR}
+   \renewcommand{\@twos}{Prof Wenfei Fan}
+   \renewcommand{\@threetitle}{Professors}
+   \renewcommand{\@threes}{%
+      Peter Buneman,%
+      Michael Fourman,%
+      Mark Jerrum,%
+      Gordon Plotkin FRS,%
+      Donald Sannella,%
+      Colin Stirling,%
+      Philip Wadler,%
+      Jane Hillston,%
+      WenFei Fan,%
+      Leonid Libkin%
+   }
+     %% added 6/03/2006
+    \phone{650 5132}
+    \fax{667 7209}
+    \email{lfcs-admin@inf.ed.ac.uk }
+\else\ifSOCS
+   \renewcommand{\@unit}{SCHOOL \textit{of} COMPUTER SCIENCE}
+   \renewcommand{\@onetitle}{Professors of Computer Science}
+   \renewcommand{\@ones}{%
+      Gordon Brebner,%
+      Michael Fourman,%
+      Roland Ibbett,%
+      Gordon Plotkin FRS,%
+      Donald Sannella,
+      Colin Stirling%
+   }
+\else\ifSOAI
+   \renewcommand{\@unit}{SCHOOL \textit{of} ARTIFICIAL INTELLIGENCE}
+   \renewcommand{\@onetitle}{\@empty}
+   \renewcommand{\@ones}{\@empty}
+\else\ifCOGSCI
+\renewcommand{\@unit}{SCHOOL \textit{of} COGNITIVE SCIENCE}
+   \renewcommand{\@onetitle}{\@empty}
+   \renewcommand{\@ones}{\@empty}
+\else\ifICCS
+\renewcommand{\@unit}{INSTITUTE \textit{for} COMMUNICATING \textit{and}
+COLLABORATIVE SYSTEMS}
+   \renewcommand{\@onetitle}{CO-DIRECTOR \textit{of} ICCS}
+   \renewcommand{\@ones}{Professor Mark Steedman}
+   \renewcommand{\@twotitle}{CO-DIRECTOR \textit{of} ICCS}
+   \renewcommand{\@twos}{Professor Johanna Moore}
+    %% added 6/03/2006
+    \phone{650 4665}
+    \fax{650 4587}
+    \email{iccs-info@inf.ed.ac.uk}
+\else\ifIANC
+\renewcommand{\@unit}{INSTITUTE \textit{for} ADAPTIVE \textit{and} NEURAL
+COMPUTATION}
+   \renewcommand{\@onetitle}{DIRECTOR}
+   \renewcommand{\@ones}{Professor Chris Williams}
+   \renewcommand{\@twotitle}{\@empty}
+   \renewcommand{\@twos}{\@empty}
+   %% added 6/03/2006
+    \phone{650 3099}
+    \fax{650 6899}
+    \email{info@anc.ed.ac.uk}
+   
+%%%\else\ifIRR  %% deleted 6 Mar 2006
+%%%\renewcommand{\@unit}{INSTITUTE \textit{for} REPRESENTATION \textit{and}
+%%%REASONING}
+%%%   \renewcommand{\@onetitle}{DIRECTOR}
+%%%   \renewcommand{\@ones}{Professor Bonnie Webber}
+%%%   \renewcommand{\@twotitle}{\@empty}
+%%%   \renewcommand{\@twos}{\@empty}
+
+\else\ifIPAB
+\renewcommand{\@unit}{INSTITUTE \textit{for} PERCEPTION, ACTION
+\textit{and} BEHAVIOUR}
+   \renewcommand{\@onetitle}{DIRECTOR}
+   \renewcommand{\@ones}{Dr Sethu Vijayakumar}
+   \renewcommand{\@twotitle}{\@empty}
+   \renewcommand{\@twos}{\@empty}
+     %% added 6/03/2006
+    \phone{651 3443}
+    \fax{651 3435}
+    \email{ipab-sec@inf.ed.ac.uk}
+\else\ifICSA
+\renewcommand{\@unit}{INSTITUTE \textit{for} COMPUTING SYSTEMS ARCHITECTURE}
+   \renewcommand{\@onetitle}{DIRECTOR}
+   \renewcommand{\@ones}{Professor Nigel Topham}
+   \renewcommand{\@twotitle}{\@empty}
+   \renewcommand{\@twos}{\@empty}
+     %% added 6/03/2006
+    \phone{650 5116}
+    \fax{650 7209}
+    \email{icsa-sec@inf.ed.ac.uk}
+\else\ifCISA
+\renewcommand{\@unit}{CENTRE \textit{for} INTELLIGENT SYSTEMS \textit{and
+their} APPLICATIONS}
+    \renewcommand{\@onetitle}{DIRECTOR}
+    \renewcommand{\@ones}{Dr Dave Robertson}
+    \renewcommand{\@twotitle}{\@empty}
+    \renewcommand{\@twos}{\@empty}
+    
+    %% added 6/03/2006
+    \phone{650 2708}
+    \fax{650 6513}
+    \email{cisa@ed.ac.uk}
+    
+\else   %% Default to the School
+   \gdef\@unit{}
+   \renewcommand{\@onetitle}{HEAD OF SCHOOL}
+   \renewcommand{\@ones}{Michael Fourman}
+    \renewcommand{\@twotitle}{DEPUTY HEADS}
+    \renewcommand{\@twos}{%
+     Steve Renals,%
+     Johanna Moore,%
+     Colin Stirling%
+     }
+     \phone{650 2690}
+     \fax{651 1426}
+     \email{hod@inf.ed.ac.uk}
+     \href{www.inf.ed.ac.uk}
+\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+
+

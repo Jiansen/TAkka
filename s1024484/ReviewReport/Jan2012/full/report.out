@@ -1,0 +1,26 @@
+\BOOKMARK [1][-]{section.1}{Project Description}{}
+\BOOKMARK [2][-]{subsection.1.1}{Background and Motivation}{section.1}
+\BOOKMARK [2][-]{subsection.1.2}{Project Aim}{section.1}
+\BOOKMARK [2][-]{subsection.1.3}{Project Objectives}{section.1}
+\BOOKMARK [1][-]{section.2}{Literature Review}{}
+\BOOKMARK [2][-]{subsection.2.1}{The -calculus}{section.2}
+\BOOKMARK [2][-]{subsection.2.2}{The Join-Calculus and the JoCaml Programming Language}{section.2}
+\BOOKMARK [2][-]{subsection.2.3}{The Ambient Calculus and the Obliq Programming Language}{section.2}
+\BOOKMARK [2][-]{subsection.2.4}{The Erlang Language and The OTP Design principles }{section.2}
+\BOOKMARK [2][-]{subsection.2.5}{Encoding Functions in Process Calculi}{section.2}
+\BOOKMARK [2][-]{subsection.2.6}{Implementation Strategies}{section.2}
+\BOOKMARK [1][-]{section.3}{Some Research Problems}{}
+\BOOKMARK [2][-]{subsection.3.1}{Name Server that Combines Static and Dynamic Typing}{section.3}
+\BOOKMARK [2][-]{subsection.3.2}{Hot Code Swapping}{section.3}
+\BOOKMARK [2][-]{subsection.3.3}{Actor Parametrised on the Type of Expecting Messages}{section.3}
+\BOOKMARK [2][-]{subsection.3.4}{Wadler's Type Pollution Problem}{section.3}
+\BOOKMARK [2][-]{subsection.3.5}{Eventual Consistency for Shared States}{section.3}
+\BOOKMARK [1][-]{section.4}{Project Progress and Plans}{}
+\BOOKMARK [2][-]{subsection.4.1}{Progress Achieved since the First Panel Review}{section.4}
+\BOOKMARK [2][-]{subsection.4.2}{Plan for the Second Year}{section.4}
+\BOOKMARK [2][-]{subsection.4.3}{Plan for the Third Year}{section.4}
+\BOOKMARK [2][-]{subsection.4.4}{Potential Risks}{section.4}
+\BOOKMARK [1][-]{appendix.A}{Scala Join \(version 0.3\) User Manual}{}
+\BOOKMARK [2][-]{subsection.A.1}{Using the Library}{appendix.A}
+\BOOKMARK [2][-]{subsection.A.2}{Implementation Details}{appendix.A}
+\BOOKMARK [2][-]{subsection.A.3}{Limitations and Future Improvements}{appendix.A}

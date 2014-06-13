@@ -1,0 +1,56 @@
+This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
+The top-level auxiliary file: report.aux
+A level-1 auxiliary file: intro.aux
+A level-1 auxiliary file: literature.aux
+A level-1 auxiliary file: problems.aux
+A level-1 auxiliary file: plan.aux
+The style file: plain.bst
+A level-1 auxiliary file: lib_manual.aux
+Database file #1: report.bib
+Warning--entry type for "akka" isn't style-file defined
+--line 422 of file report.bib
+Warning--empty institution in Dal-Zilio97implicitpolymorphic
+Warning--empty year in Honda_languageprimitives
+Warning--empty booktitle in Launchbury93anatural
+You've used 35 entries,
+            2118 wiz_defined-function locations,
+            712 strings with 9320 characters,
+and the built_in function-call counts, 12300 in all, are:
+= -- 1262
+> -- 479
+< -- 15
++ -- 203
+- -- 156
+* -- 731
+:= -- 1927
+add.period$ -- 113
+call.type$ -- 35
+change.case$ -- 181
+chr.to.int$ -- 0
+cite$ -- 38
+duplicate$ -- 530
+empty$ -- 1031
+format.name$ -- 156
+if$ -- 2712
+int.to.chr$ -- 0
+int.to.str$ -- 35
+missing$ -- 31
+newline$ -- 173
+num.names$ -- 70
+pop$ -- 233
+preamble$ -- 1
+purify$ -- 148
+quote$ -- 0
+skip$ -- 413
+stack$ -- 0
+substring$ -- 759
+swap$ -- 165
+text.length$ -- 15
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 132
+warning$ -- 3
+while$ -- 127
+width$ -- 37
+write$ -- 389
+(There were 4 warnings)

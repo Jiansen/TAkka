@@ -1,0 +1,99 @@
+%% SB->AT, 06/03/2006 
+
+% ----------------------------------
+%    Some flags.... and macros to set them
+% ----------------------------------
+
+%% These are flags to handle the unit name ie. the distinct letterhead types.
+\newif\ifIGS \IGSfalse
+\newif\ifITO \ITOfalse
+\newif\ifLFCS \LFCSfalse
+\newif\ifSOCS \SOCSfalse
+\newif\ifSOAI \SOAIfalse
+\newif\ifCOGSCI \COGSCIfalse
+\newif\ifICCS \ICCSfalse
+\newif\ifIANC \IANCfalse
+\newif\ifIRR \IRRfalse
+\newif\ifIPAB \IPABfalse
+\newif\ifICSA \ICSAfalse
+\newif\ifCISA \CISAfalse
+
+%% These are the distinct postal address flags.
+\newif\ifBP \BPfalse
+\newif\ifFH \FHfalse
+\newif\ifKB \KBfalse
+\newif\ifAT \ATfalse  %%SB ->AT 6 Mar 2006
+
+% Whether to put an international dialling code or not
+\newif\if@international \@internationalfalse
+
+%% Ensure only one letterhead style is selected.
+\newif\ifDEFLETTYPE
+\DEFLETTYPEfalse
+\newcommand\onetype{
+   \ifDEFLETTYPE
+      \ClassError{infletr}
+      {Define at most one of
+IGS,ITO,LFCS,SOCS,SOAI,COGSCI,ICCS,IANC,IRR,IPAB,ICSA,CISA}
+      {Define unit names:
+         IGS     ->  Informatics Graduate School;
+         ITO     ->  Informatics Teaching Organisation;
+         LFCS    ->  Laboratory for Foundations of Computer Science;
+         % SOCS    ->  School of Computer Science;
+         % SOAI    ->  School of Artificial Intelligence;
+         % COGSCI  ->  School of Cognitive Science;
+         ICCS    ->  Institute for Communicating and Collaborative Systems;
+         IANC    ->  Institute for Adaptive and Neural Computation;
+        % IRR     ->  Institute for Representation and Reasoning;
+         IPAB    ->  Institute for Perception, Action and Behaviour;
+         ICSA    ->  Institute for Computer Systems Architecture;
+         CISA    ->  Centre for Intelligent Systems and their Applications.
+         (Default is School with no unit name.)
+      }
+   \else
+      \DEFLETTYPEtrue
+   \fi
+}
+
+%% Ensure only one address is specfied
+\newif\ifDEFADDRESS \DEFADDRESSfalse
+\newcommand\oneaddress{
+  \BPfalse \FHfalse \KBfalse \ATfalse %%SB->AT 6 Mar 2006
+   \ifDEFADDRESS
+      \ClassError{infletr}
+      {Define at most one of BPaddress,FHaddress,KBaddress,ATaddress}
+      {Define address:
+         BPaddress  ->  2 Buccleuch Place;
+         FHaddress  ->  5 Forrest Hill;
+         KBaddress  ->  James Clerk Maxwell Building;
+         ATaddress  ->  Appleton Tower.
+         (Default is school/institute-dependent, else KBaddress.)
+      }
+   \else
+      \DEFADDRESStrue
+   \fi
+}
+
+% ----------------------------------
+%    Declaration of options
+% ----------------------------------
+
+\DeclareOption{IGS}{\onetype\IGStrue}
+\DeclareOption{ITO}{\onetype\ITOtrue}
+\DeclareOption{LFCS}{\onetype\LFCStrue\KBtrue}
+\DeclareOption{SOCS}{\PackageWarning{informaticsopt}{The old ``School of...'' affiliations are obsolete}\onetype\SOCStrue\KBtrue}
+\DeclareOption{SOAI}{\PackageWarning{informaticsopt}{The old ``School of...'' affiliations are obsolete}\onetype\SOAItrue\FHtrue}
+\DeclareOption{COGSCI}{\PackageWarning{informaticsopt}{The old ``School of...'' affiliations are obsolete}\onetype\COGSCItrue\BPtrue}
+\DeclareOption{ICCS}{\onetype\ICCStrue\BPtrue}
+\DeclareOption{IANC}{\onetype\IANCtrue\FHtrue}
+%%% revised 6/03/2006
+\DeclareOption{IRR}{\PackageWarning{informaticsopt}{The old ``School of...'' affiliations are obsolete}\onetype\IRRtrue\SBtrue}
+
+\DeclareOption{IPAB}{\onetype\IPABtrue\KBtrue}
+\DeclareOption{ICSA}{\onetype\ICSAtrue\KBtrue}
+\DeclareOption{CISA}{\onetype\CISAtrue\ATtrue} %% SB->AT 6/03/2006
+\DeclareOption{BPaddress}{\oneaddress\BPtrue}
+\DeclareOption{FHaddress}{\oneaddress\FHtrue}
+\DeclareOption{KBaddress}{\oneaddress\KBtrue}
+\DeclareOption{ATaddress}{\oneaddress\ATtrue}
+\DeclareOption{internat}{\@internationaltrue}

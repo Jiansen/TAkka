@@ -1,0 +1,175 @@
+\section{Mixing Static and Dynamic Type Checking}
+\label{type_checking}
+A key advantages of static typing is that it detects some type errors at an 
+early stage, i.e., at compile time.  The TAkka library is designed to detect 
+type errors as early as possible.  Nevertheless, not all type errors can be 
+statically detected, and some dynamic type checks are required. To address this 
+issue, a notion of run-time type descriptor is required.  This section 
+summarizes the type reflection mechanism in Scala and  explains
+how it benefits the implementation of our typed name
+server.  Our typed name server can be straightforwardly ported
+to other platforms that support type reflection.
+
+\subsection{Scala Type Descriptors}
+
+As in Java, generic types are erased at runtime in Scala.
+To record type information that is required at runtime, users can ask Scala to 
+keep the type information by using the {\tt Manifest} class.  
+A {\tt Manifest[T]} encapsulates the runtime type representation 
+of some type {\tt T}.  It provides methods for subtype test ($<:<$).
+
+The code example in Figure \ref{scala_manifest_example} shows common usages of 
+Manifest.  Different to the Java class value obtained at line 10, the Scala manifest
+value obtained at line 8 records the description of generic types.  
+There are three ways of obtaining a manifest: using the Methods {\tt 
+manifest} (line 8), using an implicit parameter of type {\tt Manifest[T]} ]
+(line 13), or using a {\tt context bound} of a type parameter (line 18).  
+The {\tt manifest} method is defined in the Scala 
+{\tt Predef} object.  Values for implicit parameters are provided by 
+the run-time system if qualified values can be inferred.  For example, at line 16,
+Scala infers that a value for the implicit parameter {\tt m} is {\tt mainifest[Int]}.  
+Details of using implicit parameter can be found in the Scala language 
+specification \citep{scala_specification}.  Context bound is a syntactic sugar for implicit parameters without a 
+user-specified parameter name.  
+The {\tt isSubType} method defined at line 23
+tests if the first {\tt Manifest} represents a type that is a subtype of the 
+type represented by the second {\tt Manifest}.
+
+\begin{figure}[h]
+\begin{lstlisting}[language=scala]
+import scala.reflect._
+
+object ManifestExample extends App {
+  assert(List(1,2.0,"3").isInstanceOf[List[String]])
+  // Compiler Warning :non-variable type argument String in type 
+  // List[String] is unchecked since it is eliminated by erasure
+  
+  assert(manifest[List[Int]].toString.equals(
+            "scala.collection.immutable.List[Int]"))
+  assert(classOf[List[Int]].erasure.toString.equals(
+            "class scala.collection.immutable.List"))
+  
+  def typeName[T](x: T)(implicit m: Manifest[T]): String  = {
+    m.toString
+  }
+  assert(typeName(2).equals("Int"))
+    
+  def boundTypeName[T:Manifest](x: T):String = {
+    manifest[T].toString
+  }
+  assert(boundTypeName(2).equals("Int"))
+  
+  def isSubType[T: Manifest, U: Manifest] = manifest[T] <:< manifest[U]
+  assert(isSubType[List[String], List[AnyRef]])
+  assert(! isSubType[List[String], List[Int]]) 
+}
+\end{lstlisting}
+\caption{Scala Example: Manifest Example}
+\label{scala_manifest_example}
+\end{figure}
+
+
+
+
+
+
+
+\subsection{Typed Name Server}
+\label{nameserver}
+
+In distributed systems, a name server maps each registered name, usually a
+unique string, to a dynamically typed value, and provides a function to look up 
+a value for a
+given name. A name can be encoded as a {\tt Symbol} in Scala so that names
+which represent the same string have the same value.  As a value retrieved from 
+a name server is {\it dynamically typed}, it needs to be checked against and be 
+cast to the expected type at the client side before using it.
+To overcome the limitations of the untyped name server, we design and implement
+a typed name server which maps each registered typed name to a value of the
+corresponding type, and allows look-up of a value by giving a typed name.
+
+\begin{figure}[!h]
+\label{tsymbol}
+\begin{lstlisting}
+case class TSymbol[T:Manifest](val s:Symbol) {
+    private [takka] val t:Manifest[_] = manifest[T]
+    override def hashCode():Int = s.hashCode()  
+    override def equals(that: Any) :Boolean = {
+      case ts: TSymbol[_] => ts.t.equals(this.t) && ts.s.equals(this.s)
+      case _ => false
+    }
+}
+case class TValue[T:Manifest](val value:T){
+  private [takka] val t:Manifest[_] = manifest[T]
+}
+\end{lstlisting}
+\caption{TSymbol and TValue}
+\end{figure}
+
+A typed name, {\tt TSymbol}, is a name shipped with a type descriptor.  A 
+typed value, {\tt TValue}, is a value shipped with a type descriptor, which
+describes a super type of the most precise type of that value.  
+In Scala, {\tt TSymbol} and {\tt TValue} can be simply defined as in Figure
+\ref{tsymbol}.  {\tt TSymbol} is declared as a {\it case class} in Scala so 
+that it can be used as a data constructor and for pattern matching.  In 
+addition, the type descriptor, {\tt t}, is constructed automatically and is 
+private to the {\tt takka} package so that it can only be accessed by TAkka 
+library developers. {\tt TValue} is implemented similarly for the same reason.
+
+With the help of {\tt TSymbol}, {\tt TValue}, and a hashmap, a typed name 
+server provides the following three operations:
+
+
+
+
+\begin{itemize}
+  \item {\tt set[T:Manifest](name:TSymbol[T], value:T):Boolean}
+
+The {\tt set} operation registers a typed name with a value of corresponding 
+type and returns true if the symbolic representation of {\it name} has {\it 
+not} been registered; otherwise the typed name server discards the request and
+returns false.
+
+  \item {\tt unset[T](name:TSymbol[T]):Boolean}
+
+The {\tt unset} operation removes the entry {\it name} and returns true if (i) 
+its symbolic representation is registered and (ii) the type {\tt T} is a 
+supertype of the registered type; otherwise the operation returns false.
+
+  \item {\tt get[T] (name: TSymbol[T]): Option[T]}
+
+The {\tt get} operation returns Some(v:{\tt T}), where {\tt v} is the value 
+associated with {\it name}, if (i) {\it name} is a registered name and (ii) 
+{\tt T} is a supertype of the registered type; otherwise the operation returns 
+None.
+
+\end{itemize}
+
+Notice that {\tt unset} and {\tt get} operations succeed as long as the 
+associated type of the input name is the supertype of the associated type of 
+the registered name.  To permit polymorphism, the {\tt hashcode} method of {\tt 
+TSymbol} defined in  Figure {\ref{tsymbol}} does not take type values into 
+account.  Equivalence comparison on {\tt TSymbol} instances, however, should 
+consider the type.  Although the {\tt TValue} class does not appear in the
+APIs for library users, it is required for an efficient library implementation 
+because the type 
+information in {\tt TSymbol} is ignored in the hashmap.  Overriding the
+hash function of {\tt TSymbol} also prevents the situation where users accidentally
+register two typed names with the same symbol but different types,
+in which case if one type is a supertype of the other, the return value of
+{\tt get} may be non-deterministic.  Last but not least, when an operation 
+fails, the name server returns {\tt false} or {\tt None} rather than raising an
+exception so that the name server is always available.
+
+In general, dynamic type checking can be carried out in two ways.  The first 
+method is to check whether the most precise type of a value conforms to the
+structure of a data type.  Examples of this method include dynamically typed
+languages and the {\tt instanceof} method in Java and other languages.  The
+second method is to compare two type descriptors at run time.  The
+implementation of our typed name server employs the second method because  
+it detects type errors which may otherwise be left out.  Our
+implementation requires the runtime type reification feature provided by Scala.
+In a system that does not support type reification, implementing typed name 
+server can be difficult.
+
+

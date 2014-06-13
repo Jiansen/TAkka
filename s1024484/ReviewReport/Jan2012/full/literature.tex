@@ -1,0 +1,19 @@
+
+\section{Literature Review}
+
+Process calculi (or process algebras) is a family of algebraic approaches to study concurrent systems \cite{historyPA}.  A process calculus need to address following questions:
+\begin{inparaenum}[1.]
+  \item What are primitive components in a concurrent system?
+  \item What kind of computations and process behaviours could be modelled in this calculus?
+  \item What does equivalence between two processes mean in this calculus?
+\end{inparaenum}
+In the past 30 years, a number of process calculi have been proposed and studied.  Each calculus answers the first two questions from slightly different perspectives.  For the third question, it is worth to note that a particular calculus may have more than one interpretation for process equivalences on different levels.
+
+This chapter will present selective results in concurrent theories and their implementations.  \S\ref{sec:PA} will use the $\pi$-calculus as an example to sketch research topics in the area of process calculi, which provides formal basis for the design of concurrent languages.  \S\ref{sec:join} and \S\ref{sec:ambient} will focus on the programmability of the join-calculus and the ambient-calculus.  Both sections will introduce how to the subject calculus addresses problems in distributed programming and how ideas in the subject calculus are applied in real programming languages.  Algebraic properties of the subject calculus, however, will not be investigated in depth in this short review.  Then, \S\ref{sec:Erlang} will introduce OTP design principles which make distributed Erlang programs more reliable and maintainable.  \S\ref{sec:blue} will present indirect and direct encodings for the $\lambda$-calculus in process calculi.  Lastly, \S\ref{sec:vanroy} will give a short survey on a general framework for implementing concurrent programming languages.
+
+\input{pi}
+\input{join}
+\input{ambient}
+\input{erlang}
+\input{blue}
+\input{vanroy}

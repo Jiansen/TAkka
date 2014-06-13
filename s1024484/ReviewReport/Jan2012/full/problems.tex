@@ -1,0 +1,46 @@
+\section{Some Research Problems}
+\label{problems}
+
+\subsection{Name Server that Combines Static and Dynamic Typing}
+In distributed programming which supports modular compilation, distributed components are implemented according to agreed communication interfaces.  In untyped settings, developers strictly follow the system specification to ensure that one part will be compatible with others.  In typed settings, developers have the advantage of checking the consistency between implementation and the predefined communication interface at compilation time, before the implementation is plugged into the running system.  Unfortunately, most of distributed systems are not static but require dynamic updating individual components, and therefore change communication interfaces now and then.  
+
+To detect incompatible interfaces at the earliest opportunity, we could implement a novel name server that maps a pair of name and type to a channel expecting values of that type.  The novel name server will provide two benefits.  Firstly, ill-typed message sending to a registered channel will be rejected before it is sent.  Secondly, components that relies on a service could be informed when the new communication interface is no longer backward compatible.
+
+Although building a name server described as above will provide promising features, it is not clear yet how many changes are required to embed the name server into standard Scala or the akka framework.
+
+\subsection{Hot Code Swapping}
+Hot code swapping plays an important role in systems running on OTP platform.  To support peaceful hot code swapping, the Erlang/OTP run-time keeps at most two versions of a module simultaneously.
+
+In an experiment, I implemented a ProcessWrapper class that maintains two pointers to two instances of my GenServer class.  Messages sending to the current version of a GenServer implementation is delegated via an instance of ProcessWrapper.  Comparing to the Erlang platform, this design has two limitations.  For one thing, for a GenServer potentially to be swapped, it must be specified in advance.  For another, one needs to swap the entire GenServer rather than the specific server implementation within a GenServer.  Those two problems demand further investigations.
+
+The akka library \cite{akka} also provides a form of hot swap on the message loop of an actor.  In akka, different versions of message loops are stored at a stack in corresponding ActorContext.  Users could send the actor some special messages, defined in the current message loop, to trigger the context.become/unbecome method.  The downside of this method is three-fold.  Firstly, developers need to specify not only that the code will be potentially hot swapped but also how to trigger the swap.  Secondly, passing new message loop, which is a function, over network is still a problem.  Lastly, different from the behaviour of Erlang programs, only one message loop is ``active'' at a time.
+
+
+\subsection{Actor Parametrised on the Type of Expecting Messages}
+
+In regular supervision meetings, Professor Wadler and I discussed the possibility of using actors that are parametrised on the type of message it expects to receive.  This proposal sounds like a feasible solution to enhance type-safety of communication between actors.  However, we do not find such a version in our working platforms, neither in pure Scala nor in akka libraries.  Further investigation reveals following problems of implementing the proposed Actor in Scala and akka as a compatible alternative:
+
+\begin{enumerate}
+\item The $sender$ field.  To simplify the work of replying to synchronous request, both akka actor and scala actor has a $sender$ field that records the sender of the latest received message.  Including a $sender$ field in our proposed Actor class raises two challenges.  For one thing, the type of the $sender$ filed is only known at run-time.  Therefore, the type parameter of an actor should not be removed at compiler time so that it could be transmitted with the message.  For another, the sender may also be able to deal with messages whose type is not known by the receiver.  Understanding full type information of messages expected by the sender is unnecessary for the receiver.
+
+\item Linked actors.  Following the Erlang design, Actors may link together so that the exit signal of a dying actor will be broadcasted to other actors.  In this case, only exit signals are transmitted between actors.  Same as problem 1, knowing type parameters of all linked actors is unnecessary but increase the burden of transmitting type information.
+
+\item Layers in a supervision tree.  The akka framework provides APIs to enquiry the parent actor and child actors of an actor.  In this situation, it may not be a good idea to leak type information between layers.  Similar issues will be discussed in \S\ref{type_pollution}.
+\end{enumerate}
+
+
+%\subsection{Problems on Serialization}
+
+
+\subsection{Wadler's Type Pollution Problem}
+\label{type_pollution}
+Most of modern systems are built in layers, where each layer provides services to the layer immediately above it, and implements those services using services in the layer immediately below it.  If a layer is implemented using an actor, then the actor will receive both messages form the layer above and the layer below via its only channel.  This means that the higher layer could send a message that is not expected from it, so as the lower layer.
+
+One solution to the type pollution problem is using sub-typing.  Let a layer has type Actor[T], denoting that it is an actor that expects message of type T.  With sub-typing, one could publish the layer as Actor[A] to the layer above while publish the same layer as Actor[B] to the layer below.  The system could check if both A and B are subtypes of T.
+
+Another solution is using separate channels for requests from the higher level and responses from the lower level.  However, the plain actor model has to be abandoned in this solution.  Currently, we identified two alternatives for the plain actor model: join calculus \cite{full_join} and session types \cite{Honda93typesfor, Honda_languageprimitives}.  In join calculus, one could define different channels to be used for different messages.  In session types, a channel is only used for communication between two parties at any time; therefore, after initialising a session requested by the layer above, the middle layer requests a new session for communications with the layer below.  The join calculus has been implemented both as language extensions \cite{join_csharp} and libraries \cite{scala_joins, join-fsharp, Russo07thejoins}.  The session type, on the other hand, has only been implemented as prototype languages \cite{Honda_languageprimitives, SJ}.  It could be a challenge to implement session types as a library.
+
+
+\subsection{Eventual Consistency for Shared States}
+Users of a distributed system would expect receiving consistent value when using shared states. Unfortunately, known as the CAP theorem \cite{CAP}, strong consistency, availability, and partition tolerance could not be obtained at the same time in distributed systems.  In practice, developers usually weaken strong consistency to eventually consistency to improve availability and partition tolerance.  Eventually consistency is an active topic both in theoretical study\cite{Eventually_Consistent_Transactions, Vogels_2009} and in practise\cite{Dynamo}.  For our project, we would like to apply the eventually consistency model to build global consistent name server.
+

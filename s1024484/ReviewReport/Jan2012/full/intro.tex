@@ -1,0 +1,37 @@
+\section{Project Description}
+
+\subsection{Background and Motivation}
+
+Concurrent programming is facing new challenges due to the recent advent of multi-core processors, which rely on parallelism, and the pervasive demands of web applications, which rely on distribution.  Theoretic works on concurrency can be traced back to Petri net and other approaches invented in 1960s \cite{historyPA}.  Since 1980, more attention has been paid to the study of process calculi (a.k.a. process algebras), which provide a family of formal models for describing and reasoning about concurrent systems \cite{abramsky}.  The proliferation of Process Calculi marks the advance in concurrency theory.  ``The Dreams of Final Theories'' \cite{abramsky} for concurrency, however, have not been achieved.
+
+In practice, it is difficult to build a reliable distributed system because of its complexity.  Firstly, a distributed system shares features and problems with other concurrent systems.  For instance, it is non-deterministic so that traditional input-output semantics is inadequate to be used for reasoning about its behaviour.  Secondly, scalability of a distributed system is usually a challenge for its developers.  For example, developers of a distributed system are unlikely to know the structure of the system in advance.  Moreover, the mobility \cite{MobileAmbients} of a distributed system requires the capability of changing its topological structure on the fly.  In addition, the latency of communication could be affected by many unpredictable factors.  Thirdly, the system should be tolerant of partial failures.  For example, when a site fails to respond to messages,  the system should address this failure by invoking a recovery mechanism.   	
+
+Fortunately, some recent works provide a solid basis for the design of distributed programming languages.  For example, the ambient calculus \cite{MobileAmbients} models the movement of processes and devices.  Bigraphs \cite{bigraph_book}, a more abstract model, is aiming at describing spatial aspects and mobility of ubiquitous computing.  Session types \cite{Honda93typesfor, Honda_languageprimitives} guarantees that two parties of a session always communicate in a dual pattern.  Lastly, the join-calculus \cite{full_join} is a remarkable calculus which models features of distributed programming as well as provides a convenient construct, the join patterns, for resources synchronisation.  It is also important to note that the syntax of the join-calculus is close to a real programming language and therefore reduces the barrier between understanding the mathematical model and employing this abstract model to guide programming practices.
+
+In addition, good programming principles, such as the OTP design principles\footnote{OTP is stand for Open Telecom Platform.  It provides a set of libraries for developing Erlang applications.  For the above reason, it is also known as Erlang/OTP design principles}, have been developed and verified by the long-term implementation practice.  OTP is a platform for developing concurrent, distributed, fault tolerant, and non-stop Erlang applications \cite{Erlang}.  In the past 20 years, the Erlang language was used to build large reliable applications like RabbitMQ, Twitterfall, and many telecommunications systems.
+
+Nevertheless, Erlang is an untyped functional programming language whereas a typed language detects certain forms of data misuse earlier.  Therefore, it would be pleasant to combine advantages of static typing and OTP principles.  At the time of this writing, this idea has been partly realised in the akka framework \cite{akka}.  In spite of some attempts, the akka framework inherits some limitations of using untyped actors from the Erlang programming language.  This situation left us research potentials in this line.
+
+\subsection{Project Aim}
+\label{aim}
+The aim of this project is to {\it{build a library that supports OTP design principles in a typed setting}}. The project intends to explore factors that encourage programmers to employ good programming principles.  This project will demonstrate how types and appropriate models help the construction of reliable distributed systems.
+
+\subsection{Project Objectives}
+\label{objectives}
+
+\begin{enumerate}
+  \item To identify a number of medium-sized applications implemented in Erlang using OTP principles.  Those examples will be served as references to evaluate frameworks that support OTP principles.  Candidate examples shall cover a wide range of aspects in distributed programming, including but not limited to 
+    \begin{inparaenum} [(a)]
+      \item transmitting messages and potentially computation closures, 
+      \item modular composition of distributed components, 
+      \item default and extensible failure recovery mechanism, 
+      \item eventually consistency model for shared states, and 
+      \item dynamic topology configuration and hot code swapping.
+    \end{inparaenum} 
+  \item To re-implement and compare identified applications within existing frameworks.  The primitives purpose of this work is to be aware of prominent features and limitations of existing frameworks.  As a research which contains certain level of overlaps with other existing and evolving frameworks, this research should distinguish itself from others by devised solutions to some problems which are difficulty to be solved by alternatives.  Moreover, the evaluation component formalised in this work is likely to be novel for comparing frameworks aiming at supporting distributed computation.  The same evaluation component will be used for evaluating our later developed library as well.
+  \item To implement a library that supports OTP design principles in a typed setting.  The library could be built either on top of existing frameworks or with lower level constructs.  It important to note that the library might be based on an abstraction that is more general than the actor model.  Although OTP design principles were proposed for the Erlang language, which is based on the Actor model, we believe that it should be possible to rephrase those good programming principles in other models.  To demonstrate the wide applications of OTP design principles, the library interface should provide a certain level of generality so that it could be implemented by and used within different models.
+  \item To demonstrate how the proposed library meets the demands of distributed programming.  At this stage, the proposed library will be used to (a) demonstrate how to write small programs aiming at different requirements; (b) demonstrate its scalability of programming in the large by reimplementing applications used in objective 1 and 2.
+  \item To summarise some challenges in distributed programming and how to get around those difficulties with the proposed library and other programming frameworks.  The summary will reveal how language libraries, which is used for practical purposes, are related to their theoretical guidance underneath.  It may also plot research blanks for future study.
+\end{enumerate}
+
+

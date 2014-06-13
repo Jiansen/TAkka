@@ -1,0 +1,64 @@
+\documentclass[coverpage]{inftechrep}
+
+\setcounter{tocdepth}{2}
+
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{paralist}
+\usepackage{hyperref}
+\usepackage[all]{hypcap}
+\usepackage{verbatim}
+\usepackage{amssymb, amsmath, amsthm}
+\usepackage{algorithmic, algorithm}
+
+\usepackage{listings} 
+% "define" Scala 
+\lstdefinelanguage{scala}{morekeywords={class,object,trait,extends,with,new,if,while,for,def,val,var,this}, 
+otherkeywords={->,=>}, 
+sensitive=true, 
+morecomment=[l]{//}, 
+morecomment=[s]{/*}{*/}, 
+morestring=[b]"} 
+\lstset{frame=tb,language=scala,aboveskip=3mm,belowskip=3mm,showstringspaces=false,columns=flexible,basicstyle={\small\ttfamily}} 
+
+
+
+\begin{comment}
+\end{comment}
+
+\begin{document}
+\title{A Scala Library for Distributed Join Calculus}
+\author{Jiansen HE}
+%\reportnumber{25}
+%\reportyear{1999}
+%\reportmonth{5}
+%\keywords{Common, Witchcraft}
+%\published{Presented at the WITCH99 Conference, Debrecen, Hungary, May 1999.}
+\institutes{The Laboratory for Foundations of Computer Science}
+%\maketitle
+%\tableofcontents
+%\begin{abstract}
+%This is the abstract.
+%\end{abstract}
+\include{lib_manual}
+%\include{conclusion}
+%%%%%%%%
+%% Any appendices should go here. The appendix files should look just like the
+%% chapter files.
+%\appendix
+%\include{appjoin}
+%% ... etc...
+
+%% Choose your favourite bibliography style here.
+\bibliographystyle{plain}
+
+%% If you want the bibliography single-spaced (which is allowed), uncomment
+%% the next line.
+% \singlespace
+
+%% Specify the bibliography file. Default is thesis.bib.
+\bibliography{report}
+
+
+
+\end{document}

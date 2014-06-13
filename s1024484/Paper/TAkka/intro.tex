@@ -1,0 +1,101 @@
+\section{Introduction}
+
+The Erlang/OTP (Open Telecom Platform) library \cite{ErlangWeb}
+was released in 1996 for writing Erlang code using the Actor
+model \cite{Hewitt:1973} together with five OTP design principles derived from
+ten years' experience of Erlang programming. The OTP Design principles, 
+especially the supervision principle, made it easier to build reliable 
+distributed applications \cite{ArmstrongErlang}.
+
+The notions of actors and supervision trees have been ported to statically 
+typed languages including Scala and Haskell.  Scala actor libraries including 
+Scala Actors \cite{actor_1, actor_2} and Akka \cite{akka_api,akka_doc} use 
+dynamically typed messages even though Scala is a statically typed language.  
+Cloud Haskell \cite{CloudHaskell}, a recent actor library, supports both 
+dynamically and statically typed messages, but does not support supervision. 
+Can actors in supervision trees be statically typed?
+
+The key claim in this paper is that actors in supervision trees can be
+typed by parameterizing the actor class with the type of messages it expects to
+receive.  Type-parameterized actors benefit both users and developers
+of actor-based services. For users, sending ill-typed messages is prevented at 
+compile time.  Because messages are usually transmitted asynchronously, it may 
+be otherwise difficult to trace the source of errors at runtime, especially in 
+distributed environments.  For service developers, since unexpected messages 
+are eliminated from the system, they can focus on the logic of the services 
+rather than worrying about incoming messages of unexpected types.  Implementing 
+type-parameterized actors in a statically-typed language; however, requires 
+solving following three problems.
+
+\begin{enumerate}
+  \item A typed name server is required to retrieve actor references of
+specific types.  A distributed system usually requires a name server that
+maps names of services to processes that implement that service.  If processes
+are dynamically typed, this is usually implemented as a map from names to 
+processes. Can this be adapted to cases where processes are statically 
+typed?
+
+  \item Supervisor actors must interact with child actors of different types.  
+Actors are structured in supervision trees to improve system reliability.  Each 
+actor in a supervision tree needs to handle messages within its specific 
+interests and also messages from its supervisor.  Is it practical to define a 
+supervisor that communicates with children of different type parameters?
+
+  \item Actors which receive messages from distinct parties may suffer from 
+the type pollution problem, in which case a party imports too much type  
+information about an actor and can send the actor messages not expected from it.
+Systems built on layered architecture or the MVC model are often victims of the 
+type pollution problem. As an actor receives messages from distinct parties 
+using its sole channel, its type parameter is the union type of all expected 
+message types.  Therefore, unexpected messages can be sent to actors which 
+naively publishes its type parameter or permits dynamically typed messages. 
+Can a type-parameterised actor have different types of communication interface, 
+i.e. typed actor reference, when published to parties.
+\end{enumerate}
+
+Continuing a line of work on merging types with actor programming by Haller
+and Odersky \cite{actor_1, actor_2} and Akka developers \cite{akka_doc}, along 
+with the work on system reliability test by Netflix, Inc. \cite{ChaosMonkey} 
+and Luna \cite{ErlangChaosMonkey}, this paper makes following contributions.
+
+\begin{itemize}
+ \item It presents the design and implementation of a novel typed name server
+that maps typed names to values, for example actor references, of the 
+corresponding type.  The typed name server (Section \ref{nameserver}) mixes 
+static and dynamic type checking so that type  errors are detected at the earliest 
+opportunity.  The implementation requires runtime support for type reflection and 
+a notion of first class type descriptors.  In Scala, the {\tt Manifest} class 
+provides such facility.
+
+ \item It describes the design of the TAkka library.  Sections \ref{actor} to
+\ref{actor_context} illustrate how type parameters are added to actor related
+classes to improve type safety.   By separating the handler for system 
+messages from the handler for user defined messages, Sections \ref{supervision}
+and \ref{systemmessage} show that type-parameterized actors can form
+supervision trees in the same manner as untyped actors. Section \ref{alternative
+designs} compares the design of TAkka with alternatives adopted by other actor 
+libraries.
+
+ \item It shows that Akka programs can gradually migrate to their TAkka 
+equivalents.  Section \ref{evolution} explains strategies of gradually 
+upgrading Akka programs to their TAkka equivalents.
+ 
+ \item It gives a straightforward solution to the type pollution problem 
+(Section \ref{type_pollution}).  We present a simple API to cast
+the type of an actor reference to its super type.  The semantics of the API is 
+easy to understand and does not require deep understanding of
+underlying concepts such as inheritance, polymorphism, and contravariant 
+types.
+ 
+ \item It gives a comprehensive evaluation of the TAkka library.  Results in
+Section \ref{expressiveness} confirm that using type parameterized actors 
+sacrifice neither expressiveness nor correctness.  Efficiency and 
+scalability test in Section \ref{efficiency} shows that TAkka applications have 
+little overhead at the initialization stage but have almost identical run-time 
+performance and scalability compared to their Akka equivalents.  In 
+addition, two helper libraries (Section \ref{reliability}) are shipped with the 
+TAkka library.  The Chaos Monkey library are ported to test applications 
+against intensive adverse conditions.  The novel Supervision View library is 
+designed and implemented to dynamically monitor changes of supervision tree.
+ 
+\end{itemize}

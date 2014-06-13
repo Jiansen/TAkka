@@ -1,0 +1,228 @@
+% This is LLNCS.DEM the demonstration file of
+% the LaTeX macro package from Springer-Verlag
+% for Lecture Notes in Computer Science,
+% version 2.4 for LaTeX2e as of 16. April 2010
+%
+\documentclass{llncs}
+%
+\usepackage{makeidx}  % allows for indexgeneration
+\usepackage{comment}
+
+
+
+%% \usepackage[style=alphabetic]{biblatex}
+\usepackage[authoryear,sectionbib]{natbib}
+%% \PassOptionsToPackage{authoryear}{natbib}
+%% \usepackage{caption}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{url}
+
+\usepackage{paralist}
+\usepackage[pdfpagelabels]{hyperref}
+\usepackage[all]{hypcap}
+\usepackage{verbatim}
+\usepackage{array}
+\usepackage{float}
+\usepackage{multirow}
+% \usepackage{rotating}
+\usepackage{multicol}
+\usepackage{longtable}
+
+\usepackage{listings} 	
+% "define" Scala
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,%
+    do,else,extends,false,final,finally,%
+    for,if,implicit,import,match,mixin,%
+    new,null,object,override,package,%
+    private,protected,requires,return,sealed,%
+    super,this,throw,trait,true,try,%
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@, <:<},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
+
+\usepackage{pxfonts}
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+ 
+% Default settings for code listings
+\lstset{frame=tb,
+  language=scala,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left, % none,
+  numbersep=2pt,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\bfseries\color{black},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{black},
+  frame=none, % single,
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  captionpos=b
+}
+
+% A comment in a draft (shouldn't appear in the final version).
+\newcommand{\mycomment}[1]{\(\spadesuit\){\bf #1 }\(\spadesuit\)}
+% Comment this out in the draft
+% \newcommand{\mycomment}[1]{}
+\newcommand{\pmcomment}[1]{\comment{PM}{#1}}
+\newcommand{\pwtcomment}[1]{\comment{PT}{#1}}
+\newcommand{\rscomment}[1]{\comment{RS}{#1}}
+
+% line break in table.  e.g.
+% Foo bar & \specialcell{Foo\\bar} & Foo bar \\    % vertically centered
+% Foo bar & \specialcell[t]{Foo\\bar} & Foo bar \\ % aligned with top rule
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+  
+  
+\renewcommand\bibname{References}
+
+
+\begin{document}
+%
+\frontmatter          % for the preliminaries
+\title{Type-parameterized Actors and Their Supervision 
+% (v7.0.1)
+}
+
+% \author{Jianse HE\inst{1} \and Philip Wadler\inst{1}
+%  \and
+% Philip Trinder \inst{2}}
+
+
+
+%\authorrunning{J. HE P. Wadler P. Trinder} % abbreviated author list (for
+%running head)
+
+%
+
+%%%% list of authors for the TOC (use if author list has to be modified)
+
+% \tocauthor{Jianse HE, Philip Wadler, and Philip Trinder}
+
+%
+
+% \institute{University of Edinburgh \and
+% University of Glasgow}
+
+
+\maketitle
+
+
+
+\begin{abstract} 
+The robustness of actor-based concurrent applications can be Improved by (i) 
+employing failure recovery mechanisms such as the supervision principle, or (ii) 
+using typed messages to prevent ill-typed communication. This paper introduces 
+TAkka, a typed Akka library that supports both typed messages and the 
+supervision principle. The TAkka library mixes statical and dynamical type 
+checking to make sure that dynamically typed distributed resources and 
+statically typed local resources have consistent types. Our notion of typed 
+actor can publish itself as different types when used by different parties so 
+that messages of unexpected types are prevented at the senders' side. In TAkka, 
+messages for supervision purposes are treated specially so that a supervisor can 
+interact with child actors of different types. Results show that Akka programs 
+can be gradually upgraded to TAkka equivalents with minimal runtime and code 
+size overheads. Finally, we implement two auxiliary libraries for 
+reliability assessment.
+\end{abstract}
+
+\begin{comment}
+The robustness of distributed message passing applications can be improved by
+\begin{inparaenum}[(i)]
+ \item employing failure recovery mechanisms such as the supervision 
+principle in the Erlang/OTP library, or
+ \item using typed messages to prevent ill-typed communication.
+\end{inparaenum}
+Attempts of combing these two approaches have been made in two directions: type checking existing 
+programs written in dynamically typed languages and implementing a statically 
+typed actor library that supports the supervision principle.   Regarding the 
+later approach, current statically typed actor libraries either use dynamically 
+typed messages (e.g. Akka), or do not support supervision (e.g. Cloud Haskell 
+and others).
+This paper introduces the typed Akka library, TAkka, which supports both typed messages
+and the supervision principle.  The TAkka library mixes statical and and dynamical type
+checking to make sure that dynamically typed distributed resources and statically
+typed local resources have consistent types.  Our notion of typed actor can 
+publish itself as different types when used by different parties so that
+messages of unexpected types are prevented at the sender's side.  In TAkka,
+messages for supervision purposes are treated specially so that a supervisor can
+interact with child actors of different types.
+Results show that Akka programs can be gradually upgraded to TAkka equivalents 
+with minimal runtime and code size overheads.   Finally, we port the Chaos 
+Monkey library and design a Supervision View library to assist reliability 
+evaluation.
+\end{comment}
+
+
+
+
+
+\input{intro}
+\input{background}
+\input{typechecking}
+\input{actor}
+\input{evolution}
+\input{evaluation}
+\input{reliability}
+
+
+\section{Conclusion}
+
+Existing actor libraries accept dynamically typed messages.  The TAkka
+library introduces a type-parameter for actor-related classes. The additional 
+type-parameter of a TAkka actor specifies the communication interface of 
+that actor.  With the help of type-parameterized actors, unexpected 
+messages to actors are rejected at compile time.
+In addition to eliminating programming bugs and type errors, 
+programmers would like to have a failure recovery mechanism for
+unexpected run-time errors.  We are glad to see that type-parameterized 
+actors can form supervision trees in the same way as untyped actors.
+Lastly, test results show that building type-parameterized actors on top of 
+Akka does not introduce significant overheads, with respect to program size,
+efficiency, and scalability.  In addition, debugging techniques such 
+as Chaos Monkey and Supervision View can be applied to applications built 
+using actors with supervision trees.  The above results encourage the use of 
+types and supervision trees to implement reliable applications and improve the 
+reliability of legacy applications with little effort.  We expect similar 
+results can be obtained in other actor libraries such as future extensions 
+of CloudHaskell \cite{OTPCloudHaskell}.
+
+\paragraph{Acknowledgements}
+
+
+The authors gratefully acknowledge the substantial help they have received from 
+many colleagues who have shared their related results and ideas with us over 
+the long period during which this paper was in preparation.  
+Benedict Kavanagh and Danel Ahman for continuous comments and discussions.
+The RELEASE team for giving us the access to the source code of the BenchErl 
+benchmark examples.  Thomas Arts from Quivq.com and Francesco Cesarini from 
+Erlang Solutions for providing the Erlang source code for the ATM simulator 
+example and the Elevator Controller example, two examples used in their 
+commercial training courses.
+
+% ??
+
+
+%
+% ---- Bibliography ----
+\bibliographystyle{abbrvnat}
+\bibliography{takka}
+
+\end{document}

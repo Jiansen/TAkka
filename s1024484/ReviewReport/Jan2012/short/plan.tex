@@ -1,0 +1,29 @@
+\section{Research Plan and Risk Analysis}
+
+\subsection{Plan for the Second Year}
+In the rest of the second year, I will port core components of the Riak distributed database\cite{riak}.  I will summarise problems that I encountered when translating the three examples into Scala using akka.  More translation exercises will be done if proper examples are found.
+
+Apart from the above, I will continue the the design and implementation of a library that supports OTP principles.  This work will require iterative and incremental development on requirement analysis, interface design, functionality implementation, and system evaluation.  Pace of progress will be recorded for project evaluation.
+
+\subsection{Plan for the Third Year}
+The beginning of the third year will continue the work of library implementation. After that, the library will be published with a technical report that covers:  
+\begin{inparaenum}[(i)]
+  \item functionalities provided by the library,
+  \item alternative choices of library design and reasons for adopting the chosen design,
+  \item benchmark results of selected canonical distributed applications.
+\end{inparaenum}  
+
+In the meantime of receiving feedbacks from programming communities, I will re-implement the selected medium-sized applications with the new library.  Testing results for the new implementation will be published in an updated version of library documentation.
+
+Finally, a more comprehensive summary of common challenges in distributed programming and their solutions will be given.  The summary will also illustrate how type theories and OTP principles guided the library design.   It may also reveal research opportunities for future study.
+
+\subsection{Potential Risks}
+As a novel and ambitious research, some tasks may be tougher than my expectation.  Also, results of some tasks may differ from my intuition.  Risk analyses for planed objectives are given below.
+
+Firstly, sample applications used in the first and second objectives, which are the basis of problems identification and results evaluation, must be carefully selected.  It would be better to select open-source applications implemented in high-quality code.  Fortunately, among five recommended examples, we have identified three appropriate applications: ATM simulator, elevator controller, and Riak core.  The other two examples, Erlang Solutions IMS and EJABBERD, are considered inappropriate for their hight ratio of implementation for communication protocols to implementation for OTP principles.
+
+Secondly, some research problems rooted in the centre of distributed programming, and therefore is inevitably also investigated by other researchers.  Although it seems feasible to re-implement identified applications in other frameworks and then identify problems of using those frameworks, our chosen comparing frameworks are vigorous and evolving quickly.  For example, the new akka library (version 2.0) forces every actor to be part of a supervision tree.  The evolving of comparing frameworks contributes to plausible solutions to some research problems as well as pressures of providing devised simpler solutions for tough problems.  In addition, since there is no uniform model for distributed programming, it would be hard to evaluate to what extend our library interface is a general framework for distributed programming.
+
+Lastly, apart from above general difficulties, I also encountered implementation difficulties listed in \S\ref{problems}.  At the time of this writing, it is not clear to me how those problems could be solved in neat ways.  I anticipate that new problems will be added to the list when I write more programs in type safe-less platforms.
+
+Despite the identified and potential troubles which may distract this research from a perfect result, none of above risks should be considered as a principle hindrance to main objectives listed in \S\ref{objectives}.  With a proper plan, wide sources of suggestions, and the commitment to research objectives, the proposed research should be suitable for a PhD project.

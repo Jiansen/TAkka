@@ -1,0 +1,40 @@
+\begin{comment}
+ 
+
+
+\chapter{Reliability of Supervision Tree}
+
+
+\section{Single Node Analysis}
+
+Case 0: Single Failure, No restart
+\begin{equation}
+R(t) = \int_{t}^{\infty} f(x)dx
+\end{equation}
+\begin{equation}
+A(t) = \frac{\int_{0}^{t} xf(x)dx + t \cdot R(t) }{t}  
+\end{equation}
+Case I: Every $T$ time, spend $t_R$ time to restart
+
+\begin{equation}
+A(t) = \frac{ n(\int_{0}^{T} x f(x) dx + T \cdot R(T)) + \int_{0}^{t_{tail}} x 
+f(x) dx}{t}
+\end{equation}
+\hspace{7 cm} where  $n = \left \lfloor \frac{t}{T+t_R} \right \rfloor$ and 
+$t_{tail} = t-nT$
+
+
+Case II: When failed, spend $t_R$ time to restart
+
+\begin{equation}
+A(t) = ?
+\end{equation}
+
+\hspace{7 cm} where  $W(t) = \int_{0}^{t} xf(x)dx$
+
+Case III: When failed or running for $T$ time, spend $t_R$ time to restart
+
+
+$A(t) = ? $
+
+\end{comment}

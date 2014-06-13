@@ -1,0 +1,3 @@
+latex2rtf -a takka.aux -b takka.bbl takka.tex
+
+latex2rtf -Z1 takka.tex

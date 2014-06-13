@@ -1,0 +1,17 @@
+set term png
+set output "flat_time.png"
+
+set title "run-time"
+
+set xlabel 'Number of Nodes'
+set ylabel 'runtime (ms)'
+set yrange [0:6000]
+set xtics (1, 4, 8, 12, 16, 20, 24, 28, 32)
+plot "GenStress.dat" using 1:2:3 with errorlines title 'GenStress  Akka Runtime' lc 1,\
+     "GenStress.dat" using 1:4:5 with errorlines title 'GenStress TAkka Runttime' lc 2,\
+     "Parallel.dat" using 1:2:3 with errorlines title 'Parallel  Akka Runtime' lc 3,\
+     "Parallel.dat" using 1:4:5 with errorlines title 'Parallel TAkka Runttime' lc 4,\
+     "SerialMsg.dat" using 1:2:3 with errorlines title 'SerialMsg  Akka Runtime' lc 5,\
+     "SerialMsg.dat" using 1:4:5 with errorlines title 'SerialMsg TAkka Runttime' lc 6
+
+set output

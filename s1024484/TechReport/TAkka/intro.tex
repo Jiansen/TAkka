@@ -1,0 +1,34 @@
+\section{Introduction}
+
+In 1996, the Erlang/OTP (Open Telecom Platform) library\cite{ErlangWeb} was
+released for writing Erlang code using the Actor model\cite{Hewitt:1973} and 5
+principles derived from ten years successful experience.  Those principles are
+later known as OTP Design principles. OTP Design principles, especially the
+supervision tree principle, have helped Erlang programmers in building reliable
+distributed applications\cite{ArmstrongErlang}.
+
+Recently, the notion of actor and supervision tree has been ported to
+statically typed languages including Scala and Haskell.  A Scala library, Akka,
+makes actor supervision obligatory \cite{akka_api,akka_doc}. Nevertheless, in
+current actor libraries, messages sent to actors are dynamically typed.
+
+Continuing a line of work on merging types and the supervision principle, this
+paper makes the following contributions:
+\begin{itemize}
+ \item it articulates the design of the TAkka library.  Section 3 illustrates
+how type parameters are added to actor related classes to improve type safety
+and how type-parametrized actors form supervision trees in the same manner as
+traditional actors. Section \ref{alternative designs} compares the design of
+TAkka with alternatives adopted by other actor libraries.
+ \item it demonstrates how static and dynamic type checking could be mixed to
+detect type errors at the earliest possibility.  Section 4 explains
+implementation techniques used in two TAkka components where both static and
+dynamic type checking are employed.
+ \item it gives a critical evaluation of the TAkka library.  Section 5.1
+defines the type pollution problem and lists possible solutions to that problem.
+Among all solutions, employing type-parametrized actors solves the problem
+most straightforwardly. The rest of Section 5 reports the overhead of TAkka in
+terms of code size, efficiency, and scalability.
+\end{itemize}
+
+\mycomment{ contributions needs to be rewritten once the content is finished.}

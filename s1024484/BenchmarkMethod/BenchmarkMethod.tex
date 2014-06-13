@@ -1,0 +1,192 @@
+\title{A Note on Benchmark Methodology}
+\author{Jiansen HE}
+%  \date{\today}
+\date{}
+
+\documentclass[12pt, a4paper, twoside]{article}
+
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{mathtools}
+
+\begin{document}
+\maketitle
+
+\section{Literature Review}
+
+\subsection{Computer Architecture: A Quantitative Approach\cite{HePa06}}
+
+Through \cite{HePa06} is aiming at presenting quantitative approaches used in the design and analysis of hardware development, we found that the methodology used to summarize performance (pages 33 - 37) also applies to the evaluation of software platform, such as TAkka and Akka.
+
+In hardware evaluation, benchmark suites are used to measure performance.  Unfortunately, by the time of this writing, there is no standard benchmark suite for the Akka platform.  Therefore, we would like to select our own suite of benchmarks for comparing the performance of Akka and TAkka.  To avoid unintentional optimization in TAkka implementation, benchmarks are selected from open-source Akka applications and modifications are made at the minimal level.
+
+Once the suite of benchmarks is decided, users would like to have a single number that summarize the performance.  One option is use a weighted arithmetic mean (e.g. PCA in \cite{Blackburn2006} ).  The alternative suggested by \cite{HePa06} is using the geometric mean of all performance ratios, which has the following property:
+
+  $ \sqrt[n]{\prod^{n}_{i=1}\frac{Performance_{A_i}}{Performance_{B_i}}} = \sqrt[n]{\prod^{n}_{i=1}\frac{Performance_{A_i}}{Performance_{B_i}}} = \sqrt[n]{\prod^{n}_{i=1}\frac{Execution\ time_{B_i}}{Execution\ time_{A_i}}} $
+
+To assess the variability of the \emph{chosen suite}, the standard deviations could be used as an indicator to \lq\lq{}decide whether the mean is likely to be a a good predictor\rq\rq{}.   As we are working with geometric mean, the geometric standard deviation, rather than the arithmetic standard deviation, shall be used.  \cite{HePa06} gives following equations for calculating geometric mean and standard deviation in spreadsheet.
+
+$Geometric\ mean = exp(\frac{1}{n} \times \sum_{i=1}^{n}ln(sample_i))$
+
+$gst = exp(\sqrt{\frac{\sum_{i=1}^{n}{(ln(sample_i)-ln(Geometric\ mean))^2}}{n}})$
+
+For those who would like to employ statistic tools to analysis results, \cite{HePa06} suggests considering \emph{normal distribution} and \emph{lognormal distribution}.  If the lognomal distribution is applicable, \cite{HePa06} further expects that \lq\lq{}68\% of the samples fall in the range [Mean / gstdev, Mean $\times$ gstdev], 95\% with [Mean / gstdev$^{2}$, Mean $\times$ gstdev$^{2}$] \rq\rq{}.
+
+
+\subsection{The Art of Application Performance Testing: Help for Programmers and Quality Assurance\cite{Ian09}} 
+
+\cite{Ian09} gives principles and examples in software performance testing.  The book does not give mathematical tools for advanced numerical evaluation.  I would like to review the book as my project proceeds.
+
+
+\paragraph{\S1.1 gives four indicators of performance. }They are:
+\begin{description}
+  \item[Service-oriented indicators] \hfill
+  \begin{itemize}
+    \item \textbf{Availability}  \lq\lq{}The amount of time an application is available to the end user.\rq\rq{}  Small examples that demonstrate the OTP supervision principle should pass availability test.  (but how?)
+    \item \textbf{Response time} \lq\lq{}the amount of time it takes for the application to respond to a user request.\rq\rq{}
+  \end{itemize}
+  \item[Efficiency-oriented indicators] \hfill
+  \begin{itemize}
+    \item \textbf{Throughput} \lq\lq{}the rate at which application-oriented events occur.\rq\rq{}  (For a web service, throughput is the reciprocal of response time.)
+    \item \textbf{Utilization}  \lq\lq{}the percentage of theoretical capacity of a resource that is being used.\rq\rq{}
+  \end{itemize}
+\end{description}
+
+\paragraph{\S2.8 listed common kinds of performance tests.}  They are:
+\begin{itemize}
+  \item Baseline test: \lq\lq{}The test is normally executed for a single transaction as a single virtual user for a set period of time or for a set number transaction iterations. ... The value obtained can then be used to determine the amount of performance degradation that occurs in response to increasing numbers of users or throughput.\rq\rq{}
+  \item Load test: \lq\lq{}... application is loaded up to the target concurrency but usually no further.\rq\rq{}
+  \item Stress test: \lq\lq{}A stress test causes the application or some part of the supporting infrastructure to fail.  The purpose is to determine the upper limits or sizing of the infrastructure.\rq\rq{}
+  \item Soak or stability test: \lq\lq{}The soak test is intended to identify problems that may appear only after an extended period of time.\rq\rq{} (In tests for the  socko, I observed that different test tools, ab and httperf, gives very different results.)
+  \item Smoke test: tests on \lq\lq{}transactions that have been affected by a code change.\rq\rq{}
+  \item isolation test: \lq\lq{}repeated executions of specific transactions that have been identified as resulting in a performance issue.\rq\rq{}
+\end{itemize}
+
+The author believes that one \lq\lq{}should always execute a baseline, load, and stress test\rq\rq{}.
+
+In the next a few pages, the author gives more detailed guidance for carrying out each type of tests.
+
+\paragraph{Chapter 8} gives examples of representing data, in tabular and graphic forms.
+
+The rest of the book is not closely related to the my current project requirements.
+
+
+\subsection{The DaCapo benchmarks: java benchmarking development and analysis\cite{Blackburn2006}}
+
+\paragraph{A useful lesson:}  on page 171, authors give a procedure for determining \emph{performance-stable iteration}:
+
+\begin{quote} 
+To find a performance -stable iteration, the harness takes a window size $w$ (number of executions) and a convergence target $v$, and runs the benchmark repeatedly until either the coefficient of variation, $\frac{\sigma}{\mu}$, of the last $w$ runs drop below $v$, or reports failure if the number of runs exceeds a maximum $m$ (where $\sigma$ is the standard deviation and $\mu$ is the arithmetic mean of the last $w$ execution times).  Once performance stabilizes, the harness reports the execution time of the next iteration.  The harness provides defaults for $w$ and $v$, which the user may override.
+\end{quote}
+
+I need to check the defaults for $w$ and $v$ in DaCapo.
+
+
+\paragraph{The method different from the suggestion of \cite{HePa06}} is to use PCA (Principal Components Analysis) \cite{dunteman1989principal} to decide the weigh of benchmarks.  I need to study \cite{dunteman1989principal} and available PCA tools.
+
+
+
+\subsection{A Scalability Benchmark Suite for Erlang/OTP \cite{bencherl}}
+
+Different from other literature that focus on performance test, \cite{bencherl} introduces a suite for testing scalability of Erlang/OTP implementations.  If applicable, we could port some small benchmarks to Akka and TAkka and see if the additional layer in the TAkka implementation affected the scalability of Actors.
+
+
+\section{Literature Considered Not Closely Relevant at This Stage}
+\begin{itemize}
+\item \cite{Gray93} Jim Gray, editor. The Benchmark Handbook for Database and
+Transaction Systems (2nd Edition). Morgan Kaufmann, 1993.
+\item \cite {Nambiar09} Raghunath Nambiar and Meikel Poess, editors. Performance
+Evaluation and Benchmarking: First TPC Technology Confer-
+ence, TPCTC 2009. Springer, 2009.
+\end{itemize}
+
+The above two paper collections are considered not closely relevant to my project at this stage because they are about advancing topics on benchmarking transaction processing and database systems.  Literature study at this stage shall focus on standard benchmark procedures.  Ideas presented in the above two collections may be valuable at later research stage.
+
+\section{Reading List}
+\begin{itemize}
+\item Blackburn et al. (2008) Wake up and smell the coffee: evaluation methodology for the 21st century \cite{Blackburn:2008}
+
+\item G.H. Dunteman. Principal Components Analysis. Quantitative
+Applications in the Social Sciences. Sage Publications, 1989.
+ \cite{dunteman1989principal}
+\end{itemize}
+
+
+\section{Benchmark Tools}
+\subsection{Web Server Performance Test Tool}
+Load testing (stress/performance testing) a web server can be performed using automation/analysis tools such as:
+
+
+\subsubsection{ApacheBench (ab)}
+ApacheBench is a command line program.  Its full documentation is available at: \url{http://httpd.apache.org/docs/2.0/programs/ab.html}
+
+Example:
+\begin{verbatim}
+   $ab -n1000000 -c100 http://localhost:8888/dynamic
+\end{verbatim}
+
+Elements of output include:
+\begin{itemize}
+  \item test progress every one tenth of total requests.  It is a good feature to observe the stability of the target application.
+  \item server host-name, port number, path, document length, and concurrency level.
+  \item test time and throughput
+  \item mean and standard deviation, which are needed for performance analysis.
+  \item percentage of the requests served within a certain time (ms), which could be used for cumulative frequency analysis.
+\end{itemize}
+
+\subsubsection{Httperf}
+\label{httperf_performance}
+Httperf is a command line program.  The full documentation for Httperf is available at \url{http://www.hpl.hp.com/research/linux/httperf/httperf-man-0.9.txt}
+
+The drawback of httperf is, at a high concurrency level, tuning OS and JVM might be required; otherwise the OS can run out of  file descriptors and sockets tend to get stuck in TIME\_WAIT.
+
+Example:
+\begin{verbatim}
+  $httperf --hog --server=localhost --port=8888 --uri=/dynamic
+   --num-conns=20000 --timeout=5
+\end{verbatim}
+or
+\begin{verbatim}
+  $httperf --hog --server=localhost --port=8888 --uri=/dynamic
+   --num-conns=20000 --rate=100 --timeout=5
+\end{verbatim}
+Elements of output include:
+\begin{itemize}
+  \item test configuration, which should be consistent to the command.
+  \item test duration
+  \item connection time: min, avg, max, median, and stddev, which are need for performance test
+  \item CPU time and network throughput at client side.
+  \item errors
+\end{itemize}
+
+
+\subsubsection{HTTP Test Tool (httest)}
+HTTP Test Tool a script driven command line tool.  The homepage for httest is 
+\url{http://htt.sourceforge.net/cgi-bin/cwiki/bin/public?page=HomePage}
+
+Load and stress test using httest is working in progress.
+
+\subsubsection{Curl-loader}
+Curl-loader a powerful loading, testing and benchmarking open-source tool
+
+* Probably a powerful tool but requires more time to learn how to use it. *  
+
+\subsubsection{Apache JMeter}
+Apache JMeter an Open Source, Java program to make scenarios for several protocols: HTTP, AJP, JDBC and different load types.
+
+* Have trouble to run *
+
+
+\subsubsection{OpenSTA}
+OpenSTA is a GUI-based benchmarking tool running on Microsoft Windows.  This project prefers cross-platform tools.
+
+
+
+
+
+
+
+\bibliographystyle{alpha}
+\bibliography{BenchmarkMethod}
+
+\end{document}

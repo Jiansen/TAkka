@@ -1,0 +1,201 @@
+\begin{thebibliography}{10}
+
+\bibitem{OTP}
+Ericsson AB.
+\newblock Otp design principles user's guide, 2011.
+
+\bibitem{abramsky}
+S.~Abramsky.
+\newblock What are the fundamental structures of concurrency? we still don't
+  know!
+\newblock In {\em Algebraic process calculi: the first 25 years and beyond},
+  {BRICS} Notes Series NS-05-03, pages 1--5, June 2005.
+
+\bibitem{Erlang}
+Joe Armstrong.
+\newblock {\em Programming Erlang: Software for a Concurrent World}.
+\newblock Pragmatic Bookshelf, 2007.
+
+\bibitem{historyPA}
+J.~C.~M. Baeten.
+\newblock A brief history of process algebra.
+\newblock Technical report, Theor. Comput. Sci, 2004.
+
+\bibitem{join_csharp}
+Nick Benton, Luca Cardelli, and C\'{e}dric Fournet.
+\newblock Modern concurrency abstractions for c\#.
+\newblock {\em ACM Trans. Program. Lang. Syst.}, 26:769--804, September 2004.
+
+\bibitem{Blue}
+Gérard Boudol.
+\newblock The $\pi$-calculus in direct style, 1997.
+
+\bibitem{Eventually_Consistent_Transactions}
+Sebastian Burckhardt, Manuel Fahndrich, Daan Leijen, and Mooly Sagiv.
+\newblock Eventually consistent transactions.
+\newblock In {\em the 22n European Symposium on Programming (ESOP)}. Springer,
+  2012.
+
+\bibitem{obliq}
+Luca Cardelli.
+\newblock Obliq: A language with distributed scope.
+\newblock {\em Computing Systems}, 8:27--59, 1995.
+
+\bibitem{MobileAmbients}
+Luca Cardelli and Andrew~D. Gordon.
+\newblock Mobile ambients.
+\newblock {\em Theor. Comput. Sci.}, 240(1):177--213, 2000.
+
+\bibitem{VMAmbient}
+Luis Rodrigo~Gallardo Cruz and Oscar~Olmedo Aguirre.
+\newblock A virtual machine for the ambient calculus.
+\newblock In {\em Electrical and Electronics Engineering, 2005 2nd
+  International Conference on}, pages 56--59, 2005.
+
+\bibitem{Dal-Zilio97implicitpolymorphic}
+Silvano Dal-Zilio.
+\newblock Implicit polymorphic type system for the blue calculus.
+\newblock Technical report, 1997.
+
+\bibitem{Dynamo}
+Giuseppe DeCandia, Deniz Hastorun, Madan Jampani, Gunavardhan Kakulapati,
+  Avinash Lakshman, Alex Pilchin, Swaminathan Sivasubramanian, Peter Vosshall,
+  and Werner Vogels.
+\newblock Dynamo: amazon's highly available key-value store.
+\newblock {\em SIGOPS Oper. Syst. Rev.}, 41:205--220, October 2007.
+
+\bibitem{extractors}
+Burak Emir, Martin Odersky, and John Williams.
+\newblock Matching objects with patterns.
+\newblock In {\em ECOOP 2007 – Object-Oriented Programming, volume 4609 of
+  LNCS}, pages 273--298. Springer, 2007.
+
+\bibitem{jocaml_lan}
+C\'{e}dric Fournet, Fabrice~Le Fessant, Luc Maranget, and Alan Schmitt.
+\newblock Jocaml: A language for concurrent distributed and mobile programming.
+\newblock In {\em In Advanced Functional Programming}, pages 129--158. Springer
+  Verlag, 2003.
+
+\bibitem{full_join}
+C\'{e}dric Fournet and Georges Gonthier.
+\newblock The join calculus: A language for distributed mobile programming.
+\newblock In {\em In Proceedings of the Applied Semantics Summer School
+  (APPSEM), Caminha}, pages 268--332. Springer-Verlag, 2000.
+
+\bibitem{join}
+C\'{e}dric Fournet, Georges Gonthier, Jean-Jacques L\'{e}vy, Luc Maranget, and
+  Didier R\'{e}my.
+\newblock A calculus of mobile agents.
+\newblock In {\em Proceedings of the 7th International Conference on
+  Concurrency Theory}, CONCUR '96, pages 406--421, London, UK, 1996.
+  Springer-Verlag.
+
+\bibitem{RCHAM}
+C\'{e}dric Fournet, Georges Gonthier, and Inria Rocquencourt.
+\newblock The reflexive cham and the join-calculus.
+\newblock In {\em In Proceedings of the 23rd ACM Symposium on Principles of
+  Programming Languages}, pages 372--385. ACM Press, 1995.
+
+\bibitem{CAP}
+Seth Gilbert and Nancy Lynch.
+\newblock Brewer's conjecture and the feasibility of consistent, available,
+  partition-tolerant web services.
+\newblock {\em SIGACT News}, 33:51--59, June 2002.
+
+\bibitem{scala_joins}
+Philipp Haller and Tom Van~Cutsem.
+\newblock Implementing joins using extensible pattern matching.
+\newblock In {\em Proceedings of the 10th international conference on
+  Coordination models and languages}, COORDINATION'08, pages 135--152, Berlin,
+  Heidelberg, 2008. Springer-Verlag.
+
+\bibitem{Honda93typesfor}
+Kohei Honda.
+\newblock Types for dyadic interaction, 1993.
+
+\bibitem{Honda_languageprimitives}
+Kohei Honda, Vasco~T. Vasconcelos, and Makoto Kubo.
+\newblock Language primitives and type discipline for structured
+  communication-based programming.
+\newblock In {\em In ESOP’98, volume 1381 of LNCS}, pages 122--138.
+  Springer-Verlag.
+
+\bibitem{SJ}
+Raymond Hu, Olivier Pernet, Dimitrios Kouzapas, Nobuko Yoshida, and Kohei
+  Honda.
+\newblock Type-safe eventful sessions in java.
+
+\bibitem{akka}
+Typesafe Inc.
+\newblock Akka documentation: Release 2.0-m3, June 2012.
+
+\bibitem{Launchbury93anatural}
+John Launchbury.
+\newblock A natural semantics for lazy evaluation.
+\newblock pages 144--154. ACM Press, 1993.
+
+\bibitem{function_as_process}
+Robin Milner.
+\newblock Functions as processes.
+\newblock In {\em Proceedings of the 17th International Colloquium on Automata,
+  Languages and Programming}, ICALP '90, pages 167--180, London, UK, 1990.
+  Springer-Verlag.
+
+\bibitem{bigraph_book}
+Robin Milner.
+\newblock {\em The Space and Motion of Communicating Agents}.
+\newblock Cambridge University Press, New York, NY, USA, 2009.
+
+\bibitem{pi_paper}
+Robin Milner, J.~Parrow, and D.~Walker.
+\newblock A calculus of mobile processes.
+\newblock {\em Journal of Information and Computation}, 100:1--77, 1992.
+
+\bibitem{join-fsharp}
+Tomas Petricek.
+\newblock Reactive programming with events.
+\newblock Master's thesis, Charles University in Prague, 2010.
+
+\bibitem{Roy06convergencein}
+Peter~Van Roy.
+\newblock Convergence in language design: a case of lightning striking four
+  times in the same place. flops.
+\newblock In {\em in the Same Place, 8th International Symposium on Functional
+  and Logic Programming (FLOPS 2006), April 2006, Springer LNCS}, pages 2--12.
+  Springer, 2006.
+
+\bibitem{roy}
+Peter~Van Roy and Seif Haridi.
+\newblock {\em Concepts, Techniques, and Models of Computer Programming}.
+\newblock MIT Press, Cambridge, MA, USA, 2004.
+
+\bibitem{Russo07thejoins}
+Claudio Russo and Nick Benton.
+\newblock The joins concurrency library.
+\newblock In {\em In: Proc. PADL}, pages 260--274, 2007.
+
+\bibitem{HOPI}
+Davide Sangiorgi.
+\newblock From pi-calculus to higher-order pi-calculus - and back.
+\newblock In {\em Proceedings of the International Joint Conference CAAP/FASE
+  on Theory and Practice of Software Development}, TAPSOFT '93, pages 151--166,
+  London, UK, 1993. Springer-Verlag.
+
+\bibitem{pi_book}
+Davide Sangiorgi and David Walker.
+\newblock {\em The $\pi$-Calculus: A Theory of Mobile Processes}.
+\newblock Cambridge University Press, New York, NY, USA, 2001.
+
+\bibitem{Vogels_2009}
+W~Vogels.
+\newblock Eventually consistent [distributed system].
+\newblock {\em Communications of the ACM}, 52(1):40--4, 2009.
+
+\bibitem{dis_note}
+Jim Waldo, Geoff Wyant, Ann Wollrath, and Samuel~C. Kendall.
+\newblock A note on distributed computing.
+\newblock In {\em Selected Presentations and Invited Papers Second
+  International Workshop on Mobile Object Systems - Towards the Programmable
+  Internet}, pages 49--64, London, UK, 1997. Springer-Verlag.
+
+\end{thebibliography}

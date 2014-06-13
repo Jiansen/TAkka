@@ -1,0 +1,146 @@
+\section{Evolution, Not Revolution }
+\label{evolution}
+
+Akka systems can be smoothly migrated to TAkka systems. In other words, 
+existing systems can evolve to introduce more types, rather than requiring a 
+revolution where all actors and interactions must be typed.
+
+The above property is analogous to adding generics to Java programs.  Java 
+generics are carefully designed so that programs without generic types can be 
+partially replaced by an equivalent generic version (evolution), rather than 
+requiring generic types everywhere (revolution) \citep{JGC}.
+
+In previous sections, we have seen how to use Akka actors in an Akka 
+system (Figure \ref{fig:akkastring}) and how to use TAkka actors in a TAkka 
+system (Figure \ref{takkastring}).  In the following, we will explain how to 
+use TAkka actors in an Akka system and how to use an Akka actor in a TAkka 
+system.
+
+\begin{figure}[!h]
+
+      \begin{lstlisting}[language=scala, escapechar=?]
+class TAkkaStringActor extends ?\textcolor{blue}{takka.actor.TypedActor[String]}? {
+  def ?\textcolor{blue}{typedReceive}? = {
+    case m:String => println("received message: "+m)
+  }
+}
+class MessageHandler(system: akka.actor.ActorSystem) extends akka.actor.Actor {
+  def receive = {
+    case akka.actor.UnhandledMessage(message, sender, recipient) =>
+      println("unhandled message:"+message);
+  }
+}
+object TAkkaInAkka extends App {
+  val akkasystem = akka.actor.ActorSystem("AkkaSystem")
+  val akkaserver = akkasystem.actorOf(
+    akka.actor.Props[TAkkaStringActor], "aserver")
+
+  val handler = akkasystem.actorOf(
+    akka.actor.Props(new MessageHandler(akkasystem)))
+  
+  akkasystem.eventStream.subscribe(handler,
+     classOf[akka.actor.UnhandledMessage]);
+  akkaserver ! "Hello Akka"
+  akkaserver ! 3
+  
+  val takkasystem = ?\textcolor{blue}{takka}?.actor.ActorSystem("TAkkaSystem")
+  val typedserver = takkasystem.actorOf(
+     takka.actor.Props[?\textcolor{blue}{String,}? TAkkaStringActor], "tserver")
+  
+  val untypedserver = takkaserver.untypedRef
+  
+  takkasystem.system.eventStream.subscribe(
+    handler,classOf[akka.actor.UnhandledMessage]);
+  
+  untypedserver ! "Hello TAkka"
+  untypedserver ! 4
+}
+/*
+Terminal output:
+received message: Hello Akka
+unhandled message:3
+received message: Hello TAkka
+unhandled message:4
+*/
+    \end{lstlisting}
+    \caption{TAkka actor in Akka application}
+\label{takkaINakka}    
+\end{figure}
+
+\subsection{TAkka actor in Akka system}
+
+It is often the case that an actor-based library is implemented by one 
+organization but used in a client application implemented by another 
+organization.  If a developer decides to upgrade the library implementation 
+using TAkka actors, for example, by upgrading the Socko Web Server 
+\citep{SOCKO}, the Gatling \citep{Gatling} stress testing tool, or the core 
+library of the Play framework \citep{play_doc}, as we do in Section 
+\ref{expressiveness}, will the upgrade affect client code, especially 
+legacy applications built using the Akka library?  Fortunately, TAkka actors and actor 
+references are implemented using inheritance and delegation respectively so 
+that no changes are required for legacy applications.
+
+TAkka actors inherits Akka actors.  In Figure \ref{takkaINakka}, 
+the actor implementation is upgraded to the TAkka version as in Figure 
+\ref{takkastring}.  The client code, lines 13 to 23, is the same as the 
+old Akka version given in Figure \ref{fig:akkastring}.  That is, no changes are 
+required for the client application.
+
+TAkka actor reference delegates the task of message sending to an 
+Akka actor reference, its {\tt untypedRef} field.  In line 29 in Figure 
+\ref{takkaINakka}, we get an untyped actor reference from {\tt typedserver} 
+and 
+use the untyped actor reference in code where an Akka actor reference is 
+expected.  Because an untyped actor reference accepts messages of any type, 
+messages of unexpected type may be sent to TAkka actors if an Akka actor 
+reference is used.  As a result, users who are interested in the {\tt 
+UnhandledMessage} event may subscribe to the event stream as in line 33.
+
+
+
+
+
+
+
+
+\subsection{Akka Actor in TAkka system}
+
+Sometimes, developers want to update the client code or the API before upgrading 
+the actor implementation. For example, a developer may not have access to 
+the actor code; or the library may be large, so the developer may want to 
+upgrade the library gradually.
+
+Users can initialize a TAkka actor reference by providing an Akka actor 
+reference and a type parameter.  In Figure \ref{akkaINtakka}, we re-use the 
+Akka actor, initialize the actor in an Akka actor system, and obtain an Akka 
+actor reference as in Figure \ref{fig:akkastring}.  Then, we initialize a TAkka 
+actor reference, {\tt takkaServer}, which only accepts {\tt String} messages.
+
+\begin{figure}[!h]
+      \begin{lstlisting}[language=scala, escapechar=?]
+class AkkaStringActor extends akka.actor.Actor {
+  def receive = {    case m:String => println("received message: "+m)  }
+}
+object AkkaInTAkka extends App {
+  val system = akka.actor.ActorSystem("AkkaSystem")
+  val akkaserver = system.actorOf(
+       akka.actor.Props[AkkaStringActor], "server")
+  
+  val takkaServer = new takka.actor.ActorRef?\textcolor{blue}{[String]}?{
+    val untypedRef = akkaserver
+  }
+  takkaServer ! "Hello World"
+// takkaServer ! 3 
+// compile error: type mismatch; found : Int(3)
+//   required: String
+}
+/*
+Terminal output:
+received message: Hello World
+*/
+    \end{lstlisting}
+    \caption{Akka actor in TAkka application}
+\label{akkaINtakka}    
+\end{figure}
+
+

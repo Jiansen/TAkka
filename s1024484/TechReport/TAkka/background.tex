@@ -1,0 +1,243 @@
+\section{Background}
+\label{background}
+
+
+
+\subsection{Actor Model and OTP Design Principles}
+
+The Actor model defined by Carl Hewitt treats actors as primitive computational
+components.  Actors collaborate by sending asynchronous messages to each other.
+An actor independently determines its reaction to messages it receives.
+Furthermore, an actor should confirm its {\it intention} to the context where
+it resides.  Carl Hewitt defines intention as ``the contract that the actor
+has with the outside world''.\cite{Hewitt:1973}
+
+
+The Actor model is adopted by Erlang programming language, whose developers
+later summarized five OTP design principles to improve the reliability of Erlang
+applications\cite{OTP}.  Table-\ref{otp} lists OTP design principles and their
+possible implementation methods in an objected-oriented language.  Apart from
+the Supervision Tree principle,  an important subject to be discussed later,
+other OTP design principles can be straightforwardly implemented in an
+objected-oriented language.  For a platform such as Java Virtual Machine (JVM)
+where hot swapping is not supported in general, hot swapping a particular
+component could be simulated by updating the reference to that component.
+\S\ref{code_evolution} explains how hot swapping the behaviour of an actor is
+supported in TAkka, which is run on JVM.
+
+
+
+\begin{table}[h]
+\label{otp}
+% \tbl{Implementing OTP Design Principles in an OO Language}{
+ \caption{Implementing OTP Design Principles in an OO Language}
+ \begin{center}
+\begin{tabular}{| l | p{7.8cm} | }
+\hline
+  OTP Design Principle & Objected-Oriented\\
+                       & Implementation \\
+\hline
+  Supervision Tree  & no direct correspondence  \\
+\hline
+  Behaviour & defining an abstract class \\
+\hline
+  Application  & defining an abstract class that has two abstract methods: start and stop \\
+\hline
+  Release  & packaging related application classes  \\ 
+\hline
+  Release Handling  & hot swapping support on key modules is required \\
+\hline
+\end{tabular}
+ \end{center}
+%}
+\end{table}
+
+
+\subsection{Scala Type Descriptors}
+The TAkka library is designed to detect type errors as early as possible.  For
+type errors that cannot be statically detected, adequate dynamic type checking
+may expose them before the program goes wrong.  To this end, a notion of
+run-time type descriptor is required.
+
+In versions since Scala 2.10.0, first class type descriptor for type {\bf T},
+which has type {\bf Type}, could be constructed from {\it typeOf[T]}.  In the
+case that {\bf T} is a generic type, a {\bf TypeTag} for {\bf T}, constructed
+from {\it typeTag[T]} must be provided.  In addition, with {\it implicit
+parameter} (e.g. line 4 in the code below) and {\it context bound} (e.g. line 10
+in in the code below), library designer could define concise APIs.  For example,
+in a Scala interpreter, one could obtain the following results:
+
+\begin{lstlisting}
+  scala> typeOf[Int => String]
+  res0: Type = Int => String
+
+  scala> def name[T](implicit m: TypeTag[T]) = typeOf[T]
+  name:[T](implicit m:TypeTag[T])Type
+
+  scala> name[Int=>String]
+  res3: Type = Int => String
+
+  scala> def name2[T:TypeTag] = typeOf[T]
+  name2: [T](implicit evidence$1: reflect.runtime.universe.TypeTag[T])Type
+
+  scala> name2[Int => String]
+  res2: Type = Int => String
+\end{lstlisting}
+
+In TAkka, dynamic type checking is achieved by comparing type descriptors rather
+than checking the most precise type of a value.  The adopted approach has two
+advantages.  For one thing, it detects type errors otherwise may be left out.
+For example, let {\bf S} be a subtype of {\bf T}, the output of function {\it f}
+has type {\bf T} and the input of function {\it g} should have type {\bf S}, it
+is clear that composing {\it f} and {\it g} is not always type safe.  In an
+environment where static type checking is not possible, comparing type
+descriptors of {\bf S} and {\bf T} reveals the type error instantly whereas the
+alternative approach may admit some test cases.  For another, data security is
+improved since values are not disclosed until type safety is confirmed.
+
+\subsection{Type Parameter and Generic Programming}
+
+\mycomment {  Short examples of Generic Collection in Scala, e.g. List[E].  Show how static type-checking avoid type-errors.}
+
+
+\subsection{Typed Nameserver}
+\label{nameserver}
+
+\mycomment{use this example to show the need and benefits of mixing static and dynamic type checking.}
+
+A canonical nameserver maps each registered name, a unique string, to a value,
+and to look up a value by giving a name.  A name could be encoded as a {\bf
+Symbol} in Scala so that names which represent the same string have the same
+value.  We noticed that the widely used canonical namesever has two limitations.
+ For one thing, values retrieved from a canonical nameserver are dynamically
+typed.  Therefore, circumspect programmers would have to manually insert type
+checking code to prevent type errors in later program.  For another, the
+canonical nameserver has a weak security barrier in the sense that values will
+be returned to an enquirer regardless of his knowledge that how the returned
+data values should be used.
+
+To overcome the above limitations of canonical nameserver, we designed and
+implemented a typed nameserver which maps each registered typed name to a value
+of the corresponding type, and to look up a value by giving a typed name.  A
+typed name, {\bf TSymbol}, is a name shipped with a type descriptor.  In Scala,
+{\bf TSymbol} could be simply defined as follows:
+
+\begin{figure}[h]
+\label{tsymbol}
+\begin{lstlisting}
+case class TSymbol[T:Type](val s:Symbol) {
+    private [takka] def t:Type[T] = typeOf[T]
+    override def hashCode():Int = s.hashCode()  
+}
+\end{lstlisting}
+\caption{TSymbol}
+\end{figure}
+
+Notice that {\bf TSymbol} is covariant because the same type value is passed to
+{\bf Manifest}, another covariant type constructor.  In addition, {\bf TSymbol}
+is declared as a {\it case class} in Scala so that the name {\bf TSymbol} could
+be used as a data constructor and pattern matching on parameters of {\bf
+TSymbol} is supported automatically.  Finally, the manifest is shipped as an
+implicit value parameter and given a name so that general users do not need to
+manually construct the manifest and the library developer could access the
+manifest as a field of {\bf TSymbol}.
+
+With the help of {\bf TSymbol}, we implemented a typed nameserver which provides
+following three operations:
+\begin{itemize}
+  \item {\it set[T:Manifest](name:TSymbol[T], value:T):Unit}
+
+Register a typed name with a value of corresponding type.  A {\bf
+NamesHasBeenRegisteredException} will raise if the symbol representation of
+$name$ has been registered.  The most precise type of $value$ shall be a subtype
+of the intention type {\bf T}.
+
+  \item {\it unset[T](name:TSymbol[T]):Unit}
+
+Cancel the entry $name$ if (i)  its symbol representation is registered and (ii)
+the the intention type {\bf T} is a super type of the registered type.
+
+  \item {\it get[T] (name: TSymbol[T]): Option[T]}
+
+Return Some(v:{\bf T}) if (i) $name$ is associated with a value and (ii) {\bf T}
+is a supertype of the registered type; Otherwise return None.
+\end{itemize}
+
+Notice that $unset$ and $get$ operations permit polymorphism.  To this end, the
+{\it hashcode} method of {\bf TSymbol} defined in Figure-{\ref{tsymbol}} does
+not take manifest into account.  Instead, type information are checked at run
+time. The typed nameserver also prevents users from registering two names with
+the same symbol but different manifests, in which case if one is a supertype of
+another, the return value of $get$ will be non-deterministic.
+
+\begin{comment}
+\subsection{Obligatory Supervision}
+
+System reliability will be improved if failed components are restarted in time.
+The Supervision Tree Principle \cite{OTP} suggests that actors should be
+organised in a tree structure so that any failed actor could be properly
+restarted by its supervisor.  Nevertheless, adopting the Supervision Tree
+principle is optional in Erlang.
+
+The Akka library makes supervision obligatory by restricting the way of creating
+actors.  The only way to create an actor is using the {\it actorOf} method
+provided by {\bf ActorSystem} or {\bf ActorContext}.  Each actor system
+provides a guardian actor for all user-created actors.  Calling the {\it
+actorOf} method of an actor system creates an actor supervised by the guardian
+actor.  Calling the {\it actorOf} method of an actor context creates a child
+actor supervised by that actor.  Therefore, all user-created actors in an
+actor system, together with the guardian actor of that actor system, form a tree
+structure. Obligatory supervision unifies the the structure of actor deployment
+and simplifies the work of system maintenance.
+
+In the code below, we define a supervisor and its child.  The Supervisor
+forwards all messages to the child.  The child will be restarted by its
+supervisor when it raises an exception.  The supervision strategy also specifies
+the maximum failures a child may have within a time range.  If a child fails
+more frequently than the the allowed frequency, the supervisor will be stopped,
+report its failure to its supervisor. In the sample code, the child raises an
+exception every time it receives a ``Stop'' string; it prints out the string
+representation of other messages. The terminal output indicates that the child
+actor is restarted before the second message is delivered.
+
+      \begin{lstlisting}[language=scala]
+class Supervisor extends Actor {
+  override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 10, withinTimeRange = 1 minute) {
+      case _: Exception                ⇒
+        println("Exception Raised to: "+self)
+        Restart
+    }
+
+  val child:ActorRef = context.actorOf(Props[Child], "child")
+
+  def receive:Any => Unit = {
+    case m => child ! m
+  }
+}
+
+class Child extends Actor {
+  def receive:Any => Unit = {
+    case "Stop" => throw new Exception("Test Exception")
+    case m => println("Received message: "+m)
+  }
+}
+
+
+object SupervisorTest extends App{
+  val system = ActorSystem("MySystem")
+  val actorRef:ActorRef = system.actorOf(Props[Supervisor], "supervisor")
+
+  actorRef ! "Stop"
+  actorRef ! "Hello World!"
+}
+
+/*
+Terminal Output:
+Exception Raised to: Actor[akka://MySystem/user/supervisor]
+Received message: Hello World!
+*/
+    \end{lstlisting}
+
+
+\end{comment}

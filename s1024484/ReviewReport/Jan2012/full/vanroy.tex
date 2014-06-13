@@ -1,0 +1,90 @@
+\subsection{Implementation Strategies}
+\label{sec:vanroy}
+
+This section will give a short survey on Peter Van Roy's general framework for the implementation of concurrent programming languages  \cite{Roy06convergencein, roy}.  \cite{Roy06convergencein} abstracts a four-layer-structure which smoothly applies to four languages designed for different purposes.  The four-layer-structure and case studies in \cite{Roy06convergencein} are summarized in Table \ref{layer}.  The rest of this section will introduce the main results in \cite{roy}, which is focused on implementation details.
+
+\begin{table}
+  \begin{center}
+  \begin{tabular}{| l | c | c | c | c |}
+\hline
+Layer&      Erlang   &    E   &    Mozart  &Oz\\
+\hline
+strict functional language          &Y&Y&Y&Y\\
+\hline
+deterministic concurrency          & N&Y&unknown&Y\\
+\hline
+asynchronous message passing&Y&Y&Y&Y\\
+\hline 
+global mutable state                     &Y&N&Y&Y\\  
+\hline
+  \end{tabular}
+  \end{center}
+  \caption{a shared structure for 4 programming languages}
+  \label{layer}
+\end{table}
+
+
+\subsubsection{A General Purpose Virtual Machine}
+The basic abstract machine in \cite{roy} consists of three elements: statement $\langle$s$\rangle$, environment E, and assignment store $\sigma$.  Explanations for concepts related to this VM are given as follows:
+\newpage
+\begin{itemize}
+  \item an {\it{assignment store  $\sigma$}} contains a set of variables.  Variables could be bound, unbound, or partially bound.
+  \item an {\it{environment}} E stores mappings from variable identifiers to entities in $\sigma$.
+  \item a {\it{semantic statement}} is a pair of ($\langle s \rangle$, E).
+  \item an {\it{execution state}} is a pair of (ST, $\sigma$), where ST is a stack of semantic statements.
+  \item a {\it{computation}} is a sequence of transitions between execution states.
+\end{itemize}
+
+\subsubsection{Extending the Basic VM}
+\label{ex_vm}
+The basic VM described in the last section is capable to model most of computation paradigms directly or indirectly.  More pleasantly, several restrictions and extensions could be added to this basic VM on demand.
+\begin{itemize}
+  \item MST(multiset of semantic stacks).  Concurrent programming would be supported via simply replacing the ST by MST.  Using the multiset structure for storing semantic stacks gives the flexibility of coordinating identical threads.
+  \item bound or unbound variables.   In the book, unbound variables refer to variables which have not been assigned a value.  In sequential computing, unbound variables should not be allowed since the program will be halting forever.  In concurrent computing, however, unbound variables are acceptable since it might be bound by another thread later.
+  \item single-assignment variable or multiple-assignment variable.  Although using single-assignment variable should be encouraged to avoid side-effects, multiple-assignment variable may ease the implementation of imperative languages.  Alternatively, both kinds of variable could appear in the same language, such as the Scala language, with different notations.
+  \item variable’s lifetime.  There are three moments in a variable’s lifetime. i) creation, ii) specification, and iii) evaluation.  Adjacent moments may or may not be happen at the same time.  Different combinations yields Table \ref{var_life} cited from \cite{roy}.
+  \item more kinds of stores.  If the state of a shared store could be regarded as the status of a program, evaluation rules on store variables implies features of the programming paradigm.  The first three examples in the next subsection demonstrate this idea.
+  \item new statement syntax.  When the encoding  of certain feature is expensive within the current kernel syntax, adding a new form of statement is one of the easiest way to increase the expressiveness of the language.  The gained expressiveness, however, may not be free.  For example, the number evaluation rules will be increased dramatically and reasoning about programs will be more complex.  Moreover, properties enjoyed by the old model may no longer be hold in the new one.
+\end{itemize}
+
+\begin{table} [h]
+  \begin{center} 
+  \begin{tabular}  {|m{2.5cm} |m{3 cm} |m{3 cm} | m{3 cm} |}
+    \hline
+    &sequential with values&sequential with values and dataflow variables&concurrent with values and dataflow variables\\
+    \hline
+   eager execution&strict functional programming&declarative model&data-driven concurrent model\\
+  &(e.g., Scheme, ML)&(e.g., Prolog)&\\
+  & (1)\&(2)\&(3)&(1),(2)\&(3)&(1),(2)\&(3)\\
+    \hline
+  lazy execution & lazy functional programming & lazy FP with dataflow variables & demand-driven concurrent model\\
+  & (e.g., Haskell) &&\\
+  & (1)\&(2),(3) & (1),(2),(3)&(1),(2),(3)\\ 
+  \hline
+  \multicolumn{4}{l}{}\\
+  \multicolumn{4}{l}{(1): Declare a variable in the store}\\
+  \multicolumn{4}{l}{(2): Specify the function to calculate the variable's value}\\
+  \multicolumn{4}{l}{(3): Evaluate the function and bind the variable}\\
+  \multicolumn{4}{l}{}\\
+  \multicolumn{4}{l}{(1)\&(2)\&(3): Declaring, specifying, and evaluating all coincide}\\
+  \multicolumn{4}{l}{(1)\&(2),(3): Declaring and specifying coincide; evaluating is done later}\\
+  \multicolumn{4}{l}{(1),(2)\&(3): Declaring is done first; specifying and evaluating are done later and coincide}\\
+  \multicolumn{4}{l}{(1),(2),(3): Declaring, specifying, and evaluating are done separately}\\
+  \end{tabular}
+  \end{center}
+  \caption{Popular computation models in languages}
+  \label{var_life}
+\end{table}
+
+\subsubsection{Example Paradigms}
+Following are 5 examples chose from \cite{roy}.  Each example demonstrates how a popular modern programming feature could be implemented with techniques described in \S \ref{ex_vm}.
+\begin{itemize}
+  \item Laziness could be realised by adding a need-predict store.
+  \item Message passing concurrency could be realised by adding a mutable store, together with two primitives NewPort and Send.
+  \item Explicit state could be realised by introducing a mutable cell store.  A cell records a mapping from a name value to a store variable.  Although a name value might be mapped to different store variables at different time, changes to name-variable mapping will not affect the internal state of a program.
+  \item Relational programming could be realised by adding choice and failure statements to kernel.
+  \item  Constraint programming could be realised by adding a constraint store and a batch of primitive operations.
+\end{itemize}
+
+
+The book  \cite{roy} provides at least two prominent contributions.  Firstly, it provides a framework which unifies most of popular programming paradigms.  Secondly, combining different versions of statements, environment and assignment store yields different programming models.  To the author of this research proposal,  those three components  are three dimensions of the ``language space''.  Researchers in the area of programming languages could use this coordinate system is two ways.  On the one hand, it provides a convenient formalism to compare different programming languages.  On the other hand, regardless of their usages,  new programming paradigms could be defined by filling ``blank coordinates'' of the space.  In fact, some models in the book does not correspond to any well known languages.

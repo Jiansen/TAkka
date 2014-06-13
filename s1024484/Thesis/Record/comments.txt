@@ -1,0 +1,303 @@
+===
+Version: 2013-10-07
+
+---
+page 23:
+
+-- "move (period) after citation"
+
+Done.
+
+-- "(but express variance and bounds differently) as explained later."
+
+Done.
+
+-- "Probably you should omit this, unless you think readers will have trouble reading Scala and benefit from seeing the corresponding Java."
+
+Deleted.
+
+--"Explain what a 'trait' is!"
+Done.
+
+
+-- "This isn't clear. Better to say in words exactly what is expected and returned by each of the three methods."
+Done.
+
+-- "Is this relevant? Is it a particularly bad implementation? Is it worse than the corresponding Java in Fig 2.13?"
+Deleted the statement.
+
+---
+Page 24:
+
+-- "reverse!"
+corrected
+
+-- "Explain what a singleton object is"
+
+Has been explained in the paragraph above, with italic type.
+
+I deleted the phrase because understanding singletion object is not importatnt here.
+
+-- "Avoid phrases that you need to put in quote marks. Say precisely it instead."
+
+Done.
+
+-- "Explain this in more detail."
+Done.
+
+---
+Page 25:
+--  "Delete. Including this is needless padding."
+Deleted.
+
+---
+Page 27:
+-- "Highlight the one change with color. The font change is hard to spot."
+Point Taken
+
+--- 
+Page 28:
+-- "This is more detailed than you need, and hard for the reader to follow. For instance, I have no idea what S#T means.
+
+Paraphrase at an appropriate level of detail."
+-- "Why do you say variance is error prone?"
+
+*** TODO: rewrite
+
+---
+Page 29
+-- "I don't believe this. If the compiler can *always* detect errors then why can't it infer the variance, saving the user of typing it in?"
+-- "This paragraph and all that follows until the end of the section is a torturous explanation of something fairly straightforward. An examiner reading this would think that you had a lot of trouble coming to grips with subtyping.
+If you want to explain variance, just (a) explain why stacks are invariant and (b) give examples of other structures that are covariant and contravariant."
+
+-- "This explanation is hard to follow!
+
+What you mean to say is that a value of type Stack[T] could be assigned to a variable of type Stack[Any], and then one could write any value onto the stack."
+
+*** TODO: rewrite
+
+
+
+---
+Page 30
+-- "This may be hard for a reader to understand. They need to know that the two definitions of push are alternatives, and that neither works."
+
+
+-- "This phrase doesn't appear in the original, because it is awkward english."
+
+Correcte4d
+
+-- "Put this into the mainline text. Footnotes should be avoided. They just make life hard for the reader, who needs to skip between the middle and the bottom of the page.
+
+Explain this more clearly. You would prefer to use Type and TypeTag, but you can't because of the bug, so you are explaining Manifest instead."
+
+Point Taken
+
+
+--- 
+Page 32
+
+--"This example makes no sense at all to me. The type 'Sub' and 'Sup' are too abstract. Can you give a simpler and more meaningful example?
+
+Also, the swich from code fragments to interactive session makes this hard to follow, doubly so since one is unlikely to actually use a Manifest in a REPL, it's main use is in proper code."
+
+Revised
+
+
+
+
+===
+Version: 2013-09-30
+
+---
+page 3:
+
+- "Your references skip from 1973 to 2013. You might want to say something about
+ what happened with actors in the intervening 40 years. Was it a popular and 
+ successful model, or ignored until it was used by Erlang?"
+
+Done.
+
+---
+page 4
+
+- "You should give more detail. How widely is Erlang used? How successful has it 
+ been?"
+
+Done.
+
+- "This should be a citation, not a footnote. Make clear in the body of the text
+ that you are quoting someone else's example code."
+
+corrected.
+
+---
+page 5
+
+- "The important point here is that the order in which 'hello' and 'goodbye'
+ interleave is not deterministic. Be sure to state this explicitly!"
+
+corrected.
+
+---
+page 6
+
+- "The figure shows code, not an API!"
+
+corrected.
+
+- "Is it guaranteed, or not guaranteed, that messages appear in the mailbox in
+ the order they were sent?"
+
+No.
+
+i)  It is guaranteed that, for message sent from the same sender to the same
+    receiver, they are received in the same order as they were sent.
+ii) Even in the above case, the sender doesn't know wheather a message will be
+    received and processed or not, unless a special machinism is implemented.
+    Sending message is an asynchronous operation. The logic of the sender should
+    not rely on the order of message processing at the receiver's side.
+
+added the following to text:
+"Generally speaking, the order in which messages appear in the mailbox
+is not necessarily the same as the order those messages were sent due to the
+asynchronous natural of message sending. Nevertheless, messages sending
+from the same sender to the same receiver is guaranteed to appear in the
+mailbox in the order they were sent, if both are delivered."
+
+- "Poor english!"
+
+"On the contrary, the receive block of the {\tt loop} process is recursively 
+defined so that the process can always processing incoming messages."
+
+-> 
+
+"On  the contrary, {\tt loop} is a recursive function that can always process new
+messages."
+
+
+- "Spell out: 'two', not '2'."
+
+corrected.
+
+---
+page 7
+
+- "Why does hello4 appear if P is dead when it is sent?"
+
+My language is misleading.  hello4 is the evaluation result of the start()
+function.  I update
+
+"the evaluation result of line 24"
+
+to
+
+"the  evaluation result of the {\tt start} function (i.e. {\tt hello4})"
+
+---
+page 8
+
+- "What you are describing here is a naive use of state. Isn't it recommended to
+ access state via the OTP libraries, and isn't that what you should explain here?"
+
+As explained in the email, OTP is not part of the standard Erlang.
+
+This example is intentionally implemented in the way that is similar to its Akka
+ equivalent.  In the background section, understanding the benifits of using
+ state via global (distributed) datastore may not be so important.  I will
+ compare approches of using state in the section on TAkka design alternatives.
+
+
+---
+page 9
+
+
+- "Begin by explaining what supervisions trees are for, namely, enhancing
+ reliability! And give an overview of how supervision trees improve reliability."
+
+It has been explained in Secion 2.2
+
+---
+page 12
+
+- "It is hard to review a section that contains only part of the text. Why are
+ you writing in this style? You seem to be bouncing around quite a lot, instead
+ of writing a full section that can be reviewed."
+
+- In email, "The reader needs an Akka tutorial, but not an Erlang tutorial"
+
+In response, I will sharp the Erlang materials.
+
+
+---
+page 13
+
+- "This sentence has no verb."
+
+"Akka actors resident in Actor Systems"
+->
+"Akka actors are resident in Actor Systems"
+
+- "English here is not correct. "
+
+Updated
+
+- "This example is too trivial to be helpful. Better to explain the general
+ principles, and demonstrate them in one complete example."
+
+Updated
+
+---
+page 14
+
+- "Make all your examples complete and runnable, including text code. Submit
+ code for examples, ready to run, with the thesis."
+
+Noted.
+
+- "Why isn't state here implemented using the appropriate Behaviour and gen_server?"
+
+- "These explanations are not detailed enough to be useful. A reader could not
+ create a behaviour or context after reading them."
+
+The "behaviour" of actor in Akka refers to the "receive" function, which is
+demonstrated in Akka examples.  Users don't need to create actor context.  The
+library does it.  An Akka user doesn't need to know the concept of actor context 
+before he can define and create an actor.  If I don't mention "context", the
+explanation of Akka actor is incomplete.  If I explain functions of "context"
+in detail, including all materials covered in the subsequent subsections, I will
+explain too much.
+
+---
+page 15
+
+Updated the first two sentences of Section 2.4.1.5.
+
+---
+page 16
+
+
+- "1. 'mysystem/user'
+   2. 'mysystem:example.com'
+
+   Why '/' in first and ':' in second?
+ 
+   Again, these all have too much detail or too little. If the reader needs to
+   read (or write) such addresses in detail, you explain too little. Otherwise,
+   you are explaining too much. Work out what the reader needs to know, and say
+   that!"
+
+The second is a remote address, which requires domain address/IP address 
+and port number specified by ':'.  Both addresses contain '/'.
+
+
+To me, the syntax of the Akka actor address is rather similar to URI
+  http://en.wikipedia.org/wiki/URI_scheme#Examples
+and I can easily read it or write one by modifying an existing one.  I will
+consider how to explain the format of the address more effectively.
+
+
+
+
+
+

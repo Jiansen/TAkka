@@ -1,0 +1,434 @@
+\section{TAkka Library Design}
+
+% This section presents the design of the TAkka library.  We outline how
+% we add types to actors and how to construct supervision trees of typed actors 
+% in TAkka.  This section concludes with a brief discussion about design 
+% alternatives used by other actor libraries.
+
+\subsection{Type-parameterized Actor}
+\label{actor}
+A TAkka actor has type {\tt TypedActor[M]}.  It inherits the Akka {\tt
+Actor} trait to minimize implementation effort.  Users of the TAkka library,
+however, do not need to use any Akka Actor APIs.  Instead, we encourage
+programmers to use the typed interface given in Figure \ref{takka_actor_api}. 
+ Unlike other actor libraries, every TAkka actor class takes a type parameter 
+{\tt M} which specifies the type of messages it expects to receive.  The same 
+type parameter is used as the input type of the receive function, the type 
+parameter of the actor context and the type parameter of the actor self reference.
+
+\begin{figure}
+\label{takka_actor_api}
+\begin{lstlisting}[language=scala, escapechar=?]
+package takka.actor
+abstract class ?\textcolor{blue}{TypedActor[M:Manifest]}? extends akka.actor.Actor
+  def typedReceive:?\textcolor{blue}{M}?=>Unit
+  val typedSelf:?\textcolor{blue}{ActorRef[M]}?
+  val typedContext:ActorContext?\textcolor{blue}{[M]}?
+  var supervisorStrategy: SupervisorStrategy
+\end{lstlisting}
+\caption{TAkka API: TypedActor}
+\end{figure}
+
+The two immutable fields of {\tt TypedActor}: {\tt typedContext} and 
+{\tt typedSelf}, will be initialized automatically when the actor is created.
+Library users may override the default supervisor strategy in the
+way explained in Section \ref{supervision}.  The implementation of the {\tt
+typedReceive} method, on the other hand, is always provided by users.
+
+The limitation of using inheritance to implement TAkka actors is that Akka 
+features are still available to library users.  Unfortunately, this limitation 
+cannot be overcome by using delegation because, as we have seen in Figure 2, 
+a child actor is created by calling the {\tt actorOf} method from its 
+supervisor's actor context, which is a private API of the supervisor.  {\tt 
+TypedActor} is the only TAkka class that is implemented using inheritance. 
+Other TAkka classes are either implemented by delegating tasks to Akka 
+counterparts or rewritten in TAkka.  Re-implementing the TAkka 
+Actor library requires a similar amount of work for implementing the Akka Actor 
+library.
+
+
+\subsection{Actor Reference}
+\label{actor_ref}
+A reference to an actor of type {\tt TypedActor[M]} has type {\tt
+ActorRef[M]}.  The APIs for the {\tt ActorRef} class is given in Figure \ref{ActorRef}. 
+An actor reference provides a {\tt !} method, through which users
+can send a message to the referenced actor.  Sending an actor a message of unexpected
+type will raise an error at compile time. By using type-parameterized actor
+references, the receiver does not need to worry about unexpected messages, while
+senders can be sure that messages will be understood and processed, as long as
+the message is delivered.
+
+An actor usually can react to a finite set of different message patterns 
+whereas our notion of actor reference only takes one type parameter.  In a 
+type system that supports untagged union types, no special extension is
+required.  In a type system which supports polymorphism, {\tt ActorRef} should
+be contravariant on its type argument {\tt M}, denoted as {\tt ActorRef[-M]} in Scala.
+Consider rewriting the simple calculator defined in Figure \ref{supervisedcalculator} using  
+TAkka, it is clear that {\tt ActorRef} is contravariant because {\tt 
+ActorRef[Operation]} is a subtype of {\tt ActorRef[Division]} though {\tt 
+Division} is a subtype of {\tt Operation}. Contravariance is crucial to avoid 
+the type pollution problem described in Section \ref{type_pollution}.  
+
+\begin{figure}
+\label{ActorRef}
+      \begin{lstlisting}[language=scala, escapechar=?]
+abstract class ActorRef?\textcolor{blue}{[-M](implicit mt:Manifest[M])}?
+  def !(message: ?\textcolor{blue}{M}?):Unit
+  ?\textcolor{blue}{def publishAs[SubM<:M](implicit smt:Manifest[SubM]):ActorRef[SubM]}?
+    \end{lstlisting}
+    \caption{TAkka API: Actor Reference}
+\end{figure}
+
+For ease of use, {\tt ActorRef} provides a {\tt publishAs} method that 
+casts an actor reference to a version that only accepts a subset of supported 
+messages.  The {\tt publishAs} method encapsulates the process of type cast on 
+{\tt ActorRef}, a contravariant type.  We believe that using the notation of the
+{\tt publishAs} method can be more intuitive than thinking about contravariance 
+and subtyping relationship when publishing an actor reference as different 
+types in a complex application.  In addition, type conversion using {\tt 
+publishAs} is statically type checked.  More importantly, with the 
+{\tt publishAs} method, users can give a supertype of an actor reference on 
+demand, without defining new types and recompiling affected classes in the type 
+hierarchy.  The last advantage is important in Scala because a library 
+developer may not have access to code written by others.
+
+
+\begin{figure}[!h]
+      \begin{lstlisting}[language=scala, escapechar=?]
+class StringProcessor extends ?\textcolor{blue}{TypedActor[String]}?  {
+  def ?\textcolor{blue}{typedReceive}?  = {
+    case m:String => println("received message: "+m)
+  }
+}
+object StringProcessorTest extends App {
+  val system = ActorSystem("ServerTest")
+  val processor = system.actorOf(Props[?\textcolor{blue}{String}?, StringProcessor], "processor")
+  
+  processor ! "Hello World"
+//  processor ! 1
+// compile error: type mismatch; found : Int(3)
+//   required: String
+
+  val processorString = system.actorFor?\textcolor{blue}{[String]}?
+                     ("akka://ServerTest/user/processor")
+  processorString ! "Hello World Again"
+  val processorInt = system.actorFor?\textcolor{blue}{[Int]}?
+                  ("akka://ServerTest/user/processor")
+  processorInt ! 2
+}
+/*
+Terminal output:
+received message: Hello World
+received message: Hello Worldv Again
+Exception in thread "main" java.lang.Exception: 
+ ActorRef[akka://ServerTest/user/server] does not 
+ exist or does not have type ActorRef[Int] at 
+ takka.actor.ActorSystem.actorFor(ActorSystem.scala:223)
+ ...
+*/
+    \end{lstlisting}
+    \caption{TAkka Example: A String Processor}
+    \label{takkastring}
+\end{figure}
+
+
+
+
+Figure \ref{takkastring} defines the same string processing actor given in
+Figure \ref{fig:akkastring}.  The {\tt typedReceive} method now has type 
+{\tt 
+String$\Rightarrow$Unit}, which is the same as intended.  In this example, the 
+types of {\tt typedReceive} and {\tt m} may be omitted because they 
+can be inferred by the compiler.  Unlike the Akka example, sending an integer 
+to {\tt server} is rejected by the compiler.  Although the type error 
+introduced on line 19 cannot be statically detected, it is captured by the 
+run-time as soon as the {\tt actorFor} method is called.  In the TAkka version, 
+there is no need to define a handler for unexpected messages.
+
+\subsection{Props and Actor Context}
+\label{actor_context}
+The type {\tt Props} denotes the properties of an actor.   An instance  of type {\tt 
+Props[M]} is used when creating an actor of type {\tt TypedActor[M]}.  Say {\tt 
+myActor} is of type {\tt MyActor}, which is a subtype of {\tt TypedActor[M]}, an instance 
+of type {\tt Prop[M]} can be created by one of the three ways shown in Figure 
+\ref{takka_props}:
+
+\begin{figure}[h]
+\label{takka_props}
+\begin{lstlisting}[language=scala, escapechar=?]
+ val props:Props[M] = Props[M, MyActor]
+ val props:Props[M] = Props[M](new MyActor)
+ val props:Props[M] = Props[M](myActor.getClass)
+\end{lstlisting}
+    \caption{TAkka Example: Creating Actor Props}
+\end{figure}
+
+
+Contrary to an actor reference, which is the interface for receiving messages, 
+an actor context describes the actor's view of the outside world.   Because 
+each actor is an independent computational 
+primitive, an actor context is private to the corresponding actor.  By using 
+APIs in Figure \ref{ActorContext}, an actor can (i) retrieve an actor reference 
+corresponding to a given actor path using the {\tt actorFor} method, (ii) 
+create a child actor with a system-generated or user-specified name using one 
+of the {\tt actorOf} methods, (iii) set a timeout denoting the time within which
+a new message must be received using the {\tt setReceiveTimeout} method, and
+(iv) update its behaviours using the {\tt become} method.  Compared with 
+corresponding Akka APIs, our methods take an additional type parameter whose 
+meaning will be explained below.
+
+\begin{figure}[h]
+\label{ActorContext}
+      \begin{lstlisting}[language=scala, escapechar=?]
+abstract class ActorContext?\textcolor{blue}{[M:Manifest]}?
+  def actorOf ?\textcolor{blue}{[Msg]}? (props: Props?\textcolor{blue}{[Msg])(implicit mt: Manifest[Msg]}?): ActorRef?\textcolor{blue}{[Msg]}?
+  def actorOf ?\textcolor{blue}{[Msg]}? (props: Props?\textcolor{blue}{[Msg]}?, name: String)?\textcolor{blue}{(implicit mt: Manifest[Msg])}?: ActorRef?\textcolor{blue}{[Msg]}?
+  def actorFor ?\textcolor{blue}{[Msg]}? (actorPath: String)
+       ?\textcolor{blue}{(implicit mt: Manifest[Msg])}?: ActorRef?\textcolor{blue}{[Msg]}?
+  def setReceiveTimeout(timeout: Duration): Unit
+  def become?\textcolor{blue}{[SupM >: M]}?(
+      newTypedReceive: ?\textcolor{blue}{SupM}? => Unit,
+      newSystemMessageHandler:
+                         SystemMessage => Unit,
+      newSupervisorStrategy:SupervisorStrategy
+  )?\textcolor{blue}{(implicit smt:Manifest[SupM])}?:ActorRef?\textcolor{blue}{[SupM]}?
+    \end{lstlisting}
+    \caption{TAkka API: Actor Context}
+\end{figure}
+
+The two {\tt actorOf} methods are used to create a type-parameterized actor supervised 
+by the current actor.  Each actor created is assigned to a typed actor path, 
+an Akka actor path together with a {\tt Manifest} of the message type.  Each 
+actor system contains a typed name server.  When an actor is created inside an 
+actor system, a mapping from its typed actor path to its typed actor reference 
+is registered to the typed name server.  The {\tt actorFor} method of {\tt 
+ActorContext} and {\tt ActorSystem} fetches a typed actor reference from the 
+typed name server.
+
+
+\subsection{Backward Compatible Behaviour Upgrade}
+\label{hot_swapping}
+
+The {\tt become} method enables behaviour upgrade of an 
+actor.  The {\tt become} method in TAkka is different from behaviour 
+upgrades in  Akka in two aspects.  Firstly, as the handler for system messages 
+are separated from the handler for other messages, TAkka users may update the 
+system message handler as well.  Secondly, behaviour upgrade in TAkka {\it must} be 
+backward compatible and {\it cannot} be rolled back.  In other words, an actor 
+must evolve into a version that is able to handle the original
+message patterns.  The above decision is made so that a service published to 
+users will not be unavailable later.  
+
+
+\begin{comment}I suggest to enforce backward compatible upgrades whenever
+possible to provide better user experience.  If a bad design has to be deprecated,
+an error message should be returned, if the received message is a synchronous 
+request.  Otherwise, the user cannot tell whether the message is deprecated or lost.}
+\end{comment}
+
+\begin{figure}
+\label{become}
+\begin{lstlisting}
+abstract class ActorContext[M:Manifest] 
+  implicit private var mt:Manifest[M] = manifest[M]
+  def become[SupM >: M](
+      newTypedReceive: SupM => Unit,
+      newSystemMessageHandler:
+               SystemMessage => Unit
+  )(implicit smtTag:Manifest[SupM]):ActorRef[SupM] 
+
+case class BehaviorUpdateException(smt:Manifest[_], mt:Manifest[_]) extends Exception(smt + "must be a supertype of "+mt+".")
+\end{lstlisting}
+\caption{TAkka API: Hot Swapping}
+\end{figure}
+
+The {\tt become} method is declared as in Figure \ref{become}.  The
+static type {\tt M} should be interpreted as the least general type of
+messages addressed by the actor initialized from {\tt TypedActor[M]}.  The
+type value of {\tt SupM} will only be known when the {\tt become} method 
+is invoked.  When a series of {\tt become} invocations are made at run 
+time, the order of those invocations may be non-deterministic.  Therefore, 
+performing dynamic type checking is required to guarantee backward
+compatibility.  Nevertheless, static type checking prevents some invalid {\tt 
+become} invocations at compile time.
+
+\subsection{Reusing Akka Supervisor Strategies in TAkka}
+\label{supervision}
+
+The Akka library implements two of the three supervisor strategies in OTP:
+{\tt OneForOne} and {\tt AllForOne}.  If a supervisor adopts the
+{\tt OneForOne} strategy, a child will be restarted when it fails.  If a 
+supervisor adopts the {\tt AllForOne} supervisor strategy, all children will 
+be restarted when any of them fails.  The third OTP supervisor strategy, {\tt
+RestForOne}, restarts children in a user-specified order, and hence is not
+supported by Akka as it does not specify an order of initialization for
+children.  Simulating the {\tt RestForOne} supervisor strategy in Akka
+requires ad-hoc implementation that groups related children and defines special
+messages to trigger actor termination.  The {\tt RestForOne} strategy is not 
+implemented in Akka.  The Akka library does not implement it neither because it 
+is not required for applications that we have considered.
+
+Figure \ref{super} gives APIs of supervisor strategies in Akka.  As in OTP, for
+each supervisor strategy, users can specify the maximum number of
+restarts of any child within a period.  The default 
+supervisor strategy in Akka is {\tt OneForOne} that permits unlimited 
+restarts.  {\tt Directive} is an enumerated type with the following values: the
+{\tt Escalate} action which throws the exception to the supervisor of the 
+supervisor, the {\tt Restart} action which replaces the failed child with a new 
+one, the {\tt Resume} action which asks the child to process the message again, 
+and the {\tt Stop} action which terminates the failed actor permanently.
+
+None of the supervisor strategies in Figure \ref{super} requires a 
+type-parameterized classes during construction.  Therefore, from the perspective 
+of API design, both supervisor strategies are constructed in TAkka in the same 
+way as in Akka.
+
+
+\begin{figure}
+\label{super}
+    \begin{lstlisting}    
+abstract class SupervisorStrategy
+case class OneForOne(restart:Int, time:Duration)(decider: Throwable => Directive) extends SupervisorStrategy
+case class OneForAll(restart:Int, time:Duration)(decider: Throwable => Directive) extends SupervisorStrategy
+    \end{lstlisting}
+    \caption{Supervisor Strategies}
+\end{figure}
+
+
+\subsection{Handling System Messages}
+\label{systemmessage}
+Actors communicate with each other by sending messages.  To organize actors, a 
+special category of messages should be handled by all actors.  In Akka, those 
+messages are subclasses of the {\tt PossiblyHarmful} trait.  The TAkka library 
+retains some of them as subclasses of the {\tt SystemMessage} trait.
+
+Actors communicate with each other by sending messages.  To maintain a
+supervision tree, a special category of messages should be handled by all 
+actors.  We define a type {\tt SystemMessage} to be the supertype of all 
+messages for system maintenance purposes.  The three Akka system messages 
+retained in TAkka are listed below.  Other Akka system messages that are not 
+related to supervision are not included in TAkka.
+
+
+\begin{description}
+  \item[ReceiveTimeout] A message sent from an actor to itself when it has not received a message
+after a timeout.
+  \item[Kill] An actor that receives this message will send an {\tt ActorKilledException} to its supervisor.
+  \item[PoisonPill] An actor that receives this message will be 
+permanently terminated.  The supervisor cannot restart the killed actor.
+\end{description}
+
+
+The next question is whether a system message should be handled by the library 
+or by application developers.  In Erlang and early versions of Akka, all
+system messages can be explicitly handled by developers in the {\tt receive}
+block.  In recent Akka versions, some system messages become private to library 
+developers and some can be still handled by application developers.
+
+As there are only two kinds of supervisor strategies to
+consider, both of which have clearly defined operational behaviours, all
+messages related to the liveness of actors are handled in the TAkka library. 
+Application developers may indirectly affect the system message handler via 
+specifying
+the supervisor strategies. In contrast, messages related to the behaviour of an
+actor, e.g. {\tt ReceiveTimeout}, are better handled by application
+developers. In TAkka, {\tt ReceiveTimeout} is the only system message that can
+be explicitly handled by users.  Nevertheless, we keep the {\tt SystemMessage}
+trait in the library so that new system messages can be included in the future
+when required.
+
+A key design decision in TAkka is to separate handlers for the system messages 
+and user-defined messages.  The above decision has two benefits. Firstly,
+the type parameter of actor-related classes only need to denote
+the type of user defined messages rather than the untagged union of user 
+defined messages and the system messages.  Therefore, the TAkka design applies
+to systems that do not support untagged union type.  Secondly, since 
+system messages can be handled by the default handler, which applies
+to most applications, users can focus on the logic of handling user
+defined messages.
+
+\begin{comment}
+\subsection{Design Alternatives}
+\label{alternative designs}
+
+
+\paragraph{Akka Typed Actor}
+In the Akka library, there is a special class called {\tt TypedActor}, which
+contains an internal actor and can be supervised.  A service of {\tt 
+TypedActor} is invoked by method invocation instead of message exchanging.  
+Code in Figure \ref{akka typed actor} demonstrates how to define a simple 
+string processor using Akka typed actor.  The Akka {\tt TypedActor} prevent 
+some type errors but have two limitations. Firstly, {\tt TypedActor} does not 
+permit hot swapping on its behaviours.  Secondly, avoiding type pollution by 
+using Akka typed actors is as awkward as using a plain object-oriented 
+model, where supertypes need to be introduced.  In Scala and Java, introducing 
+a supertype in a type hierarchy requires modification to all affected classes. 
+ 
+
+
+
+\begin{figure}
+\label{akka typed actor}
+\begin{lstlisting}
+trait MyTypedActor{
+  def processString(m:String) 
+}
+class MyTypedActorImpl(val name:String) extends MyTypedActor{
+  def this() = this("default")
+  
+  def processString(m:String) {
+    println("received message: "+m) 
+  }
+}
+object FirstTypedActorTest extends App {
+  val system = ActorSystem("MySystem")  
+  val myTypedActor:MyTypedActor =
+    TypedActor(system).typedActorOf(
+    TypedProps[MyTypedActorImpl]())
+  myTypedActor.processString("Hello World")
+}
+
+/*
+Terminal output:
+received message: Hello World
+ */	
+\end{lstlisting}
+\caption{Akka TypedActor Example}
+\end{figure}
+
+\paragraph{Actors with or without Mutable States}
+The actor model formalized by Hewitt et al. \citep{Hewitt:1973} does not 
+specify its implementation strategy.  In Erlang, a functional programming 
+language, actors do not have mutable states.  In Scala, an
+object-oriented programming language, actors may have mutable states.
+The TAkka library is built on top of Akka and implemented in Scala.  
+As a result, TAkka does not prevent users from defining actors with 
+mutable states.
+Nevertheless, the authors of this paper encourage the use of 
+actors in a functional style, for example encoding the {\tt sender} of a 
+synchronous message as part of the incoming message rather than a state 
+of an actor, because it is difficult to synchronize mutable
+states of replicated actors in a cluster environment.
+
+In a cluster, resources are replicated at different locations to provide 
+fault-tolerant services.  The CAP theorem \citep{CAP} shows that it is
+impossible to achieve consistency, availability, and partition tolerance in a
+distributed system simultaneously.  For actors that use mutable state, system 
+providers must either sacrifice availability or partition tolerance, or modify 
+the consistency model.  For example, Akka actors have mutable state and Akka 
+cluster developers spend great effort to implement an eventual consistency 
+model \citep{Kuhn12}. In contrast, stateless services, e.g. RESTful web 
+services, are more likely to achieve a good scalability and availability.
+
+
+
+\paragraph{Bi-linked Actors}
+In addition to one-way linking in the supervision tree, Erlang and Akka
+provide a mechanism to define a two-way linkage between actors. 
+Bi-linked actors are each aware of the liveness of the other.  We believe that
+bi-linked actors are redundant in a system where supervision is
+obligatory.  Notice that, if the computation of an actor relies on the liveness
+of another actor, those two actors should be organized in the same 
+supervision tree.
+
+\end{comment}

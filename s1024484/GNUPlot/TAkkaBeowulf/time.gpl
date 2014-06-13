@@ -1,0 +1,11 @@
+set term png
+set output "SerialMsg_time.png"
+
+set title "SerialMsg: Run Time"
+set xlabel 'Number of Nodes'
+set ylabel 'runtime (ms)'
+set xtics (1, 4, 8, 12, 16, 20, 24, 28, 32)
+plot "SerialMsg.dat" using 1:2 with lines  title 'Akka Big' ,\
+     "SerialMsg.dat" using 1:4 with lines  title 'TAkka Big'
+
+set output

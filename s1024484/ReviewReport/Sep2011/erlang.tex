@@ -1,0 +1,89 @@
+\subsection{The Erlang Language and The OTP Design principles }
+\label{sec:Erlang}
+%Erlang and OTP Design principles  21 - 25
+Erlang \cite{Erlang} is an untyped functional programming language used for constructing concurrent programs.  It is widely used in scalable real-time systems.  The reliability of Erlang systems is largely attributed to the five OTP design principles, namely, supervision trees, behaviours, applications, releases, and release handling \cite{OTP}.  The following subsections will give a brief introduction to the three principles closely related to distributed computing.
+
+\subsubsection{Supervision Trees}
+\label{subsec:supervisiontree}
+
+Supervision tree is probably the most important concept in the OTP design principle.  A supervision tree consists of workers and supervisors.  Workers are processes which carry out actual computations while supervisors are processes which inspect a group of workers or sub-supervisors.  Since both workers and supervisors are processes and they are organised in a tree structure, the term $\it{child}$ is used to refer to any supervised process in literature.  An example of the supervision tree is presented in Figure \ref{fig:supervison_tree} \footnote{This example is cited from \href{http://www.erlang.org/doc/design_principles/des_princ.html}{OTP Design Principles/Overview}.  Restart strategies of each supervisor, however, are removed from the figure since they are not related to the central ides discussed here.}, where supervisors are represented by squares and workers are represented by circles.
+
+In principle, a supervisor is accountable for starting, stopping and monitoring its child processes according to a list of $\it{child \ specifications}$.  A child specification contains 6 pieces of information \cite{OTP}: 
+\begin{inparaenum} [i)]
+  \item a internal name for the supervisor to identify the child. 
+  \item the function call to start the child process.
+  \item whether the child process should be restarted after the termination of its siblings or itself.
+  \item how to terminate the child process.
+  \item whether the child process is a worker or a supervisor.
+  \item a singleton list which specifies the name of the callback module. 
+\end{inparaenum}
+
+\begin{figure}[h]
+\begin{center}
+
+\begin{picture}(280, 250)
+  \put(15, 70){\circle{30}}
+  \put(95, 0){\circle{30}}
+  \put(180, 0){\circle{30}}
+  \put(260, 0){\circle{30}}
+  
+  \put(80,55){\line(0,1){30}}
+  \put(80,85){\line(1,0){30}}
+  \put(110,85){\line(0,-1){30}}
+  \put(110,55){\line(-1,0){30}}
+  
+  \put(200,55){\line(0,1){30}}
+  \put(200,85){\line(1,0){30}}
+  \put(230,85){\line(0,-1){30}}
+  \put(230,55){\line(-1,0){30}}
+  
+  \put(140,125){\line(0,1){30}}
+  \put(140,155){\line(1,0){30}}
+  \put(170,155){\line(0,-1){30}}
+  \put(170,125){\line(-1,0){30}}
+  
+  \put(0,125){\line(0,1){30}}
+  \put(0,155){\line(1,0){30}}
+  \put(30,155){\line(0,-1){30}}
+  \put(30,125){\line(-1,0){30}}  
+
+  \put(70,202){\line(0,1){30}}
+  \put(70,232){\line(1,0){30}}
+  \put(100,232){\line(0,-1){30}}
+  \put(100,202){\line(-1,0){30}}  
+
+  \put(180,15){\line(1,1){40}}
+  \put(260,15){\line(-1,1){40}}
+  \put(95,15){\line(0,1){40}}
+  
+  \put(95,85){\line(3,2){62}}
+  \put(220,85){\line(-3,2){62}}
+  \put(15,85){\line(0,1){40}}
+  
+  \put(15,155){\line(3,2){70}}
+  \put(155,155){\line(-3,2){70}}
+\end{picture}
+
+\end{center}
+\caption{a supervision tree}
+\label{fig:supervison_tree}
+\end{figure}
+
+
+\subsubsection{Behaviours}
+
+Behaviours in Erlang, like interface or traits in the objected oriented programming, abstracts common structures and patterns of process implementations.  With the help of behaviours, Erlang code can be divided into a generic part, a behaviour module, and a specific part, a callback module.  Most processes, including the supervisor in \S\ref{subsec:supervisiontree} , could be implemented by realising a set of pre-defined callback functions for one or more behaviours.  Although ad-hoc code and programming structures may be more efficient, using consistent general interfaces make code more maintainable and reliable.  Standard Erlang/OTP behaviours include: 
+\begin{inparaenum} [i)]
+  \item $\it{gen\_server}$  for constructing the server of a client\-server paradigm. 
+  \item $\it{gen\_fsm}$ for constructing finite state machines. 
+  \item $\it{gen\_event}$ for implementing event handling functionality. 
+  \item $\it{supervisor}$ for implementing a supervisor in a supervision tree. 
+\end{inparaenum}
+Last but not least, users could define their own behaviours in Erlang.
+
+
+\subsubsection{Applications}
+
+The OTP platform is made of a group of components called applications.  To define an application, users need to annotate the implementation module with ``-behaviour(application)'' statement and implement the start/2 and the stop/1 functions.  Applications without any processes are called library applications.  In an Erlang runtime system, all operations on applications are managed by the $\it{application\ controller}$ process \footnote{registered as application\_controller}.
+
+This project is concerns in distributed applications which may be used in a distributed system with several Erlang nodes.  An Erlang distributed application will be restarted at another node when its current node goes down.  A distributed application is controlled by both the application controller and the distributed application controller \footnote{registered as dist\_ac}, both of which are part of the $\it{kernel}$ application.  Two configuration parameters must be set before loading and launching a distributed application.  First, possible nodes where the distributed application may run must be explicitly pointed.  Then, all nodes configured in the last step will be sent a copy of the same configuration which include three parameters: the time for other nodes to start, nodes that must be started in given time, and nodes that can be started in given time.

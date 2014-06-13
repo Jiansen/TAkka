@@ -1,0 +1,162 @@
+\section{Actors and there Supervision in Akka}
+\label{background}
+
+The Akka library \citep{akka_doc} implements Actor programming in 
+static typed language, Scala, and makes supervision obligatory.  Figure 
+\ref{fig:akkastring} gives an example actor defined in Akka.  The {\tt receive} 
+function of the Akka actor has type {\tt Any$\Rightarrow$Unit} but the 
+defined actor, {\tt StringProcessor}, is only intended to process strings.  At 
+Line 14, a {\tt Props}, an abstraction of actor creation, is initialized and 
+passed to an actor system, which creates an actor with name  {\it processor} and 
+returns a reference pointing to that actor.  Another way to obtain 
+an actor is using the {\tt actorFor} method as shown in line 20.  We then use 
+actor references to send string messages and integer messages to the 
+referenced actor.  String messages are processed in the way defined by the 
+receive function.
+
+\begin{figure}[!h]
+      \begin{lstlisting}[language=scala]
+class StringProcessor extends Actor {
+  def receive = {
+    case m:String => println("received message: "+m);
+  }
+}
+class MessageHandler extends Actor {
+  def receive = {
+    case akka.actor.UnhandledMessage(message, sender, recipient) =>
+      println("unhandled message:"+message);
+  }
+}
+object StringCounterTest extends App {
+  val system = ActorSystem("StringProcessorTest")
+  val processor = system.actorOf(Props[StringProcessor], "processor")
+  
+  val handler = system.actorOf(Props[MessageHandler]))
+  system.eventStream.subscribe(handler,classOf[akka.actor.UnhandledMessage]);
+  processor ! "Hello World"
+  processor ! 1
+  val processorRef = system.actorFor("akka://StringCounterTest/user/processor")
+  processorRef ! "Hello World Again"
+  processorRef ! 2
+}
+/*
+Terminal output:
+received message:	Hello World
+received message:	Hello World Again
+unhandled message:1
+unhandled message:2
+*/
+    \end{lstlisting}
+    \caption{Akka Example: A String Processor}
+ \label{fig:akkastring}    
+\end{figure}
+
+Undefined messages, such as the two integer messages in the String Processor 
+example, are treated differently in different actor libraries.  In
+Erlang, an actor keeps undefined messages in its mailbox.  It attempts to 
+process the message again when a new message handler is in use.  In versions 
+prior to
+2.0, an Akka actor raises an exception when it processes an undefined message.
+In recent Akka versions, an undefined message is discarded by the actor and an
+{\tt UnhandledMessage} event is pushed to the event stream of the actor system.
+The event stream may be subscribed by other actors who are interested in
+particular event messages.  To handle the unexpected integer message in the
+above short example, an event handler is defined and created with 6 lines of 
+code.
+
+The Akka library makes supervision obligatory by restricting the way of 
+creating actors. Actors can only be initialized by using the {\tt actorOf}
+method provided by {\tt ActorSystem} or {\tt ActorContext}.  Each actor system
+provides a guardian actor for all user-created actors.  Calling the {\tt
+actorOf} method of an actor system creates an actor supervised by the 
+guardian actor.  Calling the {\tt actorOf} method of an actor context 
+creates a child actor supervised by that actor.  Therefore, all user-created  
+actors in an actor system, together with the guardian actor of that actor 
+system, form a tree structure.  Obligatory supervision unifies the 
+structure of actor deployment and simplifies the work of system maintenance.
+
+\begin{comment}
+Each actor in Akka is associated with an actor path.  The string representation
+of the actor path of a guardian actor has format 
+{\it akka://mysystem@IP:port/user}, where {\it mysystem} is the name of the 
+actor system, {\it IP} and {\it port} are the IP address and the 
+port number which the actor system listens to, and {\it user} is the name of 
+the guardian actor.  The actor path of a child actor is actor path of its 
+supervisor appended by the name of the child actor, either a user specified 
+name or a system generated name. 
+\end{comment}
+
+Figure \ref{supervisedcalculator} defines a simple calculator which supports
+multiplication and division. The simple calculator does not consider the
+problematic case of dividing a number by 0, where an {\tt
+ArithmeticException} will be raised.  We then define a safe calculator as the 
+supervisor of the simple calculator.  The safe calculator delegates 
+calculation tasks to the simple calculator and restarts the simple calculator 
+when an {\tt ArithmeticException} is raised.  The supervisor strategy of
+the safe calculator also specifies that its child may not fail more than twice 
+within a minute.  If the child fails more frequently, the safe calculator 
+itself will stop, and the failure will be reported to its supervisor, the 
+system guardian actor in this example.  The terminal output shows that the 
+simple calculator is restarted before the third message and the fifth message 
+are delivered.  The last message is not processed because both calculators 
+have been terminated since the simple calculator fails more frequently than 
+allowed.
+
+\begin{figure}[!p]
+
+  \begin{lstlisting}[language=scala]
+trait Operation
+case class Multiplication(m:Int, n:Int) extends Operation
+case class Division(m:Int, n:Int) extends Operation
+class Calculator extends Actor {
+  def receive = {
+    case Multiplication(m:Int, n:Int) =>
+      println(m +" * "+ n +" = "+ (m*n))
+    case Division(m:Int, n:Int) =>
+      println(m +" / "+ n +" = "+ (m/n))
+  }
+}
+class SafeCalculator extends Actor {
+  override val supervisorStrategy =
+    OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {
+      case _: ArithmeticException  =>
+        println("ArithmeticException Raised to: "+self)
+        Restart
+    }
+  val child:ActorRef = context.actorOf(Props[Calculator], "child")
+  def receive = {
+    case m => child ! m
+  }
+}
+object SupervisedCalculator extends App {
+  val system = ActorSystem("MySystem")
+  val actorRef:ActorRef = system.actorOf(Props[SafeCalculator],
+"safecalculator")
+
+  calculator ! Multiplication(3, 1)
+  calculator ! Division(10, 0)
+  calculator ! Division(10, 5)
+  calculator ! Division(10, 0)
+  calculator ! Multiplication(3, 2)
+  calculator ! Division(10, 0)
+  calculator ! Multiplication(3, 3)
+}
+/*
+Terminal Output:
+3 * 1 = 3
+java.lang.ArithmeticException: / by zero
+ArithmeticException Raised to: Actor[akka://MySystem/user/safecalculator]
+
+10 / 5 = 2
+java.lang.ArithmeticException: / by zero
+ArithmeticException Raised to: Actor[akka://MySystem/user/safecalculator]
+java.lang.ArithmeticException: / by zero
+
+3 * 2 = 6
+ArithmeticException Raised to: Actor[akka://MySystem/user/safecalculator]
+java.lang.ArithmeticException: / by zero
+*/
+    \end{lstlisting}
+  \caption{Akka Example: Supervised Calculator}
+  \label{supervisedcalculator}
+\end{figure}

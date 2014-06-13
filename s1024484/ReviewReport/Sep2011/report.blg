@@ -1,0 +1,52 @@
+This is BibTeX, Version 0.99c (TeX Live 2009/Debian)
+The top-level auxiliary file: report.aux
+A level-1 auxiliary file: intro.aux
+A level-1 auxiliary file: literature.aux
+A level-1 auxiliary file: plan.aux
+A level-1 auxiliary file: lib_manual.aux
+The style file: plain.bst
+Database file #1: report.bib
+Warning--empty institution in Dal-Zilio97implicitpolymorphic
+Warning--empty booktitle in Launchbury93anatural
+You've used 32 entries,
+            2118 wiz_defined-function locations,
+            689 strings with 8590 characters,
+and the built_in function-call counts, 10923 in all, are:
+= -- 1133
+> -- 377
+< -- 15
++ -- 162
+- -- 118
+* -- 606
+:= -- 1696
+add.period$ -- 105
+call.type$ -- 32
+change.case$ -- 150
+chr.to.int$ -- 0
+cite$ -- 34
+duplicate$ -- 503
+empty$ -- 950
+format.name$ -- 118
+if$ -- 2445
+int.to.chr$ -- 0
+int.to.str$ -- 32
+missing$ -- 30
+newline$ -- 159
+num.names$ -- 66
+pop$ -- 206
+preamble$ -- 1
+purify$ -- 123
+quote$ -- 0
+skip$ -- 385
+stack$ -- 0
+substring$ -- 676
+swap$ -- 160
+text.length$ -- 15
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 115
+warning$ -- 2
+while$ -- 115
+width$ -- 34
+write$ -- 360
+(There were 2 warnings)

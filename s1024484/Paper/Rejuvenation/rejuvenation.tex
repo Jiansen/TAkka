@@ -1,0 +1,174 @@
+% \documentclass[10pt, journal, compsoc, authoryear]{IEEEtran}
+\documentclass[10pt, journal, compsoc, authoryear]{article}
+
+% \setpagenumber{1}g
+\usepackage{CJKutf8}
+
+
+\usepackage{comment}
+
+\usepackage[numbers]{natbib}
+
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{url}
+
+\usepackage{amsthm}
+\usepackage{amsmath}
+ \numberwithin{equation}{subsection}
+\usepackage{paralist}
+\usepackage[pdfpagelabels]{hyperref}
+\usepackage[all]{hypcap}
+\usepackage{verbatim}
+\usepackage{array}
+\usepackage{float}
+\usepackage{multirow}
+% \usepackage{rotating}
+\usepackage{multicol}
+\usepackage{longtable}
+\usepackage{graphicx}
+
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}
+\newtheorem{conj}{Conjecture}
+%\newtheorem{exmp}{Example}[section]
+\newtheorem{exmp}{Example}
+\newenvironment{where}{\noindent{}where\begin{itemize}}{\end{itemize}}
+% A comment in a draft (shouldn't appear in the final version).
+\newcommand{\mycomment}[1]{\(\spadesuit\){\bf #1 }\(\spadesuit\)}
+% Comment this out in the draft
+% \newcommand{\mycomment}[1]{}
+\newcommand{\pmcomment}[1]{\comment{PM}{#1}}
+\newcommand{\pwtcomment}[1]{\comment{PT}{#1}}
+\newcommand{\rscomment}[1]{\comment{RS}{#1}}
+
+% line break in table.  e.g.
+% Foo bar & \specialcell{Foo\\bar} & Foo bar \\    % vertically centered
+% Foo bar & \specialcell[t]{Foo\\bar} & Foo bar \\ % aligned with top rule
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+
+% \permission {[Copyright notice will appear here once ’preprint’ option is 
+% removed.]}
+
+\begin{document}
+
+
+\title{Towards Precise Analysis for Software Rejuvenation \\ (v 0.1) } % title
+
+\author{Jiansen HE}
+
+% \category{I.3.7}{Computer Graphics}{Three-Dimensional Graphics and Realism}[Animation]
+% \category{I.3.5}{Computer Graphics}{Computational Geometry and Object Modeling}[Physically based modeling]
+
+% \terms{Experimentation, Human Factors}
+
+
+
+\maketitle
+
+
+\begin{comment} 
+\begin{abstract} 
+
+Software rejuvenation refers to a preventive failure recovery technique, which 
+restarts a software regularly to reduce the cost of software ageing.  It has been  
+actively studied in the literature and applied in enterprise level applications. 
+Traditionally, a software system is modelled as a Semi-Markov process, from 
+which a rejuvenation schedule is deducted to optimise the objective function 
+(e.g. highest availability, lowest cost) after the system reaches its steady-state.
+Unfortunately, it can takes a long time for a system to reach its steady-state.  
+We propose a approximate simulation method to study XXX
+
+
+Continue a line of work by \citet{huang1995software} and 
+\citet{dohi2000statistical}, this paper proposes an alternative Markov 
+model for software rejuvenate.  Specifically, we expend each state, $S$, in 
+traditional models to a group of states, $S(\tau)$, where $\tau$ represents 
+the elapsed time that the system has been entered into state $S$.  
+The above model is equivalent to a semi-Markov process.  It, however, brings two 
+benefits and one limitation.  The first 
+benefit is that state transition probabilities can be precisely described.  
+Like in general reliability studies, the failure rate in the new model 
+can be precisely described by an arbitrary probability density function or 
+probability mass function.  In contrast, traditional models either use the 
+average Mean Time to Failure (MTTF) for cost analysis or assume that the time 
+spent in each state has an exponential distribution.  The second 
+benefit is that transition probabilities of the new Markov process has take 
+time into account.  The result model is either a simple Markov chain if time is 
+a discrete value,  or a general Markov process if time is a continuous value.  
+Comparing to traditional models that are semi-Markov processes or Continuous 
+Time Markov Chains (CTMT), the Markov Chain used in proposed model is often 
+easier to understand and analysis.  The downside of expending the state space 
+is the decreased performance of simulation processes.  Fortunately, approximate 
+estimations can be given to balance the trade-off between accuracy and 
+efficiency.  Most importantly, we show that the classical model given by 
+\citep{huang1995software} is the least accurate approximation.  Moreover, 
+inspired by economical theories, a notion of {\it utility} function
+is proposes paper to unify the cost analysis and the availability 
+analysis, which are usually treated separately in previous studies.
+
+
+
+\end{abstract}
+\end{comment} 
+
+% \begin{IEEEkeywords}
+% key1; key2; key3; 
+
+% \end{IEEEkeywords}
+
+% \IEEEpeerreviewmaketitle
+
+
+\input{Introduction}
+\input{classicmodels}
+\input{newmodel}
+\input{example}
+
+
+
+
+\section{Efficiency}
+
+In Example HuangB \& HuangC.  The time is set to 10 minutes.  It takes 1 hour to
+simulate the first year.  Not bad!
+
+The matrix is sparse, space efficiency can be improved.
+
+
+TODO: measure the complexity 
+
+
+\section{TODO List}
+
+
+\begin{itemize}
+  \item Examples from Dohi
+  \item Space Efficiency improvement
+  \item ! compose sub-systems
+\end{itemize}
+
+
+
+\section{Conclusion}
+
+
+% \section*{Acknowledgment}
+
+
+% The authors would like to thank... more thanks here
+
+
+\bibliographystyle{IEEEtranN}
+\bibliography{rejuvenation}
+
+% \appendix
+%  \input{appendix_correct}
+
+% \received{September 2008}{March 2009}
+
+\end{document}
+
+

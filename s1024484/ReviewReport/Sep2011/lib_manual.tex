@@ -1,0 +1,378 @@
+\section{Scala Join (version 0.2) User Manual}
+\label{app_lib}
+
+The Scala Join Library (version 0.2) improves the scala joins library \cite{scala_joins} implemented by Dr. Philipp Haller.  In deed, this library inherited its syntax and main implementation strategy for local join calculus.  Main advantages of this library are: 
+\begin{inparaenum}[(i)]
+  \item uniform $and$ operator,
+  \item theoretically unlimited number of join patterns in a single block
+  \item clear typed $unapply$ method in extractor objects
+  \item simpler structure for the $\bf{Join}$ class, and most importantly,
+  \item supporting communication on distributed join channels.
+\end{inparaenum}  
+
+\subsection{Using the Library}
+\subsubsection{Sending Messages via Channels}
+An elementary operation in the join calculus is sending a message via a channel.  A channel could be either asynchronous or synchronous.  At caller's side, sending a message via an asynchronous channel has no obvious effect in the sense that the program will proceed immediately after sending the message.  By contrast, when a message is sent via a synchronous channel, the current thread will be suspended until a result is returned.  
+
+To send a message $m$ via channel $c$, users simply apply the message to the channel by calling $c(m)$.  For the returned value of a synchronous channel, users may want to assign it to a variable so that it could be used later.  For example,
+\begin{lstlisting}
+  val v = c(m) // c is a synchronous channel
+\end{lstlisting}
+
+\subsubsection{Grouping Join Patterns}
+
+A join definition defines channels and join patterns.  Users defines a join definition by initializing the $\bf{Join}$ class or its subclass.  It is often the case that a join definition (including channels and join patterns defined inside) should be globally $\it{static}$.  If this is the case, it is a good programming practice in Scala to declare the join definition as a $\it{singleton\ object}$ with following idiom:
+
+\begin{lstlisting}
+  object join_definition_name extends Join{
+    //channel declarations
+    //join patterns declaration
+  }
+\end{lstlisting}
+
+A channel is a singleton object inside a join definition.  It extends either class $\bf{AsyName[ARG]}$ or class $\bf{SynName[ARG,R]}$, where $\bf{ARG}$ and $\bf{R}$ are generic type parameters in Scala.  Here, $\bf{ARG}$ indicates the type of channel parameter whereas $\bf{R}$ indicates the type of return value of a synchronous channel.  The current library only supports unary channels, which only take one parameter.  Fortunately, this is sufficient for constructing nullary channels and channels that take more than one parameters.  A nullary channel could be edcoded as a channel whose argument is always $\bf{Unit}$ or other constant.  For channel that takes more than one parameters, users could pack all arguments in a tuple.
+
+Once a channel is defined, we can use it to define a join pattern in the following form
+\begin{lstlisting}
+  case <pattern> => <statements>
+\end{lstlisting}
+
+The $\textless pattern \textgreater$ at the left hand side of $\Rightarrow$ is made of channels and their formal arguments, connected by the infix operator $and$.  The  $\textless statements \textgreater$ at the right hand side of $\Rightarrow$ is a sequence of Scala statements.  Formal arguments declared in the  $\textless pattern \textgreater$ must be pairwise distinguished and might be used in the  $\textless statements \textgreater$ part.  In addition, each join definition accepts one and only one group of join pattens as the argument of its $join$ method.  Lastly, like most implementations for the join calculus, the library does not permit multiple useages of the same channel in a single join pattern.  On the other side, using the same channel in arbitrary number of different patterns is allowed.
+
+We conclude this section by presenting a sample code that defines a join pattern.
+
+\begin{lstlisting}[label=local_join_def_example, caption=Example code for defining channels and join patterns (join\_test.scala)]
+import join._
+import scala.concurrent.ops._ // spawn
+object join_test extends App{//for scala 2.9.0
+  object myFirstJoin extends Join{
+    object echo extends AsyName[String]
+    object sq extends SynName[Int, Int]
+    object put extends AsyName[Int]
+    object get extends SynName[Unit, Int]
+
+    join{
+      case echo(str)  => println(str)
+      case sq(x) => sq reply x*x
+      case put(x) and get(_) => get reply x
+   }
+  }
+
+  spawn {
+    val sq3 = myFirstJoin.sq(3)
+    println("square (3) = "+sq3)
+  }
+  spawn { println("get: "+myFirstJoin.get()) }
+  spawn { myFirstJoin.echo("Hello World") }
+  spawn { myFirstJoin.put(8) }
+}
+\end{lstlisting}
+One possible result of running above code is:
+\begin{lstlisting}
+>scalac join_test.scala
+>scala join_test
+square (3) = 9
+Hello World
+get: 8
+\end{lstlisting}
+
+\subsubsection{Distributed Computation}
+
+With the distributed join library, it is easy to construct distributed systems on the top of a local system.  This section explains additional constructors in the distributed join library by looking into the code of a simple client-server system, which calculates the square of an integer on request.  The server side code is given at Listing \ref{dis_server} and the client side code is given at Listing \ref{dis_client}.
+
+\begin{lstlisting}[label=dis_server, caption=Server.scala]
+import join._
+object Server extends App{
+  val port = 9000
+  object join extends DisJoin(port, 'JoinServer){
+    object sq extends SynName[Int, Int]
+    join{      case sq(x) => println("x:"+x); sq reply x*x    }
+    registerChannel("square", sq)
+  }
+  join.start()
+}
+\end{lstlisting}
+\begin{lstlisting}[label=dis_client, caption=Client.scala]
+object Client{
+  def main(args: Array[String]) {
+    val server = DisJoin.connect("myServer", 9000, 'JoinServer)
+    //val c = new DisSynName[Int, String]("square", server)
+    //java.lang.Error: Distributed channel initial error: 
+            Channel square does not have type Int => java.lang.String.
+    //...
+    val c = new DisSynName[Int, Int]("square", server)//pass
+    val x = args(0).toInt
+    val sqr = c(x)
+    println("sqr("+x+") = "+sqr)
+    exit()
+}}
+\end{lstlisting}
+
+\begin{lstlisting}
+> scala ServerTest                                    
+Server 'JoinServer Started...
+							>scala Client 5
+x:5
+							sqr(5) = 25
+							>scala Client 7
+x:7
+							sqr(7) = 49
+\end{lstlisting}
+
+
+In Server.scala, we constructed a distributed join definition by extending class \\ $\bf{DisJoin(Int, Symbol)}$.  The integer is the port number where the join definition is going to listen and the symbol is used to identify the join definition.  The way to declare channels and join patterns in $\bf{DisJoin}$ is the same as the way in $\bf{Join}$.  In addition, we register channels which might be used at remote site with a memorizable string.  At last, different from running a local join definition, a distributed join definition has to be explicitly started.
+
+In Client.scala, we connect to the server by calling DisJoin.connect.  The first and second arguments are the hostname and port number where the remote join definition is located.  The last argument is the name of the distributed join definition.  The hostname is a String which is used for local name server to resolve the IP address of a remote site.  The port number and the name of join definition should be exactly the same as the specification of the distributed join definition.
+
+Once the distributed join definition, server, is successfully connected, we can initialize distributed channels as an instance of DisAsyName[ARG](channel\_name, server) or DisSynName[ARG, R](channel\_name, server).  Using an unregistered channel name or declaring a distributed channel whose type is inconsistent with  its referring local channel will raise a run-time exception as soon as the distributed channel is initialised.  In later parts of program, we are free to use distributed channels to communicate with the remote server.  The way to invoke distributed channels and local channels are same.
+
+
+
+\newpage
+
+\subsection{Implementation Details}
+\subsubsection{Case Statement, Extractor Objects and Pattern Matching in Scala}
+
+In Scala, a partial function is a function with an additional method: $isDefinedAt$, which will return $true$ if the argument is in the domain of this partial function, or $false$ otherwise.  The easiest way to define a partial function is using the case statement.  For example,
+
+\begin{lstlisting}
+scala> val myPF : PartialFunction[Int,String] = {
+     |  case 1 => "myPF apply 1"
+     | }
+myPF: PartialFunction[Int,String] = <function1>
+
+scala> myPF.isDefinedAt(1)
+res1: Boolean = true
+
+scala> myPF.isDefinedAt(2)
+res2: Boolean = false
+
+scala> myPF(1)            
+res3: String = myPF apply 1
+
+scala> myPF(2)            
+scala.MatchError: 2
+	at $anonfun$1.apply(<console>:5)
+	...
+\end{lstlisting}
+
+In addition to instances of a numerate class and case classes, the value used between $case$ and $\Rightarrow$ could also be an instance of an $\it{extractor\ object}$, object that contains an $unapply$ method\cite{extractors}.  For example,
+
+\begin{lstlisting}
+scala> object Even {
+     |   def unapply(z: Int): Option[Int] = if (z%2 == 0) Some(z/2) else None
+     | }
+defined module Even
+
+scala>   42 match { case Even(n) => Console.println(n) } // prints 21
+21
+
+scala>   41 match { case Even(n) => Console.println(n) } // prints 21
+scala.MatchError: 41
+	...
+\end{lstlisting}
+
+In the above example, when a value, say $x$, attempts to match against a pattern, $Even(n)$, the method $Even.unapply(x)$ is invoked.  If $Even.unapply(x)$ returns $Some(v)$, then the formal argument $n$ will be assigned with the value $v$ and statements at the right hand side of $\Rightarrow$ will be executed.  By contrast, if $Even.unapply(x)$ returns $None$, then the current case statement is considered not matching the input value, and the pattern examination will move towards the next case statement.  If the last case statement still does not match the input value, then the whole partial function is not defined for the input.  Applying a value outside the domain of a partial function will rise a $\it{MatchError}$.
+
+\newpage
+\subsubsection{Implementing Local Channels}
+\label{imp_loc_join}
+Both asynchronous channel and synchronous channel are subclass of trait $NameBase$.  The reason why we introduced this implementation free trait is that, although using generic types to restrict the type of messages pending on a specific channel is important for type safety, as we will see later, a unified view for asynchronous and synchronous channels would simplify the implementation at many places. 
+
+\begin{lstlisting} [label=local_asy_ch, caption=Code defines local asynchronous channel]
+class AsyName[Arg](implicit owner: Join, argT:ClassManifest[Arg]) extends NameBase{
+  var argQ = new Queue[Arg] //queue of arguments pending on this name
+
+  def apply(a:Arg) :Unit = synchronized { 
+    val isNewMsg = argQ.isEmpty
+    argQ += a
+    if (isNewMsg){ owner.trymatch() }
+  }
+  //other code
+}
+\end{lstlisting}
+
+Asynchronous channel is implemented as Listing \ref{local_asy_ch}.  The implicit argument $owner$ is the join definition where the channel is defined.  The other implicit argument, $\bf{argT}$, is the descriptor for the run time type of $\bf{Arg}$.  Although $\bf{argT}$ is a duplicate information for $\bf{Arg}$, it is important for distributed channels, whose erased type parameter might be declared differently between different sites.  We postponed this problem until  \S\ref{imp_dis_join}.
+
+As shown in the above code, an asynchronous channel contains an argument queue whose element must has generic type $\bf{Arg}$.  Pending a message on this channel is achieved by calling the $apply$ method, so that c(m) could be wrote instead of c.apply(m) for short in Scala.  When a message is sent via a channel, it is added to the end of the argument queue.  Based on the linear assumption that no channel should appear more than once in a join pattern, reduction is possible only when the number of pending messages on a channel is increased from 0.
+
+
+\begin{lstlisting} [label=local_syn_ch, caption=Code defines local synchronous channel]
+class SynName[Arg, R](implicit owner: Join, argT:ClassManifest[Arg], resT:ClassManifest[R])
+ extends NameBase{
+  var argQ = new Queue[Arg]
+  var value = new SyncVar[R] 
+  
+  def apply(a:Arg) :R = synchronized {
+    val isNewMsg = argQ.isEmpty
+    argQ += a
+    if (isNewMsg){ owner.trymatch() }
+    fetch
+  }
+  
+  def reply(r:R){
+    assert(!value.isSet, "Internal Error: SyncVar has been set")
+    value.put(r)
+  }
+
+  private def fetch():R={
+    value.take
+  }
+
+  //other code
+}
+\end{lstlisting}
+
+As listing \ref{local_syn_ch} shows, synchronous channel is similar to asynchronous channel but has more features.   Firstly, other processes could send a reply value to a synchronous channel.  Secondly, sending a message to a synchronous channel will return a value rather than proceed to the next step of the program.  Both features are realised by using a synchronous variable (SynVar), provided by the Scala standard library.
+
+\subsubsection{Implementing the Join Patterns Using Extractor Objects}
+
+In this library, join patterns are represented as a partial function which has type: \\
+(Set[NameBase], Queue[(NameBase, Any)]) $\Rightarrow$ Unit.  The trymatch method tries to fire a satisfied pattern, or to restore the system if no pattern is matched at all.  The meaning of the arguments will be explained when we look into the details of the unapply method of channels.
+
+\begin{lstlisting} [label=code_join, caption=Code defines the Join class]
+class Join {
+   private var hasDefined = false
+  
+   implicit val joinsOwner = this
+   private var joinPat: PartialFunction[(Set[NameBase],Boolean), Unit] = _
+   
+   def join(joinPat: PartialFunction[(Set[NameBase],Boolean), Unit]) {
+    if(!hasDefined){
+      this.joinPat = joinPat
+      hasDefined = true
+    }else{ throw new Exception("Join definition has been set for"+this) }
+   }
+   
+  def trymatch() = synchronized {
+    var names: Set[NameBase] = new HashSet
+    var queue = new Queue[(NameBase, Any)]
+    try{
+      joinPat((names, queue))
+    }catch{
+      case e:Exception => queue.foreach{ case (c, a) =>  c.pendArg(a)} // no pattern is matched
+    }
+  }
+}
+\end{lstlisting}
+
+
+To investigate how extractor objects is used to implement join patterns, first consider a join pattern that only contains a single channel, for example, 
+
+\begin{lstlisting}
+  case ch(msg) => println("received message "+msg+" from channel "+ch) 
+\end{lstlisting}
+
+To examine if this case statement is matched, the library tests if the argument queue of the channel $ch$ is empty.  If the argument queue is not empty, the unapply method should return the head element of the queue, otherwise the test fails.
+
+Examining a pattern where more than one channel is involved will require more tasks.  Firstly, to examine the linearity of each pattern, we use a set to records examined channels in current pattern.  Clearly, adding the same channel to the set more than once suggested that the current pattern is not satisfy the linearity requirement.  Secondly, since the presence of message on a single channel does not imply the success of the current pattern, a log is required to record examined channels and their popped messages.  In the case that a pattern is partly matched, all popped  messages should be appended to their original channels.
+
+The last thing is to define an $and$ constructor which combines two or more channels in a join pattern.  Indeed, this is surprisingly simple to some extent.  In the library, $and$ is defined as a binary operator which passes the same argument to both operands.
+
+\begin{lstlisting} [label=unapply_ch, caption=The unapply method in local asynchronous and synchronous channel]
+  def unapply(attr:(Set[NameBase], Queue[(NameBase, Any)])) : Option[Arg]= attr match{
+    case (set, ch_arg_q) =>
+      assert(!set.contains(this), "\n join pattern non-linear")
+      set += this
+      if (argQ.isEmpty){//no message is pending on this channel, pattern match fails
+        set.clear                // clear the set
+        ch_arg_q.foreach{ case (c, a) =>  c.pendArg(a)} // pending messages back
+        None         // signal the failure of pattern matching 
+      }else{
+        val arg = argQ.dequeue 
+        ch_arg_q += ((this, arg))
+        Some (arg)
+      }
+  }
+\end{lstlisting}
+
+\begin{lstlisting} [label=unapply_and, caption=Code defines the and object]
+object and{
+  def unapply(attr:(Set[NameBase], Queue[(NameBase, Any)])) = {
+      Some(attr,attr)
+  }
+}
+\end{lstlisting}
+
+\subsubsection{Implementing Distributed Join Calculus}
+\label{imp_dis_join}
+
+The $\bf{DisJoin}$ class extends both the $\bf{Join}$ class, which supports join definitions, and the $\bf{Actor}$ traits, which enables distributed communication.  In addition, the distributed join definition manages a name server which maps a string to one of its channels.  Comparing to a local join definition, a distributed join definition has two additional tasks: checking if distributed channels used at a remote sites are annotated with correct types and listening messages pending on distributed channels.  The code of the $\bf{DisJoin}$ class is presented in Listing $\ref{code_disjoin}$.
+
+
+\begin{lstlisting} [label=code_disjoin, caption=Code defines the DisJoin Class]
+class DisJoin(port:Int, name: Symbol) extends Join with Actor{
+  var channelMap = new HashMap[String, NameBase]   //work as name server
+  
+  def registerChannel(name:String, ch:NameBase){
+    assert(!channelMap.contains(name), name+" has been registered.")
+    channelMap += ((name, ch))
+  }  
+  
+  def act(){
+    RemoteActor.classLoader = getClass().getClassLoader()
+    alive(port)
+    register(name, self)//
+    println("Server "+name+" Started...")
+    
+    loop(
+      react{
+        case JoinMessage(name, arg:Any) =>  {
+          if (channelMap.contains(name)) {
+            channelMap(name) match {
+              case n : SynName[Any, Any] => sender ! n(arg)
+              case n : AsyName[Any] => n(arg)
+         }}}
+
+        case SynNameCheck(name, argT, resT) => {
+          if (channelMap.contains(name)) {
+            sender ! (channelMap(name).argTypeEqual((argT,resT)))
+          }else{
+            sender ! NameNotFound
+          }
+        }
+        case AsyNameCheck(name, argT) => {
+          if (channelMap.contains(name)) {
+            sender ! (channelMap(name).argTypeEqual(argT))
+          }else{
+            sender ! NameNotFound
+       }}}
+    )
+}}
+\end{lstlisting}
+
+In this library, distributed channel is indeed a stub of a remote local channel.  When a distributed channel is initialized, its signature is checked at the place where its referring local channel is defined.  Later, when a message is sent through this distributed channel, the message and the channel name is forwarded to the remote join definition where the  referring local channel is defined.  Consistent with the semantic of distributed join calculus, reduction, if any, is performed at the location where the join pattern is defined.  If the channel is a distributed synchronous channel, a reply value will be send back to the remote caller.  Listing \ref{code_dissynname} illustrates how distributed synchronous channel is implemented.  Distributed asynchronous channel is implemented in a similar way.  
+
+
+\begin{lstlisting} [label=code_dissynname, caption=Code defines distributed synchronous channel]
+class DisSynName[Arg:Manifest, R:Manifest](n:String, owner:scala.actors.AbstractActor){
+  val argT = implicitly[ClassManifest[Arg]]//type of arguments
+  val resT = implicitly[ClassManifest[R]]//type of return value
+  
+  initial()// type checking etc.
+  
+  def apply(arg:Arg) :R = synchronized {
+    (owner !? JoinMessage(n, arg)).asInstanceOf[R]
+  }
+  
+  //check type etc.
+  def initial() = synchronized {
+    (owner !? SynNameCheck(n, argT, resT)) match {
+      case true => Unit
+      case false => throw new Error("Distributed channel initial error:"+
+                                        "Channel " + n + " does not have type "+
+                                        argT+ " => "+resT+".")
+      case NameNotFound => throw new Error("name "+n+" is not found at "+owner)
+}}}
+\end{lstlisting}
+
+Lastly, the library also provides a function that simplifies the work of connection to a distributed join definition.
+
+\begin{lstlisting}
+object DisJoin {
+  def connect(addr:String, port:Int, name:Symbol):AbstractActor = {
+    val peer = Node(addr, port)//location of the server
+    RemoteActor.select(peer, name)
+  }
+}
+\end{lstlisting}

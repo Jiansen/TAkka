@@ -1,0 +1,50 @@
+920d919
+<   Thread.sleep(1000)
+931d929
+< unhandled message:1	
+933a932
+> unhandled message:1
+954c953,956
+< application. 
+---
+> application.  Lastly, the order in which the four output messages are printed 
+> is non-deterministic, but ``Hello World'' is always printed before ``Hello 
+> World Again'' and  ``unhandled message:1'' is always printed before ``unhandled 
+> message:2''. 
+981c983
+< versions, and are not related to our central topics.
+---
+> versions, and are not related to the central topics of this thesis.
+1059a1062,1064
+> Actor context and supervisor strategies will be explained in Section~\ref{akka_actor_context}
+> and Section~\ref{akka_supervision} respectively.
+> 
+1359c1364,1365
+< } }  
+---
+>   }  
+> }
+1593a1600,1601
+> 
+> 
+1878c1886
+<  
+---
+> 
+1896c1904
+< \newpage
+---
+> 
+2123d2130
+< \begin{comment}
+2125a2133,2134
+> \begin{comment}
+> 
+2169a2179,2180
+> \end{comment}
+> 
+2186a2198,2199
+> 
+> \begin{comment}
+2197a2211
+> 

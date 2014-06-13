@@ -1,0 +1,42 @@
+\section{Introduction}
+
+
+quick read
+
+
+\begin{itemize}
+  \item \S 4.1.5
+  \item \S 2 \& \S 3
+\end{itemize}
+
+\begin{CJK*}{UTF8}{gbsn}
+
+
+\end{CJK*}
+
+
+\begin{comment}
+
+
+\section{mini outline}
+
+ 
+ 
+
+Expected Contribution:
+1. A novel and more precise model for software rejuvenation.  Compared to the original model, the new model
+    a. fixes the problem of using mean transition rate between states.
+    b. adds the notion of S(t).  Instead of randomly jump to a healthy state (the original model), S(t) will evolve to either S(t+s) or R(0).
+    c. merges the highly robust state (the unrealistic state where failure will not occur) and the a failure
+probable state (where failures are likely to occur) to W(t), where the failure rate is a function about t.
+    d.  split the transaction from the failure state to the highly robust state (i.e. W(0)) to two steps:  W(t) -> S(0) (data restore etc.) and S(t) -> R(0) (cleaning cache etc.). 
+
+2. The approach of availability analysis can be generalized to analyze of the execution cost.
+3. An efficient algorithm for approximate estimation on availability and other cost.
+
+
+The research scope:
+
+The first phrase of this research only aims at modelling a single component or a software system as a whole.  If time permits, we may extend the work to clusters, the widest scope I found in papers on software rejuvenation.
+
+\end{comment}

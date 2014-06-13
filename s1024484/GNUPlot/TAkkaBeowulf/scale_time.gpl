@@ -1,0 +1,11 @@
+set term png
+set output "scale_time.png"
+
+set title "run-time"
+set xlabel 'Number of Nodes'
+set ylabel 'runtime (ms)'
+set xtics (1, 4, 8, 12, 16, 20, 24, 28, 32)
+plot "MBrot.dat" using 1:2:3 with errorlines  title 'MBrot  Akka Runtime' lc 1,\
+     "MBrot.dat" using 1:4:5 with errorlines  title 'MBrot TAkka Runttime' lc 2
+
+set output

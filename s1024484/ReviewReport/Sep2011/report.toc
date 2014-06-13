@@ -1,0 +1,50 @@
+\contentsline {section}{\numberline {1}Project Description}{1}{section.1}
+\contentsline {subsection}{\numberline {1.1}Background and Motivation}{1}{subsection.1.1}
+\contentsline {subsection}{\numberline {1.2}Project Aim}{2}{subsection.1.2}
+\contentsline {subsection}{\numberline {1.3}Project Objectives}{2}{subsection.1.3}
+\contentsline {subsection}{\numberline {1.4}Dissertation Outline}{2}{subsection.1.4}
+\contentsline {paragraph}{Chapter 2 (\it {Process Calculi})}{2}{section*.2}
+\contentsline {paragraph}{Chapter 3 (\it {Other Concurrent Models})}{2}{section*.3}
+\contentsline {paragraph}{Chapter 4 (\it {A Library for the OTP Design Principles in typed languages})}{3}{section*.4}
+\contentsline {paragraph}{Chapter 5 (\it {Supervised Distributed Join-Calculus})}{3}{section*.5}
+\contentsline {paragraph}{Chapter 6 (\it {Extended Models})}{3}{section*.6}
+\contentsline {paragraph}{Chapter 7 (\it {Conclusion and Future Work})}{3}{section*.7}
+\contentsline {subsection}{\numberline {1.5}Dissemination of Results}{3}{subsection.1.5}
+\contentsline {section}{\numberline {2}Literature Review}{4}{section.2}
+\contentsline {subsection}{\numberline {2.1}The $\pi $-calculus}{4}{subsection.2.1}
+\contentsline {subsubsection}{\numberline {2.1.1}Syntax and Notations}{4}{subsubsection.2.1.1}
+\contentsline {subsubsection}{\numberline {2.1.2}Equivalence Relations}{6}{subsubsection.2.1.2}
+\contentsline {subsection}{\numberline {2.2}The Join-Calculus and the JoCaml Programming Language}{7}{subsection.2.2}
+\contentsline {subsubsection}{\numberline {2.2.1}The Local Reflexive Chemical Machine (RCHAM)}{9}{subsubsection.2.2.1}
+\contentsline {subsubsection}{\numberline {2.2.2}Distributed Solutions}{9}{subsubsection.2.2.2}
+\contentsline {subsubsection}{\numberline {2.2.3}The Failure Model}{10}{subsubsection.2.2.3}
+\contentsline {subsubsection}{\numberline {2.2.4}The JoCaml Programming Language}{10}{subsubsection.2.2.4}
+\contentsline {subsection}{\numberline {2.3}The Ambient Calculus and the Obliq Programming Language}{10}{subsection.2.3}
+\contentsline {subsubsection}{\numberline {2.3.1}The Ambient Calculus}{10}{subsubsection.2.3.1}
+\contentsline {subsubsection}{\numberline {2.3.2}The Obliq Programming Language}{13}{subsubsection.2.3.2}
+\contentsline {subsection}{\numberline {2.4}The Erlang Language and The OTP Design principles }{13}{subsection.2.4}
+\contentsline {subsubsection}{\numberline {2.4.1}Supervision Trees}{13}{subsubsection.2.4.1}
+\contentsline {subsubsection}{\numberline {2.4.2}Behaviours}{14}{subsubsection.2.4.2}
+\contentsline {subsubsection}{\numberline {2.4.3}Applications}{14}{subsubsection.2.4.3}
+\contentsline {subsection}{\numberline {2.5}Encoding Functions in Process Calculi}{15}{subsection.2.5}
+\contentsline {subsubsection}{\numberline {2.5.1}Indirect Encoding}{15}{subsubsection.2.5.1}
+\contentsline {subsubsection}{\numberline {2.5.2}The Blue Calculus: Encoding Functions in a Direct Style}{15}{subsubsection.2.5.2}
+\contentsline {subsection}{\numberline {2.6}Implementation Strategies}{16}{subsection.2.6}
+\contentsline {subsubsection}{\numberline {2.6.1}A General Purpose Virtual Machine}{16}{subsubsection.2.6.1}
+\contentsline {subsubsection}{\numberline {2.6.2}Extending the Basic VM}{17}{subsubsection.2.6.2}
+\contentsline {subsubsection}{\numberline {2.6.3}Example Paradigms}{18}{subsubsection.2.6.3}
+\contentsline {section}{\numberline {3}Project Progress and Plans}{19}{section.3}
+\contentsline {subsection}{\numberline {3.1}Report on Progress}{19}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}Plan for the Second Year}{19}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}Plan for the Third Year}{20}{subsection.3.3}
+\contentsline {subsection}{\numberline {3.4}Potential Risks}{20}{subsection.3.4}
+\contentsline {section}{\numberline {A}Scala Join (version 0.2) User Manual}{21}{appendix.A}
+\contentsline {subsection}{\numberline {A.1}Using the Library}{21}{subsection.A.1}
+\contentsline {subsubsection}{\numberline {A.1.1}Sending Messages via Channels}{21}{subsubsection.A.1.1}
+\contentsline {subsubsection}{\numberline {A.1.2}Grouping Join Patterns}{21}{subsubsection.A.1.2}
+\contentsline {subsubsection}{\numberline {A.1.3}Distributed Computation}{22}{subsubsection.A.1.3}
+\contentsline {subsection}{\numberline {A.2}Implementation Details}{24}{subsection.A.2}
+\contentsline {subsubsection}{\numberline {A.2.1}Case Statement, Extractor Objects and Pattern Matching in Scala}{24}{subsubsection.A.2.1}
+\contentsline {subsubsection}{\numberline {A.2.2}Implementing Local Channels}{25}{subsubsection.A.2.2}
+\contentsline {subsubsection}{\numberline {A.2.3}Implementing the Join Patterns Using Extractor Objects}{26}{subsubsection.A.2.3}
+\contentsline {subsubsection}{\numberline {A.2.4}Implementing Distributed Join Calculus}{27}{subsubsection.A.2.4}

@@ -1,0 +1,142 @@
+\section{The TAkka Library}
+\subsection{Type Parametrised Actor}
+Every TAkka actor takes a type parameter specifying the type of its expecting messages.  Only messages of the right type can be sent to TAkka actors.  Therefore, receivers do not need to worry about unexpected messages while senders can ensure that messages will be understood and processed, as long as the message is delivered.
+
+Table-\ref{first_actor} shows how to define and use a simple string processing actor in Akka and TAkka.  Both actors define a message handler that only intends to processing strings.  At line 15, sending a message of non-string type to the string processing actor is prohibited in TAkka but allowed in Akka\footnote{In versions prior to Akka 1.3.1, receiving a message that does not match any pattern will cause an exception.  Since Akka 2.0, unhandled messages are sent to an event stream.  Both strategies are different from the Erlang design where unhandled messages are remain in the actor\rq{}s message box for later processing.}.
+
+\begin{table}
+\label{first_actor}
+  \begin{adjustwidth}{-0.5cm}{}
+  \begin{tabular}{ l l }
+      \begin{lstlisting}[language=scala]
+import akka.actor._
+
+class MyAkkaActor extends Actor{
+  def receive = {
+    case m:String  =>
+     println("received message: "+m)
+  }
+}
+
+object AkkaActorTest extends App {
+  val system = ActorSystem("MySystem")
+  val myActor = system.actorOf(
+         Props(new MyAkkaActor),"myactor")
+  myActor ! "hello"
+  myActor ! 3
+ //no compile error
+
+}
+      \end{lstlisting}
+&
+      \begin{lstlisting}[language=scala]
+import takka.actor._
+
+class MyTAkkaActor extends Actor[String] {
+  def typedReceive = {
+    case m =>
+      println("received message: "+m)
+  }
+}
+
+object TAkkaActorTest extends App {
+  val system = ActorSystem("MySystem")
+  val myActor = system.actorOf(
+           Props[String](new MyTAkkaActor),"myactor")
+  myActor ! "hello"
+  //myActor ! 3
+  //compile error: type mismatch; found : Int(3)
+  // required: String
+}
+      \end{lstlisting}
+  \end{tabular}
+  \caption{A Simple Actor in Akka and TAkka}
+  \end{adjustwidth}
+  \label{my_table}
+\end{table}
+
+
+\subsection{Supervising Type Parametrised Actors}
+System reliability will be improved if failed components are restarted in time. The OTP Supervision Principle suggests that actors should be organised in a tree structure so that failed actors could be properly restarted by its supervisor.  The Akka library enforces all user-created actors to be supervised by a system guardian actor or another user-created actor.  The TAkka library derives the above good design.  To be embedded into a supervision tree, every TAkka actor, Actor[M], defines two message handlers: one for messages of type M and another for messages for supervision purpose.
+
+\subsection{Wadler\rq{}s Type Pollution Problem}
+The Walder\rq{}s type pollution problem is first found in layered systems, where each layer provides services to the layer immediately above it, and implements those services using services in the layer immediately below it.  If a layer is implemented using an actor, then the actor will receive both messages form the layer above and the layer below via its only channel. This means that the higher layer could send a message that is not expected from it, so as the lower layer. 
+
+Generally speaking, type pollution may occur when an actor expects messages of different types from different users.  Another example of type pollution is implementing the controller in the MVC model using an actor.
+
+One solution to the type pollution problem is using type parametrised actors and sub-typing.  Let a layer has type Actor[T], denoting that it is an actor that expects message of type T.  With sub-typing, one could publish the layer as Actor[A] to one user (e.g. the layer above or the Model) while publish the same layer as Actor[B] to another user (e.g. the layer below or the Viewer). The system could check if both A and B are subtypes of T.
+
+\subsection{Code Evolution}
+Same as in the Akka design, an actor could hot swap its message handler by calling the $becomes$ method of its context, the actor\rq{}s view of its outside world.  Different from the Akka design, code evolution in TAkka has a restricted direction, that is, an actor must be evolve to a version that is able to handle the same amount or more number of patterns.  The decision is made so that a service published to users would not become unavailable later.  The related code in the ActorContext trait in presented below.  Notice that both static and dynamic type checking are used in the implementation.
+
+\begin{table}[h]
+\begin{lstlisting}
+trait ActorContext[M] {
+ implicit var mt:Manifest[_] = manifest[M]
+
+ def become[SupM >: M](behavior: SupM => Unit, possibleHamfulHandler:akka.actor.PossiblyHarmful => Unit)(implicit smt:Manifest[SupM]):ActorRef[SupM] = {
+     if (!(smt >:> mt))
+       throw BehaviorUpdateException(smt, mt)
+     
+     mt = smt
+     // other code
+ }
+}
+\end{lstlisting}
+\caption{Code Evolution in TAkka}
+\end{table}
+
+\subsection{A comparison with Akka Typed Actor}
+In the Akka library, there is a special class called TypedActor, which contains an internal actor and could be supervised.  Users of typed actor invoke a service by calling a method instead of sending messages.  The typed actor prevents some type errors but has some limitations.  For one thing, typed actor does not permit code evolution.  For the other, typed actor cannot solve the type pollution problem.
+
+
+\subsection{Typed Nameserver}
+Traditional nameserver associate each name with a value.  Users of a traditional name server can hardly tell the type of request resource.  To overcome the above limitation, we designed a typed nameserver which map each typed name to a value of corresponding type, and to look up a value by giving a typed name.
+
+\subsubsection{Scala Manifest as Type Descriptor}
+Comparing type information among distributed components requires a notion of type descriptor that is a first class value.  In Scala, a descriptor for type T could be constructed as manifest[T], which is a value of type Manifest[T].  Furthermore, with $implicit\ parameter$ (e.g. line 4 below) and $context\ bound$ (line 10 below), library designer could present users concise APIs.  For example, in a Scala interpreter, one could obtain following results:
+
+\begin{lstlisting}
+  scala> manifest[Int => String]
+  res0: Manifest[Int => String] = scala.Function1[Int, java.lang.String]
+
+  scala> def name[T](implicit m: scala.reflect.Manifest[T]):String = m.toString
+  name: [T](implicit m: scala.reflect.Manifest[T])String
+
+  scala> name[Int => String]
+  res1: String = scala.Function1[Int, java.lang.String]
+
+  scala> def name2[T:Manifest]:String = {manifest[T].toString}
+  name2: [T](implicit evidence$1: Manifest[T])String
+
+  scala> name2[Int => String]
+  res2: String = scala.Function1[Int, java.lang.String]
+\end{lstlisting}
+
+\subsubsection{Typed Name and Typed NameServer}
+A typed name, TSymbol, is a unique string symbol shipped with a manifest.  In TAkka, TSymbol is defined as follows:
+
+\begin{lstlisting}
+  case class TSymbol[T](val symbol:Symbol)(implicit val t:Manifest[T]) {
+    override def hashCode():Int = symbol.hashCode()  }
+\end{lstlisting}
+
+The three operations provided by typed nameserver are:
+\begin{itemize}
+  \item set[T:Manifest](name:TSymbol[T], value:T):Unit
+
+Register a typed name with a value of corresponding type.  A \lq{}NamesHasBeenRegisteredException\rq{} will be thrown if the name has been used by the name server.
+
+  \item unset[T](name:TSymbol[T]):Unit
+
+Cancel the entry $name$ if (i)  the symbol representation of $name$ is registered, and (ii) the manifest of $name$ (i.e. the intention type) is a super type of the registered type.
+
+  \item get[T] (name: TSymbol[T]): Option[T]
+
+Return Some(v:T) if (i) $name$ is associated with a value and (ii) T is a supertype of the registered type; otherwise return None.
+\end{itemize}
+
+Notice that $unset$ and $get$ operations permit polymorphism.  For this reason, the hashcode of TSymbol does not take manifest into account.  The typed nameserver also prevents users from registering two names with the same symbol but different manifests, in which case if one is a supertype of another, the return value of $get$ will be non-deterministic.
+
+
+

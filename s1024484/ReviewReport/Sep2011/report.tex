@@ -1,0 +1,63 @@
+\documentclass[coverpage]{myproposal}
+
+\setcounter{tocdepth}{2}
+
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{paralist}
+\usepackage{hyperref}
+\usepackage[all]{hypcap}
+\usepackage{verbatim}
+\usepackage{amssymb, amsmath, amsthm}
+\usepackage{array}
+\usepackage{float}
+
+\usepackage{listings} 	
+% "define" Scala 
+\lstdefinelanguage{scala}{morekeywords={class,object,trait,extends,with,new,if,while,for,def,val,var,this}, 
+otherkeywords={->,=>}, 
+sensitive=true, 
+morecomment=[l]{//}, 
+morecomment=[s]{/*}{*/}, 
+morestring=[b]"} 
+\lstset{frame=tb,language=scala,aboveskip=3mm,belowskip=3mm,showstringspaces=false,columns=flexible,basicstyle={\small\ttfamily}} 
+
+\newtheorem{defn}{Definition}[section]
+
+\begin{document}
+\title{A Typed Language for Distributed Programming}
+\author{ Jiansen HE \\  Supervisor: Prof. Philip Wadler}
+%\reportnumber{25}
+%\reportyear{1999}
+\institutes{The Laboratory for Foundations of Computer Science }
+\maketitle
+\tableofcontents
+%\begin{abstract}
+%This is the abstract.
+%\end{abstract}
+\include{intro}
+\include{literature}
+\include{plan}
+
+%% Choose your favourite bibliography style here.
+\bibliographystyle{plain}
+
+
+%%%%%%%%
+%% Any appendices should go here. The appendix files should look just like the
+%% chapter files.
+\appendix
+\include{lib_manual}
+%% ... etc...
+
+
+%% If you want the bibliography single-spaced (which is allowed), uncomment
+%% the next line.
+% \singlespace
+
+%% Specify the bibliography file. Default is thesis.bib.
+\bibliography{report}
+
+
+
+\end{document}

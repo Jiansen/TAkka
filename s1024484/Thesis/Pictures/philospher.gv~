@@ -1,0 +1,26 @@
+digraph finite_state_machine {
+    rankdir=LR;
+    size="8,5"
+    node [shape = point ]; begin
+ 
+    node [shape = circle, label="Waiting", fontsize=14] Waiting;
+    node [shape = circle, label="Thinking", fontsize=14] Thinking;
+    node [shape = circle, label="Hungry", fontsize=14] Hungry;
+    node [shape = circle, label="WaitForOtherChopstick", fontsize=14] WaitForOtherChopstick;
+    node [shape = circle, label="FirstChopstickDenied", fontsize=14] FirstChopstickDenied;
+    node [shape = circle, label="Eating", fontsize=14] Eating;
+ 
+
+    begin -> Waiting;
+    Waiting -> Thinking [ label = "Think" ];
+
+    Free -> Working [ label = "↓message" ];
+    Free -> Dead [ label = "↑exception_c" ];
+
+    Working -> Dead [ label = "↑exception_c" ];
+    Working -> Free [ label = "↑reply" ];
+
+
+    Dead -> Start [ label = "↓restart" ];
+    Dead -> Free [ label = "↓resume" ];
+}

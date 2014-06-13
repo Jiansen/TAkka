@@ -1,0 +1,109 @@
+-module(chameneosErl).
+
+-export([start/0]).
+-export([mall/3, mallactor/6, chameneo/4]).
+
+start() -> start(1, 4).
+
+start(N, NumChameneos) ->
+  Start = now(),
+  spawn(chameneosErl, mall, [self(), N, NumChameneos]),
+  receive
+      stop ->
+        End = now(),
+        timer:now_diff(End, Start)
+  end.
+
+colour(0) -> blue;
+colour(1) -> yellow;
+colour(2) -> red;
+colour(3) -> faded.
+
+startChameneos(NumChameneos, NumChameneos, _Mall) -> exit;
+startChameneos(I, NumChameneos, Mall) ->
+  spawn(chameneosErl, chameneo, [Mall, colour(I rem 3), I, 0]), 
+  startChameneos(I+1, NumChameneos, Mall).
+
+mall(Main, N, NumChameneos) ->
+  Mall = spawn(chameneosErl, mallactor, [Main, 0, 0, NumChameneos, N, none]),
+  startChameneos(0, NumChameneos, Mall).
+
+mallactor(Main, SumMeetings, NumFaded, NumChameneos, N, none) ->
+  io:format("None ~p~n", [self()]),
+  receive
+    {meetingCount, I} ->
+io:format("I ~p~n", [I]),
+        if
+         (NumFaded + 1 == numChameneos) -> Main ! stop
+%%         true -> 
+        end,
+      mallactor(Main, SumMeetings+I, NumFaded+1, NumChameneos, N, none);
+    {meet, Colour, Sender} ->
+      io:format("None ~p Sender ~p N ~p ~n", [self(), Sender, N]),
+      if
+        N > 0 -> 
+          mallactor(Main, SumMeetings, NumFaded, NumChameneos, N, {some, Sender});
+        true -> 
+          io:format("Kill ~p~n",[Sender]),
+          Sender ! {exit, self()}
+      end; 
+    M -> io:format("Mall: Unrecognized msg ~p",[M])
+  end;
+
+mallactor(Main, SumMeetings, NumFaded, NumChameneos, N, {some, Chameneo}) ->
+  io:format("Some ~p ~n", [self()]),
+  receive
+    {meetingCount, I} ->
+        io:format("NumFaded ~p   I ~p ~n",[NumFaded, I]),
+        if
+         (NumFaded + 1 == numChameneos) -> Main ! stop
+%%         true -> 
+        end,
+      mallactor(Main, SumMeetings+I, NumFaded+1, NumChameneos, N, {some, Chameneo});
+    {meet, Colour, Sender} ->
+      io:format("Some ~p Sender ~p N ~p  Chameneo~p ~n", [self(), Sender, N, Chameneo]),
+      if
+        N > 0 -> 
+          Chameneo ! {meet, Colour, Sender},
+          mallactor(Main, SumMeetings, NumFaded, NumChameneos, N-1, none);
+        true -> 
+          Chameneo ! {exit, self},
+          Sender ! {exit, self()}
+      end; 
+    M -> io:format("Mall: Unrecognized msg ~p",[M])
+  end.
+
+chameneo(Mall, Colour, ID, Meetings) ->
+  io:format("This ~p  Colour ~p ID ~p Meetings ~p Mall ~p ~n",[self(), Colour, ID, Meetings, Mall]),
+  Mall ! {meet, Colour, self()}, 
+  receive
+    {meet, OtherColour, Sender} ->
+%%       io:format("chameneo ~p Colour ~p MEET Mall ~P !!!~n",[ID, Colour, Mall]),
+       io:format("chameneo ~p MEET ~n",[ID]),
+       Sender ! {change, Colour},
+       chameneo(Mall, complement(Colour, OtherColour), ID, Meetings+1);
+    {change, NewColour} ->
+       io:format("chameneo ~p CHANGE ~n",[ID]),
+       chameneo(Mall, NewColour, ID, Meetings+1);
+    {exit, Sender} ->
+       io:format("chameneo ~p EXIT ~n",[ID]),
+%%       exit(self(), normal),
+       Sender ! {meetingCount, Meetings},
+       chameneo(Mall, faded, ID, Meetings);
+    M -> io:format("CC: Unrecognized msg ~p",[M])
+  end.
+
+complement(red, red) -> red;
+complement(red, yellow) -> blue;
+complement(red, blue) -> blue;
+complement(yellow, red) -> blue;
+complement(yellow, yellow) -> yellow;
+complement(yellow, blue) -> red;
+complement(blue, red) -> yellow;
+complement(blue, yellow) -> red;
+complement(blue, blue) -> blue;
+complement(_, faded) -> faded;
+complement(faded, _) -> faded.
+
+
+

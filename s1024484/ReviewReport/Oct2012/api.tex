@@ -1,0 +1,275 @@
+\section{The TAkka Library}
+\label{actor}
+
+An \textit{actor} is a lightweight process that responses to \textit{message}s according to its \textit{behavior}.  In a fault tolerant system, related actors are supervised by their \textit{supervisor}s and form a tree structure.  To better benefit from the functional nature of the actor model, the Akka framework \cite{akka_doc, akka_api} decides to shield actors from the outside using \textit{actor reference}s, which can be freely passed across applications and distributed nodes.
+
+Following core operations are required by the actor model:
+\begin{itemize}
+  \item \textbf{create}: create an actor and return an actor reference to the actor created;
+  \item \textbf{send}: send a message to an actor via its actor reference;
+  \item \textbf{become}: update the \textit{behavior} of an actor.
+\end{itemize}
+
+Following sub-sections will explain how the TAkka library supports the actor model described above.  APIs of this library is largely influenced by the Akka framework \cite{akka_api}.  Key differences between this library and Akka will be explained in related sub-sections.  Full TAkka APIs are given at \url{http://homepages.inf.ed.ac.uk/s1024484/takka/}.
+
+\subsection{Actor}
+\label{sec_actor}
+
+\begin{lstlisting}
+package actor
+abstract class Actor[Msg:Manifest]{
+  protected def typedReceive:PartialFunction[Msg, Unit]
+  protected def possiblyHarmfulHandler:akka.actor.PossiblyHarmful => Unit
+
+  protected[actor] implicit val typedContext:ActorContext[Msg]
+  implicit final val typedSelf:ActorRef[Msg]
+  final lazy val typedRemoteSelf:ActorRef[Msg]
+
+  def preStart():Unit
+  def postStop():Unit
+  def preRestart(reason:Throwable, message:Option[Msg]):Unit
+  def postRestart(reason:Throwable):Unit
+}
+\end{lstlisting}
+
+The \textbf{Actor} class provides essential constructs for defining an actor.  The \textit{behavior} of an actor is defined by the \textit{typedReceive} method and the \textit{possiblyHarmfulHandler} method.  Users must implement \textit{typedReceive} which will be used as the handler for receiving messages of type \textbf{Msg}.  General users do not have to override the default implementation of \textit{possiblyHarmfulHandler}, which reacts to system messages.  This library uses the same system messages as the akka library \cite{akka_api}.  Selected system messages will be explained in related sections.  In the case that there is an intersection of \textbf{M} and \textbf{PossiblyHarmful}, message of the intersect type will be handled by \textit{typedReceive}.
+
+An \textbf{Actor} instance has fields representing its actor reference(\S\ref{sec_actor_ref}) and actor context(\S\ref{sec_actor_context}).  The \textit{typedSelf} field, initialised at the same time as the actor, is an actor reference that enables local communication to this actor.  Using the value of \textit{typedSelf} at a remote site will usually fail to delivery messages, unless the actor is deployed as a remote actor (\S\ref{sec_actor_system}).  On the other side, value of the \textit{typedRemoteSelf}, if it exists, can be passed around local and remote sites and behave as expected.  Notice that \textit{typedRemoteSelf} is a lazy initialised field.  When \textit{typedRemoteSelf} is first called, a \textbf{NotRemoteSystemException} may raise if the actor is not located in an actor system that supports remote communication.  The use of actor context will be explained in \S\ref{sec_actor_context}.
+
+Moreover, users can specify procedures which will be called 
+\begin{inparaenum}[(i)]
+\item before the actor is started;
+\item after the actor is terminated;
+\item before the actor is restarted due to an Error or Exception raised when handling a particular message; and
+\item after the actor is successfully restarted.
+\end{inparaenum}
+
+Finally, unlike the akka design, this library deprecates the \textit{sender} field which represents the sender of the last receiving message.  The \textit{sender} field is deprecated for several reasons.  Firstly, the type of the \textit{sender} field should be a super type of the union of types of all possible senders expecting a reply.  Therefore, it is still possible to reply a sender with messages of wrong types.  Secondly, without due care, using the shared variable \textit{sender} may introduce bugs in concurrent processes.  Thirdly, experience shows that using \textit{sender} contributes to the difficulty of tracing dataflow in debugging process.  Lastly, to reduce side-effects of message processing, the library designer argues that resources that may effect the message processing, including the sender of a synchronous request, should be part of the message.
+
+%% Actor Reference
+\subsection{Actor Reference}
+\label{sec_actor_ref}
+\begin{lstlisting}
+@serializable
+@SerialVersionUID("ActorRef-v-0-1")
+abstract class ActorRef[-Msg : Manifest]{
+  def ![M](message: Msg):Unit
+  final def tell(msg: Msg): Unit
+
+  def isTerminated : Boolean
+  def path : akka.actor.ActorPath
+  final def compareTo (other: ActorRef[_]):Int
+}
+\end{lstlisting}
+
+As mentioned earlier, same as in the akka library, actors are shielded from the outside using actor references.  Users send messages to an actor via calling the \textit{tell} method or the ! method of corresponding actor references.
+
+Same as in the akka API, the \textit{isTerminated} test of an actor reference checks the liveness of its representing actor.  The \textit{isTerminated} test returns true only if the representing actor is completely shut down by its actor system; temporary actor failure will not change the test result from true because actor is always be supervised and could be restarted after the failure.
+
+In addition, users could enquiry and compare the paths of actor references.  Actor path in this library is not type parametrised because it is not directly related to message sending.
+
+The two serialization annotations before the class declaration ensures that an actor reference could be serialized and deserialized consistently.
+
+\subsection{Actor Reference Configuration}
+\label{props}
+
+\begin{lstlisting}
+object Props{
+  def apply[T, A<:Actor[T]] (implicit arg: ClassManifest[A], t:Manifest[T]): Props[T]
+  def apply[T:Manifest](actorClass: Class[_ <: Actor[T]]): Props[T]
+  def apply[T:Manifest](creator: => Actor[T]): Props[T]
+}
+case class Props[-T:Manifest] (props: akka.actor.Props)
+\end{lstlisting}
+
+Trying to be consistent with the akka library, this library also provides a Props class, whose instance represents the configuration of actor creation, used in \textit{ActorSystem.actorOf} and \textit{ActorContext.actorOf}.  This section will only look at ways of creating an instance of Props.  Using a Props to create an actor and actor reference will be explained the the next two sections.
+
+\begin{lstlisting}
+class StringActor extends Actor[String] {
+  // class implementation
+}
+\end{lstlisting}
+
+Suppose an actor based string processor, \textbf{StringActor}, is implemented as above, users can then obtain a corresponding Props of \textbf{StringActor} using one of the following idioms:
+
+\begin{lstlisting}
+  val props = Props[String, StringActor]
+  val props = Props[String](StringActorClass)
+  //where StringActorClass is a class object for StringActor
+  val props = Props[String](new StringActor)
+\end{lstlisting}
+
+Omitting the String parameter in above examples will give an actor creation configuration of type Props[\_], whose corresponding actor reference will not accept message of any type.
+
+Though it is more flexible to create a Props by providing a type parameter and an akka Props instance, props object created in this way looses the guarantee of having a correct type parameter captures the type of expecting messages.
+
+\subsection{Actor Context}
+\label{sec_actor_context}
+\begin{lstlisting}
+abstract class ActorContext[M:Manifest] {
+  val props:Props[M]
+  def typedSelf : ActorRef[M]
+  implicit def system : ActorSystem
+
+  def receiveTimeout : Option[Duration]  
+  def resetReceiveTimeout(): Unit
+  def setReceiveTimeout (timeout: Duration): Unit
+  
+  def actorOf[Msg:Manifest](props:Props[Msg], name:String):ActorRef[Msg]  
+  def actorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg]
+  def remoteActorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg]  
+  def remoteActorOf[Msg:Manifest](props:Props[Msg], name:String):ActorRef[Msg]
+  def actorFor[E:Manifest](actorPath: String): ActorRef[E]
+
+  def watch[M](subject: ActorRef[M]): ActorRef[M]  
+  def unwatch[M](subject: ActorRef[M]): ActorRef[M]
+
+  def become[SupM >: M](behavior: SupM => Unit,    
+               possibleHamfulHandler:akka.actor.PossiblyHarmful => Unit)
+               (implicit arg:Manifest[SupM]):ActorRef[SupM]
+}
+\end{lstlisting}
+
+An actor context provides contextual information for an actor.\cite{akka_api}  By accessing an actor context, users could retrieve the props that created the actor, the actor reference that pointed to the actor, the actor system that the actor located in, and the timeout of receiving the first message.  If a timeout is set for the first message, then users should handle the \textbf{ReceiveTimeout} message inside the \textit{possiblyHarmful} method.
+
+Two main usages of actor context are creating and looking for a child actor.  Actor is created by calling the \textit{actorOf} method or the \textit{remoteActorOf} method.  The actor reference returned by the \textit{actorOf} method may not contain a global aware path.  The actor reference returned by the \textit{remoteActorOf} method, on the other hand, can be used at a remote site if the actor system supports remote communication.  Actor created by either methods is supervised by the actor captured by this actor context.  Like in akka, an actor will be given a name at the time of its creation.  If the user does not provide a name, a system generated name will be provided; if the user provides a name which has been used by a sibling of the creating actor, an \textbf{InvalidActorNameException} will be thrown.  Once a valid name is associated with the created actor, a new actor path is generated with the name appending to the actor captured by the actor context.  In another word, a child actor is created.  The \textit{actorFor} method returns an actor reference associated with the provided actor path and the expecting message type.  The returned actor reference will point to a \textbf{DeadLetters}, which is the sink of messages to dead actors, in the case that the actor path is not associated with an actor, or the actor at the actor path has an incompatible type parameter to the provided type parameter.
+
+Like in OTP\cite{OTP} and akka\cite{akka_doc}, an actor could linked to another actor, watching for its death message, or unlinked from a linked actor.  The death message, \textbf{Terminated (actor: ActorRef)}, is handled by the \textit{possiblyHarmful} method of an actor.
+
+Unlike in the akka library, the actor context in this library does not manage information about the current processing message such as its sender.  Any information that the message receiver needs to consider should be part of the message itself.
+
+Finally, this library provides code swap on the actor behaviour using $become$ in the same fashion as in akka.  The current API is different from the akka version in three aspects.  Firstly, the $become$ method in this library requires a handler for system messages.  Fortunately, in most cases, users use actor context inside an actor definition; therefore, users could pass the system message handler retrieved from the actor definition, if the handler does not need to be changed.  Secondly, the behavior parameter has type \textbf{SupM $\Rightarrow$ Unit}, where \textbf{SupM} is usually not \textbf{Any}.  Thirdly, this library deprecated the \textit{unbecome} method to avoid potential problems related to type evolution.
+
+\subsection{Actor System}
+\label{sec_actor_system}
+\begin{lstlisting}
+object ActorSystem {
+  def apply():ActorSystem
+  def apply(name: String): ActorSystem
+  def apply(name: String, config: Config): ActorSystem
+}
+
+abstract class ActorSystem {  
+  // members with type parameter
+  def actorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg]  
+  def actorOf[Msg:Manifest](props:Props[Msg], name:String):
+  def remoteActorOf[Msg:Manifest](props:Props[Msg]):ActorRef[Msg]  
+  def remoteActorOf[Msg:Manifest](props:Props[Msg], name:String):ActorRef[Msg]  
+
+  def actorFor[Msg:Manifest](actorPath: String): ActorRef[Msg]  
+  def actorFor[Msg:Manifest](actorPath: akka.actor.ActorPath): ActorRef[Msg]
+
+  def deadLetters : ActorRef[Any]
+
+  // members that same as akka version
+  def awaitTermination (): Unit 
+  def awaitTermination (timeout: Duration): Unit
+  def eventStream : akka.event.EventStream
+  def extension [T <: Extension] (ext: ExtensionId[T]): T  
+  def isTerminated : Boolean 
+  def log : LoggingAdapter  
+  def logConfiguration (): Unit
+  def name : String
+  def registerExtension [T <: Extension] (ext: ExtensionId[T]): T  
+  def registerOnTermination (code: Runnable): Unit  
+  def registerOnTermination [T] (code: => T): Unit  
+  def scheduler : akka.actor.Scheduler  
+  def settings : akka.actor.ActorSystem.Settings
+  def shutdown (): Unit
+  override def toString():String 
+  def uptime : Long = system.uptime
+
+  // addtional members for constructing remote ActorRef  
+  def isLocalSystem():Boolean
+  
+  @throws(classOf[NotRemoteSystemException])
+  def host:String
+  
+  @throws(classOf[NotRemoteSystemException])
+  def port:Int
+}
+
+case class NotRemoteSystemException(system:ActorSystem) extends Exception("ActorSystem: "+system.name+" does not support remoting")
+\end{lstlisting}
+
+An actor system manages resources to run its containing actors.  Same as the akka library, an actor system is initialised by calling one of the \textit{ActorSystem.apply} methods.  Users could optionally provide a name and a configuration when creating an actor system, otherwise a default name and a default configuration will be provided.  Actor system created with the default configuration can only provide actor references for local communication.  In a user defined configuration, remote communication and other functionalities may be enabled.  For more information about the \textbf{com.typesafe.config.Config} object and actor system configuration, users may refer to the akka API\cite{akka_api} and the akka documentation\cite{akka_doc}.  A later version of the type-parametrised actor library may provide a convenient API for writing actor system configuration or enable remote communication by default.
+
+\S\ref{sec_actor_context} explains how to created an actor supervised by another actor.  To construct a complete supervision tree inside an actor system, a top-level actor needs to be created.  The akka library \cite{akka_doc} provides an guardian actor, \textit{user}, for all user created top-level actors.  This library follows the same design and put actors created using \textit{ActorSystem.actorOf} and \textit{ActorSystem.remoteActorOf} at the next level of the \textit{user} actor.
+
+This library also provides a typed version of \textit{deadLetters}, which is the receiver of messages to stopped or non-exist actors.  The last two methods in the \textbf{ActorSystem} class are implemented to help constructing actor references that can be used at remote sites.  The isLocalSystem returns false if the actor system is registered to a host name and port number, or returns true otherwise.  The rest methods have the same functionality as their corresponds in the akka library\cite{akka_api}.
+
+\subsection{FSM}
+
+\begin{lstlisting}
+object FSM {
+  case class CurrentState[S, E](fsmRef: ActorRef[E], state: S)
+  case class Transition[S, E](fsmRef: ActorRef[E], from: S, to: S)
+  case class SubscribeTransitionCallBack[E](actorRef: ActorRef[E])
+  case class UnsubscribeTransitionCallBack[E](actorRef: ActorRef[E])
+  case class Timer[E](name: String, msg: E, repeat: Boolean, generation: Int)
+                       (implicit system: ActorSystem) 
+}
+
+trait FSM[S, D, E] extends akka.routing.Listeners {
+  this: Actor[E] =>
+
+  type State = FSM.State[S, D]
+  type StateFunction = scala.PartialFunction[Either[Event[E], StateTimeout.type], State]
+  type EventFunction = scala.PartialFunction[Event[E], State]
+  type TimeoutFunction = scala.PartialFunction[StateTimeout.type, State]
+  
+  protected[actor] def setTimer(name: String, msg: E, timeout: Duration, repeat: Boolean): State
+  protected final def when(stateName: S, stateTimeout: Duration = null)(eventFunction: EventFunction): Unit
+  protected final def whenStateTimeout(stateName: S, stateTimeout: Duration = null)(timeoutFunction: => State): Unit
+  case class Event[E](event: E, stateData: D)
+}
+
+trait LoggingFSM[S, D, E] extends FSM[S, D, E]
+\end{lstlisting}
+
+Whenever possible, the library designer suggests to avoid using mutable actor state so that the actor behavior will be more functional and more likely to be effect free.  In some cases; however, if a stateful actor better captures a problem, the user may consider encode the actor as a finite state machine (FSM) using the typed \textbf{FSM} trait.
+
+Like what has been done in the Actor class, a generic type denoting the type of events is added to the FSM trait comparing to the akka version.  To save the space, the above list only gives public members with restricted type.  The rest of members have the same signatures as members in the akka version.
+
+\begin{comment}
+%% Library Implementation
+\section{Library Implementation}
+\label{implementation}
+
+\subsection{Programming Patterns for the Implementation}
+To reuse the significant amount of work done in the akka project \cite{akka_doc} and provide consistent yet better typed APIs, most classes in \S\ref{actor} are implemented using the delegation pattern, employing a suitable akka instance as the value of an immutable field.  Unfortunately, the delegation pattern cannot be applied to both \textbf{Actor} and \textbf{ActorContext} as they are initialised simultaneously in a special way in the akka implementation.  To resolve the deadlock when initialising an actor, the library designer decided to implement the \textbf{Actor} class via inheritance.  Using inheritance means all poorly typed features in the akka \textbf{Actor} are inherited to the type-parametrised actor library.  Fortunately, different from using members in the \textbf{ActorContext} class, using members in the \textbf{Actor} class usually not effects the outside of an actor.  The library designer further provides an implementation for the protected \textit{receive} method inherited form the akka \textbf{Actor} class.  By doing this, an explicit \textbf{override} annotation is required if a user would like overrides the implementation of \textit{receive} method for a good reason.
+
+
+\subsection{Code and Type Evolution}
+\label{type_evolution}
+Erlang/OTP \cite{OTP} provides a sophisticate mechanism for hot code swap on any OTP process via the code\_change/3 function.  In akka, hot code swap is only partly supported for actor behaviors via pushing or popping handlers to and from a handler stack.  Although a \textbf{Wrapper} class has been implemented for simulating Erlang/OTP style hot code swap, it is not used in the current implementation which is aiming at providing  APIs similar to those in the akka library.
+
+\begin{lstlisting}
+  def become[SupM >: M](behavior: SupM => Unit,    
+               possibleHamfulHandler:akka.actor.PossiblyHarmful => Unit)
+               (implicit arg:Manifest[SupM]):ActorRef[SupM]
+\end{lstlisting}
+
+Notice that the type-parametrised library does no have the \textit{unbecome} method but have a \textit{become} method has signature given as above.  The library does not provide the \textit{unbecome} method because the library designer would like to ensure that code evolution is always backward compatible.   For the same reason, the new behavior of an actor must not cover less types of messages.
+
+Furthermore, after calling \textit{become[SupM](behavior, pHH)}, users would expected a way to retrieve actor reference of type \textbf{ActorRef[SupM]}.  For this matter, \textit{become} returns an actor reference rather than \textit{unit}.  In addition to passing the returned value of the \textit{become} method, users can retrieve the wilder typed actor reference via \textit{actorFor} method in \textbf{ActorContext} and \textbf{ActorSystem}.
+
+As the type of actor reference may evolve at the run-time, an immediate question is how to interpret the meaning of the static type parameter for the class definition.  The library designer suggests that the type of \textbf{Actor}, \textbf{ActorContext}, \textbf{Props}, and the \textit{typeSelf} field, etc. only denotes the most precise type of expecting messages of the $initial$ actor, i.e. the first actor initialised by an actor definition.
+
+Users of this library would expected the type parameter of \textbf{Actor}, \textbf{ActorContext}, and \textbf{Props} classes is a contravariant type.  Unfortunately, the type parameter of the \textit{become} method, \\ \textbf{SupM $>$: M}, put the class type parameter, \textbf{M}, at a covariant position.  There are two workarounds to this issue:
+\begin{enumerate}[1)]
+\item Change the type parameter of \textit{become} to \textbf{SubM $<$: M}.  As a consequence, users cannot upgrade the actor behavior to an handler which is able to deal with more types of messages.
+\item Keep the current signature of the \textit{become} method.  Except for the \textbf{ActorRef} class and the \textbf{Props} class, remove the contravariant restriction of the type parameter of related classes.  
+\end{enumerate}
+
+This library adopted the second solution.  Fortunately, it does not cause problems in practice.  In most cases, as actors are shielded from actor references, users are more interested in the type of an actor reference rather than the full type of the represented actor.  To retrieve an actor reference which is capable to send messages, users could try to query on the \textit{actorFor} method, or the typed name server introduced in \S\ref{name_server}.  The only difficulty is constructing a less general actor from a general purpose actor class.  The trick is to initialise an internal general purpose actor and delegate received messages to that actor.
+
+\subsection{Actor Reference with Global Awareness}
+As mentioned in \S\ref{sec_actor_context}, most actor references retrieved by akka APIs cannot be used at remote sites.  There are three exceptions to the above argument:
+\begin{inparaenum}[(i)]
+\item the $sender$ of messages sent from a remote site;
+\item the actor reference to an actor that is configured to be deployed at a remote actor system; and
+\item the actor reference retrieved by $actorFor(path:String)$ where host name and port number are specified as part of the actor path.
+\end{inparaenum}  The $sender$ field in case (i) has been deprecated in the typed-parametrised actor library.  From the provided akka API, actor references retrieved in case (ii) cannot be distinguished from local actor references retrieved using the same $actorOf$ method.  Actor references retrieved in case (iii) supports remote communication; however, manually manage host name and port number is a trivial task.  To reduce the work of host name and port number management, the type-parametrised actor library provide new supports for retrieving actor reference with global awareness.
+\end{comment}
+

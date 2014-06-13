@@ -1,0 +1,2 @@
+latex2rtf -a Jiansen.aux Jiansen.tex
+

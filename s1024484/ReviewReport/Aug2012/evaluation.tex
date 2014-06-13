@@ -1,0 +1,9 @@
+\section{Performance Evaluation}
+
+The three dimensions of library evaluation are (i) scalability (ii) reliability or availability (iii) reasonable efficient.  Standard methodology for evaluating performance has been found in literature.  Evaluation methodology for the other two aspects, unfortunately, requires more studies.
+
+The performance evaluation methodology presented in this section is derived from Hennessy and Patterson\rq{}s book \cite{HePa06}, which provides quantitative approaches used in the design and analysis of hardware development.  I found the presented approach is also applicable to software performance evaluation.
+
+In hardware evaluation, benchmark suites are used to measure performance.  Unfortunately, by the time of this writing, there is no standard benchmark suite for Akka or other distributed programming frameworks.  Therefore, a selection of benchmarking examples is required for assessing the overall performance of the TAkka library.  To avoid unintentional optimization in TAkka implementation, benchmarks should be selected from existing applications written in other platforms and modifications should be made at the minimal level.
+
+Once the suite of benchmarks is decided, we could use geometric mean of all performance measures to summarize the overall performance.  In addition, to assess the variability of the chosen suite, the geometric standard deviations could be used as an indicator to \''decide whether the mean is likely to be a a good predictor\".  Hennessy and Patterson\cite{HePa06} further suggest employing statistic tools to analysis results.

@@ -1,0 +1,41 @@
+%% Progress Overview
+\section{Progress Overview}
+
+The last three months were used to implement key components of the type-parametrised actor library.  The library has been tested against examples ported from Erlang and Akka examples.  Experience shows that programs with additional type parameter provides clearer communication interface and better guarantee of type safety.
+
+Aside from the type-parametrised actor library, I have implemented a typed name server which maps each type symbol to a value of corresponding type.  The typed name server is immediately used in the type-parametrised actor library for looking up actor references of expecting type.
+
+This report is organised as follows: \S\ref{actor} will look through API of the type-parametrised actor library.  It will examine how key components and functions are related to concepts of the Actor Model \cite{actor_2} and OTP principles\cite{OTP}.  The API will be compared with the Akka version.  \S\ref{implementation} will . \S\ref{examples} will list ported examples.  For each example, ** examine features tested and how helped the improvement of the type-parametrised library.  ***  \S\ref{name_server} will introduce the typed name server.  Finally, \S\ref{type_evolution} will begin an open discussion on the issue of code evolution and type evolution when using a type-parametrised actor library.
+
+\begin{comment}
+
+
+-- The design of new Actor API
+
+-- Ported Akka examples
+** Two out of three examples identified in the last report are ported and tested.  The riak example is suspended because ...
+** asked for more examples from akka developer team
+
+--  key differences and the reasons for these
+
+-- implementation strategy: sub-typing is not suitable, delegation is good but difficult at some point.  In this prototype implementation, use sub-typing where **, but not encouraging ***.
+
+-- Other issues of using the API
+
+     ** ActorRef as part of the message
+
+
+
+-- Typed name server
+-- audited name server 
+
+
+TODO:
+code evolution
+type evolution
+
+=============================
+\end{comment}
+
+
+

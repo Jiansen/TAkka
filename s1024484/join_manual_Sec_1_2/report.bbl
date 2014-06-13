@@ -1,0 +1,24 @@
+\begin{thebibliography}{1}
+
+\bibitem{extractors}
+Burak Emir, Martin Odersky, and John Williams.
+\newblock Matching objects with patterns.
+\newblock In {\em ECOOP 2007 – Object-Oriented Programming, volume 4609 of
+  LNCS}, pages 273--298. Springer, 2007.
+
+\bibitem{scala_joins}
+Philipp Haller and Tom Van~Cutsem.
+\newblock Implementing joins using extensible pattern matching.
+\newblock In {\em Proceedings of the 10th international conference on
+  Coordination models and languages}, COORDINATION'08, pages 135--152, Berlin,
+  Heidelberg, 2008. Springer-Verlag.
+
+\bibitem{ScalaCheck}
+Rickard Nilsson.
+\newblock Scalacheck, 2011.
+
+\bibitem{DownloadBench}
+Salmon Run.
+\newblock More java actor frameworks compared, jan 2009.
+
+\end{thebibliography}

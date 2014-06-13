@@ -1,0 +1,87 @@
+\documentclass[11pt, a4paper]{article}
+
+\title{Distributed Programming with Types and OTP Design Principles}
+\author{Jiansen HE}
+\date{Aug 13, 2012}
+
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{paralist}
+\usepackage{hyperref}
+\usepackage[all]{hypcap}
+\usepackage{verbatim}
+\usepackage{amssymb, amsmath, amsthm}
+\usepackage{array}
+\usepackage{float}
+\usepackage{multirow}
+
+\usepackage{changepage}
+
+
+\usepackage{listings} 	
+% "define" Scala
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,%
+    do,else,extends,false,final,finally,%
+    for,if,implicit,import,match,mixin,%
+    new,null,object,override,package,%
+    private,protected,requires,return,sealed,%
+    super,this,throw,trait,true,try,%
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
+
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+ 
+% Default settings for code listings
+\lstset{frame=tb,
+  language=scala,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left, % none,
+  numbersep=2pt,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\color{blue},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{mauve},
+  frame=none, % single,
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  captionpos=b
+}
+
+\begin{document}
+\maketitle
+
+\input{progress}
+\input{takka}
+
+\input{evaluation}
+\input{futurework}
+%% \include{actor}
+
+
+
+\bibliographystyle{plain}
+\bibliography{Aug2012}
+
+\appendix
+\include{examples}
+\include{api}
+%% \include{plan}
+
+\end{document}

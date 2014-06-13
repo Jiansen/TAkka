@@ -1,0 +1,71 @@
+\section{Project Description}
+
+\subsection{Background and Motivation}
+
+Concurrent programming is facing new challenges due to the recent advent of multi-core processors, which rely on parallelism, and the pervasive demands of web applications, which rely on distribution.  Theoretic works on concurrency can be traced back to Petri net and other approaches invented in 1960s \cite{historyPA}.  Since 1980, more attention has been paid to the study of process calculi (a.k.a. process algebras), which provide a family of formal models for describing and reasoning about concurrent systems \cite{abramsky}.  The proliferation of Process Calculi marks the advance in concurrency theory.  ``The Dreams of Final Theories'' \cite{abramsky} for concurrency, however, have not been achieved.
+
+In practice, it is difficult to build a reliable distributed system because of its complexity.  Firstly, a distributed system shares features and problems with other concurrent systems.  For instance, it is non-deterministic so that traditional input-output semantics is inadequate to be used for reasoning about its behaviour.  Secondly, scalability of a distributed system is usually a challenge for its developers.  For example, developers of a distributed system are unlikely to know the structure of the system in advance.  Moreover, the mobility \cite{MobileAmbients} of a distributed system requires the capability of changing its topological structure on the fly.  In addition, the latency of communication could be affected by many unpredictable factors.  Thirdly, the system should be tolerant of partial failures.  For example, when a site fails to respond to messages,  the system should address this failure by invoking a recovery mechanism.   	
+
+Fortunately, some recent process calculi provide a solid basis for the design of distributed programming languages.  For example, the ambient calculus models the movement of processes and devices \cite{MobileAmbients}.  Bigraphs, a more abstract model, is aiming at describing spatial aspects and mobility of ubiquitous computing \cite{bigraph_book}.  Lastly, the join-calculus \cite{full_join} is a remarkable calculus which models features of distributed programming as well as provides a convenient construct, the join patterns, for resources synchronisation.  It is also important to note that the syntax of the join-calculus is close to a real programming language and therefore reduces the barrier between understanding the mathematical model and employing this abstract model to guide programming practices.
+
+In addition, good programming principles, such as the OTP design principles\footnote{OPT is stand for Open Telecom Platform.  It provides a set of libraries for developing Erlang applications.  For the above reason, it is also known as Erlang/OTP design principles}, have been developed and verified by the long-term implementation practice.  OTP is a platform for developing concurrent, distributed, fault tolerant, and non-stop Erlang applications \cite{Erlang}.  In the past 20 years, the Erlang language was used to build large reliable applications like RabbitMQ, Twitterfall, and many telecommunications systems.
+
+Nevertheless, Erlang is an untyped functional programming language whereas it is widely believed that applications built in typed languages enjoy the advantages of {\it{reliability}} and {\it{maintainability}}.  In this project, reliability of a distributed system includes 3 aspects:
+\begin{inparaenum}[\itshape a\upshape)]
+\item every worker process should be supervised by a sensor, which is responsible for monitoring its child processes and restarting failed child processes;
+\item all information subscribers interested in the same notification should receive the same message;
+\item if an application is built with different layers, applications built at one layer should only depend on services provided by the layer below, without leaking its internal information to other layers.   
+\end{inparaenum}
+The maintainability of a distributed system is 3 fold:
+\begin{inparaenum}[i)]
+\item a process or computation may migrate across the network and perform consistent behaviour regardless of the concrete computation framework where it is executed;
+\item any process or computation device may join or leave the system peacefully without affecting the rest of the system;
+\item the system should be developed in a modular way.    
+\end{inparaenum}
+
+Therefore, this project will aim to investigate how to provide reliable and maintainable distributed applications via embedding good distributed programming principles into a type system  for distributed programming.  The principles to be considered are the OTP design principles.
+
+\subsection{Project Aim}
+The aim of this project is {\it{to formalise an approach that improves the reliability and maintainability of distributed programs.}}   The project intends to explore factors that encourage programmers to employ good programming principles.  This project will demonstrate how types and appropriate models ease the construction of reliable distributed systems.
+
+\subsection{Project Objectives}
+\label{objectives}
+
+\begin{enumerate}
+  \item To build a library that implements the OTP design principles in a typed language supporting the join-calculus.  This piece of work is going to investigate two problems.  
+    \begin{inparaenum} 
+        \item How types will influence the programmability of distributed applications.  In distributed programming based on message passing, untyped channels have the advantage of carrying data which may be rejected by a rigid type system whereas typed channels detect some forms of data misuse earlier.  This project will encapsulate ``tricks'' around using untyped channels into libraries and provide convenient ways for constructing reliable programs.
+        \item To what extend  the join-calculus fits the OTP design principles.  Although the OTP design principles have been proposed for the Erlang language, which is based on the Actor model, it should be possible to rephrase those good principles in other languages and models.  This project aims to realise general {\it{principles}} rather than implement specific library functions.
+    \end{inparaenum}
+  \item To formalise the approach used in the first objective.  The wide applications of our approach will be demonstrated by removing ad-hoc language features used in the first task.  The formalism will be based on the join-calculus.  New language features will only be cautiously added if the old model is incapable to tackle certain problems.  For example, the failure model in the join-calculus might be replaced by exceptions, which is more sophisticate in tracing failures.  Moreover, properties of the formalism will be studied.  Apart from algebraic properties, a set of criteria for evaluating the maintainability and reliability of distributed systems will be defined and verified.
+  \item To extend the core calculus to gain engineering benefits.  For instance, although encoding the $\lambda$-calculus should be possible in our model, which derives from the join-calculus, shipping function closures in the core-calculus could be as expensive as in the core join-calculus.  One possible approach to reduce this cost is defining a higher-order join-calculus with $\lambda$-abstraction and function application, so that functions would be first class objects in the new model.
+\end{enumerate}
+
+
+\subsection{Dissertation Outline}
+\label{DToutline}
+{\bf{Chapter 1} (\it{Introduction})} will give a brief introduction to this research, including: 
+\begin{inparaenum} [(1)]
+  \item the main research topic,
+  \item the importance of the research,
+  \item definitions of key concepts,
+  \item a summary of related work,
+  \item main novel contributions of this research, and finally
+  \item a roadmap for the rest of the dissertation.
+\end{inparaenum}
+
+\paragraph{Chapter 2 (\it{Process Calculi})} will summarize methodologies and results in the studies of process calculi.  Considering the fruitful results in the area of process calculi and the purpose of this dissertation, only those process calculi that directly influenced this research will be introduced.
+
+\paragraph{Chapter 3 (\it{Other Concurrent Models})} will compare the join-calculus with three widely used models in distributed programming:  Petri net, Actor model, and reactive events.  This chapter will first define some criteria for evaluating distributed systems.  Then, a tiny representative example in distributed programming \footnote{For example, a pingpong program or a simple client-server application.} will be implemented in languages that directly support each model.  Lastly, a short summary will be given.
+
+\paragraph{Chapter 4 (\it{A Library for the OTP Design Principles in typed languages})} will introduce some OTP design principles, followed by how those principles are employed to build libraries in a typed language that supports the join-calculus.  This chapter will enumerate ad-hoc strategies adopted to get around the problem of porting libraries from an untyped language to an typed language.
+
+\paragraph{Chapter 5 (\it{Supervised Distributed Join-Calculus})} will define a formalism that extends the distributed join-calculus with the supervision principle.  It will list properties that ensure the reliability of the extended formalism.  The proof for those properties will be given in the content or as an appendix.
+
+\paragraph{Chapter 6 (\it{Extended Models})} will present some extensions of our model.  For each extension, we will discuss the trade-off between retaining the core calculus defined in Chapter 5 and adding new primitives to it.
+
+\paragraph{Chapter 7 (\it{Conclusion and Future Work})} will evaluate the whole thesis by highlighting the advantages and limitations of the achieved work.  The thesis may also elaborate possible trends in the area of distributed programming.  
+
+\subsection{Dissemination of Results}
+
+The main results of this dissertation are expected to be sent for publication to some of the following international conferences: CONCUR, DISC, ICPADS, ICDCS, MOBILITY, OPODIS, PODC, PPoPP, or SIROCCO.

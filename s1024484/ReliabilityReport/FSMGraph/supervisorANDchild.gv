@@ -1,0 +1,30 @@
+digraph finite_state_machine {
+    rankdir=LR;
+    size="8,5"
+    node [shape = point ]; begin
+ 
+    node [shape = circle, label="Start", fontsize=14] Start;
+    node [shape = doublecircle, label="Free", fontsize=14] Free;
+    node [shape = circle, label="Supervising", fontsize=14] Supervising;
+    node [shape = doublecircle, label="Dead", fontsize=14] Dead;
+
+    node [shape = circle, label="Working", fontsize=14] Working;
+ 
+
+    begin -> Start;
+    Start -> Free [ label = "init" ];
+
+    Free -> Supervising [ label = "↓exception_c" ];
+    Free -> Dead [ label = "↑exception_s" ];
+
+    Supervising -> Dead [ label = "↑exception_s" ];
+    Supervising -> Free [ label = "↑restart, ↑resume" ];
+
+    Dead -> Start [ label = "↓restart" ];
+    Dead -> Free [ label = "↓resume" ];
+
+
+    Free -> Working [ label = "↓message" ];
+    Working -> Dead [ label = "↑exception_s" ];
+    Working -> Free [ label = "↑reply" ];
+}

@@ -1,0 +1,19 @@
+\section{Examples for Scalability Test}
+\label{scalability}
+
+Following 9 examples are ported from the BenchErl suite\cite{RELEASE} for the purpose of scalability test.
+
+\begin{itemize}
+  \item bang: This benchmark tests many-to-one message passing.  The benchmark spawns a specified number sender and one receiver.  Each sender sends a specified number of messages to the receiver. 
+  \item big: This benchmark tests many-to-many message passing.  The benchmark creates a number of actors that exchange ping and pong messages.
+  \item ehb: This is a benchmark and stress test.  The benchmark is parameterized by the number of groups and the number of messages sent from each sender to each receiver in the same group.
+  \item mbrot: This benchmark models pixels in a 2-D image.  For each pixel, the benchmark calculates whether the point belongs to the Mandelbrot set.
+  \item parallel: This benchmark spawns a number of processes, where a list of N timestamps is concurrently created.
+  \item genstress: This benchmark is similar to the bang test.  It spawns an echo server and a number of clients.  Each client sends some dummy messages to the server and waits for its response.  The Erlang version of this test can be executed with or without using the gen\_server behaviour.  For generality, this benchmark only tests the version without using gen\_server.
+  \item serialmsg: This benchmark tests message forwarding through a dispatcher.
+  \item timer\_wheel: This benchmark is a modification to the big test.  While responding to ping messages, a process in this message also waits pong messages.  If no pong message is received within the specified timeout, the process terminates itself.  
+  \item ran: This benchmark spawns a number of processes.  Each process generates a list of ten thousand random integers, sorts the list and sends the first half of the result list to the parent process.
+\end{itemize}
+
+The other 4 tests in the BenchErl suite are not selected because they are testing specific features of the Erlang platform.
+

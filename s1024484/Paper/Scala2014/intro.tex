@@ -1,0 +1,90 @@
+\section{Introduction}
+
+The Actor model defined by \citet{Hewitt:1973} treats actors as
+primitive computational components.  Actors collaborate by sending asynchronous
+messages to each other.  An actor independently determines its reaction to
+messages it receives.  The Actor model was adopted in the Erlang programming 
+language \citep{ArmstrongErlang} for building real time telephony applications. 
+Erlang developers later propose thed supervision principle \citep{OTP}, which 
+suggests that actors should be organized in a tree structure so that any failed 
+actor can be properly restarted by its supervisor.  Nevertheless, adopting the 
+supervision principle is optional in Erlang.
+
+The notions of actors and supervision trees have been ported to statically 
+typed languages including Scala and Haskell.  Scala actor libraries including 
+Scala Actors \citep{actor_1, actor_2} and Akka \citep{akka_api,akka_doc} use 
+dynamically typed messages even though Scala is a statically typed language.  
+Some recent actor libraries, including Cloud Haskell \citep{CloudHaskell}, Lift 
+\citep{lift_scala}, and scalaz \citep{scalaz}, support both 
+dynamically and statically typed messages, but do not support supervision.
+Can actors in supervision trees be statically typed?
+
+The key claim in this paper is that actors in supervision trees can be
+typed by parameterizing the actor class with the type of messages it expects to
+receive.  Type-parameterized actors benefit both users and developers
+of actor-based services. For users, sending ill-typed messages is prevented at 
+compile time.  Because messages are usually transmitted asynchronously, it may 
+be otherwise difficult to trace the source of errors at runtime, especially in 
+distributed environments.  For service developers, since unexpected messages 
+are eliminated from the system, they can focus on the logic of the services 
+rather than worrying about incoming messages of unexpected types.  
+
+
+Implementing  type-parameterized actors in a statically-typed language; however, requires 
+solving the following challenges identified by the Akka Development Team:
+
+\begin{enumerate}
+  \item The Akka developers claim that using a type parameterized actor" is impossible because actor behaviour is dynamic" \citep{Kuhn11}.
+
+  \item The Akka developers claim that ``we need to be able to encode disjoint types" \citep{Kuhn12}, an option which is not provided by Scala. 
+
+  \item The Akka developers claim that ``address lookup will be impossible" \citep{Kuhn12} because actor references will have different types.
+  
+  \item The Akka developers claim thatâ ``the way to provide high performance is to provide fewer guarantees, and also let the programmer choose what guarantees he or she needs'' \citep{Kuhn12}.
+\end{enumerate}
+
+
+
+
+
+
+Continuing a line of work on merging types with actor programming by Haller
+and Odersky \citep{actor_1, actor_2} and the Akka developers \citep{akka_doc}, 
+along with work on system reliability testing by 
+\citet{ChaosMonkey} and \citet{ErlangChaosMonkey}, this paper makes 
+following contributions.
+
+\begin{itemize}
+ \item It presents the design and implementation of a typed name server
+that maps typed names to values of the corresponding type, for example actor 
+references.  The typed name server (Section \ref{nameserver}) mixes 
+static and dynamic type checking so that type  errors are detected at the earliest 
+opportunity.  The implementation requires language support for type reflection 
+and first class type descriptors.  In Scala, the {\tt Manifest} class provides 
+such facility.
+
+ \item It describes the design of the TAkka library.  Sections \ref{actor} to
+\ref{actor_context} illustrate how type parameters are added to actor related
+classes to improve type safety.  The TAkka actor supports dynamic backward-compatible 
+behaviour upgrading as shown in Section \ref{hot_swapping}.  By separating the handler for system 
+messages from the handler for user defined messages, Sections \ref{supervision}
+and \ref{systemmessage} show that type-parameterized actors can form
+supervision trees in the same manner as untyped actors.  Section 
+\ref{evolution} explains how to upgrade Akka programs to their TAkka 
+equivalents gradually.
+ 
+ \item It gives a comprehensive evaluation of the TAkka library.  Section 
+\ref{type_pollution} shows that the TAkka library can avoid the type pollution 
+problem straightforwardly.  Results in
+Section \ref{expressiveness} confirm that using type parameterized actors 
+sacrifice neither expressiveness nor correctness.  Efficiency and 
+scalability test in Section \ref{efficiency} shows that TAkka applications have 
+little overhead at the initialization stage but have almost identical run-time 
+performance and scalability compared to their Akka equivalents.  In 
+addition, two helper libraries explained in Section \ref{reliability} are 
+shipped with the TAkka library for assisting reliability evaluation.  The 
+first library, Chaos Monkey, is ported to test applications against intensive 
+adverse conditions.  The second library, Supervision View, is 
+designed and implemented to dynamically monitor changes of supervision tree.
+ 
+\end{itemize}

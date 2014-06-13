@@ -1,0 +1,20 @@
+digraph model {
+    rankdir=TD;
+    node [shape = circle, label="W(τ)", fontsize=14] Work; 
+    node [shape = circle, label="R(τ)", fontsize=14] Rejuvenation;
+    node [shape = circle, label="F(τ)", fontsize=14] Failed;
+
+
+ 
+    Work -> Work [tailport=n headport=n];
+    Failed -> Failed [tailport=w headport=w];
+    Rejuvenation -> Rejuvenation [tailport=e headport=e];
+
+    Work -> Failed;
+    Work -> Rejuvenation;
+
+    Failed -> Rejuvenation;
+    Rejuvenation -> Work;
+
+    { rank=same; Failed Rejuvenation }
+}

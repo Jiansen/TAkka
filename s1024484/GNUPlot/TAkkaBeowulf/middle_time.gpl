@@ -1,0 +1,15 @@
+set term png
+set output "middle_time.png"
+
+set title "run-time"
+set xlabel 'Number of Nodes'
+set ylabel 'runtime (ms)'
+set xtics (1, 4, 8, 12, 16, 20, 24, 28, 32)
+plot "Bang.dat" using 1:2:3 with errorlines  title 'Bang  Akka Runtime' lc 1,\
+     "Bang.dat" using 1:4:5 with errorlines  title 'Bang TAkka Runtime'lc 2,\
+     "Big.dat" using 1:2:3 with errorlines  title 'Big  Akka Runtime' lc 3,\
+     "Big.dat" using 1:4:5 with errorlines  title 'Big TAkka Runtime' lc 4,\
+     "RUN.dat" using 1:2:3 with errorlines  title 'RUN  Akka Runtime' lc 5,\
+     "RUN.dat" using 1:4:5 with errorlines  title 'RUN TAkka Runtime' lc 6
+
+set output

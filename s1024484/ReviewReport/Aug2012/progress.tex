@@ -1,0 +1,41 @@
+%% 
+\section{Project Motivation}
+In 1996, the Erlang/OTP (Open Telecom Platform) library\cite{ErlangWeb} was released for writing Erlang code using the Actor model\cite{Hewitt:1973} and principles derived from 10 years successful experience.  Those principles are later known as OTP principles.  Although Erlang is an untyped language, with the help of testing tools and OTP principles, successful OTP applications has achieved a high reliability.\cite{ArmstrongErlang}
+
+Since May 2011, the Akka team has been working on porting OTP principles into Scala, a typed language that mixes functional and objected-oriented programming paradigms. The Akka library\cite{akka_doc, akka_api} demonstrated the possibility of using OTP principles in a typed setting; however, messages to Akka actors are dynamically typed and some Akka APIs may deserve more specific types.  It remains to be seen whether a strongly typed platform helps the construction of reliable distributed applications.
+
+%% Project Objectives
+\section{Project Objectives}
+The aim of this project is to {\it{study how types and OTP principles help the construction of distributed systems}}.  This project intends to explore factors that encourage programmers to employ types and good programming principles.   To this end, following iterative and incremental tasks are required.
+
+\begin{enumerate}
+  \item To identify some medium-sized applications implemented in Erlang or Akka using OTP principles.  Those examples will be served as references to evaluate frameworks that support distributed programming.  Candidate examples shall cover a wide range of aspects in distributed programming, including but not limited to 
+    \begin{inparaenum} [(a)]
+      \item transmitting messages and potentially computation closures, 
+      \item modular composition of distributed components, 
+      \item default and extensible failure recovery mechanism, 
+      \item eventually consistency model for shared states, and 
+      \item dynamic topology and hot code swapping.
+    \end{inparaenum}
+    
+  \item To implement a library that supports OTP design principles in a strongly typed setting.  Basic components of the library may be build on top of Akka\cite{akka_doc} in the case that repeated implementation could be avoided.  Comparing to the Akka library, the new library shall be able to prevent more forms of type errors.
+    
+  \item To re-implement identified applications using the library developed in task 2.  The primitive purpose of this task is to be aware of prominent features and limitations of existing and the proposed library.  As a research which contains certain level of overlaps with other existing and evolving frameworks, this research should distinguish itself from others by devised solutions to some problems which are difficult to be solved by alternatives.
+
+  \item To evaluate how the proposed library meets the demands of distributed programming.  At this stage, experience gained in task 3 will be systematically analysed.  To do so, a novel framework for comparing distributed comparing platforms is likely required.  The evaluation phase does not suggest the end of this project.  The library and its evaluation will be published to programming communities for feedbacks before we conclude.
+\end{enumerate}
+
+
+
+%% Progress Overview
+\section{Progress Overview}
+At the time of this writing, key components of a typed actor library, TAkka, have been implemented.  The TAkka library provides type-parametrised actor and Akka-style APIs.  The TAkka library has been tested against examples ported from Erlang and Akka examples.  Experience shows that type-parametrised actor works well with OTP principles and provides clearer communication interface and better guarantee of type safety.
+
+Aside from type-parametrised actor, I have implemented a typed nameserver which maps each type symbol to a value of corresponding type.  The typed nameserver is immediately used in the TAkka library for looking up actor references.
+
+
+
+
+
+
+

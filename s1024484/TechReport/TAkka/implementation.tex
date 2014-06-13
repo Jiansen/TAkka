@@ -1,0 +1,64 @@
+\begin{comment}
+\section{Mixing Static and Dynamic Type Checking}
+
+Implementing {\bf ActorContext} described as \S\ref{actor_context} requires a
+mixture of static and dynamic type checking.  This section looks into how
+static and dynamic type checking are combined to guarantee backward compatible
+code evolution and support type safe data retrieval.
+
+\subsection{Backward Compatible Code Evolution}
+\end{comment}
+\section{Backward Compatible Code Evolution}
+\label{code_evolution}
+
+Partial service upgrade is a desired feature of distributed systems, whose
+components are typically developed separately. Unfortunately, hot code swap is
+not supported by the JVM, the platform where the TAkka library runs on.  To
+support hot swapping on an actor's receive function, system message handler, and
+supervision strategy, those three behaviour methods are maintained as object
+reference.
+
+Different from Erlang and Akka Design, code evolution in TAkka must be backward
+compatible.  In another word, an actor must evolve to a version that is able to
+handle the same amount of or more message patterns.  The above decision is made
+so that a service published to users would not be unavailable later.
+
+\begin{figure}[h]
+\label{become}
+\begin{lstlisting}
+trait ActorContext[M] {
+ implicit var mt:Manifest[_] = manifest[M]
+
+ def become[SupM >: M](
+      newTypedReceive: SupM => Unit,
+      newSystemMessageHandler:
+               SystemMessage => Unit
+      newSupervisionStrategy:SupervisionStrategy
+ )(implicit smt:Manifest[SupM]):ActorRef[SupM] = {
+     if (!(smt >:> mt))
+       throw BehaviorUpdateException(smt, mt)
+
+    this.mt = smt
+    this.systemMessageHandler =  newSystemMessageHandler
+    this.timeoutHandler = newTimeoutHandler
+    this.supervisionStrategy = newSupervisionStrategy
+
+    // other code
+ }
+}
+\end{lstlisting}
+\caption{Code Evolution in TAkka}
+\end{figure}
+
+The {\it become} method is implemented as in Figure-\ref{become}.  The manifest
+for static type {\bf M} should be interpreted as the least general type of
+messages addressed by the actor initialized from {\bf Actor[M]}.  The
+manifest for {\bf SupM} will only be known when the {\it become} method is
+invoked.  When a series of {\it become} invocations are made at run time, the
+order of those invocations may be non-deterministic.  Therefore, performing a
+dynamic type checking is required to guarantee backward compatibility.
+Nevertheless, static type checking prevents some invalid {\it become}
+invocations at compile time.
+
+
+

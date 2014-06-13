@@ -1,0 +1,190 @@
+% This is LLNCS.DEM the demonstration file of
+% the LaTeX macro package from Springer-Verlag
+% for Lecture Notes in Computer Science,
+% version 2.4 for LaTeX2e as of 16. April 2010
+%
+\documentclass[authoryear,preprint]{sigplanconf}
+
+
+%
+\usepackage{makeidx}  % allows for indexgeneration
+\usepackage{comment}
+
+
+
+%% \usepackage[style=alphabetic]{biblatex}
+% \usepackage[authoryear,sectionbib]{natbib}
+%% \PassOptionsToPackage{authoryear}{natbib}
+%% \usepackage{caption}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{url}
+
+\usepackage{paralist}
+\usepackage{verbatim}
+\usepackage{array}
+\usepackage{float}
+\usepackage{multirow}
+% \usepackage{rotating}
+\usepackage{multicol}
+\usepackage{longtable}
+
+\usepackage{listings} 	
+% "define" Scala
+\lstdefinelanguage{scala}{
+  morekeywords={abstract,case,catch,class,def,%
+    do,else,extends,false,final,finally,%
+    for,if,implicit,import,match,mixin,%
+    new,null,object,override,package,%
+    private,protected,requires,return,sealed,%
+    super,this,throw,trait,true,try,%
+    type,val,var,while,with,yield},
+  otherkeywords={=>,<-,<\%,<:,>:,\#,@, <:<},
+  sensitive=true,
+  morecomment=[l]{//},
+  morecomment=[n]{/*}{*/},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]"""
+}
+
+
+\usepackage{pxfonts}
+\usepackage{color}
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+\definecolor{mauve}{rgb}{0.58,0,0.82}
+ 
+% Default settings for code listings
+\lstset{frame=tb,
+  language=scala,
+  aboveskip=3mm,
+  belowskip=3mm,
+  showstringspaces=false,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  numbers=left, % none,
+  numbersep=2pt,
+  numberstyle=\tiny\color{gray},
+  keywordstyle=\bfseries\color{black},
+  commentstyle=\color{dkgreen},
+  stringstyle=\color{black},
+  frame=none, % single,
+  breaklines=true,
+  breakatwhitespace=true,
+  tabsize=2,
+  captionpos=b
+}
+
+\usepackage[pdfpagelabels]{hyperref}
+\usepackage[all]{hypcap}
+
+
+% A comment in a draft (shouldn't appear in the final version).
+\newcommand{\mycomment}[1]{\(\spadesuit\){\bf #1 }\(\spadesuit\)}
+% Comment this out in the draft
+% \newcommand{\mycomment}[1]{}
+\newcommand{\pmcomment}[1]{\comment{PM}{#1}}
+\newcommand{\pwtcomment}[1]{\comment{PT}{#1}}
+\newcommand{\rscomment}[1]{\comment{RS}{#1}}
+
+% line break in table.  e.g.
+% Foo bar & \specialcell{Foo\\bar} & Foo bar \\    % vertically centered
+% Foo bar & \specialcell[t]{Foo\\bar} & Foo bar \\ % aligned with top rule
+\newcommand{\specialcell}[2][c]{%
+  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
+  
+  
+\renewcommand\bibname{References}
+
+
+\begin{document}
+
+\special{papersize=8.5in,11in}
+\setlength{\pdfpageheight}{\paperheight}
+\setlength{\pdfpagewidth}{\paperwidth}
+
+\conferenceinfo{CONF 'yy}{Month d--d, 20yy, City, ST, Country} 
+\copyrightyear{20yy} 
+\copyrightdata{978-1-nnnn-nnnn-n/yy/mm} 
+\doi{nnnnnnn.nnnnnnn}
+           
+\titlebanner{banner above paper title}        % These are ignored unless
+\preprintfooter{short description of paper}   % 'preprint' option specified.
+
+\title{Typecasting Actors: from Akka to TAkka
+}
+% \subtitle{Subtitle Text, if any}
+
+\authorinfo{Jiansen HE}
+           {University of Edinburgh}
+           {jiansen.he@ed.ac.uk}
+\authorinfo{Philip Wadler}
+           {University of Edinburgh}
+           {wadler@inf.ed.ac.uk}
+\authorinfo{Philip Trinder}
+           {University of Glasgow}
+           {Phil.Trinder@glasgow.ac.uk}
+
+\maketitle
+
+
+
+\begin{comment} 
+
+Scala supports actors and message passing with the Akka library. Though Scala is 
+statically typed, messages in Akka are dynamically typed (that is, of type Any). 
+The Akka designers argue that using static types is "impossible" because "actor 
+behaviour is dynamic", and, indeed, it is not clear that important actor 
+support, such as supervision or name servers, could be implemented if messages 
+are statically typed. Here we present Takka, a variant of Akka where messages 
+are statically typed, and show that it is possible to implement supervisors and 
+name servers in such a framework. We show it is possible to upgrade from Akka to 
+Takka gradually, porting one module at a time; and we show that Takka can 
+support behavioral upgrade where the new message type of an actor is a supertype 
+of the old type. We demonstrate the expressiveness of Takka by rewriting a score 
+of Akka applications; the percentage of lines that needs to be changed varies 
+from 44\% (in a 25 line program) to 0.05\% (in a 27,000 line program), with a 
+geometric mean of 8.5\%. We measure the execution speed, scalability, and 
+throughput of Takka programs and show that it is comparable to Akka. [perhaps 
+give precise details]
+
+\end{comment}
+
+
+
+
+\input{mainbody}
+% \input{mainbody2}
+
+% \input{intro}
+% \input{background}
+% \input{typechecking}
+% \input{actor}
+% \input{evolution}
+% \input{evaluation}
+% \input{reliability}
+
+
+
+
+\acks
+
+
+The authors gratefully acknowledge the substantial help they have received from 
+many colleagues who have shared their related results and ideas with us over 
+the long period during which this paper was in preparation.  
+Benedict Kavanagh and Danel Ahman for continuous comments and discussions.
+The RELEASE team for giving us access to the source code of the BenchErl 
+benchmark examples.  Thomas Arts from Quviq.com and Francesco Cesarini from 
+Erlang Solutions for providing the Erlang source code of two examples used in their 
+commercial training courses.
+
+\vspace{-10pt}
+
+
+% ---- Bibliography ----
+\bibliographystyle{abbrvnat}
+\bibliography{takka}
+
+\end{document}

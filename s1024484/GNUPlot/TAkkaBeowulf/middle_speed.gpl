@@ -1,0 +1,15 @@
+set term png
+set output "middle_speed.png"
+
+set title "speedup"
+set xlabel 'Number of Nodes'
+set ylabel 'speed-up'
+set xtics (1, 4, 8, 12, 16, 20, 24, 28, 32)
+plot "Bang.dat" using 1:6 with lines  title 'Bang  Akka Speedup' ,\
+     "Bang.dat" using 1:7 with lines  title 'Bang TAkka Speedup',\
+     "Big.dat" using 1:6 with lines  title 'Big  Akka Speedup' ,\
+     "Big.dat" using 1:7 with lines  title 'Big TAkka Speedup',\
+     "RUN.dat" using 1:6 with lines  title 'RUN  Akka Speedup',\
+     "RUN.dat" using 1:7 with lines  title 'RUN TAkka Speedup'
+
+set output
