@@ -219,15 +219,15 @@ Philip Wadler\\
   implemented if messages are statically typed. Here we present TAkka,
   a variant of Akka where messages are statically typed, and show that
   it is possible to implement supervisors and name servers in such a
-  framework. We show it is possible to smoothly migrate from Akka to TAkka,
-  porting one module at a time. We show that TAkka can
+  framework. We show it is possible to upgrade from Akka to TAkka
+  gradually, porting one module at a time; and we show that TAkka can
   support behavioural upgrades where the new message type of an actor is
   a supertype of the old type. We demonstrate the expressiveness of
-  TAkka by rewriting approximately 20 Akka applications; the percentage of
+  TAkka by rewriting a score of Akka applications; the percentage of
   lines that need to be changed varies from 44\% (in a 25-line
   program) to 0.05\% (in a 27,000-line program), with a geometric mean
-  of 8.5\%. We show that the execution speed, scalability, and throughput of TAkka
-  programs are comparable to those of Akka programs.
+  of 8.5\%. We measure the execution speed, scalability, and
+  throughput of TAkka programs and show that they are comparable to Akka.
 
 \end{abstract}
 
@@ -241,18 +241,6 @@ Philip Wadler\\
 \keywords{Actor Programming, Type Checking, Fault Tolerance}
 
 \input{mainbody}
-
-
-\section{Acknowledgements}
-
-The authors gratefully acknowledge the substantial help they have received from 
-many colleagues who have shared their related results and ideas with us over 
-the long period during which this paper was in preparation.  
-Benedict Kavanagh and Danel Ahman for continuous comments and discussions.
-The RELEASE team for giving us access to the source code of the BenchErl 
-benchmark examples.  Thomas Arts from Quviq.com and Francesco Cesarini from 
-Erlang Solutions for providing the Erlang source code of two examples used in their 
-commercial training courses.
 
 
 \bibliographystyle{abbrv}

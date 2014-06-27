@@ -1,0 +1,272 @@
+> It is our pleasure to let you know that your paper has been accepted to Scala’14!
+> 
+> Your paper...
+> 
+> Typecasting Actors: from Akka to TAkka
+> 
+> ...has been accepted both for presentation at Scala’14, as well as for publication in the ACM Digital Library.
+> Below, we append the reviewers' comments for your paper. Please address reviewers' comments in your
+> camera-ready version, and send it by email to Heather Miller (heather.miller@epfl.ch) and Philipp Haller
+> (philipp.haller@typesafe.com) by *June 26th*.
+> 
+> If you would *not* like your paper to be published in the ACM DL, please let us know as soon as possible,
+> but not later than June 22nd. If we do not receive an email from you, we assume that you will submit a
+> camera-ready version for publication in the ACM DL.
+>
+> Please note that full papers will be given a 30 minute presentation time slot. Short papers and tool demos
+> will have a 20 minute presentation time slot.
+> 
+> == Camera-Ready Instructions / Publication in the ACM DL ==
+> 
+> For preparation of the camera-ready version of your paper, please:
+> 
+> 1. follow the guidelines at: http://www.acm.org/publications/gi-proceedings
+> 2. format your article with the ACM Tighter Alternate style
+>     (http://www.acm.org/sigs/publications/proceedings-templates). Use the
+>     following LaTeX commands (or the equivalent if you are not using
+>     LaTeX):
+> 
+>    \conferenceinfo{Scala}{'14, Uppsala, Sweden}
+>    \CopyrightYear{2014}
+>    \crdata{978-1-4503-2868-5}
+DONE
+> 3. use the ACM Computing Classification categories and terms
+>     (http://www.acm.org/about/class/1998).
+DONE
+> 4. use Type 1 fonts (scalable), not Type 3 (bit-mapped) within the PDF file.
+>     All fonts MUST be embedded within the PDF file. Any PDF that is not deposited
+>     with fonts embedded will need to be corrected. In order to help you through
+>     this process, the ACM has created documentation on how to embed your fonts
+>     (http://www.acm.org/publications/WORD%20to%20PDF%20instructions.txt).
+>     There is also the ACM Digital Library optimal distiller settings file
+>     (http://www.acm.org/publications/ACM.joboptions).
+> 
+>     ACM cannot substitute font types, though. This really must be done in the
+>     source files before the PDF is generated. If bit-mapped fonts are used, they
+>     will not necessarily display legibly in all PDF readers on all platforms, though
+>     they will print out fine.
+DONE: AUTO when using pdflatex
+> == ACM copyright form ==
+> 
+> In the coming days, you will receive an email asking you to submit an ACM copyright form which is
+> required for the publication of your paper. Please make sure to return the filled out form _as soon as
+> possible_. The sooner you return the copyright form, the greater the chances are that ACM DL will have
+> your paper published before the workshop takes place.
+*** Waiting for the email ***
+
+> == Important Logistical Information ==
+> 
+> Please note that the deadline for early ECOOP registration is June 28th!
+> 
+> 
+> We are looking forward to seeing you at the workshop!
+> 
+> Sincerely,
+> The Scala'14 Organizers
+> 
+> 
+> ----------------------- REVIEW 1 ---------------------
+> PAPER: 14
+> TITLE: Typecasting Actors: from Akka to TAkka
+> AUTHORS: Jiansen He, Philip Wadler and Philip Trinder
+> 
+> OVERALL EVALUATION: 3 (strong accept)
+> REVIEWER'S CONFIDENCE: 4 (high)
+> 
+> ----------- REVIEW -----------
+> Summary:
+> 
+> The paper presents TAkka, a typed implementation of the Akka actor framework. In TAkka, actor references ActorRef[M] are parameterized with a type M describing the set of messages that the actor can accept. TAkka actors support system-wide messages, and enable supervision trees, just like in Akka. A type-safe name service is provided so that lookup of actors by name retains type information. Programmers can gracefully upgrade from Akka to TAkka, and on average typing an existing Akka codebase requires changes to 8.5% of lines of code. TAkka does not add significant runtime overheads compared to Akka.
+> 
+> Points in favor:
+> 
+> - The authors convincingly show that message-passing between actors can be statically typed with little overhead, and that this static typing discipline does not need to stand in the way of generic features such as supervision or dynamic upgrade of actor behaviors.
+> 
+> - The paper is well-written, with clear examples throughout the paper (the style of putting Akka and TAkka code side-by-side was very much appreciated by this reviewer).
+> 
+> - The authors have rewritten a fairly extensive set of examples in TAkka and adequately report on the differences in lines of code and runtime performance.
+> 
+> Points against:
+> - No significant points against, but perhaps as a minor point of feedback, there is no related work section discussing other actor-based (or perhaps channel-based) languages that feature type-safe communication. Admittedly, this reviewer can't think of very many actor languages that feature type-safe message passing (perhaps Salsa [Varela et al]?)
+== SALASA is a dynamically typed actor lanuage ===
+
+> Detailed comments:
+> 
+> - While I applaud the fact that the authors continue to support "become" (i.e. dynamic upgrade of actor behaviour) in TAkka, it seems to me the restriction of having the new type be a supertype of the old type, combined with the fact that "become" cannot be undone, does limit the extent to which one can safely type actors that model finite state machines (FSMs).
+> In Erlang, it is common for actors to model FSMs (Erlang OTP even supports "behavior" processes dedicated to them). Indeed, it seems to this reviewer that modeling FSMs is the main reason to use advanced features such as "become".
+> 
+> If I understood correctly, TAkka can only deal with FSMs that are monotonic (i.e. can't go back to a previous state). In future work, it might be useful to have a look at typestate (as e.g. employed in > the Plaid language) to be able to extend the use cases that can be safely handled by TAkka.
+
+Added the followings at the end of Section 3.5
+
+Behaviour upgrade via the {\tt become} method is different from behaviour {\it changes}
+of a Finite State Machine (FSM).  Both Akka and TAkka defines a {\tt FSM} class as a
+subclass of {\tt Actor}.
+An instance of {\tt FSM} may only react to a subset of messages and discard the rest.
+Although the behaviour of an {\tt FSM} changes over time, its type {\it does not} change
+because its internal states is invisible to its users, and hence it is expected to 
+be able to receive any message of a valid type, though that message may be processed
+or discarded.  The ATM simulator example in Table~\ref{express} is implemented using
+the {\tt FSM} trait.  We show that rewriting an FSM based Akka application using TAkka
+is straightforward.
+
+> - Figure 5: is it strictly necessary to ask for a new `advancedCal` actor reference in Akka? It seems the untyped nature of Akka would allow one to just upgrade the `simpleCal` actor reference and continue to use `simpleCal` to send the new messages.
+Accepted
+
+In Figure 5: Akka Example: Behaviour Upgrade, added 
+  simpleCal ! Divison(10, 2)
+after 
+  simpleCal ! Upgrade(advancedCalculator)
+
+In Figure 6: TAkka Example: Behaviour Upgrade, added 
+  // simpleCal ! Divison(10, 2) // compile error
+after 
+  simpleCal ! Upgrade(advancedCalculator)
+
+> - p.7, section 6: The Type Pollution Problem: "One solution to the type pollution problem is using separate channels for distinct parties".
+> 
+> You cite Join and Pi calculus, but perhaps even more relevant, although admittedly less well-known, is the communicating event loops model, as e.g. implemented in the E language and in the AsyncObjects > Scala library. Communicating event loops are an extension to the actor model where multiple objects (components, as you call them) inside an actor can be individually referenced. See e.g.:
+> 
+>   * Miller, M. S., Tribble, E. D. and Shapiro, J.: Concurrency Among Strangers: Programming in E as Plan Coordination. In Proc. Trustworthy Global Computing, 2005, pp. 195-229.
+> 
+>   * C. Plotnikov: AsyncScala framework: <http://asyncobjects.sourceforge.net/asyncscala/index.html> (this is basically an implementation of the ideas from the E language as a Scala library)
+
+Object reference in the event loops model is similar to channels.  Coordinating event loop (vat) in the event loops model is similar to waiting messages in a join-pattern. 
+Regarding to the two implementations:
+The E programming language is dynamically typed.
+The Cat class of AsyncScala takes an continous as an input, rather than a message.
+
+=== Therefore, I do not include references of the above model in the paper. === 
+
+
+>  - Figure 15: the "(b) Big" benchmark is the only benchmark that seems to reveal a significant difference between Akka and TAkka. Is it worth explaining why?
+=== I think that it is OK to leave it.  The more problematic problem of "Big" is that it does not scale. ===
+
+
+
+> ----------------------- REVIEW 2 ---------------------
+> PAPER: 14
+> TITLE: Typecasting Actors: from Akka to TAkka
+> AUTHORS: Jiansen He, Philip Wadler and Philip Trinder
+> 
+> OVERALL EVALUATION: -1 (weak reject)
+> REVIEWER'S CONFIDENCE: 4 (high)
+> 
+> ----------- REVIEW -----------
+> The authors present TAkka, a modification to the Akka actor library which introduced gradual typing. Actors are optionally typed, and may undergo type safe behavior upgrades.
+> 
+> - The paper is filled with examples and has a nice and linear exposition. It’s easy to follow; the authors do a good job of bringing the reader into their thought process.
+> 
+> - I really like the emphasis on quantifying the changes — how much code had to change, any performance implications, etc. It was slightly disappointing that only one error was found during the > conversion process. In the interest of quantifying the usefulness of this application of static typing might have been interesting to survey past bugs in a few large actor-based systems in order to quantify how many of these would have been prevented by a static typing discipline.
+> 
+> - My intuiting is that, in message-passing systems like actors, one of the most useful forms of static type checking is the use of exhaustiveness checks for messages. It seems to me that the TAkka’s typing scheme precludes these when upgrades are required. Were exhaustiveness checks (i.e. sealed-trait ADTs) employed in any of the code bases that were ported?
+
+"It seems to me that the TAkka’s typing scheme precludes these when upgrades are required"
+
+Add a sentence to the first paragraph of Section 3.5 to explain that TAkka actor is extensible.
+
+The {\tt become} method enables behaviour upgrade of an  actor.  Figure~\ref{fig:akka_swap}
+and \ref{fig:takka_swap} compare behaviour upgrade in Akka and TAkka.  
+As new subtypes can be introduced later (line 39 in Figure~\ref{fig:takka_swap}), an
+actor can be upgraded to a version that is able to receive more types of messages.
+However,unlike
+the Akka version, behaviour upgrade in TAkka {\it  must} be backward 
+compatible and {\it cannot} be rolled back.  In other words, 
+an actor must evolve into a version that is at least able to handle the original
+message patterns.  The above decision is made so that a service published to 
+users will not be unavailable later.  Supporting behaviour upgrades in TAkka also
+requires that there is a suitable supertype defined in advance. This requirement
+is a weakness compared to Akka, which permits upgrading the behaviour to 
+any syntactically correct implementation.
+
+
+"Were exhaustiveness checks (i.e. sealed-trait ADTs) employed in any of the code bases that were ported"
+
+Add the following to the end of the first paragraph of Section 3.1
+
+
+Notice that the {\tt typedReceive} method in the TAkka {\tt Actor}
+class has a {\tt function} type rather than a {\tt partial function} as in Akka.
+A function has the advantage of exhaustiveness checks on sealed-trait ADTs.  This
+feature is not used in our ported example used for expressiveness check (Table~\ref{expressiveness}).
+Our ported examples are well written and implemented and therefore have proper
+types.  Nevertheless, we believe that exhaustiveness checks is an helpful feature
+in practice.
+
+
+> - The usefulness of static typing is somewhat diminished when communicating with remote actors. It would be interesting to see a discussion about how a nameserver might provide extra safety here.
+The last paragraph of Section 4 explains how nameserver is used in an actor system to provide extra type safety when querying on a typed actor reference.
+
+> ----------------------- REVIEW 3 ---------------------
+> PAPER: 14
+> TITLE: Typecasting Actors: from Akka to TAkka
+> AUTHORS: Jiansen He, Philip Wadler and Philip Trinder
+>
+> OVERALL EVALUATION: 3 (strong accept)
+> REVIEWER'S CONFIDENCE: 4 (high)
+> 
+> ----------- REVIEW -----------
+> This paper describes the TAkka library, which modifies the Akka actor library to provide type-safe actors.  In TAkka, actors communicate through typed interfaces; the type of an interface is represented at run-time so that the name server can ensure that an actor has the right type when a request is made.  The paper describes a motivating example, goes through the library design, discusses interoperability with Akka, and evaluates the expressiveness and performance of the library empirically.
+> 
+> This is an excellent paper overall--it is well-written, understandable, solves a natural problem (since Scala libraries are generally expected to be typed), and appears to solve it very well.  I was impressed that the paper reimplemented a considerable range of Akka programs in TAkka, providing confidence that programs can be ported to TAkka and that doing so takes little effort and does not bloat the code.  The scalability benchmarks suggested there is little overhead associated with using types.
+> 
+> I have only a few suggestions, related to the writing:
+> 
+> Abstract: the rule is to put the comma in the quotes (see also "Evolution, not Revolution," later) [my apologies if this is an American/British difference]
+*** ??? ***
+Checked the paper.  Except "Evolution, not Revolution", I don't find other cases where a comma is required in the quotes.
+
+> upgrade where -> upgrades where
+ACCEPTED
+> section 1: parameterized on -> parameterized by
+ACCEPTED
+> section 2: lines 33-35: should be 38-39 I believe
+ACCEPTED
+> props[M] - note that in Fig. 2, Props has 2 type parameters.
+Added the followings
+
+The type {\tt Props} denotes the properties of an actor.   An instance  of type 
+{\tt Props[M]} is used when creating an actor of type {\tt Actor[M]}.  
+The most common way to initialize an instance of {\tt Props} is to use one of 
+the {\it apply} method in Figure~\ref{akka_api} and~\ref{takka_api}
+Line~24 in Figure~\ref{akka:supervisedcalculator} and~\ref{takka:supervisedcalculator}
+uses such method and takes the advantage of the Scala language where
+{\tt apply} and {\it implicit parameters} can be omitted in code.
+
+> section 3.1: "Re-implementing the TAkka..." - I have no idea what this sentence means, please reword.  Maybe you mean "would require" instead of "requires"?
+ACCEPTED, Corrected to:
+
+Re-implementing the TAkka Actor library would require a similar amount of work as implementing the Akka Actor library.
+
+> Fig. 3: contrext -> context
+ACCEPTED
+
+> type cast -> type casting
+ACCEPTED
+> Fig. 4: it's strange that ActorRef is parameterized by the message type M, but Actor is parameterized by a Manifest.  I think it must be incorrect to pass the M parameter of Actor to ActorRef--a Manifest cannot be the message type, right, because a Manifest as I understand it is the run-time representation of the message type.  In general I think the paper would do well to describe Manifest enough so the reader can understand how it is used and what it is used for.
+
+Added the following at the end of the first paragraph in Section 3.1:
+
+In Figure~\ref{takka_api}, the manifest for the type parameter of the {\tt ActorRef}
+class is provided by an {\it implicit parameter}, whose value will be provided by
+Scala at runtime.  The declaration of the {\tt Actor} class and the {\tt ActorContext}
+class uses Scala {\it context bounds}, which is a shorthand for defining implicit
+parameters.
+
+
+> Is it legal Scala code to leave out the body of the apply method for object props?  This seems mysterious, especially since neither props or apply is abstract.  If you are leaving out the body from the figure, indicate this somehow, e.g. with elipsis (...).
+
+Added the following at the end of the first paragraph in Section 3:
+
+Implementation of the two APIs are omitted in this paper.
+
+
+> Section 3.5.  Anecdotally, I wonder how often are non-monotonic upgrades used in Akka?  I guess based on your case study, it must be rare.
+Added explaination on FSM at the end of Section 3.5
+
+
+> section 3.6: is the same cumbersome -> is as cumbersome
+ACCEPTED
+
+> section 6: not intended for it -> not intended for it to use [clarification of ambiguity...to use the unintended messages on another client vs. to receive unintended messages onesself]
+ACCEPTED  Made the same correction in the introduction.

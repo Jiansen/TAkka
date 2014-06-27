@@ -1,26 +1,5 @@
-\begin{abstract} 
 
-  Scala supports actors and message passing with the Akka
-  library. Though Scala is statically typed, messages in Akka are
-  dynamically typed (that is, of type {\tt Any}).  The Akka designers
-  argue that using static types is ``impossible'' because ``actor
-  behaviour is dynamic'', and, indeed, it is not clear that important
-  actor support, such as supervision or name servers, can be
-  implemented if messages are statically typed. Here we present TAkka,
-  a variant of Akka where messages are statically typed, and show that
-  it is possible to implement supervisors and name servers in such a
-  framework. We show it is possible to upgrade from Akka to TAkka
-  gradually, porting one module at a time; and we show that TAkka can
-  support behavioural upgrade where the new message type of an actor is
-  a supertype of the old type. We demonstrate the expressiveness of
-  TAkka by rewriting a score of Akka applications; the percentage of
-  lines that need to be changed varies from 44\% (in a 25-line
-  program) to 0.05\% (in a 27,000-line program), with a geometric mean
-  of 8.5\%. We measure the execution speed, scalability, and
-  throughput of TAkka programs and show that they are comparable to Akka.
-
-\end{abstract}
-
+\newpage
 % \vspace{-5pt}
 \section{Introduction}
 
@@ -29,14 +8,14 @@ Can the benefits of static typing extend to message passing?
 A distinguishing feature of Scala is its sophisticated static type
 system.  A distinguishing feature of modern computing is its reliance
 on communication.  Scala supports communication with the Akka library
-\citep{akka_doc}, partly inspired by Erlang \citep{ArmstrongErlang}, which in
-turn is inspired by actors and message passing \citep{Hewitt:1973}.
+\cite{akka_doc}, partly inspired by Erlang \cite{ArmstrongErlang}, which in
+turn is inspired by actors and message passing \cite{Hewitt:1973}.
 However, these two features do not play well together---messages
 in Akka are dynamically typed (that is, of type {\tt Any}).
 
 There are sound reasons for this design.  The Akka designers argue
 that using static types is ``impossible'' because ``actor behaviour is
-dynamic'' \citep{Kuhn11, Kuhn12}.  The design of Akka is
+dynamic'' \cite{Kuhn12, Kuhn11}.  The design of Akka is
 inspired by the Erlang OTP Design Principles, including supervision
 trees to ensure reliability, and Erlang is dynamically typed.  Since
 supervision is generic---a supervision framework is instantiated to
@@ -52,7 +31,7 @@ with different static types.
 
 This paper introduces TAkka, a variant of Akka with statically typed
 messages.  It turns out that each of the issues above can be resolved
-straightforwardly.  Each actor is parameterised on the type of
+straightforwardly.  Each actor is parameterised by the type of
 messages it handles.  In addition, each actor can also receive system
 messages, such as Poison Pill, which are handled by the supervision
 framework.  The name server uses Scala ``manifest'' types to support a
@@ -71,12 +50,12 @@ In a system with multiple components, different components may require
 different interfaces; since all messages are received in the same
 mailbox, a naive approach would be to set the type to the union of all
 the interfaces, causing each component to see a type containing
-messages not intended for it---an issue we dub the Type Pollution
+messages not intended for it to use---an issue we dub the Type Pollution
 Problem.  Fortunately, the problem may be avoided by exploiting
 subtyping to publish a different interface to each layer.
 
-To evaluate the expressiveness of our system, we rewrite a score of
-Akka applications in TAkka.  The percentage of lines that need to be
+To evaluate the expressiveness of our system, we rewrite approximately 
+20 Akka applications in TAkka.  The percentage of lines that need to be
 changed varies from 44\% (in a 25-line program) to 0.05\% (in a
 27,000-line program), with a geometric mean of 8.5\%.
 
@@ -91,7 +70,7 @@ scalability profiles.
 
 The paper makes the following contributions.
 
-\vspace{-8pt}
+% \vspace{-8pt}
 \begin{itemize}\setlength{\itemsep}{0pt}
 \item We contrast Akka and TAkka, illustrating the differences with a
   simple application, a supervised calculator (Section~\ref{actor}).
@@ -117,14 +96,14 @@ The paper makes the following contributions.
   performance of a half-dozen BenchErl benchmarks written in both
   Akka and TAkka (Section~\ref{efficiency}).
 \end{itemize}
-\vspace{-5pt}
+% \vspace{-5pt}
 Section~\ref{conclusion} concludes.
 
 
 \section{Actors and Their Supervision}
 \label{actor}
 
-The Akka library \citep{akka_doc} implements actor programming and
+The Akka library \cite{akka_doc} implements actor programming and
 makes supervision obligatory. As an introduction to Akka,
 Figure~\ref{akka:supervisedcalculator} defines a calculator.
 Each {\tt Actor} defines a {\tt receive} method that reacts to
@@ -187,7 +166,7 @@ an {\tt UnhandledMessage} event is pushed to the event stream of the
 actor system. The event stream may be subscribed to by other actors who are 
 interested in particular event messages. Our example program defines a
 handler (lines~44---49) and subscribes to the {\tt UnhandledMessage} events
-(lines~33--35).
+(lines~37---39).
 
 Figure~\ref{takka:supervisedcalculator} gives an equivalent TAkka 
 implementation. Code that appears in the Akka version but not the TAkka
@@ -220,32 +199,10 @@ define a handler for unexpected messages.
 This section elaborates the design of the TAkka library, which provides type 
 parameters for the Actor related classes found in Akka.  Figure~\ref{akka_api}
 gives the Akka API, and Figure~\ref{takka_api} gives it TAkka counterpart.
+Implementation of the two APIs are omitted in this paper.
 
 % \vspace{-5pt}
 \subsection{Actor}
-
-A TAkka actor has type {\tt Actor[M]}.  Unlike other actor 
-libraries, every TAkka actor class takes a type parameter {\tt M} which 
-specifies the type of messages it expects to receive.  The same type parameter 
-is used as the input type of the receive function, the type parameter of the 
-actor context and the type parameter of the actor reference pointing to itself. 
-TAkka uses Scala {\tt Manifest} to record type information required at runtime.
-
-The TAkka {\tt Actor} class inherits 
-the Akka {\tt Actor} trait to minimize implementation effort.  Users of the 
-TAkka library, however, do not need to use any Akka Actor API.  Instead, we 
-encourage programmers to use the typed interface given in Figure~\ref{takka_api}.  
-The limitation of using inheritance to implement TAkka actors 
-is that Akka features are still available to library users.  Unfortunately, 
-this limitation cannot be overcome by using delegation because, as we have seen 
-in the {\tt SupervisedCalculator} example, a child actor is created by calling the {\tt actorOf} method from 
-its supervisor's actor context, which is a private field of the supervisor.  
-{\tt Actor} is the only TAkka class that is implemented using inheritance. 
-Other TAkka classes are either implemented by delegating tasks to Akka 
-counterparts or rewritten in TAkka.  Re-implementing the TAkka 
-Actor library requires a similar amount of work as implementing the Akka Actor 
-library.
-
 
 \begin{figure}[p]
 
@@ -386,10 +343,6 @@ Exception in thread "main" java.lang.Exception: ActorRef[akka://MySystem/user/ca
 
 
 
-
-
-
-
 \begin{figure}[!h]
 \label{akka_api}
 \begin{lstlisting}[language=scala, escapechar=?]
@@ -404,7 +357,7 @@ abstract class ActorRef
 ?\textcolor{blue}{trait }? Actor
   def ?\textcolor{blue}{receive:PartialFunction[Any, Unit]}?
   val ?\textcolor{blue}{self: ActorRef}?
-  private val ?\textcolor{blue}{contrext: ActorContext}?
+  private val ?\textcolor{blue}{context: ActorContext}?
   var supervisorStrategy: SupervisorStrategy
 \end{lstlisting}
 
@@ -451,7 +404,7 @@ case class OneForAllStrategy(restart:Int = -1,
     \end{lstlisting}
     
     \caption{Akka API}
-    \vspace{-10pt }
+    \vspace{-20pt }
 \end{figure}
 
 \begin{figure}[!h]
@@ -517,8 +470,9 @@ case class OneForAllStrategy(restart:Int = -1,
     \end{lstlisting}
     
     \caption{TAkka API}
-%    \vspace{-10pt }
+    \vspace{-20pt }
 \end{figure}
+
 
 
 \begin{figure}[!h]
@@ -563,15 +517,17 @@ object CalculatorUpgrade extends App {
   }  
      
    simpleCal ! Upgrade(advancedCalculator)    
+   ?\textcolor{blue}{ simpleCal ! Divison(10, 2) }?   
    val advancedCal = system.actorFor
    		("akka://CalculatorSystem/user/calculator")   
-   advancedCal ! Multiplication(5, 3)
+   advancedCal ! Multiplication(5, 3) 
    advancedCal ! Divison(10, 3)
    advancedCal ! Upgrade(advancedCalculator)
 }
 /*  Terminal Output:
 5 * 1 = 5
 Upgrading ...
+10 / 2 = 5
 5 * 3 = 15
 10 / 3 = 3
 Upgraded.
@@ -624,6 +580,7 @@ object CalculatorUpgrade extends App {
   }
   
   simpleCal ! Upgrade(advancedCalculator)    
+  // simpleCal ! Divison(10, 2) // compile error  
   val advancedCal =  system.actorFor?\textcolor{blue}{[Operation]}?
   		("akka://CalculatorSystem/user/calculator")   
   advancedCal ! Multiplication(5, 3)
@@ -633,6 +590,7 @@ object CalculatorUpgrade extends App {
 /*  Terminal Output:
 5 * 1 = 5
 Upgrading ...
+
 5 * 3 = 15
 10 / 3 = 3
 Upgraded.
@@ -644,9 +602,44 @@ Upgraded.
 \end{figure}
 
 
+A TAkka actor has type {\tt Actor[M]}.  Unlike other actor 
+libraries, every TAkka actor class takes a type parameter {\tt M} which 
+specifies the type of messages it expects to receive.  The same type parameter 
+is used as the input type of the receive function, the type parameter of the 
+actor context and the type parameter of the actor reference pointing to itself. 
+TAkka uses Scala {\tt Manifest} to record type information required at runtime.
+In Figure~\ref{takka_api}, each of the three actor-related classes ---
+{\tt ActorRef}, {\tt Actor}, and {\tt ActorContext} --- takes a manifest as its
+immutable field to record the value of its type parameter.
+The manifest is defined as an implicit parameter as Scala can infer its value.
+The {\tt ActorRef} class defines manifest explicitly because its
+type parameter requires a contravariance annotation.  The {\tt Actor} class
+and the {\tt ActorContext} class define manifest implicitly using
+Scala {\it context bounds}.  
 
+Notice that the {\tt typedReceive} method in the TAkka {\tt Actor}
+class has a {\tt function} type rather than a {\tt partial function} as in Akka.
+Using a function type has the advantage of exhaustiveness checks on its input if
+its input type is a sealed-trait ADT.  Section~\ref{expressiveness} will report
+examples we ported from Akka for expressiveness checks.  For all examples
+considered, there is no problem when replacing a partial function with a total function.
+We believe that exhaustiveness checks are helpful
+in practice.
 
-
+The TAkka {\tt Actor} class inherits 
+the Akka {\tt Actor} trait to minimize implementation effort.  Users of the 
+TAkka library, however, do not need to use any Akka Actor API.  Instead, we 
+encourage programmers to use the typed interface given in Figure~\ref{takka_api}.  
+The limitation of using inheritance to implement TAkka actors 
+is that Akka features are still available to library users.  Unfortunately, 
+this limitation cannot be overcome by using delegation because, as we have seen 
+in the {\tt SupervisedCalculator} example, a child actor is created by calling the {\tt actorOf} method from 
+its supervisor's actor context, which is a private field of the supervisor.  
+{\tt Actor} is the only TAkka class that is implemented using inheritance. 
+Other TAkka classes are either implemented by delegating tasks to Akka 
+counterparts or rewritten in TAkka.  Re-implementing the TAkka 
+Actor library would require a similar amount of work as implementing the Akka Actor 
+library.
 
 % \vspace{-5pt}
 \subsection{Actor Reference}
@@ -672,7 +665,7 @@ Section~\ref{type_pollution}.
 
 For ease of use, {\tt ActorRef} provides a {\tt publishAs} method that 
 casts an actor reference to a version that only accepts a subset of supported 
-messages.  The {\tt publishAs} method encapsulates the process of type cast 
+messages.  The {\tt publishAs} method encapsulates the process of type casting 
 {\tt ActorRef}, a contravariant type.  We believe that using the notation of the
 {\tt publishAs} method can be more intuitive than thinking about contravariance 
 and subtyping relationship when publishing an actor reference as different 
@@ -689,6 +682,13 @@ developer may not have access to code written by others.
 \label{actor_context}
 The type {\tt Props} denotes the properties of an actor.   An instance  of type 
 {\tt Props[M]} is used when creating an actor of type {\tt Actor[M]}.  
+Line~24 in Figures~\ref{akka:supervisedcalculator} and~\ref{takka:supervisedcalculator}
+initialises an instance of {\tt Props} using the last {\tt apply} method
+in Figures~\ref{akka_api} and~\ref{takka_api} respectively.  The code uses Scala
+syntactical sugar that omits the method name {\tt apply} and lets Scala provide
+the value of manifest, which is an implicit parameter.
+
+
 Unlike an actor reference, which is the interface for receiving messages, 
 an actor context describes the actor's view of the outside world.   Because 
 each actor defines an independent computation, an actor context is private to 
@@ -707,7 +707,7 @@ a new message must be received using the {\tt setReceiveTimeout} method, and
 
 % \vspace{-5pt}
 
-\subsection{Reusing Akka Supervisor Strategies in TAkka}
+\subsection{Reusing Akka Supervisor Strategies \\ in TAkka}
 \label{supervision}
 
 None of the supervisor strategies in Figure~\ref{takka_api} require a 
@@ -726,32 +726,63 @@ which is not provided by Scala.
 % \vspace{-5pt}
 \subsection{Behaviour Upgrades}
 
-The {\tt become} method enables behaviour upgrade of an  actor.  Figure~\ref{fig:akka_swap}
-and \ref{fig:takka_swap} compare behaviour upgrade in Akka and TAkka.  Unlike
+Behaviour upgrades in Akka and TAkka can be done using one of two complementary 
+techniques: using the {\tt become} method or defining an actor as a Finite State Machine (FSM).
+
+The {\tt become} method upgrades the behaviour of an  actor.  After the upgrade, the
+actor might be able to process messages of more types.  Figures~\ref{fig:akka_swap}
+and \ref{fig:takka_swap} compare using {\tt become} in Akka and TAkka.  
+As new subtypes can be introduced later (line~39 in Figure~\ref{fig:takka_swap}), an
+actor can be upgraded to a version that is able to receive more types of messages.
+However, unlike
 the Akka version, behaviour upgrade in TAkka {\it  must} be backward 
 compatible and {\it cannot} be rolled back.  In other words, 
-an actor must evolve into a version that is able to handle the original
+an actor must evolve into a version that is at least able to handle the original
 message patterns.  The above decision is made so that a service published to 
 users will not be unavailable later.  Supporting behaviour upgrades in TAkka also
 requires that there is a suitable supertype defined in advance. This requirement
 is a weakness compared to Akka, which permits upgrading the behaviour to 
 any syntactically correct implementation.
 
-% \vspace{-5pt}
-\subsection{The Akka TypedActor class}
+An actor that implements the {\tt FSM} trait switches between predefined states.  In each
+state, that actor may only react to messages of a particular type, i.e. events associated with
+that state, and discard messages of other types.  Because the internal state of an FSM
+is invisible to others, it accepts all messages that {\tt may} trigger an action.  In other words,
+the type of its actor reference does not change.  
+The ATM simulator example in Table~\ref{express} is implemented using
+the {\tt FSM} trait.  We show that rewriting an FSM-based Akka application using TAkka
+is straightforward.
+
+\subsection{Related Work}
+
 Akka attempts to merge supervision and typed actors via a {\tt TypedActor} class
 whose instance is initialised in a special way. A service 
 of {\tt TypedActor} object is invoked by method invocation instead of message 
 passing.   The Akka {\tt TypedActor} class prevents some type errors but has 
 two limitations. Firstly, TypedActor does not permit behaviour upgrade. 
 Secondly, avoiding the type pollution problem (Section~\ref{type_pollution}) by 
-using Akka typed actors is the same cumbersome as using a simple 
+using Akka typed actors is as same cumbersome as using a simple 
 object-oriented model, where supertypes need to be defined in advance. In 
 Scala, introducing a supertype in a type hierarchy requires modification to all 
 affected classes, whose source code may not be accessible by application 
 developers.
 
-% \vspace{-5pt}
+Alternative to the actor model, different concurrent programming paradigms have been proposed.
+An important category of concurrent programming model is channel based communications,
+originated from CCS \cite{milner1980calculus} and $\pi$-calculus \cite{pi_book}.
+Models that support typed channels include
+the join-calculus \cite{full_join} and the typed $\pi$-calculus \cite{pi_book}.
+Another group of concurrent programming model, which focuses on communication coordination,
+is the event loops model.   Examples of this model are the E programming
+language \cite{miller2005concurrency} and the AsyncScala framework \cite{asyncscala}.
+The E programming language is dynamically typed.  The {\tt Vat} class
+in AsyncScala encapsulates a process and takes a continuation as its input.
+Neither the E language or the AsyncScala framework employs typed messages.
+
+
+
+
+
 \section{Typed Name Server}
 \label{nameserver}
 
@@ -762,17 +793,7 @@ which represent the same string have the same value.  As a value retrieved from
 a name server is {\it dynamically typed}, it needs to be checked and 
 cast to the expected type at the client side before using it.  
 
-To overcome the limitations of the untyped name server, we design 
-a typed name server.  A typed name server maps each registered typed name to a value of the
-corresponding type, and allows look-up of a value by giving a typed name.
-A typed name, {\tt TSymbol}, is a name shipped with a type descriptor.  A 
-typed value, {\tt TValue}, is a value shipped with a type descriptor, which
-describes a super type of the most precise type of that value.  
-{\tt TSymbol} and {\tt TValue} can be defined as in Figure~\ref{tsymbol}.
-The APIs of a dynamic typed name server and a typed name server 
-are given in Figure~\ref{dynamic_name_server} and \ref{static_name_server} respectively.
-
-\begin{figure}[h]
+\begin{figure}[b]
 \label{tsymbol}
 \begin{lstlisting}
 case class TSymbol[T:Manifest](val s:Symbol) {
@@ -788,53 +809,51 @@ case class TValue[T:Manifest](val value:T){
 }
 \end{lstlisting}
 \caption{TSymbol and TValue}
-% \vspace{-5pt}
+\vspace{-10pt}
 \end{figure}
+
+To overcome the limitations of the untyped name server, we design 
+a typed name server.  A typed name server maps each registered typed name to a value of the
+corresponding type, and allows look-up of a value by giving a typed name.
+A typed name, {\tt TSymbol}, is a name shipped with a type descriptor.  A 
+typed value, {\tt TValue}, is a value shipped with a type descriptor, which
+describes a super type of the most precise type of that value.  
+{\tt TSymbol} and {\tt TValue} can be defined as in Figure~\ref{tsymbol}.
+The APIs of a dynamic typed name server and a typed name server 
+are given in Figure~\ref{dynamic_name_server} and \ref{static_name_server} respectively.
+
+
+
+
 
 Each TAkka actor system contains a typed name server.  The typed name server is 
 used when the actor is created and when an  actor reference is requested.  
 When an actor is created, the actor records a map from a typed actor path and the
 typed actor reference for the created actor.  Upon retrieving a typed actor
-reference, line 47 in Figure~\ref {takka:supervisedcalculator} for example, the
+reference, line~47 in Figure~\ref {takka:supervisedcalculator} for example, the
 typed name server checks if the typed actor path matches any record.
-
-
-
 
 
 \begin{figure}[t]
 \label{dynamic_name_server}
 \begin{lstlisting}[language=scala, escapechar=?]
-
+?\textcolor{blue}{package untype.nameserver}?
 object NameServer 
-
-  def set(name:Symbol, value:?\textcolor{blue}{Any}?):Boolean
-  def unset(name:Symbol):Boolean
-  def get(name:Symbol):Option[?\textcolor{blue}{Any}?]
-  
+  @throws(classOf[NamesExistException])
+  def set(name:?\textcolor{blue}{Symbol}?, value:?\textcolor{blue}{Any}?):Boolean
+  def unset(name:?\textcolor{blue}{Symbol}?):Boolean
+  def get(name:?\textcolor{blue}{Symbol}?):Option[?\textcolor{blue}{Any}?]
+case class NamesExistException(name:?\textcolor{blue}{Symbol}?)
+  extends Exception("Name "+name+" has been registered.")  
 \end{lstlisting}
 \caption{Dynamic Typed Name Server}
-\vspace{-20pt}
-\end{figure}
-
-\begin{figure}[t]
-\label{static_name_server}
-\begin{lstlisting}[language=scala, escapechar=?]
-?\textcolor{blue}{package takka.nameserver}?
-object NameServer 
-  ?\textcolor{blue}{@throws(classOf[NamesHasBeenRegisteredException])}?
-  def set?\textcolor{blue}{[T:Manifest]}?(name:?\textcolor{blue}{TSymbol[T]}?, value:?\textcolor{blue}{T}?):Boolean
-  def unset?\textcolor{blue}{[T:Manifest]}?(name:?\textcolor{blue}{TSymbol[T]}?):Boolean
-  def get?\textcolor{blue}{[T:Manifest]}?(name:?\textcolor{blue}{TSymbol[T]}?):Option[?\textcolor{blue}{T}?]
-?\textcolor{blue}{case class NamesHasBeenRegisteredException(name:TSymbol[\_])
-  extends Exception("Name "+name+" has been registered.")  }?
-\end{lstlisting}
-\caption{Static Typed Name Server}
 \vspace{-10pt}
 \end{figure}
 
 
-% \vspace{-5pt}
+
+
+
 \section{Evolution, Not Revolution}
 \label{evolution}
 
@@ -844,7 +863,7 @@ revolution where all actors and interactions must be typed.
 The above property is analogous to adding generics to Java programs.  Java 
 generics are carefully designed so that programs without generic types can be 
 partially replaced by an equivalent generic version (evolution), rather than 
-requiring generic types everywhere (revolution) \citep{JGC}.
+requiring generic types everywhere (revolution) \cite{JGC}.
 
 Section~\ref{actor} presents how to define and use a safe calculator
 in the Akka and TAkka systems respectively.  Think of a {\tt SafeCalculator} acotor
@@ -853,35 +872,49 @@ the Akka version to the TAkka version gradually, either upgrading the
 service implementation first or the client interface.
 
 
-% \vspace{-5pt}
 \subsection{TAkka Service with Akka Client}
 
 It is often the case that an actor-based service is implemented by one 
 organization but used in a client application implemented by another.  
 Let us assume that a developer decides to upgrade the service 
 using TAkka actors, for example, by upgrading the Socko Web Server 
-\citep{SOCKO}, the Gatling stress testing tool \citep{Gatling}, or the core 
-library of Play \citep{play_doc}, as we do in Section~\ref{expressiveness}.  
+\cite{SOCKO}, the Gatling stress testing tool \cite{Gatling}, or the core 
+library of Play \cite{play_doc}, as we do in Section~\ref{expressiveness}.  
 Will the upgrade affect legacy client applications
 built using the Akka library?  Fortunately, no changes are required at all.
 
 As the TAkka {Actor} class inherits the Akka {\tt Actor} class, it can be used 
-to create an Akka actor.  For example, the object {\tt akkaCal}, created at line 
-5 in Figure~\ref{takkaINakka}, is created from a TAkka actor and used as an Akka
+to create an Akka actor.  For example, the object {\tt akkaCal}, created at 
+line~5 in Figure~\ref{takkaINakka}, is created from a TAkka actor and used as an Akka
 actor reference.  After the service developer has upgraded all actors to equivalent 
 TAkka versions, the developer may want to start a TAkka actor system.  Until that
 time, the developer can create TAkka actor references but publish their untyped
-version to users who are working in the Akka environment (line 19).
+version to users who are working in the Akka environment (line~19).
 As a result, no changes are required for a client 
 application that uses Akka actor references.  Because an Akka actor reference 
 accepts messages of any type, messages of unexpected type may be sent to TAkka actors.  
 As a result, handlers for the {\tt UnhandledMessage} event is required in a
-careful design (line 10 and 20).
+careful design (line~10 and~20).
 
+\begin{figure}[t]
+\label{static_name_server}
+\begin{lstlisting}[language=scala, escapechar=?]
+?\textcolor{blue}{package takka.nameserver}?
+object NameServer 
+  @throws(classOf[NamesExistException])
+  def set?\textcolor{blue}{[T:Manifest]}?(name:?\textcolor{blue}{TSymbol[T]}?, value:?\textcolor{blue}{T}?):Boolean
+  def unset?\textcolor{blue}{[T:Manifest]}?(name:?\textcolor{blue}{TSymbol[T]}?):Boolean
+  def get?\textcolor{blue}{[T:Manifest]}?(name:?\textcolor{blue}{TSymbol[T]}?):Option[?\textcolor{blue}{T}?]
+case class NamesExistException(name:?\textcolor{blue}{TSymbol[\_]}?)
+  extends Exception("Name "+name+" has been registered.")
+\end{lstlisting}
+\caption{Static Typed Name Server}
+\vspace{-10pt}
+\end{figure}
 
-
-% \vspace{-5pt}
 \subsection{Akka Service with TAkka Client}
+
+
 
 Sometimes developers want to update the client code or API before 
 upgrading the service implementation. For example, a developer may not have access to 
@@ -894,6 +927,29 @@ Akka calculator, initialise it in an Akka actor system, and obtain an Akka
 actor reference.  Then, we wrap the Akka actor reference as a TAkka 
 actor reference, {\tt takkaCal}, which only accepts messages of type
 {\tt Operation}.
+
+
+\section{The Type Pollution Problem}
+\label{type_pollution}
+
+
+In a system with multiple components, different components may require
+different interfaces; since all messages are received in the same
+mailbox, a naive approach would be to set the type to the union of all
+the interfaces, causing each component to see a type containing
+messages not intended for it to use ---an issue we dub the Type Pollution
+Problem.
+
+We illustrate the Type Pollution Problem and its solution on an
+instance of the Model-View-Controller pattern \cite{burbeck87}.  The Model
+and View have separate interfaces to the Controller, and neither
+should see the interface used by the other.  However, the naive
+approach would have the Controller message type contain all the
+messages the Controller receives, from both the Model and the View.
+A similar problem can occur in a multi-tier architecture \cite{fowler2002patterns},
+where an intermediary layer interfaces with both the layer above
+and the layer below.
+
 
 \begin{figure}[t]
 
@@ -935,27 +991,6 @@ unhandled message:Hello TAkka
 \end{figure}
 
 
-% \vspace{-5pt}
-\section{The Type Pollution Problem}
-\label{type_pollution}
-
-
-In a system with multiple components, different components may require
-different interfaces; since all messages are received in the same
-mailbox, a naive approach would be to set the type to the union of all
-the interfaces, causing each component to see a type containing
-messages not intended for it---an issue we dub the Type Pollution
-Problem.
-
-We illustrate the Type Pollution Problem and its solution on an
-instance of the Model-View-Controller pattern \cite{burbeck87}.  The Model
-and View have separate interfaces to the Controller, and neither
-should see the interface used by the other.  However, the naive
-approach would have the Controller message type contain all the
-messages the Controller receives, from both the Model and the View.
-A similar problem can occur in a multi-tier architecture \cite{fowler2002patterns},
-where an intermediary layer interfaces with both the layer above
-and the layer below.
 
 \begin{figure}[t]
       \begin{lstlisting}[language=scala, escapechar=?]
@@ -980,12 +1015,46 @@ object ASTC extends App {
     \end{lstlisting}
     \caption{Akka Service with TAkka Client}
 \label{akkaINtakka}    
-\vspace{-20pt }
+\vspace{-15pt }
 \end{figure}
 
+% \vspace{-5pt}
 
 
-\begin{figure}[h]
+
+
+
+
+
+
+One solution to the type pollution problem is using separate channels
+for distinct parties.  For instance, in Model-View-Controller, one
+channel would communicate between Model and Controller, and a distinct
+channel communicate between Model and View.  Programming models that
+support this solution includes the join-calculus \cite{full_join} and
+the typed $\pi$-calculus \cite{pi_book}.  
+Can we gain similar
+advantages for a system based on actors rather than channels?
+
+TAkka solves the type pollution problem with subtyping.  The code
+outline in Figure~\ref{MVC} summarises a Tic-Tac-Toe example in the
+TAkka code repository \cite{takka_repo}, which uses the
+Model-View-Controller pattern.  Traits {\tt V2CMessage} and {\tt
+  M2CMessage} represent the types of messages expected by the View and
+the Model respectively.  Both are subtypes of {\tt ControllerMsg},
+which represents the type of all messages expected by the controller.
+In the code, the Controller actor publishes itself at different types
+to the View actor and the Model actor (lines 26--29), by sending
+appropriate initialisation messages.  In line~27, {\tt typedSelf}
+is of type {\tt ActorRef[ControllerMsg]} while {\tt
+  ModelSetController} expects a parameter of type {\tt
+  ActorRef[M2CMessage]}. Since {\tt ActorRef} is contravariant in its
+type parameter, the call is correct even if the call to {\tt
+  publishAs} is omitted; the call is to make the programmer's intent
+explicit and allows the compiler to catch more errors.
+
+
+\begin{figure}[!h]
 \label{MVC}
 \begin{lstlisting}
 trait ControllerMessage
@@ -1025,35 +1094,6 @@ class Controller(model:ActorRef[C2MMessage],
 \vspace{-15pt}
 \end{figure}
 
-
-
-
-One solution to the type pollution problem is using separate channels
-for distinct parties.  For instance, in Model-View-Controller, one
-channel would communicate between Model and Controller, and a distinct
-channel communicate between Model and View.  Programming models that
-support this solution includes the join-calculus \citep{full_join} and
-the typed $\pi$-calculus \citep{pi_book}.  Can we gain similar
-advantages for a system based on actors rather than channels?
-
-TAkka solves the type pollution problem with subtyping.  The code
-outline in Figure~\ref{MVC} summarises a Tic-Tac-Toe example in the
-TAkka code repository \cite{takka_repo}, which uses the
-Model-View-Controller pattern.  Traits {\tt V2CMessage} and {\tt
-  M2CMessage} represent the types of messages expected by the View and
-the Model respectively.  Both are subtypes of {\tt ControllerMsg},
-which represents the type of all messages expected by the controller.
-In the code, the Controller actor publishes itself at different types
-to the View actor and the Model actor (lines 26--29), by sending
-appropriate initialisation messages.  In line 27, {\tt typedSelf}
-is of type {\tt ActorRef[ControllerMsg]} while {\tt
-  ModelSetController} expects a parameter of type {\tt
-  ActorRef[M2CMessage]}. Since {\tt ActorRef} is contravariant in its
-type parameter, the call is correct even if the call to {\tt
-  publishAs} is omitted; the call is to make the programmer's intent
-explicit and allows the compiler to catch more errors.
-
-
 % \vspace{-5pt}
 \section{Expressiveness}
 \label{expressiveness}
@@ -1061,7 +1101,7 @@ explicit and allows the compiler to catch more errors.
 
 \begin{table*}[!ht]
 \begin{center}
-\begin{tabular}{| p{3.2 cm} | p{3.5 cm} | c | c |  c | c | c |}
+\begin{tabular}{| m{2.3 cm} | c | c | c |  c | c | c |}
 \hline
 
 Source & Example & \specialcell{Akka Code \\ Lines} &
@@ -1070,9 +1110,9 @@ Source & Example & \specialcell{Akka Code \\ Lines} &
 & \specialcell{\% of \\Code Size} \\
 
 \hline
-Small Examples  & String Processor & 25 & 11 & 44 & 22 & 88 \\
+Small   & String Processor & 25 & 11 & 44 & 22 & 88 \\
 \cline{2-7}                            
-                            & Supervised Calculator &38 & 11 & 29 & 41 & 108 \\ 
+Examples                            & Supervised Calculator &38 & 11 & 29 & 41 & 108 \\ 
 \cline{2-7}
                             & Behaviour Upgrade & 38 & 10 & 26 & 39 & 102 \\
 \cline{2-7}                            
@@ -1080,9 +1120,9 @@ Small Examples  & String Processor & 25 & 11 & 44 & 22 & 88 \\
 \cline{2-7}                            
 \hline
 
-BenchErl Examples & bang & 93 & 8 & 8.6 & 94 & 101 \\
+BenchErl  & bang & 93 & 8 & 8.6 & 94 & 101 \\
 \cline{2-7}
-                            & big & 93 & 10 & 11 & 100 & 108 \\
+Examples                            & big & 93 & 10 & 11 & 100 & 108 \\
 \cline{2-7}                            
                             & ehb &201 & 23 & 11 & 216 & 107 \\ 
 \cline{2-7}                            
@@ -1095,9 +1135,9 @@ BenchErl Examples & bang & 93 & 8 & 8.6 & 94 & 101 \\
 \hline
 
 \hline
-Quviq  & ATM simulator & 1148 & 199 & 17.3 & 1160 & 101 \\
+QuviQ \cite{quviq} & ATM simulator & 1148 & 199 & 17.3 & 1160 & 101 \\
 \cline{2-7}
-   \citep{quviq}                                  & Elevator Controller &
+                                     & Elevator Controller &
 2850 & 172 & 9.3 & 2878 & 101 \\
 \hline
 
@@ -1111,26 +1151,26 @@ Akka                 & Dining Philosophers & 189 & 23 & 12.1 &
 Documentation             & Distributed Calculator  & 250 &
 43 & 17.2 & 250 & 100 \\
 \cline{2-7}
-\citep{akka_doc}                                                     & Fault Tolerance & 274 &
+\cite{akka_doc}                                                     & Fault Tolerance & 274 &
 69 & 25.2 & 274 & 100 \\
 \hline
 
-                                                    & Barber Shop 
-\citep{BarberShop}& 754 & 104 & 
+Other                                                   & Barber Shop 
+\cite{BarberShop}& 754 & 104 & 
 13.7 & 751 & 99 \\
 \cline{2-7}
-Other Open Source             & EnMAS \citep{EnMAS} & 1916 & 213 & 11.1 & 1909 &
+Open              & EnMAS \cite{EnMAS} & 1916 & 213 & 11.1 & 1909 &
 100 \\
 \cline{2-7}
-  Akka Applications                & Socko Web Server \citep{SOCKO}  & 5024 & 
+Source                 & Socko Web Server \cite{SOCKO}  & 5024 & 
 227
 & 4.5 & 5017 & 100 \\
 \cline{2-7}
-                                                     & Gatling \citep{Gatling}
+ Akka                                                     & Gatling \cite{Gatling}
 & 1635 & 111 & 6.8 & 1623 & 99 \\
 \cline{2-7}
-                                                     & Play Core 
-\citep{play_doc}
+ Applications                                                      & Play Core 
+\cite{play_doc}
 & 27095 & 15 & 0.05 & 27095 & 100 \\
 \hline
 geometric mean                   & & 354.1 & 30.2 & 8.5 & 360.1 & 101.7 \\
@@ -1140,7 +1180,7 @@ geometric mean                   & & 354.1 & 30.2 & 8.5 & 360.1 & 101.7 \\
 \caption{Results of Expressiveness Evaluation}
 \end{center}
 \label{express}
-\vspace{-10pt}
+% \vspace{-10pt}
 \end{table*}
 
 \begin{figure*}[!ht]
@@ -1154,7 +1194,7 @@ geometric mean                   & & 354.1 & 30.2 & 8.5 & 360.1 & 101.7 \\
     \end{center}
     \caption{Code Size Evaluation}
    \label{fig:expressiveness}
-\vspace{-10pt}   
+% \vspace{-10pt}   
 \end{figure*}
 
 
@@ -1172,7 +1212,7 @@ geometric mean                   & & 354.1 & 30.2 & 8.5 & 360.1 & 101.7 \\
     \end{center}
      \caption{Throughput Benchmarks}
    \label{throughput}
-   \vspace{-10pt}
+   % \vspace{-10pt}
 \end{figure*}
 
 \begin{figure*}[!ht]
@@ -1204,18 +1244,18 @@ geometric mean                   & & 354.1 & 30.2 & 8.5 & 360.1 & 101.7 \\
     \end{center}
     \caption{Runtime \& Scalability Benchmarks}
    \label{runtime}
-   \vspace{-10pt}
+   % \vspace{-10pt}
 \end{figure*}
 
 This section investigates whether the type discipline enforced by TAkka restricts the 
 expressibility of Akka.  Table~\ref{express} lists the examples used for expressiveness checks.  
-Examples are selected from Quviq \citep{quviq}
+Examples are selected from QuviQ \cite{quviq}
 and open source Akka projects to ensure that the main requirements for actor 
 programming are not unintentionally neglected.  Examples from 
-Quviq are re-implemented using both Akka and TAkka.  Examples from 
+QuviQ are re-implemented using both Akka and TAkka.  Examples from 
 Akka projects are re-implemented using TAkka.  Following standard practice,  
 we assess the overall code modification and code 
-size by calculating the geometric mean of all examples \citep{HePa06}. The evaluation results 
+size by calculating the geometric mean of all examples \cite{HePa06}. The evaluation results 
 in Table~\ref{express} show that when porting an Akka program to TAkka, about 
 8.5\% lines of code need to be modified including additional type declarations. 
 Sometimes, the code size can be smaller because TAkka code does not 
@@ -1224,7 +1264,7 @@ of Akka and TAkka applications are almost the same.  Figure~\ref{fig:expressiven
 reports the same result in a Scatter chart.
 
 A type error is reported by the compiler when porting the Socko example 
-\citep{SOCKO} from its Akka implementation to its equivalent TAkka 
+\cite{SOCKO} from its Akka implementation to its equivalent TAkka 
 implementation. Socko is a library for building event-driven web services.  The 
 Socko designer defines a {\tt SockoEvent} class to be the supertype of all 
 events.  One subtype of {\tt SockoEvent} is {\tt HttpRequestEvent}, 
@@ -1250,17 +1290,18 @@ transmitting type descriptors in distributed settings. We assess the effects of
 the above overheads in terms of throughput and scalability.
 
 The example used in the throughput benchmark is the JSON serialization example 
-\citep{techempower}.  The example was implemented using Akka Play, TAkka Play, Akka 
+\cite{techempower}.  The example was implemented using Akka Play, TAkka Play, Akka 
 Socko, and TAkka Socko.  All four versions of the web service are deployed to 
 Amazon EC2 Micro instances (t1.micro), each of which has 0.615GB memory. The throughput 
 is tested with up to 16 EC2 Micro instances.  For each number of EC2 instances, 
 10 rounds of throughput measurement are executed to gather the average and 
-standard deviation of the throughput. The results reported in Figure~\ref{throughput} show that web servers built using the Akka-based library and 
-the TAkka-based library have very similar throughput.
+standard deviation of the throughput. The results reported in Figure~\ref{throughput} show that
+web servers built using the Akka-based library and the TAkka-based library have very similar throughput.
+
 
 
 We further investigate the speed-up of multi-node TAkka applications by 
-porting 6  BenchErl benchmarks \citep{RELEASE} which do not involve Erlang/OTP 
+porting 6  BenchErl benchmarks \cite{RELEASE} which do not involve Erlang/OTP 
 specific features.  Each BenchErl benchmark spawns one master process and 
 many child processes for a given task.  Each child process performs 
 a certain amount of computation and reports the result to the master process.  
@@ -1274,13 +1315,25 @@ benchmarks.   We report the average and the standard deviation
 of the run-time of each example.  Depending on the ratio of the computation 
 time and the I/O time, benchmark examples scale at different levels.  In 
 all examples, TAkka and Akka implementations have almost identical 
-run-time and scalability.
+run-time and scalability.  It appears that the Akka and TAkka implementations
+of the Big benchmark have different runtimes and overlapped poor scalability.
+We do not understand why it is the only benchmark that seems to reveal a 
+significant difference in terms of runtime.
+
+\begin{figure}[h]
+     \begin{center}
+            \includegraphics[scale=0.30]{efficiency/NQueens.png}
+    \end{center}
+    \caption{Benchmark: N-Queens Puzzle}
+   \label{nqueens_efficiency}
+   % \vspace{-10pt}
+\end{figure}
 
 In the BenchErl examples, child processes are asked to 
 execute the same computation a number of times.  In contrast, distributed and 
 cluster computing techniques are often used to solve a computationally 
 expensive task by distributing sub-tasks to independent nodes.  To simulate 
-such a scenario, another benchmark, N-Queens Puzzle \citep{wiki:nqueens}, is added. 
+such a scenario, another benchmark, N-Queens Puzzle \cite{wiki:nqueens}, is added. 
 Finding all solutions of an N-Queen Puzzle is an NP-hard problem.  Therefore, a 
 suitable $n$ makes the problem a good benchmark to demonstrate the advantage of 
 cluster and distributed programming.  Figure~\ref{nqueens_efficiency}
@@ -1288,16 +1341,7 @@ reports the result when $n$ is set to $14$.  The result shows that both the Akka
 TAkka implementation have good scalability and similar efficiency.
 
 
-\begin{figure}[!h]
-     \begin{center}
-        \subfigure[N-Queens Time]{
-            \includegraphics[scale=0.26]{efficiency/NQueens.png}
-        }
-    \end{center}
-    \caption{Benchmark: N-Queens Puzzle}
-   \label{nqueens_efficiency}
-   \vspace{-10pt}
-\end{figure}
+
 
 
 \section{Conclusion}
