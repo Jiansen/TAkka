@@ -1,4 +1,3 @@
-%PA
 @article{historyPA,
  author = {Baeten, J. C. M.},
  title = {A brief history of process algebra},
@@ -58,17 +57,12 @@
     publisher = {ACM Press}
 }
 
-@article{MobileAmbients,
-  author    = {Luca Cardelli and
-               Andrew D. Gordon},
-  title     = {Mobile Ambients},
-  journal   = {Theor. Comput. Sci.},
-  volume    = {240},
-  number    = {1},
-  year      = {2000},
-  pages     = {177-213},
-  ee        = {http://dx.doi.org/10.1016/S0304-3975(99)00231-5},
-  bibsource = {DBLP, http://dblp.uni-trier.de}
+@INPROCEEDINGS{Cardelli98mobileambients,
+    author = {Luca Cardelli and Andrew D. Gordon},
+    title = {Mobile ambients},
+    booktitle = {In Proceedings of POPL'98},
+    year = {1998},
+    publisher = {ACM Press}
 }
 
 
@@ -91,35 +85,45 @@
 
 
 @article{Act1,
-  title={Thinking About Lots of Things at Once without Getting Confused: 
-Parallelism in Act 1},
+  title={{Thinking About Lots of Things at Once without Getting Confused: 
+Parallelism in Act 1}},
   author={Lieberman, Henry},
+  journal={  {MIT:   AI Memos (1959 - 2004)}  },  
   year={1981}
 }
 
-@article{actor_operational_semantics,
+@misc{actor_operational_semantics,
   title={Semantics of communicating parallel processes},
   author={Grief, Irene},
   year={1975},
-  publisher={Massachusetts Institute of Technology}
+  publisher={Massachusetts Institute of Technology},
+  howpublished = {\url{http://dspace.mit.edu/handle/1721.1/57710}},
+  note={  {MIT:  AI Working Papers (1971 - 1995)}  }  
 }
 
-@article{acot_laws,
+@misc{acot_laws,
   title={Laws for communicating parallel processes},
   author={Baker, Henry and Hewitt, Carl},
   year={1977},
-  publisher={MIT Artificial Intelligence Laboratory}
+  howpublished = {\url{http://dspace.mit.edu/handle/1721.1/41962}},  
+  note={  {MIT:   AI Memos (1959 - 2004)}  }
 }
 
-@article{actor_denotational_semantics,
-  title={Foundations of actor semantics},
-  author={Clinger, William Douglas},
-  year={1981}
-}
+@misc{actor_denotational_semantics,
+ author = {Clinger, William D},
+ title = {{Foundations of Actor Semantics}},
+ year = {1981},
+  note={  {MIT:  AI Technical Reports (1964 - 2004)}  },
+  howpublished = {\url{http://dspace.mit.edu/handle/1721.1/6935}},    
+ institution = {Massachusetts Institute of Technology},
+ address = {Cambridge, MA, USA},
+} 
 
-@article{actor_transition_semantic,
+@misc{actor_transition_semantic,
   title={Actors: a model of concurrent computation in distributed systems},
   author={Agha, Gul Abdulnabi},
+  note={  {MIT: AI Technical Reports (1964 - 2004)}  },
+  howpublished = {\url{http://dspace.mit.edu/handle/1721.1/6952}},      
   year={1985}
 }
 
@@ -189,6 +193,7 @@ programming languages},
  author = {Armstrong, Joe},
  title = {Programming Erlang: Software for a Concurrent World},
  year = {2007},
+ isbn = {193435600X, 9781934356005},
  publisher = {Pragmatic Bookshelf},
 } 
 
@@ -213,7 +218,7 @@ static analysis: A war story},
 
 @ARTICLE{obliq,
     author = {Luca Cardelli},
-    title = {Obliq: A Language with Distributed Scope},
+    title = {{Obliq: A Language with Distributed Scope}},
     journal = {Computing Systems},
     year = {1995},
     volume = {8},
@@ -279,6 +284,15 @@ static analysis: A war story},
  publisher = {Apress},
  address = {Berkely, CA, USA},
 } 
+
+@misc{scala_web_doc,
+author = {EPFL},
+title  = {Scala Online Documentation},
+year ={ 2014 },
+ howpublished ={http://www.scala-lang.org/documentation/},
+note = {Accessed on May 2014}
+}
+
 
 @BOOK{TPL,
   author = {Benjamin C. Pierce},
@@ -717,14 +731,10 @@ howpublished ={http://basho.com/products/riak-overview/}
 }
 
 @book{HePa06,
-    author = {Hennessy, John L. and Patterson, David A.},
-    edition = {4},
-    howpublished = {Paperback},
-    isbn = {0123704901},
-    month = sep,
-    publisher = {Morgan Kaufmann},
-    title = {Computer Architecture: A Quantitative Approach, 4th Edition},
-    year = {2006}
+  title={Computer organization and design: the hardware/software interface},
+  author={Patterson, David A and Hennessy, John L},
+  year={2013},
+  publisher={Newnes}
 }
 
 
@@ -831,9 +841,9 @@ Bon\'{e}r and Phil Trinder",
 
 @Unpublished{atmprivate,
   author = "Francesco Cesarini",
-  title = "Small to medium applications built with {OTP}",
-  note = "private communication",
-  date = "20 Dec 2011",
+  title = {Small to medium applications built with {OTP}},
+  note = {private communication},
+  date = {20 Dec 2011},
   year = {2011}
 }
 
@@ -847,8 +857,8 @@ note={Accessed on 17 Feb 2013}
 }
 
 @Unpublished{OTPCloudHaskell,
-  author =       "Tim Watson and Jeff Epstein and Simon Peyton Jones and Jiansen He",
-  title =        "Supporting Libraries (a la OTP) for Cloud Haskel",
+  author =  {Tim Watson and Jeff Epstein and Simon Peyton Jones and Jiansen He},
+  title =        {{Supporting Libraries (a la OTP) for Cloud Haskel}},
   note =         "private communication",
   year = {2012}
 }
@@ -887,7 +897,7 @@ note={Accessed on Mar 2013}
 }
 
 
-@inbook{JGC, 
+@book{JGC, 
  author = {Naftalin, Maurice and Wadler, Philip},
  title = {{J}ava {G}enerics and {C}ollections},
  year = {2006},
@@ -1015,23 +1025,33 @@ address = {Los Alamitos, CA, USA},
 }
 
 
-@article{reenskaug1979original,
+@misc{reenskaug1979original,
   title={The original {MVC} reports},
   author={Reenskaug, Trygve Mikjel H},
+  howpublished={\url{https://www.duo.uio.no/handle/10852/9621}},
   year={1979}
 }
 
-@article{reenskaug2003model,
-  title={The {M}odel-{V}iew-{C}ontroller ({MVC}): Its {P}ast and {P}resent},
-  author={Reenskaug, Trygve},
-  year={2003}
+@misc{reenskaug2003model,
+  added-at = {2007-12-29T17:26:01.000+0100},
+  author = {Reenskaug, Trygve},
+  biburl = {http://www.bibsonomy.org/bibtex/2e378d81b79c26ab94e7884c5ade98873/juve},
+  booktitle = {The Model-View-Controller(MVC)Its Past and Present},
+  description = {Trygve MVC},
+  interhash = {f8332d44dada48537e6f615efdc6a47d},
+  intrahash = {e378d81b79c26ab94e7884c5ade98873},
+  keywords = {controller history imported mcv model origin view},
+  timestamp = {2007-12-29T17:26:01.000+0100},
+  title = {The Model-View-Controller (MVC) Its Past and Present},
+  url = {http://heim.ifi.uio.no/~trygver/2003/javazone-jaoo/HM1A93.html},
+  year = 2003
 }
 
 @misc{wiki:nqueens,
    author = "Wikipedia",
    title = "Eight queens puzzle",
-   year = "2014",
-   url = 
+   year = {2014},
+   howpublished = 
 "\url{http://en.wikipedia.org/wiki/Eight_queens_puzzle}",
    note = "[Online; accessed 30-March-2014]"
  }
@@ -1039,8 +1059,8 @@ address = {Los Alamitos, CA, USA},
 @misc{wiki:tictactoe,
    author = "Wikipedia",
    title = "Tic-tac-toe",
-   year = "2013",
-   url = 
+   year = {2013},
+   howpublished = 
 "\url{http://en.wikipedia.org/wiki/Tic-tac-toe}",
    note = "[Online; accessed 12-November-2013]"
  }
@@ -1048,8 +1068,8 @@ address = {Los Alamitos, CA, USA},
  @misc{wiki:mandelbrot,
    author = "Wikipedia",
    title = "Mandelbrot set",
-   year = "2013",
-   url = 
+   year = {2013},
+   howpublished = 
 "\url{ http://en.wikipedia.org/wiki/Mandelbrot_set}",
    note = "[Online; accessed 12-November-2013]"
  }
@@ -1057,8 +1077,8 @@ address = {Los Alamitos, CA, USA},
  @misc{wiki:philosophers,
    author = "Wikipedia",
    title = "Dining philosophers problem",
-   year = "2013",
-   url = 
+   year = {2013},
+   howpublished = 
 "\url{http://en.wikipedia.org/wiki/Dining_philosophers_problem}",
    note = "[Online; accessed 12-November-2013]"
  }
@@ -1066,29 +1086,29 @@ address = {Los Alamitos, CA, USA},
   @misc{wiki:barber,
    author = "Wikipedia",
    title = "Sleeping barber problem",
-   year = "2013",
-   url = 
+   year = {2013},
+   howpublished = 
 "\url{http://en.wikipedia.org/wiki/Sleeping_barber_problem}",
    note = "[Online; accessed 12-November-2013]"
  }
  
- 
- @book{allen2009zend,
-  title={Zend Framework in action},
-  author={Allen, Rob and Lo, Nick and Brown, Steven},
-  year={2009}
-}
-
+@book{allen2009zend,
+ author = {Allen, Rob and Lo, Nick and Brown, Steven},
+ title = {Zend Framework in Action},
+ year = {2008},
+ isbn = {1933988320, 9781933988320},
+ publisher = {Manning Publications Co.},
+ address = {Greenwich, CT, USA},
+} 
 
 @misc{apple:objc,
    author = {{Apple Inc.}},
-   title = "Concepts in Objective-C
-Programming",
-   year = "2012",
-   url = 
-"\url{
-https://developer.apple.com/library/ios/documentation/general/conceptual/CocoaEn
-cyclopedia/CocoaEncyclopedia.pdf}",
+   title = {{Concepts in Objective-C
+Programming:Model-View-Controller}},
+   year = {2012},
+   howpublished = 
+{\url{
+https://developer.apple.com/library/mac/documentation/general/conceptual/CocoaEncyclopedia/CocoaEncyclopedia.pdf}},
    note = "[Online; accessed 12-November-2013]"
  }
  
@@ -1109,7 +1129,7 @@ cyclopedia/CocoaEncyclopedia.pdf}",
 author = {Zhang, Yanmin},
 title = {Hackbench},
 howpublished ={http://people.redhat.com/mingo/cfs-scheduler/tools/hackbench.c},
-year = 2008,
+year = {2008},
 note={Accessed on Oct 2013}
 }
 
@@ -1117,7 +1137,7 @@ note={Accessed on Oct 2013}
 author = {{JSON ORG}},
 title = {{Introducing JSON}},
 howpublished ={http://json.org},
-year = 2013,
+year = {2013},
 note={Accessed on Oct 2013}
 }
 
@@ -1125,7 +1145,7 @@ note={Accessed on Oct 2013}
 author = {{Amazon.com, Inc.}},
 title = {{Amazon Elastic Compute Cloud (Amazon EC2)}},
 howpublished ={http://aws.amazon.com/ec2/},
-year = 2013,
+year = {2013},
 note={Accessed on Oct 2013}
 }
 
@@ -1133,7 +1153,7 @@ note={Accessed on Oct 2013}
 author = {{Amazon.com, Inc.}},
 title = {Best Practices in Evaluating Elastic Load Balancing},
 howpublished ={http://aws.amazon.com/articles/1636185810492479},
-year = 2012,
+year = {2012},
 note={Accessed on Oct 2013}
 }
 
@@ -1141,7 +1161,7 @@ note={Accessed on Oct 2013}
 author = {{Amazon.com, Inc.}},
 title = {{Elastic Load Balancing}},
 howpublished ={http://aws.amazon.com/elasticloadbalancing/},
-year = 2013,
+year = {2013},
 note={Accessed on Oct 2013}
 }
 
@@ -1152,7 +1172,7 @@ note={Accessed on Oct 2013}
 author = {Jiansen HE},
 title = {FreeBench},
 howpublished ={https://github.com/Jiansen/FreeBench},
-year = 2013,
+year = {2013},
 note={Accessed on Oct 2013}
 }
 
@@ -1172,6 +1192,7 @@ Information Technology, Australian National University}
     author = { {WorldWide Conferencing, LLC} },
     title = {Lift},
     year = {2013},
+  note = {Accessed on May 2013},    
      howpublished ={\url{http://liftweb.net/}}
 }
 
@@ -1179,6 +1200,7 @@ Information Technology, Australian National University}
   author = "{Typelevel {ORG}}",
   title = {scalaz: {F}unctional programming for {S}cala},
   year = {2013},
+  note = {Accessed on May 2013},  
  howpublished ={\url{http://typelevel.org/projects/scalaz/}}
 }
 
@@ -1238,9 +1260,10 @@ International Symposium on},
   intrahash = {3bb13628af9222319ca70601d8416903},
   keywords = {mvc seusseminar smalltalk},
   timestamp = {2012-11-16T18:43:15.000+0100},
-  title = {Applications Programming in Smalltalk-80(TM): How to use Model-View-Controller (MVC)},
-  url = {http://st-www.cs.uiuc.edu/users/smarch/st-docs/mvc.html},
-  year = 1987
+  title = {{Applications Programming in Smalltalk-80(TM): How to use Model-View-Controller (MVC)}},
+  howpublished = {\url{http://st-www.cs.uiuc.edu/users/smarch/st-docs/mvc.html}},
+  note = {Accessed on May 2013},
+  year = {1987}
 }
 
 
@@ -1256,15 +1279,15 @@ International Symposium on},
   title = {{TA}kka},
   howpublished = {\url{https://github.com/Jiansen/TAkka}},
   author={HE, Jiansen},
-  year = 2014
-  note = {Accessed on May 2014}
+  year = {2014},
+
 }
 
 @misc{takka_play,
   title = {{TA}kka {P}lay},
   howpublished = {\url{https://github.com/Jiansen/TAkka-Play}},
   author={HE, Jiansen},
-  year = 2014
+  year = {2014},
   note = {Accessed on May 2014}
 }
 
@@ -1278,3 +1301,20 @@ publisher = {ACM Digital Library},
 address = {UPPSALA, SWEDEN}
 }
 
+@inproceedings{endrikat2014api,
+ author = {Endrikat, Stefan and Hanenberg, Stefan and Robbes, Romain and Stefik, Andreas},
+ title = {How Do API Documentation and Static Typing Affect API Usability?},
+ booktitle = {Proceedings of the 36th International Conference on Software Engineering},
+ series = {ICSE 2014},
+ year = {2014},
+ isbn = {978-1-4503-2756-5},
+ location = {Hyderabad, India},
+ pages = {632--642},
+ numpages = {11},
+ url = {http://doi.acm.org/10.1145/2568225.2568299},
+ doi = {10.1145/2568225.2568299},
+ acmid = {2568299},
+ publisher = {ACM},
+ address = {New York, NY, USA},
+ keywords = {API Usability, Documentation, Static Type Systems},
+} 

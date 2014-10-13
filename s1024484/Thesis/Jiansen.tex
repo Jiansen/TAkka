@@ -1,19 +1,13 @@
 \documentclass[mphil, 12 pt]{csthesis}
 
-
-% \usepackage{CJKutf8}
-
 \usepackage{comment}
 
-%% \usepackage[style=alphabetic]{biblatex}
 \usepackage[square]{natbib}
-%% \PassOptionsToPackage{authoryear}{natbib}
 \usepackage{caption}
 \usepackage{graphicx}
-%\usepackage{subfigure}
 \usepackage{changepage}
 \usepackage{url}
-\usepackage{subfig}
+\usepackage{subcaption}
 
 \usepackage{paralist}
 \usepackage[pdfpagelabels]{hyperref}
@@ -114,8 +108,12 @@ during my hard times.  Meeting my wife and getting married are the best
 two things happened to me in the past 4 years.
 
 I want to thank my supervisors, Philip Wadler, Philip Trinder and Don Sannella,
-for their guidance over four years.  I am fortunate to have been supervised
-by them.
+for their guidance over 4 years.  I am fortunate to have been supervised
+by them.  
+
+I want to thank my examiners, Ian Stark and Kevin Hammond, for their 
+meticulous examination and detailed suggestions that contribute to the final version
+of this thesis.
 
 I gratefully acknowledge the substantial help that have received from many 
 colleagues who have shared their related results and ideas over the long period 
@@ -131,6 +129,7 @@ in their commercial training courses.
 
 %}
 
+\pagenumbering{roman}
 \setcounter{tocdepth}{1}
 \standarddeclaration
 \oneandahalfspace
@@ -142,23 +141,43 @@ in their commercial training courses.
 
 The robustness of actor-based concurrent applications can be improved upon by 
 (i) employing failure recovery mechanisms such as the supervision principle, or 
-(ii) using typed messages to prevent ill-typed communication. This thesis 
-introduces TAkka, a typed Akka library that supports both the supervision 
-principle and typed messages. The TAkka library mixes static and dynamic type 
+(ii) using typed messages to prevent ill-typed communication. 
+This thesis explores to what extent the supervision principle can work with 
+typed messages.  This thesis evaluates the hypothesis by building a new library called TAkka
+in the Scala language on top of the existing Akka library, where Akka provides
+supervised actors and TAkka adds typed messaging.  
+The TAkka library mixes static and dynamic type 
 checking to make sure that dynamically typed distributed resources and 
 statically typed local resources have consistent types. Our notion of typed 
 actor can publish itself as different types when used by different parties so 
 that messages of unexpected types are prevented at the senders' side. In TAkka, 
 messages for supervision purposes are treated in a special way so that a 
-supervisor can interact with child actors of different types. Results show that 
+supervisor can interact with child actors of different types. 
+This thesis evaluates the TAkka library by porting 23 small and medium sized 
+Akka applications to their TAkka equivalents.  Results show that 
 Akka programs can be gradually upgraded to TAkka equivalents with minimal 
 runtime and code size overheads. Finally, TAkka includes two auxiliary 
-libraries for reliability assessment.
+libraries for reliability assessment.  This thesis confirms that the supervision principle
+and typed messages can be merged in an actor library for building real world applications.
+
 
 \end{abstract}
 
-% \end{comment}
+\thispagestyle{empty}
+\section*{Lay Summary}
 
+A ``programmer'' specifies a task for a computer to perform by encoding a sequence of instructions known as a ``program'' or an ``application''.  Many modern computer application  involve programs concurrently executed on one or more computers.  Writing a reliable concurrent computer application is challenging to programmers due to its complexity.  In practice, two methods can help the robustness of a program.  The first method is to use type checking.  Types specify how data should be used in programs.  Type checking examines if data is used in the right manner in a program.  Static type checking reports errors before a program is executed whereas dynamic type checking reports errors when it is executed.  Engineering experience shows that errors are easier to be fixed if they were noticed earlier.   The other method is to use a library, a collection of programs written and tested by other programmers for common programming tasks.  Typically, a library encourages writing programs in certain manners.  This thesis interests in a library called ``Akka'' which encourages ``actor programming'' and ``supervision principle''.  In actor programming, concurrent programs are coded as actors, which independently perform their own tasks and collaborate by sending messages to each other.  The ``supervision principle'' requires that actors should be organised in a tree structure so that the failure of an actor can be recovered by its supervisor.  Unfortunately, the Akka library does not check the type of messages sending to actors, resulting in potential errors otherwise can be avoided.
+
+This thesis presents the result of improving the Akka library by building a TAkka library built on top of the former.  The TAkka library employs static type checking whenever applicable. and use dynamic type checking when static checking meets its limitation.  It confirms that static type checking and the supervision principle works well together.  Apart from the robustness gained from the supervision principle, static type checking result in additional benefits.   Firstly, format of messages sent between distributed machines are checked at the earliest possibility.  Secondly, typed programs are usually better structured, shorter and easier to maintain.  Thirdly, a statically typed program can often be compiled to code that executes
+more quickly.
+
+This thesis evaluates the TAkka library by porting 23 small and medium sized Akka applications to their TAkka equivalents. Results show that Akka programs can be gradually written to TAkka equivalents with minimal runtime and code size overheads. Finally, TAkka includes two auxiliary libraries for reliability assessment.
+
+
+
+% \end{comment}
+\pagenumbering{arabic}
+\setcounter{page}{0}
  \input{Introduction}
 %\input{SupervisionModel}
  \input{MPhilBackground}
@@ -172,16 +191,12 @@ libraries for reliability assessment.
 % \input{RejuvenationModel}
 
 
+\appendix
+ \input{api}
+\include{scala_join_manual}
 
 \bibliographystyle{apalike}
 \bibliography{Jiansen}
-
-% \appendix
-%  \input{appendix_correct}
-% \addcontentsline{toc}{chapter}{APPENDICES}
-
-% \input{artefacts}
- 
 
 
 

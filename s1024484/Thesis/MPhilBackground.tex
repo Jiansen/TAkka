@@ -1,16 +1,16 @@
 \chapter{Background and Related Work}
 \label{background}
 
-This Chapter summarises work that influences the design and implementation of 
+This chapter summarises work that influences the design and implementation of 
 the TAkka library.  It begins with a general introduction on the 
 Actor programming model (Section~\ref{actor_general}) and the Supervision principle
 (Section~\ref{supervision_principle}), then explains OTP design 
 principles in Erlang (Section~\ref{erlang_otp}), followed by a short tutorial on how to use the Actor 
 programming model and the Supervision principle in the Akka library (Section~\ref{akka_lib}).  The 
 Chapter concludes with a summary of features of the Scala type system used in the TAkka 
-implementation (Section~\ref{type_checking}).  The Actor model makes concurrent programming easy.  The 
+implementation (Section~\ref{scala_essence}).  The Actor model makes concurrent programming easy.  The 
 Supervision principle makes applications robust.  The Supervision principle is 
-introduced in the Erlang language.  It becomes obligatory in the Akka library, 
+introduced in the Erlang language.  It is obligatory in the Akka library, 
 which is implemented in the Scala language.  Scala has a sophisticated type 
 system, which enabled the experimental building of the more powerful and 
 easier-to-use library, TAkka.
@@ -19,14 +19,14 @@ easier-to-use library, TAkka.
 \section{The Actor Programming Model}
 \label{actor_general}
 
-The Actor Programming Model is first proposed by \citet{Hewitt:1973} for the 
+The Actor Programming Model was first proposed by \citet{Hewitt:1973} for the 
 purpose of constructing concurrent systems.  In the model, a concurrent system
 consists of actors which are primitive computational components. Actors 
 communicate with each other by sending messages.  Each actor independently 
 reacts to messages it receives.
 
 The Actor model given in \citep{Hewitt:1973} does not specify its formal 
-semantics and hence does not suggest implementation strategies neither.  An 
+semantics and hence does not suggest implementation strategies either.  An 
 operational semantics of the Actor model is developed by 
 \citet{actor_operational_semantics}.  \citet{acot_laws} later define a set of 
 axiomatic laws for Actor systems.  Other semantics of the Actor model include 
@@ -50,8 +50,8 @@ actor_2} for Scala, Akka \citep{akka_doc} for Java and Scala, and CloudHaskell
 
 The core idea of the supervision principle is that actors should 
 be monitored and restarted when necessary by their supervisors in order to 
-improve the availability of a software system.  The supervision principle is 
-first proposed in the Erlang/OTP library \citep{OTP} and is adopted by the Akka 
+improve the availability of a software system.  The supervision principle was 
+first proposed in the Erlang/OTP library \citep{OTP} and was adopted by the Akka 
 library \citep{akka_doc}.
 
 A supervision tree in Erlang consists of two types of actors: workers and 
@@ -83,9 +83,10 @@ Erlang developers summarised five design principles shipped with the Erlang/OTP
 library, which stands for Erlang Open Telecom Platform \citep{erlang_history, 
 OTP}.
 
-Erlang, collaborates with other languages, and provides fault-tolerant support 
-for enterprise-level distributed real-time applications. One of the early OTP 
-applications, Ericsson’s AXD 301 switch, is reported to have achieved nine 9s 
+Erlang provides fault-tolerant support for many enterprise-level distributed real-time
+applications, which often contain components implemented using other languages.
+One of the early OTP 
+applications, Ericsson's AXD 301 switch, is reported to have achieved nine 9s 
 availability, that is, 99.9999999\% of uptime, during its nine-month experiment 
 \citep{ArmstrongAXD}.  Up to the present day, Erlang has been widely used in 
 database systems (e.g. Mnesia, Riak, and Amazon SimpleDB) and messaging 
@@ -131,7 +132,10 @@ paradigm.
 
 A software system on the OTP platform is made up of a group of components 
 called applications.  To define an application, users implement two callback 
-functions of the {\tt application} behaviour: {\tt start/2} and {\tt stop/1}.  
+functions of the {\tt application} behaviour: {\tt start/2} and {\tt stop/1}.
+In Erlang API, the signature of a function contains its name and the number
+of arguments it takes.  Because Erlang is dynamically typed, users of an Erlang
+library need to study the type of each function from respected documentation.
 Applications without any processes are called library applications.  
 In an Erlang runtime system, all operations on applications are managed by the 
 $\it{application\ controller}$ process, registered as {\tt application\_controller}.
@@ -173,7 +177,7 @@ design principles and common practices in Java and Scala programming.
   Behaviour & defining an abstract class, an interface, or a trait. \\
 \hline
   Application  & defining an abstract class that has two abstract methods: start 
-and stop \\
+and stop, or using Java/Scala an equivalent class such as {\tt Thread}. \\
 \hline
   Release  & packaging related application classes  \\ 
 \hline
@@ -868,14 +872,16 @@ library which implements the supervision principle.
 
 \section{The Akka Library}
 \label{akka_lib}
-Akka is the first library that makes supervision obligatory. The API of the 
+
+Akka is a Scala library that enforces the supervision principle.  The next section briefly
+introduces Scala features that used in this thesis.  The API of the 
 Akka library \citep{akka_api, akka_doc} is similar to the Scala 
 Actor library \citep{actor_1, actor_2}, which borrows syntax from the Erlang 
 languages \citep{ArmstrongErlang, ErlangManual}.  Both Akka and Scala Actor are 
 built in Scala, a typed language that merges features from Object-Oriented 
 Programming and Functional Programming.  This section gives a brief tutorial 
 on Akka, based on related materials in the Akka Documentation 
-\citep{akka_doc}.
+\citep{akka_doc}.  The Akka API used in this thesis is listed in Figure A.1, Appendix A.
 
 
 \subsection{Actor Programming in Akka}
@@ -1038,7 +1044,7 @@ states. Firstly, those variables will be reset each time when the actor is
 restarted, either due to a failure caused by itself or be enforced by its 
 supervisor for other reasons.  Secondly, mutable internal variables result in 
 the difficulty of implementing a consistent cluster environment where actors may 
-be replicated to increase reliability \citep{Kuhn12}.  The alternatives of 
+be replicated to increase reliability \citep{Kuhn12}.  Alternatives to 
 working with mutable states will be discussed in Section 
 \ref{alternative_designs}.
 
@@ -1054,7 +1060,7 @@ implementation of those four functions take no action when they are
 invoked.
 
 Upon close inspection, it can be seen that the {\tt receive} function of the 
-{\tt StringCounter} actor in Figure~\ref{fig:akka_string_counter}, it actually 
+{\tt StringCounter} actor in Figure~\ref{fig:akka_string_counter} actually 
 has type {\tt Function[String, Unit]} rather than the declared type {\tt 
 PartialFunction[Any, Unit]}.  The definition  of {\tt StringCounter} is 
 accepted by the Scala because {\tt PartialFunction} does not check the 
@@ -1206,7 +1212,6 @@ allocated for each actor by appending an actor name, which shall not conflict
 with its siblings, to the address of its parent.   Examples of Akka addresses 
 are:
 
-\newpage
 \begin{lstlisting}[language=scala]
   "akka://mysystem/user/service/worker"                                //local
   "akka.tcp://mysystem:example.com:1234/user/service/worker"   //remote
@@ -1244,7 +1249,7 @@ ActorRef}.
 \subsubsection{Actor Context}
 \label{akka_actor_context}
 
-The {\tt ActorContext} class has been mention a few times in previous 
+The {\tt ActorContext} class has been mentioned a few times in previous 
 sections.  This section explains what the contextual information of an Akka 
 actor includes, with a reference to the following API cited from 
 \citep{akka_api}.
@@ -1325,9 +1330,9 @@ redundant in Akka.  For all examples studied in this thesis, there is no client
 application that requires any of those three methods.
 
 Finally, actor context manages two behaviours of the actor it represents.  The 
-first behaviour specified by the actor context is the timeout within which a 
-new message shall be received or a {\tt  ReceiveTimeout} message is sent to the 
-actor.  The second behaviour managed by the actor context is the handler for 
+first behaviour, {\tt setReceiveTimeout}, specifies the timeout within which a 
+new message shall be received; otherwise a {\tt  ReceiveTimeout} message is sent to the 
+actor.  The second behaviour, {\it receive}, is the handler for 
 incoming messages.  The next subsection explains how to upgrade the message 
 handler of an actor using the {\tt become} and {\tt unbecome} method.
 
@@ -1412,7 +1417,7 @@ receives a {\tt Downgrade} command.
 %consider the potential {\it division by zero} problem, an error that can be 
 %tolerated if the actor is properly supervised.
 
-\newpage
+% \newpage
 
 \subsection{Supervision in Akka}
 \label{akka_supervision}
@@ -1458,9 +1463,9 @@ class MyActor extends Actor {
 
 The Akka library implements two supervisor strategies: {\tt OneForOne} and 
 {\tt AllForOne}.  The {\tt OneForOne} supervisor strategy corresponds to the
-{\tt one\_for\_one} supervision strategy in OTP, which restart a child when it 
+{\tt one\_for\_one} supervision strategy in OTP, which restarts a child when it 
 fails.  The {\tt AllForOne} supervisor strategy corresponds to the {\tt 
-one\_for\_all} supervision strategy in OTP, which restart all children when 
+one\_for\_all} supervision strategy in OTP, which restarts all children when 
 any of them fails.  The {\tt rest\_for\_all} supervision strategy in OTP is not
 implemented in Akka because Akka actor does not specify the order of children.  
 Simulating the {\tt rest\_for\_all} strategy in Akka 
@@ -1475,7 +1480,7 @@ package akka.actor
 abstract class SupervisorStrategy
 case class OneForOne(restart:Int, time:Duration)(decider: Throwable => 
   Directive) extends SupervisorStrategy
-case class OneForAll(restart:Int, time:Duration)(decider: Throwable => 
+case class AllForOne(restart:Int, time:Duration)(decider: Throwable => 
   Directive) extends SupervisorStrategy
 
 sealed trait Directive extends AnyRef
@@ -1592,22 +1597,47 @@ reported to its supervisor, the system guardian actor in this example.
 The terminal output shows that the simple calculator is restarted before the 
 third and fifth message are delivered. The last message is not processed since
 both calculators are terminated because the simple calculator fails more 
-frequently than allowed.  A more robust application should reacts failures
+frequently than allowed.  A more robust application should react to failures
 of all user created actors.  However, an Akka guardian actor keeps silent
 when its child fails.
 
 
 % \newpage
 
-\section{The Scala Type System}
-\label{type_checking}
+\section{Essential Scala Features}
+\label{scala_essence}
 
 One of the key design principles of the TAkka library, described in 
-subsequent Chapters, is using type checking to detect some errors at the 
+subsequent chapters, is using static type checking to detect some errors at the 
 earliest opportunity.  Since both TAkka and Akka are built using the Scala 
 programming language \citep{scala_lan, scala_specification}, this section 
-summarises key features of the Scala type system that benefit implementation 
+summarises key features of the Scala language that benefit implementation 
 of the TAkka library.  
+
+\subsection{The Scala Language}
+The Scala programming language merges features of functional programming
+and object-oriented programming.  A Scala program is compiled to Java bytecode
+and runs on a Java virtual machine (JVM).  The syntax of the Scala language is
+similar to Java.  The Scala website \citep{scala_web_doc} gives Scala tutorials for 
+programmers from different background.  This section briefly lists some general
+features of the Scala language compared with Java.  Later sections will describe
+the Scala type system which is important to the implementation of the TAkka library,
+the key result of this thesis.
+
+Scala uses a statically typed system.  In Scala, all types inherit from a top-level class {\tt Any}.
+In the extreme case where all values are declared and used as type {\tt Any}, a program is
+the same as its dynamically typed equivalent.  The above property gives programmers an
+advantage of working in a gradual typing system where a program can be dynamically typed
+in earlier versions and be migrated to a more statically typed version later.  Additionally,
+Scala has a sophisticated type inference support on local variables, which often results in
+clean code.
+ 
+Scala supports many syntactical sugars and functional features such as currying, pattern matching, partial functions
+and lazy evaluation.  Syntactical sugars makes Scala a good language for certain style of domain-specific languages.  
+The support for functional programming gives programmers the flexibility of writing programs in
+a style that takes the advantages of both functional and object-oriented style.  
+
+
 
 
 \subsection{Parameterized Types}
@@ -1685,11 +1715,12 @@ To demonstrate how to use Scala parameterized types to do generic programming,
 Figure~\ref{scala_generic_example} gives a simple stack library and an 
 associated client application adapted from
 \citep[Example 5-2]{JGC}. The example defines an abstract data type {\tt Stack}, an 
-implementation class {\tt ArrayStack}, a utility method {\tt reverse}, and 
+implementation class {\tt ListStack}, a utility method {\tt reverse}, and 
 client application {\tt Client}.
 
-In the example, {\tt Stack} is defined as a {\it trait}.  Different from a
-Java {\it Interface}, a {\it trait} can contain method implementation.  
+In the example, {\tt Stack} is defined as a {\it trait}.  A Scala {\it trait} supports
+inheritance. Different from a
+Java {\it Interface}, a {\it trait} can contain one or more method implementations.  
 Compared with an abstract class, a {\it trait} supports multiple inheritance.  The 
 {\tt Stack} trait defines the signature of three methods: {\tt empty}, {\tt 
 push}, and {\tt pop}.  The {\tt empty} method defined in the {\tt 
@@ -1800,7 +1831,7 @@ trait Stack[E] {
   \end{lstlisting}
   
   \begin{lstlisting}[language=scala, escapechar=?]
-class ArrayStack[E] extends Stack[E]{
+class ListStack[E] extends Stack[E]{
   private var list:List[E] = Nil  
   def empty():Boolean = {
     return list.size == 0
@@ -1822,7 +1853,7 @@ class ArrayStack[E] extends Stack[E]{
   \begin{lstlisting}[language=scala]
 object Stacks {
   def reverse[T](in:Stack[T]):Stack[T] = {
-    val out = new ArrayStack[T]
+    val out = new ListStack[T]
     while(!in.empty){
       val elt = in.pop
       out.push(elt)
@@ -1834,7 +1865,7 @@ object Stacks {
 
   \begin{lstlisting}[language=scala, escapechar=?]
 object Client extends App {
-  val stack:Stack[Integer] = new ArrayStack[Integer]  
+  val stack:Stack[Integer] = new ListStack[Integer]  
   var i = 0
   for(i <- 0 until 4) stack.push(?\textcolor{blue}{ new Integer(i)}?)
   assert(stack.toString().equals("stack(3, 2, 1, 0)"))
@@ -1893,7 +1924,7 @@ used consistently according to a set of rules given in \citep[Section
 4.5]{scala_specification}.  As a programmer, the author of this thesis 
 finds that it is easier to uses variant types according to a variant of the 
 {\it Get and Put Principle}.
-\newpage
+
 
 The {\it Get and Put Principle} for Java Generic Collections \citep[Section 
 2.4]{JGC} read as the follows:
@@ -1947,11 +1978,11 @@ trait Stack[?{\textcolor{blue}{+E}}?] {
 
   \begin{lstlisting}[language=scala, escapechar=?]
 import scala.collection.immutable.List
-class ArrayStack[E]?\textcolor{blue}{(protected val list:List[E])}? extends Stack[E]{  
+class ListStack[E]?\textcolor{blue}{(protected val list:List[E])}? extends Stack[E]{  
   def empty():Boolean = {    return list.size == 0  }
-  def push[?\textcolor{blue}{ T $>$:E}?](elt: ?\textcolor{blue}{ T}?): ?\textcolor{blue}{ Stack[T]}? = {  new ArrayStack(elt :: list)  }
+  def push[?\textcolor{blue}{ T $>$:E}?](elt: ?\textcolor{blue}{ T}?): ?\textcolor{blue}{ Stack[T]}? = {  new ListStack(elt :: list)  }
   def pop():?\textcolor{blue}{ (E, Stack[E])}? = {
-    if (!empty) (list.head, new ArrayStack(list.tail))
+    if (!empty) (list.head, new ListStack(list.tail))
     else throw new NoSuchElementException("pop of empty stack")
   }
   override def toString():String={return "stack"+list.toString.drop(4)}
@@ -1962,7 +1993,7 @@ class ArrayStack[E]?\textcolor{blue}{(protected val list:List[E])}? extends Stac
 object Stacks {
   def reverse[T](in:Stack[T]):Stack[T] = {
     var temp = in
-    var out:Stack[T] = new ArrayStack[T](Nil)
+    var out:Stack[T] = new ListStack[T](Nil)
     while(!temp.empty){
       val eltStack = temp.pop
       temp = eltStack._2
@@ -1975,7 +2006,7 @@ object Stacks {
 
   \begin{lstlisting}[language=scala, escapechar=?]
 object Client extends App {
-  var stack:Stack[Integer] = new ArrayStack[Integer](Nil)  
+  var stack:Stack[Integer] = new ListStack[Integer](Nil)  
   var i = 0
   for(i <- 0 until 4) { stack = stack.push(i) }
   assert(stack.toString().equals("stack(3, 2, 1, 0)"))
@@ -2034,7 +2065,7 @@ examples, the new stack is {\it immutable} in the sense that its {\tt push} and
 \end{comment}
 
 
-\newpage 
+%\newpage 
 
 \subsection{Scala Type Descriptors}
 
@@ -2043,6 +2074,16 @@ To record type information that is required at runtime, users can ask Scala to
 keep the type information by using the {\tt Manifest} class.  
 A {\tt Manifest[T]} encapsulates the runtime type representation 
 of some type {\tt T}.  It provides methods for subtype test ($<:<$).
+
+Figure~\ref{scala_manifest_example} gives some examples of using
+{\tt Manifest}.  The example shows that a {\tt Manifest} value (line~9)
+records the value of a type parameter where as a {\tt Class} (line~10) does not.
+To define a method that obtains type information of a generic type, 
+the {\tt typeName} defined at line~13 asks the Scala runtime to provide
+a value of {\tt Manifest}.  To simplify the API, Scala further provides a syntactic 
+sugar called context bounds. We define an equivalent method {\tt boundTypeName}
+using context bounds at Line 18.
+
 
 \begin{comment}
 \begin{figure}[p]
@@ -2214,8 +2255,14 @@ message patterns, which is provided by the {\tt Function} class, might be
 useful in practice.
 \end{comment}
 
-% \section{Other Related Work}
+\newpage
+\section{Other Related Work}
 
+This section summarizes other related work that inspires this research although not directly influence the final result.  Section \ref{sec:join} introduces the Join-Calculus, a computation model where a computation component can have different channels for different messages. 
+Appendix \ref{app_lib} presents the Scala Join library implemented by the author as an exercise to understand distributed channel-based communication.  Section \ref{sec:ambient} introduces the Ambient Calculus, an early computation model where code can executed on and migrates between distributed computational components.
+
+\input{join}
+\input{ambient}
 % \subsection{Type-parameterized Actor libraries}
 
 

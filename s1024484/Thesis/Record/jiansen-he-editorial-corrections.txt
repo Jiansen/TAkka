@@ -1,0 +1,339 @@
+> Abstract
+> 
+> Rewrite the abstract to properly reflect the content of the thesis.   In
+> particular, make it clear what is the hypothesis being tested in this work.
+> 
+> Indicate how this hypothesis was evaluated, and whether or not the research
+> confirmed or refuted it.
+> 
+Done.  The introduction chapter is also updated to make
+contributions and benefits clear.
+
+> 
+> Chapter 1
+> 
+> p.3 "...and verified by our libraries..."  What kind of verification?
+> 
+“verified” -> “validated”
+
+> p.4 "... are expanded from a companion paper..." not "expanded for".
+> 
+Done. So as for Chapter 3, 4 and 5.
+
+> Make it clear that the target of the thesis is Scala, not Erlang.
+> 
+> How widely used is Akka?  Give some evidence, if possible quantitative.
+> 
+Done. Also added a paragraph on why building the library on top of Akka.
+
+> 
+> Chapter 2
+> 
+> Add a section on Scala as part of the background material.
+>
+Done. 
+
+“2.5 The Scala Type System” -> “2.5 Essential Scala Features”
+— add a section (2.5.1) that summarise the Scala language and give a reference to learning materials.
+
+ 
+> p.5 "The Actor Programming Model is first proposed..." should be "was first
+> proposed".  This also applies later in §2.2 for "..is first proposed" and
+> "..is adopted", both of which should use "was".
+> 
+Done.
+
+> p.5 "...implementation strategies neither." should use "...either".
+> 
+Done.
+
+> p.7 "Erlang, collaborates with other languages, and ..."  What does that mean?
+> How does it collaborate?
+> 
+
+“Erlang, collaborates with other languages, and provides fault-tolerant support 
+for enterprise-level distributed real-time applications.”
+->
+Erlang provides fault-tolerant support for many enterprise-level distributed real-time
+applications, which often contain components implemented using other languages.
+
+> p.8 Explain the integers in start/2 and stop/1.  Although this is standard
+> Erlang, and common in Prolog, I don't think it isn't widely used outside those
+> languages.
+> 
+Added the followings:
+
+… start/2 … stop/1. In Erlang API, the signature of a function contains its name and the number of arguments it takes.  Because Erlang is dynamically typed, users of an Erlang
+library need to study the type of each function from respected documentation.
+Applications without any processes …
+
+> Table 2.1 Under "Application" you could mention the Thread class as a
+> Java/Scala analogue.
+> 
+
+Done.
+
+> p.9 "Akka is the first library that makes supervision obligatory".  Do you
+> have evidence for this?  Do you mean the first in Scala?  The first in any
+> language?  I don't think that's such a big deal, actually; it's enough to say
+> that "Akka is an actor library that enforces the supervision principle".
+> 
+Done.  
+
+> p.13 "The alternatives of working with mutable states..." should be
+> "alternatives to".
+> 
+Done.
+
+> p.13 "...actor in Fig. 2.1 it actually has..." should be "...actor in Fig. 2.1
+> actually has..."
+> 
+Done.
+
+> p.16 "...has been mention..." should be "...has been mentioned..."
+> 
+Done.
+
+> p.18 What is the role of the ReceiveTimeout?  Does it tell us how often the
+> actor should expect to receive messages, or how often we should hear from it?
+> 
+Done. Updated the last paragraph of §2.4.1.6
+
+Finally, actor context manages two behaviours of the actor it represents. The first behaviour, setReceiveTimeout, specifies the timeout within which a new message shall be received; otherwise a ReceiveTimeout message is sent to the actor. The second behaviour, receive, is the handler for incoming messages. The next subsection explains how to upgrade the message handler of an actor using the become and unbecome method.
+
+> p.20 Both occurrences of "restart" should be "restarts".
+> 
+Done.
+
+> p.21 Fig 2.7 has "OneForAll" not "AllForOne".  Which is the correct strategy
+> name?  See also Fig 3.13 on p.52.
+> 
+Done.
+“AllForOne" is correct.  Fig 2.7 and Fig 3.13 are updated.
+
+> p.23 using type checking => using static type checking?  
+> 
+Done.
+
+> p.23 trait can contain method implementation => trait can contain one or more
+> method implementations.  This might be a good point to define what is a Scala
+> trait.
+> 
+Done.
+
+> p.23 "...should reacts failures of all user created actors." => "...should
+> react to failures of all user-created actors."
+> 
+Done.
+
+> p.23 §2.5.1.1 Generic Programming.  This promises an ArrayStack, but actually
+> gives us a ListStack.  The variance example in Fig.2.10 calls it ArrayStack,
+> but uses a list. Be consistent and correct.
+> 
+Done. All occurrences are changed to ListStack 
+
+> Chapter 3
+> 
+> Diagrams needed to explain how distributed name servers work.
+> 
+Done. 
+Added Figure 3.13 to show how to use name servers to fetch distributed actor references.
+
+Figure 3.13 is referred at Section 3.8 paragraph 2
+“… Figure 3.12 presents the code of the actorFor function which fetches typed actor references. The process is summarised in Figure 3.13.”
+
+
+> p.30 Start with "The last chapter..." not "Last Chapter..."  Also, there is no
+> need to capitalise Chapter unless it is accompanied by a number.  So "In
+> Chapter 4 we shall see..." but "The last chapter examined...".
+Done.
+
+> 
+> Pattern completeness is a clear additional advantage, somehow complementary to
+> type safety.  You could make more of that as a TAkka feature in the evaluation
+> and elsewhere.
+> 
+Done.
+
+In page 3, the first benefit:  
+“… Another immediate benefits of typing checking is pattern completeness checking for message handlers.”
+
+In §3.2 Type-parameterized Actor
+
+“Notice that the type of typedReceive is Function[M, Unit], whereas the type of receive in the Akka Actor class is PartialFunction[Any, Unit]. An advantage of using Function is that the compiler can check the completeness of the domain patterns. In Akka, completeness checking is not considered because an Akka actor may receive messages of any type. In contrast, a TAkka actor only expects messages of a certain type. Therefore, pattern completeness checking is a helpful feature for TAkka users.”
+
+> p.34 "...in Akka API" => "...in the Akka API"
+> 
+Done.
+
+> Mention that Actor[M] is not contravariant in M as might be expected; and
+> explain briefly why it is not.
+> 
+Done.
+
+In Section 3.2, first paragraph, added
+
+“The type constructor Actor is invariant because the same type parameter is used for ActorContext, which is invariant as will be explained in Section 3.5.”
+
+In Section 3.5, at the end of the second paragraph where API is explained, added
+
+“Notice that the type parameter M is used in a covariant position in the become 
+method and in a contravariant position is the Props type and the ActorRef type. 
+To be valid in all cases, ActorContext is a invariant type constructor.”
+
+> p.37 Perhaps give a short example of publishAs?
+Done. 
+
+Figure 3.4 line 26 (page 46) uses publishAs.  
+
+Added the following text to the last paragraph of §3.3
+
+“… For example, line 26 in Figure~\ref{takka_actor_reference_example}
+uses the publishAs method to explicitly cast an actor reference of type
+ActorRef[Operation] to its supertype ActorRef[Multiplication] ….”
+
+> p.38 "By using API in..." => "By using the API in..."
+> 
+Done.
+
+> p.40 "Takka removes API that enquire the..." => "Takka removes the API call
+> that returns the..."
+> 
+Done.
+
+> p.47 Do you use structural equivalence on types?
+> 
+No.  To make this point clear, added the followings at the end of Section 3.7.1
+
+“In Scala, types of different fully qualified names are considered different.
+Hence, the value of a type descriptor only records its fully qualified name
+rather than the structure of a type.”
+
+
+> p.52 "Figure 3.13 gives API of..." => "Figure 3.13 gives the API for..."
+> 
+Done.
+
+> p.55 "TAkka users may want to use those two messages for reliability test as
+> well." => "Akka users may also want to those two messages for reliability
+> testing."
+> 
+Done.
+
+> p.64 "In the Akka library, there is a special class called TypedActor,
+> which contains can be supervised by an actor."  Rewrite --- I don't understand
+> this sentence at all.
+> 
+Done.  Rewritten as
+
+“In the Akka library, there is a special class called TypedActor. 
+Although an instance of TypedActor can be supervised by a standard 
+actor, it is essentially a different framework as a service of 
+TypedActor class is invoked by a method invocation instead of 
+sending a message.”
+
+> 
+> Chapter 5
+> 
+> p.70 "...has syntactical advantages to avoid type pollution problem." =>
+> "...has advantages in avoiding the type pollution problem."
+> 
+Done.
+
+> p.71 "The TAkka solution is publishing a component as of different types to
+> different parties" => "The TAkka solution is to publish a component at
+> different types to different parties."
+> 
+Done.
+
+> p.71 "shall be" => "must be"
+> 
+Done.
+
+> p.71 "One key design principle of MVC is that the model and the view never
+> communicate with each other directly."  Do you have a citation for this?  
+> 
+> Reenskaug in "Models - Views - Controllers", a Xerox PARC technical
+> note from 1979, http://heim.ifi.uio.no/~trygver/1979/mvc-2/1979-12-MVC.pdf,
+> says
+> 
+>   A view is attached to its model (or model part) and gets the data necessary
+>   for the presentation from the model by asking questions. It may also update
+>   the model by sending appropriate messages.
+> 
+> For Reenskaug, then, a model and view certainly do communicate.  If you want
+> to have a situation where they don't, then you will need a different citation.
+> 
+
+There are variants of the MVC model.
+https://developer.apple.com/library/mac/documentation/general/conceptual/devpedia-cocoacore/MVC.html
+
+Rewrite Section 3.10.1.2 The MVC pattern as the followings
+
+“… In an application built using MVC, a controller coordinates a model and a view, for example, sending instructions and reacting to messages from the model and the view. Consequently, the controller has two distinct sets of interface: one to work with the model, the other to work with the view.”
+
+
+
+> p.89 "It will be..." => "It would be..."
+> 
+Done.
+
+> p.89 and many other places, don't just say "average" but be precise and say
+> "mean" (assuming that it is, in fact, mean rather than median you use).
+> 
+Done.
+
+> p.111 Make it clear that Fig. 5.19 is not the actual output of the tool, but a
+> visual interpretation of the textual information it provides.
+> 
+Done.
+
+> Chapter 6
+> 
+> p.115	"canhelp ... Haskell."  => "...can help the design of future versions
+> of Cloud Haskell."
+> 
+Done.
+
+> 
+> Chapter 7
+> 
+> p.117 "via using".  Choose either "via" or "using", but not both.
+> 
+Done.  Choose “using”.
+
+> p.118 "...avoiding type pollution problem..." => "...avoiding the type
+> pollution problem..."
+> 
+Done. 
+
+> 
+> Bibliography
+> 
+> Very many of these references need work to make them complete.  Every entry
+> should contain appropriate information for the reader to be able to locate the
+> source indicated.
+> 
+> Here are a few examples, taken at random.
+> 
+>   - Agha's book on Actors was published in 1986 by MIT Press, Cambridge.  Or
+>     do you mean the Technical Report from 1985?  Be specific.
+> 
+>   - The book "Zend Framework in Action" by Allen, Lo and Brown was published
+>     by Manning Publications.
+> 
+>   - Reenskaug (2003) was a presentation at JavaZone and at the JAOO
+>     Conference, and is available, so you could give an appropriate URL. 
+> 
+>   - Your reference to Reenskaug (1979) "The original MVC reports" I cannot
+>     track down at all --- perhaps you mean a specific report?  If so, then
+>     give its title, and say when, where and how it was published.
+> 
+>   - Grief (1975).  This is MIT Technical Report MIT-LCS-TR-154.  Say that, and
+>     if you can give a URL for it, do that too.
+> 
+> Really, this goes all the way through the bibliography, with many entries
+> needing this kind of refinement to be useful to the reader.
+
+Done. Updated Bibliography.  Add URL for most articles.
+

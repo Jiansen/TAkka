@@ -1,0 +1,141 @@
+\subsection{The Join-Calculus and the JoCaml Programming Language}
+\label{sec:join}
+%Join-calculus and JoCaml 12 - 14
+
+Join-calculus \citep{RCHAM} is a name passing process calculus that is designed for the distributed programming.  There are two versions of the join-calculus, namely the core join-calculus and the distributed join-calculus.  The core join-calculus could be considered as a variant of the ${\pi}$-calculus.  It is as expressive as the asynchronous ${\pi}$-calculus in the sense that translations between those two calculi are well formulated.  A remarkable construct in the join-calculus is join patterns, which provides a convenient way to express process synchronisations.  This feature also makes the join-calculus closer to a real programming language.  The distributed join-calculus extends the core calculus with location, process migration, and failure recovery.  This proposal uses the short phrase ``join-calculus'' to refer to the distributed join-calculus which includes all components in the core join-calculus.  The syntax (Table \ref{join_syn}), the scoping rules (Table \ref{join_scope}), and the reduction rules (Table \ref{join_rule}) of the join-calculus are cited from \citep{join}.
+
+\begin{table}[H]
+  \begin{center}
+  \begin{tabular}{ l c l  l l c l  l }
+$P$  & :: =  &                                               & processes                      &$D$& :: =  & & definition \\
+ & $|$ & $x \langle \widetilde{v} \rangle $   & asynchronous                 &&$|$&$J\ \triangleright \ P$&local rule\\
+ & $ $ & $                                               $   & message                        &&$|$&$\top$             & inert definition\\
+ & $|$ & $ \mathbf{def}\ D\ \mathbf{in}\ P$ & local definition                &&$|$&$D\ \wedge \ D$&co-definition\\
+ & $|$ & $P\ |\ P$                                        & parallel                           &&$|$&$a\ [D\ :\ P]$& \bf{sub-location} \\
+ & $ $ & $                                               $   & composition                   &&$|$&$\Omega a\ [D\ :\ P] $& \bf{dead sub-location} \\ 
+ & $|$ & $\mathbf{0}$                                 & inert process                  &$J$& ::= & &join-pattern\\
+ & $|$ & $go\langle a, \kappa \rangle$       & \bf{migration}                  &&$|$& $x\langle\widetilde{v}\rangle$ & message pattern\\
+ & $|$ & $halt \langle \rangle $                   & \bf{termination}               &&$|$&$J|J$& synchronous \\
+ & $|$ & $fail\langle a, \kappa \rangle $     & \bf{failure detection}        &&$$&$$&join-pattern\\
+
+   \multicolumn{8}{p{\textwidth}}{Constructs whose explanation is in {\bf{bold}} font are only used in the distributed join-calculus.  Other constructs are used in both distributed and local join-calculus.}\\
+  \end{tabular}
+  \end{center}
+  \caption{Syntax of the distributed join-calculus -- \citep{RCHAM} }
+  \label{join_syn}
+\end{table}
+
+\begin{table}[h]
+  \begin{center}
+  \begin{tabular}{ r l c l  l  c l  }
+  $J:$&$dv[x\langle\widetilde{v}\rangle]$&$\overset{def}{=}$&$\{x\}$& $rv[x\langle\widetilde{v}\rangle]$&$\overset{def}{=}$&$\{u \in \widetilde{v}\}$\\
+  &$dv[J\ |\ J']$&$\overset{def}{=}$&$dv[J]\cup dv[J']$&$rv[J\ |\ J']$&$\overset{def}{=}$&$rv[J]\uplus rv[J']$\\
+  $D:$&$dv[J\ \triangleright \ P]$&$\overset{def}{=}$&$dv[J]$&$rv[J\ \triangleright \ P]$&$\overset{def}{=}$&$dv[J]\cup(fv[P]-rv[J])$\\
+  &$dv[\top]$&$\overset{def}{=}$&$\emptyset$&$fv[\top]$&$\overset{def}{=}$&$\emptyset$\\
+  &$dv[D\ \wedge \ D']$&$\overset{def}{=}$&$dv[D]\cup dv[D']$&$fv[D\ \wedge \ D']$&$\overset{def}{=}$&$fv[D]\cup fv[D']$\\
+  &$dv[a\ [D\ : P]]$&$\overset{def}{=}$&$\{a\} \uplus dv[D]$&$fv[a\ [D\ : P]]$&$\overset{def}{=}$&$\{a\} \cup fv[D] \cup fv[P]$\\
+  $P:$&$fv[x\langle\widetilde{v}]$&$\overset{def}{=}$&$\{x\}\cup\{u\in\widetilde{v}\}$&$fv[go\langle a, \kappa \rangle]$&$\overset{def}{=}$&$\{a,\kappa\}$\\
+  &$fv[\mathbf{0}]$&$\overset{def}{=}$&$\emptyset$&$fv[halt\langle\rangle]$&$\overset{def}{=}$&$\emptyset$\\
+  &$fv[P\ |\ P']$&$\overset{def}{=}$&$fv[P]\cup fv[P']$&$fv[fail\langle a, \kappa \rangle]$&$\overset{def}{=}$&$\{a,\kappa\}$\\
+  &$fv[ \mathbf{def}\ D\ \mathbf{in}\ P]$&$\overset{def}{=}$&\multicolumn{2}{l}{$(fv[P]\cup fv[D])-dv[D]$}\\
+  \multicolumn{7}{p{\textwidth}}{Well-formed conditions for $D$: A location name can be defined only once; a channel name can only appear in the join-patterns at one location.}
+  \end{tabular}
+  \end{center}
+  \caption{Scopes of the distributed join-calculus -- \citep{RCHAM} }
+  \label{join_scope}
+\end{table}
+
+\begin{table}[h]
+  \begin{center}
+  \begin{tabular}{l r c l r}
+  \bf{str-join}   &$\vdash\ P_1\ |\ P_2$&$\rightleftharpoons$&$\vdash \ P_1 ,\ P_2$\\
+  \bf{str-null}   &$\vdash\ \mathbf{0}$&$\rightleftharpoons$&$\vdash$\\
+  \bf{str-and}   &$D_1\ \wedge D_2\ \vdash$&$\rightleftharpoons$&$D_1,\ D_2\ \vdash$\\
+  \bf{str-nodef}&$\top$&$\rightleftharpoons$&$\vdash$\\
+  \bf{str-def}    &$\vdash\ \mathbf{def}\ D\ \mathbf{in}\ P$&$\rightleftharpoons$&$D\sigma_{dv}\ \vdash\ P\sigma_{dv}$&(range($\sigma_{dv}$) fresh)\\
+  \bf{str-loc}    &$\varepsilon a\ [D\ :\ P] \vdash_\varphi$&$\rightleftharpoons$&$\vdash_\varphi\ \parallel\ \{D\}\ \vdash_{\varphi\varepsilon a}\ \{P\}$&($a$ frozen)\\
+  \\
+  \bf{red}&$J\ \triangleright \ P\ \vdash_\varphi\ J\sigma_{rv}$&$\longrightarrow$&$J\ \triangleright \ P\ \vdash_\varphi\ P\sigma_{rv}$&($\varphi$ alive)\\
+  \bf{comm}&$\vdash_\varphi\ x\langle\widetilde{v}\rangle \  \parallel\ J\ \triangleright P \vdash\ $&$\longrightarrow$&$\vdash_\varphi\ \parallel\ J\ \triangleright P\ \vdash\  x\langle\widetilde{v}\rangle $&($x\in dv[J],\ \varphi$ alive)\\
+  \bf{move}&$a[D\ :\ P|go\langle b,\kappa\rangle]\ \vdash_\varphi\ \parallel\ \vdash_{\psi\varepsilon b}$&$\longrightarrow$&$\ \vdash_\varphi\ \parallel\ a\ [D:P|\kappa\langle\rangle]\ \vdash_{\psi\varepsilon b}$&($\varphi$ alive)\\
+  \bf{halt}&$a[D\ :\ P|halt\langle\rangle]\ \vdash_\varphi\ $&$\longrightarrow$&$\Omega a[D\ :\ P]\ \vdash_\varphi\ $&($\varphi$ alive)\\
+  \bf{detect}&$\vdash_\varphi fail\langle a,\kappa\rangle\ \parallel\ \vdash_{\psi\varepsilon a}$&$\longrightarrow$&$\ \vdash_\varphi\ \kappa\langle\rangle\ \parallel\ \vdash_{\psi\varepsilon a}$&($\psi\varepsilon a$ dead, $\varphi$ alive)\\
+    \multicolumn{5}{p{\textwidth}}{Side conditions: in {\bf{str-def}}, $\sigma_{dv}$ instantiates the channel variables $dv[D]$ to distinct, fresh names; in {\bf{red}}, $\sigma_{rv}$ substitutes the transmitted names for the received variables $rv[J]$; $\varphi$ is dead if it contains $\Omega$, and alive otherwise;  ``$a$ frozen'' means that $a$ has no sublocations; $\varepsilon a$ denotes either $a$ or $\Omega a$}\\
+  \end{tabular}
+  \end{center}
+  \caption{The distributed reflexive chemical machine -- \citep{RCHAM} }
+  \label{join_rule}
+\end{table}
+
+\begin{table}[h]
+  \begin{center}
+  \begin{tabular}{ l c l  l l c l  p{\textwidth} }
+$P$  & :: =  &                                               & processes                      \\
+ & $|$ & $x \langle \widetilde{v} \rangle $   & asynchronous message \\
+ & $|$ & $ \mathbf{def}\ D\ \mathbf{in}\ P$ & local definition                \\
+ & $|$ & $P\ |\ P$                                        & parallel composition       \\
+ & $|$ & $\mathbf{0}$                                 & inert process                  \\
+ & $|$ & $\mathrm{x}(\widetilde{V});P$       & \bf{sequential composition} \\
+ & $|$ & $\mathbf{let}\ \widetilde{u}\ =\ \widetilde{V}\ \mathbf{in}\ P$& \bf{named values} \\
+ & $|$ & $\mathbf{reply}\  \widetilde{V}\ \mathbf{to}\ \mathrm{x}$     & \bf{implicit continuation} \\
+ &&&\\
+ 
+$D$& :: =  & & definition \\
+&$|$&$J\ \triangleright \ P$&local rule\\
+&$|$&$\top$             & inert definition\\
+&$|$&$D\ \wedge \ D$&co-definition\\
+$J$& ::= & &join-pattern\\
+&$|$& $x\langle\widetilde{v}\rangle$ & message pattern\\ 
+&$|$&$J|J$&synchronous join-pattern\\
+$V$& ::= & &values\\
+&$|$&$x$& value name\\
+&$|$&$\mathrm{x}(\widetilde{V})$& \bf{synchronous call}\\
+  \end{tabular}
+  \begin{tabular}{ r c l  r }
+\\
+    $\mathrm{x}(\widetilde{v})$&=&$x\langle \widetilde{v},\kappa_x\rangle$&(in join-patterns)\\
+    $\mathbf{reply}\  \widetilde{V}\ \mathbf{to}\ \mathrm{x}$&=&$\kappa_x\langle\widetilde{V}\rangle$&(in process)
+    \\
+    $x\langle\widetilde{V}\rangle$&=&$\mathbf{let}\ \widetilde{v}\ =\ \widetilde{V}\ \mathbf{in}\ x\langle\widetilde{v}\rangle$\\
+    $\mathbf{let}\ \widetilde{u}\ =\ \widetilde{V}\ \mathbf{in}\ P$&=&$\mathbf{let}\ u_1=\ V_1\ \mathbf{in\ let}\ u_2\ = \ \cdots\ \mathbf{in}\ P$\\
+    $\mathbf{let}\ \widetilde{u}\ =\ \mathrm{x}(\widetilde{V})\ \mathbf{in}\ P$&=&$\mathbf{def}\ \kappa\langle\widetilde{u}\rangle\triangleright\ P\ \mathbf{in}\ x\langle\widetilde{V},\kappa\rangle$\\
+    $\mathbf{let}\ u\ =\ v\ \mathbf{in}\ P$&=&$P\{v/u\}$\\
+    $\mathrm{x}(\widetilde{V});P$&=&$\mathbf{def}\ \kappa\langle\rangle\triangleright\ P\ \mathbf{in}\ x\langle\widetilde{V},\kappa\rangle$
+
+  \end{tabular}
+  \end{center}
+  \captionsetup{justification=centering}
+  \caption{The core join-calculus with synchronous channel, \\ \hspace{2.2cm}    sequencing, and let-binding -- \citep{RCHAM} }
+  \label{join_syn_chan}
+\end{table}
+
+
+
+\subsubsection{The Local Reflexive Chemical Machine (RCHAM)}
+
+The denotational semantics of the join-calculus is usually described in the domain of a reflexive chemical machine (RCHAM).  A local RCHAM consists of two parts:  a multiset of definitions $D$ and a multiset of active processes $P$.  Definitions specify possible reductions of processes, while active processes can introduce new names and reaction rules.  
+
+The six chemical rules for the local RCHAM are $\bf{str\text{-} join}$, $\bf{str\text{-}null}$, $\bf{str\text{-}and}$, $\bf{str\text{-}nodef}$, $\bf{str\text{-}def}$, and $\bf{red }$ in Table \ref{join_rule}.  As their names suggest, the first 5 are structure rules whereas the last one is reduction rule.  Structure rules correspond to reversible syntactical rearrangements.  The reduction rule, $\bf{red}$, on the other hand, represents an irreversible computation.
+
+Finally, for the ease of writing programs, the local join-calculus could be extended with synchronous channel, sequencing, and let-bindings as in Table \ref{join_syn_chan}.  The distributed join-calculus could be extended similarly.
+
+\subsubsection{Distributed Solutions}
+Distributed system in the join-calculus is constructed in three steps: first, definitions and processes are partitioned into several local solutions; then, each local solution is attached with a unique location name; finally, location names are organized in a location tree.
+
+A distributed reflexive chemical machine (DRCHAM) is simply a multiset of RCHAMs.  It is important to note that message pending to a remotely defined channel will be forwarded to the RCHAM where the channel is defined before applying any $\bf{red}$ rule.  The above process is a distinction  between the join-calculus and other distributed models.  The side effect of this evaluation strategy is that both channel and location names must be pairwise distinct in the whole system.  As a consequence, a sophisticate name scheme is required for a language that implements the join-calculus.
+
+To support process migration, a new contract, $go \ \langle b,\kappa\rangle$, is introduced, together with the {\bf{move}} rule.  There are two effects of applying the move rule.  Firstly, site $a$ moves from one place ($\varphi a$) to another ($\psi\varepsilon$a).  Secondly, the continuation $\mathit{\kappa}\langle\rangle$ may trigger another computation at the new location.
+
+\subsubsection{The Failure Model}
+A failed location in the join-calculus cannot respond to messages.  Reactions inside a failed location or its sub-locations are prevented by the side-condition of reduction rules.  Nevertheless, messages and locations are allowed to move into a failed location, but will be frozen in that dead location (str-loc).
+
+To model failure and failure recovery, two primitives $halt\langle\rangle$ and $fail\langle \cdot, \cdot \rangle$ are introduced to the calculus.  Specifically speaking, $halt\langle\rangle$ terminates the location where it is triggered (rule halt), whereas $fail\langle a,\kappa \rangle$ triggers the continuation $\kappa\langle\rangle$ when location $a$ fails (rule detect).  
+
+\subsubsection{The JoCaml Programming Language}
+
+The JoCaml programming language is an extension of OCaml.  JoCaml supports the join-calculus with similar syntax and more syntactic sugars.  When using JoCaml to build distributed applications, users should be aware of following three limitations in the current release (version 3.12) \citep{jocaml_lan}:
+\begin{enumerate} [1.]
+  \item Functions and closures transmission are not supported.  In the join-calculus, distributed calculation is modelled as sending messages to a remotely defined channel.  As specified in the $\bf{comm}$ rule, messages sent to a remotely defined channel will be forwarded to the place where the channel is defined.  In some cases, however, programmers may want to define an computation at one place but execute the computation elsewhere.  The standard JoCaml, unfortunately, does not support code mobility.
+  \item Distributed channels are untyped.  In JoCaml, distributed port names are retrieve by enquiring its registered name (a string) from name service.  Since JoCaml encourages modular development, codes supposed to be run at difference places are usually wrote in separated modules and complied independently.  The annotated type of a distributed channel, however, is not checked by the name service.  Invoking a remote channel whose type is erroneously annotated may cause a run-time error.
+  \item  When mutable value is required over the web, a new copy, rather than a reference to the value, is sent.  This may cause problems when a mutable value is referenced at many places across the network.
+\end{enumerate}

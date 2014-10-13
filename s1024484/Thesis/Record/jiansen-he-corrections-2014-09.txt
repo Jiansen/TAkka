@@ -1,0 +1,144 @@
+Abstract
+
+This does now make a reasonable statement of the overall thesis being
+explored.  That's great.  However, there are still omissions: most notably,
+you say nothing about Scala, and don't say what Akka is.
+
+ - Typo: "This thesis explores to what extent..." not "...what extend..."
+Done.
+
+ - Make it clear that you have built a new library "TAkka" in the Scala
+   language on top of the existing Akka library, where Akka provides
+   supervised actors and TAkka adds typed messaging.
+Done.
+
+
+Chapter 1
+
+Make it clear that the target of the thesis is Scala, not Erlang.  You still
+need to do this.  As with the abstract, I recommend that in Section 1.2 you
+replace the (ungrammatical) sentence "Main research results are published as
+the TAkka library..." with a statement about how your approach has been to
+develop a library TAkka for Scala that builds on the existing Akka library for
+supervised actors by the introduction of typed messaging.  This then leads
+naturally into your more detailed paragraphs about TypeSafe, Scala 2.10, and
+the applications you have rewritten.
+
+Done.  Edited the first 3 paragraphs in Section 1.2.
+
+There is also a grammatical error still uncorrected from the previous list:
+
+p.4 "... are expanded from a companion paper..." not "expanded for".
+Done.
+
+Chapter 2
+
+Good to see more on basic Scala, and the substantial section on other related
+work.  
+
+pp.37/38 Tables 2.7-2.9.  Add to the caption for each individual table that
+these are taken from Cardelli+Gordon.
+Done.  Also for Table 2.3 - 2.6
+
+Some errors still need correction:
+
+p.7 "This chapter..." not "This Chapter...".  Capitalise "chapter" only when
+describing a specific numbered chapter, such as "Chapter 4".
+Done.
+
+p.15 "The alternatives of working with mutable states..." should be
+"Alternatives to working with mutable states...".
+Done.
+
+p.25 "...should reacts failures of all user created actors." => "...should
+react to failures of all user-created actors."
+Done.
+
+p.25 "... in subsequent chapters,..." not "..in subsequent Chapters,...".
+Done.
+
+Chapter 3
+
+I see you have moved the piece on type pollution here from Chapter 5.
+
+p.41 Use "expanded from" not "expanded for".  Also, it's Sections 3 and 4 of
+He et al., not Chapter.
+Done.
+
+p.41 "The last chapter examined..." not "Last chapter examined...".
+Done.
+
+Chapter 4
+
+p.88 Use "expanded from" not "expanded for".  Also, it's Section 5 of He et
+al., not Chapter 5.
+Done.
+
+
+Chapter 5
+
+p.91 Use "expanded from" not "expanded for".  Also, it's Sections 6, 7 and 8
+of He et al., not Chapters. 
+Done.
+
+The introductory paragraph needs rewriting: it still refers to type pollution,
+which has now moved to Chapter 3.
+Done.
+
+p.81 Fig.5.7.  Add to the caption from this a note that it is taken from
+Cesarini.
+Done.  p93 Fig. 5.1  The ATM example.
+
+Chapter 6
+
+This should be titled "Summary and Future Work" now that it incorporates the
+material previously in Chapter 7.
+Done.
+
+You also need to revise the final sentence of the opening paragraph "This
+chapter...concludes." to make appropriate mention of the section on future
+work.
+Done.
+
+Similarly, you need to revise the arrangement of Section 6.1.2.  This is about
+the library evaluation framework but still includes discussion of the type
+pollution problem, which is now in Chapter 3 on TAkka design.  I recommend you
+break this into a separate subsection between 6.1.1 and 6.1.2, focusing only
+on preventing type pollution.
+Done.  Move the paragraph on type pollution to 6.1.1.
+
+
+Appendix A
+
+It's good to see this.  However, I couldn't find any reference in the thesis
+itself to tell the reader that this exists.  You need to put in comments
+referring to Appendix A.
+
+ - In Section 2.4: The Akka Library.  Point out that the Akka API is detailed
+   in Appendix A.
+Done.  Add the following to the start of Section 2.4
+
+“Akka API used in this thesis is listed in Figure A.1, Appendix A.”
+
+ - At the start of Chapter 3.  When you are discussing TAkka being built on
+   top of Akka, refer to Appendix A and explain that this shows the API for
+   both libraries.
+
+Done.  Add the following to the start of Chapter 3
+
+“The latest TAkka API and its companion Akka
+API (version 2.1.4) are given in Appendix A.”
+
+
+Appendix B
+
+Please add some opening text to explain why this appendix is here --- at the
+moment you don't even say that it is you who wrote the Scala Join library.
+You already have a brief description on page 31 where you refer to Appendix B,
+so could repeat that at the start of the appendix itself.  I also don't quite
+understand the relationship between your Scala Join library and the Scala
+Joins library (with an -s) of Haller.  Do you reuse his code?  The numbering
+seems odd to me --- Haller's Joins is at version 0.4, and your Join is at
+version 0.3 --- can you explain this?
+
+Done.  Explained in the start of the Appendix.

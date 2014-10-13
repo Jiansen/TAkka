@@ -1,5 +1,79 @@
-% !TEX encoding = GBK
-\chapter{Future Work}
+\chapter{Summary and Future Work}
+\label{summary}
+
+The main goal of this thesis is the development of a library that combines the 
+advantages of type checking and the supervision principle.  The aim is to 
+contribute to the construction of reliable distributed applications using 
+type-parameterized actors and supervision trees.  Aside from the TAkka library 
+itself, this thesis has presented the evaluation results of TAkka.  The 
+evaluation metrics in this thesis can be used and further developed for the 
+evaluation of other libraries that implement actors and supervision trees.  This 
+chapter reviews the research results presented in the thesis, suggests future 
+research topics, and concludes.
+
+
+\section{Overview of Contributions}
+
+
+\subsection{A library for Type-parameterized Actors and Their Supervision}
+
+The key contribution of this thesis is the design and implementation of the 
+TAkka library, which is the first programming library where type parameterized 
+actors can form a supervision tree.  The TAkka library is built on top of Akka, 
+a library which has been used for implementing real world applications.  The 
+TAkka library adds type checking features to the Akka library but
+delegates tasks such as actor creation and message passing to the underlying
+Akka systems. 
+
+The TAkka library uses both static and dynamic type checking so that type 
+errors are detected at the earliest opportunity. To enable look up on remote 
+actor references, TAkka defines a typed name server that keeps maps from typed 
+symbols to values of the corresponding types.
+
+In addition, Akka  programs can gradually migrate to their TAkka equivalents 
+(evolution) rather than require providing type parameters everywhere 
+(revolution).  The above property is analogous to adding generics to Java 
+programs.
+
+Compared with Akka, the TAkka library avoids the type pollution 
+problem straightforwardly.  The type pollution problem, discussed in 
+Section~\ref{type_pollution}, refers to the situation where a user can send a 
+service message not expected from him or her because that service publishes too 
+much type information about its communication interface. Without due care, 
+the type pollution problem may occur in actor-based systems that are 
+constructed using the layered architecture \citep{DijkstraTHE, 
+buschmann2007pattern} or the MVC pattern \citep{reenskaug1979original, 
+reenskaug2003model}, two popular design patterns for constructing modern 
+applications.  A demonstration example shows that avoiding the type 
+pollution problem in TAkka is as simple as publishing a service as having 
+different types when it is used by different parties.
+
+\subsection{A Library Evaluation Framework}
+
+The second contribution of this thesis is a framework for evaluating the 
+TAkka library.  The author believes that the employed evaluation metrics can be 
+used and further developed for evaluating other libraries that implement actors 
+and the supervision principle.
+
+By porting existing small and medium sized Erlang and Akka applications, 
+results in Section~\ref{expressiveness} and \ref{efficiency} show that 
+rewriting Akka programs using TAkka will {\it not} bring obvious runtime and 
+code-size overheads. As regards expressiveness, {\it all} Akka applications 
+considered in this thesis can be ported to their TAkka equivalents with a small 
+portion of code modifications.  The TAkka library is expected to have the {\it 
+same} expressiveness as the Akka library.
+
+Finally, the reliability of a TAkka application can be partly assessed by using
+the Chaos Monkey library and the Supervision View library.  
+The Chaos Monkey library, ported from the work by \citet{ChaosMonkey} and 
+\citet{ErlangChaosMonkey}, tests whether an application can survive in an 
+adverse environment where exceptions raise randomly.  The Supervision View 
+library dynamically captures the structure of supervision trees.  With the help 
+of the Chaos Monkey library and the Supervision View library, application 
+developers can visualise how the application will behave under the tested 
+condition.
+
+\section{Future Work}
 \label{future_work}
 
 The work presented in this thesis confirms that actors in supervision trees can
@@ -13,7 +87,7 @@ make TAkka more usable, as well as to further the goal of making the building
 of reliable distributed applications easier.
 
 
-\section{Supervision and Typed Actor in Other Systems}
+\subsection{Supervision and Typed Actor in Other Systems}
 
 The result of this thesis confirms the feasibility of using type parameterized 
 actors in a supervision tree.  The resulting TAkka library is built on top of 
@@ -36,11 +110,11 @@ parameterized actors, however, was introduced very recently in libraries such
 as Cloud Haskell \citep{CloudHaskell} and scalaz \citep{scalaz}.  It has been 
 proposed to implement a supervision tree in Cloud Haskell 
 \citep{OTPCloudHaskell}.  The author believes that the techniques used in this 
-thesis canhelp the design of the future version of Cloud Haskell.
+thesis can help the design of the future versions of Cloud Haskell.
 
 
 
-\section{Benchmark Results from Large Real Applications}
+\subsection{Benchmark Results from Large Real Applications}
 
 This thesis compares TAkka with Akka with regards to several dimensions by 
 porting small and medium sized applications. Most of selected examples are 
@@ -56,7 +130,7 @@ construction and reliability of large commercial or research applications.
 
 
 
-\section{Supervision Tree that Supports Software Rejuvenation}
+\subsection{Supervision Tree that Supports Software Rejuvenation}
 
 The core idea of the Supervision Principle is to restart components {\it 
 reactively} when they fail. Similarly, software rejuvenation 
@@ -68,7 +142,7 @@ implemented in a number of commercial and scientific applications to improve
 their longevity. As a supervisor can restart its children, can  {\it software 
 rejuvenate schedule} be set for each actor?
 
-\section{Measuring and Predicting System Reliability}
+\subsection{Measuring and Predicting System Reliability}
 
 Due to the nature of software development, the library itself cannot guarantee 
 the reliability of applications built using it; nor can the achieved 
@@ -106,84 +180,6 @@ them, is there an algorithm to give a supervision tree with desired
 reliability?  If not, can we determine if the desired reliability is not
 achievable?
 \end{itemize}
-
-
-\chapter{Thesis Summary}
-\label{summary}
-
-The main goal of this thesis is the development of a library that combines the 
-advantages of type checking and the supervision principle.  The aim is to 
-contribute to the construction of reliable distributed applications via using 
-type-parameterized actors and supervision trees.  Aside from the TAkka library 
-itself, this thesis has presented the evaluation results of TAkka.  The 
-evaluation metrics in this thesis can be used and further developed for the 
-evaluation of other libraries that implement actors and supervision trees.  This 
-chapter first reviews the research results presented in the thesis and then 
-briefly concludes.
-
-
-\section{Overview of Contributions}
-
-
-\subsection{A library for Type-parameterized Actors and Their Supervision}
-
-The key contribution of this thesis is the design and implementation of the 
-TAkka library, which is the first programming library where type parameterized 
-actors can form a supervision tree.  The TAkka library is built on top of Akka, 
-a library which has been used for implementing real world applications.  The 
-TAkka library adds type checking features to the Akka library but
-delegates tasks such as actor creation and message passing to the underlying
-Akka systems. 
-
-The TAkka library uses both static and dynamic type checking so that type 
-errors are detected at the earliest opportunity. To enable look up on remote 
-actor references, TAkka defines a typed name server that keeps maps from typed 
-symbols to values of the corresponding types.
-
-In addition, Akka  programs can gradually migrate to their TAkka equivalents 
-(evolution) rather than require providing type parameters everywhere 
-(revolution).  The above property is analogous to adding generics to Java 
-programs.
-  
-\subsection{A Library Evaluation Framework}
-
-The second contribution of this thesis is a framework for evaluating the 
-TAkka library.  The author believes that the employed evaluation metrics can be 
-used and further developed for evaluating other libraries that implement actors 
-and the supervision principle.
-
-Compared with Akka, the TAkka library avoids the type pollution 
-problem straightforwardly.  The type pollution problem, discussed in 
-Section~\ref{type_pollution}, refers to the situation where a user can send a 
-service message not expected from him or her because that service publishes too 
-much type information about its communication interface. Without due care, 
-the type pollution problem may occur in actor-based systems that are 
-constructed using the layered architecture \citep{DijkstraTHE, 
-buschmann2007pattern} or the MVC pattern \citep{reenskaug1979original, 
-reenskaug2003model}, two popular design patterns for constructing modern 
-applications.  A demonstration example shows that avoiding type 
-pollution problem in TAkka is as simple as publishing a service as having 
-different types when it is used by different parties.
-
-By porting existing small and medium sized Erlang and Akka applications, 
-results in Section~\ref{expressiveness} and \ref{efficiency} show that 
-rewriting Akka programs using TAkka will {\it not} bring obvious runtime and 
-code-size overheads. As regards expressiveness, {\it all} Akka applications 
-considered in this thesis can be ported to their TAkka equivalents with a small 
-portion of code modifications.  The TAkka library is expected to have the {\it 
-same} expressiveness as the Akka library.
-
-Finally, the reliability of a TAkka application can be partly assessed by using
-the Chaos Monkey library and the Supervision View library.  
-The Chaos Monkey library, ported from the work by \citet{ChaosMonkey} and 
-\citet{ErlangChaosMonkey}, tests whether an application can survive in an 
-adverse environment where exceptions raise randomly.  The Supervision View 
-library dynamically captures the structure of supervision trees.  With the help 
-of the Chaos Monkey library and the Supervision View library, application 
-developers can visualise how the application will behave under the tested 
-condition.
-
-
 
 \section{Conclusion}
 

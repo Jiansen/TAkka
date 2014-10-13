@@ -2,11 +2,11 @@
 \label{takka_design}
 
 \begin{center}
-(This chapter is expanded from \citep{TAKKA_paper} , Chapter 3 and 4)
+A condensed version of the material in this chapter appears \\ in~\citep[Section 3 and 4]{TAKKA_paper}
 \end{center}
 \vspace{12 pt}
 
-Last Chapter examined actor programming and supervision in Erlang/OTP and Akka. 
+The last chapter examined actor programming and supervision in Erlang/OTP and Akka. 
  Erlang/OTP is written in Erlang, a dynamically typed language, whereas Akka is 
 written in Scala, a statically typed language. A key advantage of static typing 
 is that it detects some type errors at an early stage, i.e., at compile time.  
@@ -18,14 +18,14 @@ type parameterized actors and supervision will be difficult
 to work together [? private communication and mailing list question ?] .
 \end{comment}
 
-This Chapter presents the design of the TAkka library, which confirms the key 
+This chapter presents the design of the TAkka library, which confirms the key 
 claim of this thesis: actors in supervision trees can be 
 {\it statically} typed by parameterizing the actor class with the type of 
-messages it expects to receive.  The Chapter outlines how 
+messages it expects to receive.  This chapter outlines how 
 static and dynamic type checking are used to prevent ill-typed messages.  
 Examples of TAkka applications show that type-parameterized actors can form 
 supervision trees in the same way as actors without type parameters.  This 
-Chapter concludes with a brief discussion on design alternatives used by 
+chapter concludes with a brief discussion on design alternatives used by 
 other actor libraries.
 
 The latest TAkka library is built on top of Akka 2.1.4.  During the research 
@@ -34,7 +34,8 @@ all Akka versions, actors can be parameterized as expected.
 Nevertheless, as the Akka API and the structure of Akka configuration file change 
 slightly in different Akka versions, readers who want to use a later Akka 
 version may need to update the API or the configuration file according to the 
-specification of the Akka version used.
+specification of the Akka version used.  The latest TAkka API and its companion Akka
+API (version 2.1.4) are given in Appendix A.
 
 
 \section{TAkka Example: a String Counter}
@@ -152,7 +153,10 @@ Unlike other actor libraries, every TAkka actor class takes a type parameter
 type parameter is used as the input type of the {\tt typedReceive} function.  
 The actor reference pointing to itself, {\tt typedSelf}, has type {\tt 
 ActorRef[M]} to which only messages of type {\tt M} can be sent.  
+The type constructor {\tt Actor} is {\it invariant} because the same type parameter is
+used for {\tt ActorContext}, which is {\it invariant} as will be explained in Section~\ref{takka_actor_context}.
 Finally, the actor context for the actor, {\tt typedContext}, has type {\tt ActorContext[M]}.  
+%As explained 
 
 To maintain the actor behaviour and the supervision relationship, a special class
 of messages, which has type {\tt SystemMessage}, should be handled by all actors.
@@ -210,7 +214,7 @@ Notice that {\tt takka.actor.Actor} inherits {\tt akka.actor.Actor}.  A
 critical problem of using inheritance is that dynamically typed 
 Akka API, which we are trying to avoid whenever possible, are still available 
 to TAkka users.  Unfortunately, this limitation cannot be overcome by using 
-delegation because, as we have seen in Akka API, a child actor is created by 
+delegation because, as we have seen in the Akka API, a child actor is created by 
 calling the {\tt actorOf} method from its supervisor's actor context, which 
 cannot be accessed outside the supervisor. {\tt Actor} is the only TAkka 
 class that is implemented using inheritance. All other TAkka classes and traits 
@@ -349,10 +353,11 @@ send division requests only to that actor reference.
 
 For ease of use, {\tt ActorRef} provides a {\tt publishAs} method that 
 casts an actor reference to a version that only accepts a subset of supported 
-messages.  The {\tt publishAs} method encapsulates the process of type cast on 
-{\tt ActorRef}, a contravariant type.  The author believes that using the 
-notation of the {\tt publishAs} method can be more intuitive than thinking 
-about contravariance 
+messages.  For example, line 26 in Figure~\ref{takka_actor_reference_example}
+uses the {\tt publishAs} method to explicitly cast an actor reference of type
+{\tt ActorRef[Operation]} to its supertype {\tt ActorRef[Multiplication]}.
+The author believes that using the notation of the {\tt publishAs} method can be 
+more intuitive than thinking about contravariance 
 and subtyping relationship each time, especially when publishing an actor 
 reference as different types in a complex application.  In addition, type 
 conversion using {\tt publishAs} is statically type checked.  More importantly, 
@@ -401,7 +406,7 @@ create actors that can handle more types of messages.
 
 An actor context describes the contextual information of an actor. Because each 
 actor is an independent computational primitive, an actor context is private to 
-its corresponding actor.  By using API in Figure 
+its corresponding actor.  By using the API in Figure 
 \ref{takka_api_actor_context}, an actor can
 \begin{enumerate}[(\itshape i\upshape)]
 \item create a child actor supervised by itself,
@@ -425,7 +430,12 @@ actor reference to its corresponding actor.  The {\tt SupM} type variable in the
 upgrade, a topic elaborated in Section~\ref{hot_swapping}.  
 The {\tt Msg} type variable in {\tt actorOf}, {\tt remoteActorOf}, and {\tt actorFor}
 denotes the type parameter of another actor.  Therefore, {\tt Msg} has no
-relationship with the other two type variables.
+relationship with the other two type variables.  Notice that the type
+parameter {\tt M} is used in a {\it covariant} position in the {\tt become} method
+and in a {\it contravariant} position is the {\tt Props} type and the {\tt ActorRef} type.
+To be valid in all cases, {\tt ActorContext} is a {\it invariant} type constructor.
+
+
 
 
 
@@ -497,7 +507,7 @@ The way to enable distributed programming will be explained in Section
 
 The contextual information of an actor includes the {\tt Props} used to create 
 that actor, the typed actor reference pointing to that actor, and the actor 
-system where the actor resides.  TAkka removes API that enquire the 
+system where the actor resides.  TAkka removes the API call that returns the 
 actor reference of an actor's parent and children for two reasons.  Firstly, 
 the types of the parent and children of an actor are unknown to the library 
 developer as they vary from one actor to another.  Secondly, actor references 
@@ -773,8 +783,17 @@ used as a data constructor and for pattern matching.  In addition, the
 type descriptor, {\tt t}, is constructed automatically and is private to the
 {\tt takka} package so that only the library developer can access it as a field 
  of {\tt TSymbol}. {\tt TValue} is declared as a {\it case class} for the same 
-reason.  The {\tt hashCode} method of {\tt TSymbol} does not consider the
-value of its type descriptor for efficiency considerations.
+reason.  
+
+
+As will be explained in the next section, the typed name server permits
+the case where a value is fetched and used as a value of its supertype.  
+For efficiency considerations, the {\tt hashCode} method of {\tt TSymbol} 
+does not count the value of its type descriptor.
+In Scala, types of different fully qualified names are considered different.
+Hence, the value of a type descriptor only records its fully qualified name
+rather than the structure of a type.
+
 
 \subsection{Operations}
 
@@ -885,7 +904,11 @@ typed actor reference is registered at the typed name server located at the JVM
 it runs.  In this section, Figure~\ref{takka_actorOf} presents the code of the 
 {\tt actorOf} function which creates an actor and registers its actor reference 
 to the typed name server.  Figure~\ref{takka_actorFor} presents the code of the 
-{\tt actorFor} function which fetches typed actor references.
+{\tt actorFor} function which fetches typed actor references.  Unlike the Akka {\tt actorFor} method,
+which always return an actor reference that may point to a dummy actor where all messages sink, 
+the TAkka  {\tt actorFor} method either returns an actor reference pointing an alive actor or
+throws an Exception if no matched actor is found.  The process is of fetching a TAkka actor reference
+summarised in Figure~\ref{takka_actorFor_fig}.
 
 
 \begin{figure}[h]
@@ -1029,6 +1052,14 @@ def actorFor[M:Manifest](actorPath: akka.actor.ActorPath): ActorRef[M]= {
     \label{takka_actorFor}
 \end{figure}
 
+\begin{figure}[p]
+     \begin{center}            
+\includegraphics[keepaspectratio=true,height=0.6\paperheight]
+{Pictures/RemoteActorReference.png}
+    \end{center}
+     \caption{Fetched Typed Actor Reference}
+   \label{takka_actorFor_fig}
+\end{figure}
 
 The {\tt actorOf} method and the {\tt remoteActorOf} method create an actor 
 that is supervised by a {\tt user} actor created by the system.  The task of 
@@ -1044,12 +1075,13 @@ required for using it remotely.  If remote communication is not enabled by the
 actor system, a {\tt NotRemoteSystemException} will arise.
 
 
-The {\tt actorFor} method returns a typed actor reference if there is such with 
-an expected type located at a given path.  When looking for a typed 
+The {\tt actorFor} method (Figure~\ref{takka_actorFor}) returns a typed actor reference if there is such with 
+an expected type located at a given path.  Figure~\ref{takka_actorFor_fig} illustrates how typed name servers 
+are used in TAkka to fetch a potentially remote actor reference.  When looking for a typed 
 actor reference, the actor system first checks if the input actor path 
 contains an IP address and a port number.  If so, it sends a request to the 
 {\tt ActorTypeServer} actor in the remote actor system; otherwise it sends a 
-request to the {\tt ActorTypeServer} actor in the local machine.  When an {\tt 
+request to the {\tt ActorTypeChecker} actor in the local machine.  When an {\tt 
 ActorTypeServer} actor receives a request that asks if there is an actor 
 reference of the expected type at a given path,
 it checks registered names at the typed name server in its JVM.  
@@ -1081,7 +1113,7 @@ terminations.  The TAkka library does not implement the {\tt RestForOne}
 strategy because it is not needed for the applications considered in this 
 project.
 
-Figure~\ref{takka_supervisor_strategy} gives API of supervisor strategies in 
+Figure~\ref{takka_supervisor_strategy} gives the API of supervisor strategies in 
 TAkka.  In fact, it is the same as the Akka version given in Figure 
 \ref{akka_supervisor_strategy}.  TAkka reuses the Akka API because none of the 
 supervisor strategies requires type-parameters and TAkka separates 
@@ -1097,7 +1129,7 @@ package akka.actor
 abstract class SupervisorStrategy
 case class OneForOne(restart:Int, time:Duration)(decider: Throwable => 
   Directive) extends SupervisorStrategy
-case class OneForAll(restart:Int, time:Duration)(decider: Throwable => 
+case class AllForOne(restart:Int, time:Duration)(decider: Throwable => 
   Directive) extends SupervisorStrategy
 
 sealed trait Directive extends AnyRef
@@ -1226,6 +1258,451 @@ ArithmeticException Raised to: Actor[akka://MySystem/user/safecalculator]
 
 \newpage
 
+\section{Fixing The Type Pollution Problem}
+\label{type_pollution}
+
+In a system with multiple components, different components may require
+different interfaces; since all messages are received in the same
+mailbox, a naive approach would be to set the type to the union of all
+the interfaces, causing each component to see a type containing
+messages not intended for it---an issue dubbed the Type Pollution
+Problem.
+
+This section illustrates the Type Pollution Problem and its solution on an
+instance of the Model-View-Controller pattern \citep{reenskaug1979original, burbeck87}.  The Model
+and View have separate interfaces to the Controller, and neither
+should see the interface used by the other.  However, the naive
+approach would have the Controller message type contain all the
+messages the Controller receives, from both the Model and the View.
+A similar problem can occur in a multi-tier architecture \citep{fowler2002patterns},
+where an intermediary layer interfaces with both the layer above
+and the layer below.
+
+One solution to the type pollution problem is using separate channels
+for distinct parties.  For instance, in Model-View-Controller, one
+channel would communicate between Model and Controller, and a distinct
+channel communicate between Model and View.  Programming models that
+support this solution includes the join-calculus \citep{full_join} and
+the typed $\pi$-calculus \citep{pi_book}.  Can we gain similar
+advantages for a system based on actors rather than channels?
+
+The TAkka solution is to publish a component at different types to different 
+parties.  The published type must be a supertype of the most precise type of 
+the component.  In Java and Scala applications, this solution can be tricky 
+because, as will be briefly discussed in Section~\ref{type_pollution_oo}, a set 
+of supertypes must be defined in advance.  
+Fortunately, if the component is implemented as a type-parameterized actor, 
+the limitation can be avoided straightforwardly.  The demonstration example 
+studied in this section is a Tic-Tac-Toe game with a graphical user interface 
+(GUI) implemented using the MVC pattern.
+
+
+\subsection{Case Study: Tic-Tac-Toe}
+
+
+\subsubsection{The Game}
+
+Tic-Tac-Toe \citep{wiki:tictactoe}, also known as Noughts and Crosses, is a 
+paper-and-pencil game.  A basic version of the Tic-Tac-Toe game is played by 
+two players who mark X and O in turn in a $3\times3$ grid.  A player wins the 
+game if he or she succeeds in placing three respective marks, i.e. three Xs or three Os, in a 
+horizontal, vertical, or diagonal row.  The game is drawn if no player wins when 
+the grid is fully marked.
+
+Figure~\ref{tictactoe_example} gives an example game won by the first player, 
+X.  Figures \ref{fig:t0} to \ref{fig:t7}  are screenshots 
+of the game implemented in the next subsection.  The graphical user interface 
+of the game contains three parts.  The left hand side of the window shows the 
+player with the next move.  The middle of the window shows the current status of 
+the game board.  The right hand side contains control buttons, each of which 
+kills one component of the application and test if that component will be 
+restarted.  Finally, Figure~\ref{fig:t8} announces the winner.
+
+\begin{figure}[p]
+     \begin{center}
+        \subcaptionbox{ \label{fig:t0}}{
+            \includegraphics[scale=0.38]{TicTacToeScreenCut/0.png}
+        }
+        \subcaptionbox{ \label{fig:t1} }{
+           \includegraphics[scale=0.38]{TicTacToeScreenCut/1.png}
+        }\\
+        \subcaptionbox{ \label{fig:t2} }{
+            \includegraphics[scale=0.38]{TicTacToeScreenCut/2.png}
+        }
+        \subcaptionbox{ \label{fig:t3} }{
+            \includegraphics[scale=0.38]{TicTacToeScreenCut/3.png}
+        }\\
+        \subcaptionbox{ \label{fig:t4} }{
+            \includegraphics[scale=0.38]{TicTacToeScreenCut/4.png}
+        }
+        \subcaptionbox{ \label{fig:t5} }{
+           \includegraphics[scale=0.38]{TicTacToeScreenCut/5.png}
+        }\\        
+        \subcaptionbox{ \label{fig:t6} }{
+            \includegraphics[scale=0.38]{TicTacToeScreenCut/6.png}
+        }
+        \subcaptionbox{ \label{fig:t7} }{
+           \includegraphics[scale=0.38]{TicTacToeScreenCut/7.png}
+        }\\                
+        \subcaptionbox{\label{fig:t8}}{
+           \includegraphics[scale=0.38]{TicTacToeScreenCut/8.png}
+        }\\                        
+    \end{center}
+     \caption{A Game of Tic-Tac-Toe}
+   \label{tictactoe_example}
+\end{figure}
+
+
+\subsubsection{The MVC pattern}
+
+Model-view-controller (MVC) is a software architecture pattern introduced by 
+\citet{reenskaug1979original}.  The pattern separates the data abstraction
+(the model), the representation of data (the view), and the component for 
+manipulating the data and interpreting user inputs (the controller).  
+In an application built using MVC, a controller coordinates a model and a view, for example,  
+sending instructions and reacting to messages from the model and the view.  
+Consequently, the controller has two distinct sets of interface: one to
+work with the model, the other to work with the view.
+
+MVC has been widely used in the design of applications with a graphical user 
+interface (GUI), from early Smalltalk programs written in Xerox Parc 
+\citep{reenskaug1979original, reenskaug2003model}, to modern web application 
+frameworks like the Zend framework \citep{allen2009zend}, to mobile 
+applications including Apple iOS applications \citep{apple:objc}.  This 
+section will follow the MVC pattern to implement a Tic-Tac-Toe Game with a 
+GUI.  The challenge here is using types to prevent the 
+situation where the model sends the controller a message expected from the 
+view, or the view pretends to be the model. 
+ 
+
+
+\subsection{A TAkka Implementation}
+
+
+
+
+\begin{figure}[p]
+\begin{lstlisting}[language=scala, escapechar=?]
+package sample.tic_tac_toe.takka
+
+?\textcolor{blue}{sealed trait ControllerMessage}?
+?\textcolor{blue}{sealed trait View2ControllerMessage extends ControllerMessage}?
+final case class ButtonClickedAt(row:Int, col:Int) extends View2ControllerMessage
+
+?\textcolor{blue}{sealed trait Model2ControllerMessage extends ControllerMessage}?
+final case class GridNotEmpty(row:Int, col:Int) extends Model2ControllerMessage
+final case class PlayedCross(row:Int, col:Int) extends Model2ControllerMessage
+final case class PlayedO(row:Int, col:Int) extends Model2ControllerMessage
+final case class NextMove(move:Move) extends Model2ControllerMessage
+final case class Winner(move:Move) extends Model2ControllerMessage
+
+?\textcolor{blue}{sealed trait Controller2ViewMessage}?
+final case class DisplyError(err:String) extends Controller2ViewMessage
+final case class DrawCross(row:Int, col:Int) extends Controller2ViewMessage
+final case class DrawO(row:Int, col:Int) extends Controller2ViewMessage
+final case class DisplayNextMove(move:Move) extends Controller2ViewMessage
+final case class AnnounceWinner(winner:Move) extends Controller2ViewMessage
+
+?\textcolor{blue}{sealed trait Controller2ModelMessage}?
+final case class MoveAt(row:Int, col:Int) extends Controller2ModelMessage
+
+final case class ModelSetController(controller:ActorRef[Model2ControllerMessage]) extends Controller2ModelMessage
+final case class ViewSetController(controller:ActorRef[View2ControllerMessage]) extends Controller2ViewMessage
+
+
+sealed trait Move
+final case object X extends Move
+final case object O extends Move
+\end{lstlisting}
+\caption{TicTacToe: Message}
+\label{TTT_message}
+\end{figure}
+
+\begin{figure}[p]
+
+\begin{lstlisting}[language=scala, escapechar=?]
+package sample.tic_tac_toe.takka
+import takka.actor._
+?\textcolor{blue}{final class Model extends Actor[Controller2ModelMessage]}? {
+  ?\textcolor{blue}{var controller:ActorRef[Model2ControllerMessage]}? = _  
+  def typedReceive = {
+    case ModelSetController(control) => controller = control
+    case MoveAt(row:Int, col:Int) =>   { model.setStatus(row, col)  }
+  }  
+  private object model {
+    sealed trait GridStatus
+    case object Empty extends GridStatus
+    case object XModelMove extends GridStatus
+    case object OModelMove extends GridStatus // Uppercase O
+    
+    var nextXMove:Boolean = true // true->X false->O    
+    val status:Array[Array[GridStatus]] = 
+          Array(Array(Empty, Empty, Empty),
+                 Array(Empty, Empty, Empty),
+                 Array(Empty, Empty, Empty))
+    def setStatus(row:Int, col:Int) = {   
+      if(nextXMove){
+          if (status(row)(col) == Empty) {
+            status(row)(col) = XModelMove
+            controller ! PlayedCross(row, col)
+            nextXMove = false
+            controller ! NextMove(O)
+          }else{  controller ! GridNotEmpty(row, col)          }
+      }else{
+          if (status(row)(col) == Empty) {
+            status(row)(col) = OModelMove
+            controller ! PlayedO(row, col)
+            nextXMove = true
+            controller ! NextMove(X)
+          }else{  controller ! GridNotEmpty(row, col)          }     
+      }
+
+      checkWinner match {
+        case Empty =>
+        case XModelMove =>          controller ! Winner(X)
+        case OModelMove =>          controller ! Winner(O)          
+     }}
+   def checkWinner:GridStatus = {
+     // reuse GridStatus instead of a new set of values
+     // return XModelMove if X wins
+     // return OModelMove if O wins
+     // return Empty if no winner has 
+}}
+\end{lstlisting}
+\caption{TicTacToe: Model}
+\label{TTT_model}
+\end{figure}
+
+\begin{figure}[p]
+\begin{lstlisting}[language=scala, escapechar=?]
+package sample.tic_tac_toe.takka
+
+import takka.actor._
+import scala.swing._
+import scala.swing.event._
+import javax.swing.JOptionPane
+
+?\textcolor{blue}{final class View extends Actor[Controller2ViewMessage]}?{
+  ?\textcolor{blue}{private var controller:ActorRef[View2ControllerMessage]}? = _
+   
+  private var guiApp:GUIApplication = _;
+      
+  def typedReceive = {
+     case ViewSetController(control) =>
+       assert(controller == null, "controller has been set")
+       controller = control
+       guiApp = new GUIApplication(controller)
+       guiApp.main(Array(""))              
+     case DisplyError(err) =>       guiApp.displayError(err)
+     case DrawCross(row, col) =>       guiApp.draw(row, col, true)
+     case DrawO(row, col) =>       guiApp.draw(row, col, false)
+     case DisplayNextMove(move) =>       guiApp.showNextMove(move)
+     case AnnounceWinner(winner:Move) => winner match{
+       case X => guiApp.announceWinner(true)
+       case O => guiApp.announceWinner(false)
+     }
+  }
+}
+
+
+class GUIApplication(controller:ActorRef[View2ControllerMessage]) extends SimpleSwingApplication {
+   def draw(row:Int, col:Int, isCross:Boolean) { 
+     // draw X or O at (row, col)
+   }
+   def showNextMove(move:Move) {
+     // update next player
+   }
+   def displayError(err:String){
+     // show error message
+   }
+   def announceWinner(isCross:Boolean){
+     // announce winner
+   }
+}
+\end{lstlisting}
+\caption{TicTacToe: View}
+\label{TTT_view}
+\end{figure}
+
+
+\begin{figure}[p]
+\begin{lstlisting}[language=scala, escapechar=?]
+package sample.tik_tak_tok.takka
+
+import takka.actor._
+
+?\textcolor{blue}{final class Controller(model:ActorRef[Controller2ModelMessage], view:ActorRef[Controller2ViewMessage]) extends Actor[ControllerMessage]}? {
+  def typedReceive = {
+    case ButtonClickedAt(row, col) =>
+      model ! MoveAt(row, col)
+    case GridNotEmpty(row, col) =>
+      view ! DisplyError("grid "+row+" , "+col+" is not empty")
+    case PlayedCross(row, col) =>
+      view ! DrawCross(row, col)
+    case PlayedO(row, col) =>
+      view ! DrawO(row:Int, col:Int)
+    case NextMove(move) =>
+      view ! DisplayNextMove(move)
+    case Winner(move) =>
+      view ! AnnounceWinner(move)
+  }
+  
+  override def preStart() = {
+    model ! ModelSetController(typedSelf.publishAs[Model2ControllerMessage])
+    view ! ViewSetController(typedSelf.publishAs[View2ControllerMessage])
+  }
+}
+
+package sample.tic_tac_toe.takka
+
+import takka.actor._
+?\textcolor{blue}{object TicTacToeApplication extends App \{}?
+  ?\textcolor{blue}{val system = ActorSystem("LocalTicTacToe")}?
+  ?\textcolor{blue}{val model = system.actorOf(Props[Controller2ModelMessage, Model], "model")}?
+  ?\textcolor{blue}{val view = system.actorOf(Props[Controller2ViewMessage, View], "view")}?
+  ?\textcolor{blue}{val controller = system.actorOf(Props(new Controller(model, view)), "controller")  }?
+?\textcolor{blue}{\}}?
+\end{lstlisting}
+\caption{TicTacToe: Application}
+\label{TTT_controller}
+\end{figure}
+
+TAkka solves the type pollution problem by using subtyping polymorphism.  The code from 
+Figure~\ref{TTT_message} to Figure~\ref{TTT_controller} gives an TAkka 
+application that implements the Tic-Tac-Toe game with a GUI.  The code marked 
+in \textcolor{blue}{blue} may be reused by other applications built 
+using the MVC pattern.
+
+
+Messages used in this implementation are given in Figure~\ref{TTT_message}. 
+Messages sent to the controller are separated into two groups: those expected 
+from the model and those expected from the view.  The {\tt Controller} actor of 
+this application, defined in Figure~\ref{TTT_controller}, reacts to messages 
+sent either from the {\tt Model} actor or the {\tt View} actor.  In its 
+initialization process, however, the controller publishes itself as different 
+types to the view actor and the model actor.  Although the {\tt publishAs} 
+methods in line 22 and line 23 of Figure~\ref{TTT_controller} can be committed 
+because the type of the controller has been refined in the {\tt 
+ModelSetController} message and the {\tt ViewSetController} message, the code
+explicitly expresses the type convention and lets the compiler double check the 
+type.
+
+In the definition of the {\tt Model} actor (Figure~\ref{TTT_model}) and the 
+{\tt View} actor (Figure~\ref{TTT_view}), the {\tt Controller} actor is declared 
+as different types.  As a result, both the view and the model only know the 
+communication interface between the controller and itself.  The {\tt Model} 
+actor internally represents the game board as a two dimensional array.  Each 
+time the model receives a request from the controller, it updates the status of 
+the board and then announce the winner or the next player to the controller.  
+The {\tt View} actor maintains a GUI application that displays the game board 
+and listens to user input.  All user input is forwarded to the controller 
+which sends corresponding requests to the model.  When the view receives 
+requests from the controller, it updates the game board or announce the winner 
+via the GUI.  Detailed GUI implementation is omitted in this thesis for clarity.
+Readers can found the complete code in the public code repository of this project. \citep{takka_repo}
+
+
+Finally, setting up the application is straightforward.  In the code 
+given at the bottom of Figure~\ref{TTT_controller}, a {\tt Model} actor, a 
+{\tt View} actor, and a {\tt Controller} actor are initialized in a local actor 
+system.  In this implementation, the controller actor must be initialized at the 
+end because its initialization requires actor references of the model and the 
+view.  The user interface of this application looks like the one gives in 
+Figure~\ref{tictactoe_example}.  
+
+
+
+\subsection{A Scala Interface}
+\label{type_pollution_oo}
+
+
+
+The type pollution problem is avoided in TAkka by publishing different types of 
+an actor to different users.  This method can be applied to any language that 
+supports polymorphism.  For example, Figure~\ref{TTT_interface} gives an 
+interface of implementing the Tic-Tac-Toe game using the MVC pattern without actors.  The code 
+marked in \textcolor{blue}{blue} can be modified for building other 
+applications using the MVC pattern.
+
+Similar to the TAkka implementation which separates the type of messages sent 
+from a model to a controller and a view to a controller, the interface in Figure 
+\ref{TTT_interface} separates the methods of a controller to be called by a 
+model and those to be called by a view into two distinct traits.  The controller 
+is defined as the subclass of both traits.
+
+The example implementation, however, is difficult to maintain.  Notice that the 
+{\tt ControllerForView} trait and the {\tt ControllerForModel} trait are the 
+supertypes of the {\tt Controller} trait.  As a result, those two traits 
+and their methods should be defined in advance.  Each time a new 
+method shall be added to either of the two traits, 
+the whole program needs to be recompiled and re-deployed.  Where an application 
+is a collaborative project maintained by different groups, attempts at 
+large-scale updates should be avoided whenever possible.  
+
+In contrast, our TAkka implementation avoids the problems suffered by the simple
+Scala solution because new messages can be added easily as a subtype
+of an earlier defined message.   With the benefit of backward compatible behaviour upgrading (Section 
+\ref{hot_swapping}), the controller, the model and the view can be updated 
+separately.
+
+
+
+
+\begin{figure}[p]
+\begin{lstlisting}[language=scala, escapechar=?]
+package sample.tic_tac_toe.mvcobject
+
+?\textcolor{blue}{trait Controller extends ControllerForView with ControllerForModel}?
+class GameController(model:Model, view:View) extends Controller {
+  // implementation
+}
+
+?\textcolor{blue}{trait ControllerForView}? {
+  def buttonClickedAt(row:Int, col:Int):Unit
+}
+?\textcolor{blue}{trait ControllerForModel}? {
+  def gridNotEmpty(row:Int, col:Int):Unit
+  def playedCross(row:Int, col:Int):Unit
+  def playedO(row:Int, col:Int):Unit
+  def nextMove(move:Move):Unit
+  def winner(move:Move):Unit
+}
+
+?\textcolor{blue}{trait Model}? {
+  ?\textcolor{blue}{def setController(controller:ControllerForModel): Unit}?
+  def moveAt(row:Int, col:Int): Unit
+}
+class GameModel extends Model {
+  // implementation
+}
+
+?\textcolor{blue}{trait View}? {
+  ?\textcolor{blue}{def setController(controller:ControllerForView): Unit}?
+  def displyError(err:String): Unit
+  def drawCross(row:Int, col:Int): Unit
+  def drawO(row:Int, col:Int): Unit
+  def displayNextMove(move:Move): Unit
+  def announceWinner(winner:Move): Unit
+}
+class GameView extends View {
+  // implementation
+}
+
+sealed trait Move
+final case object X extends Move
+final case object O extends Move
+
+?\textcolor{blue}{object TicTacToeApplication extends App \{}?
+  ?\textcolor{blue}{val model = new GameModel;}?
+  ?\textcolor{blue}{val view = new GameView;}?
+  ?\textcolor{blue}{val controller = new GameController(model, view)  }?
+?\textcolor{blue}{\}}?
+\end{lstlisting}
+\caption{TicTacToe: MVC Interface}
+\label{TTT_interface}
+\end{figure}
+
+
 \section{Handling System Messages}
 \label{systemmessage}
 
@@ -1276,8 +1753,8 @@ Some messages are defined as public objects which can be handled by a user where
 as some messages are defined as private objects which only be used by the
 library developers.  TAkka retains {\tt Kill} and {\tt PoisonPill} because it is used
 in the Chaos Monkey library and the Supervision View 
-library explained in Section~\ref{reliability}.  TAkka users may want to use those two messages for
-reliability test as well.  The {\tt ReceiveTimeout} message is retained because it is used in many 
+library explained in Section~\ref{reliability}.  TAkka users may also want to use those two messages for
+reliability testing.  The {\tt ReceiveTimeout} message is retained because it is used in many 
 applications considered in this thesis.  The TAkka library makes {\tt Create}, {\tt Failed}, {\tt Suspend}, 
 and {\tt Resume} private because reactions to those messages can be consistently defined
 in library rather than leave to users.  The decision is verified by the design
@@ -1364,7 +1841,7 @@ defined messages.
 
 
 
-\section{Case Study: A Distributed Calculator}
+\section{A Distributed Calculator}
 \label{sec_distributed_calculator}
 
 In previous sections, we have seen that an actor can be parameterized by the 
@@ -1539,7 +2016,6 @@ import akka.kernel.Bootable
 import com.typesafe.config.ConfigFactory
 import scala.util.Random
 import takka.actor._
-
 class CreationApplication extends Bootable {
   val system = ActorSystem("RemoteCreation", 
                            ConfigFactory.parseString(""" 
@@ -1560,21 +2036,18 @@ class CreationApplication extends Bootable {
                                                     "creationActor")
   val remoteActor = system.actorOf(Props[CalculatorMessage, 
                           AdvancedCalculatorActor], "advancedCalculator")
-
   def doSomething(op: MathOp) = {    localActor ! Ask(remoteActor, op)  }
 }
 class CreationActor extends Actor[MathResult] {
   def typedReceive = {
-    case Ask(calculator, op) => {
+    case Ask(calculator, op) => 
       calculator ! Op(op, typedRemoteSelf)      
-    }
     case result: MathResult => result match {
       case MultiplicationResult(n1, n2, r) => 
         println("Mul result: %d * %d = %d".format(n1, n2, r))
       case DivisionResult(n1, n2, r)  => 
         println("Div result: %.0f / %d = %.2f".format(n1, n2, r))
 }}}
-
 object CreationApp extends App {
     val app = new CreationApplication
     while (true) {
@@ -1606,7 +2079,6 @@ class LookupApplication extends Bootable {
                    actor {
                      provider = "akka.remote.RemoteActorRefProvider"
                    }
-
                    remote {
                      netty {
                        hostname = "129.215.91.195"
@@ -1617,7 +2089,6 @@ class LookupApplication extends Bootable {
   val actor = system.actorOf(Props[MathResult, LookupActor], "lookupActor")
   val remoteActor = system.actorFor[CalculatorMessage]
        ("akka://CalculatorApplication@129.215.91.88:2552/user/simpleCalculator")
-
   def doSomething(op: MathOp) = {    actor ! Ask(remoteActor, op)  }
 }
 class LookupActor extends Actor[MathResult] {
@@ -1628,9 +2099,7 @@ class LookupActor extends Actor[MathResult] {
            println("Add result: %d + %d = %d".format(n1, n2, r))
       case SubtractResult(n1, n2, r) => 
            println("Sub result: %d - %d = %d".format(n1, n2, r))
-    }
-  }
-}
+}}}
 object LookupApp extends App {
     val app = new LookupApplication
     while (true) {
@@ -1640,8 +2109,8 @@ object LookupApp extends App {
            app.doSomething(Subtract(Random.nextInt(100), 
                                         Random.nextInt(100)))
       Thread.sleep(200)
-    }
-}
+}}
+
 \end{lstlisting}
 \caption{Distributed Calculator: Actor Look up}
 \label{discal_lookup}
@@ -1683,16 +2152,15 @@ an Akka application that enables distributed programming, the same actor system
 configuration can be reused in the corresponding TAkka version.
 
 
-\newpage
-
 \section{Design Alternatives}
 \label{alternative_designs}
 
 \paragraph{Akka Typed Actor}
-In the Akka library, there is a special class called {\tt TypedActor}, which
-contains can be supervised by an actor.  The {\tt TypedActor} class is essentially
-a different framework.  A service of {\tt TypedActor} class is invoked by method 
-invocation instead of message passing.  Code in Figure~\ref{akka typed actor} shows 
+In the Akka library, there is a special class called {\tt TypedActor}.
+Although an instance of {\tt TypedActor} can be supervised by a
+standard actor, it is essentially a different framework as a service
+of {\tt TypedActor} class is invoked by a method 
+invocation instead of sending a message.  Code in Figure~\ref{akka typed actor} shows 
 how to define a simple string processor using Akka typed actor.  
 Line 34 to 36 show that a {\tt TypedActor} object does not have a {\tt !} method.
 Line 37 to 39 and their output (Line 44 to 45) show that an actor is located at 

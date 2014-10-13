@@ -1,10 +1,8 @@
 \chapter{Introduction}
 
-% This introductory chapter presents the general background for problems 
-% discussed in this thesis.  It summarizes main contributions of this thesis. 
-% Finally, an overview of the thesis is given.
+This introductory chapter presents the general background that motivates solving  problems discussed in this thesis.  It summarizes main contributions of this thesis.  Finally, an overview of the thesis is given.
 
-% \section{General Background and Problem}
+\section{General Background and Motivation}
 
 Building reliable distributed applications is among the most difficult tasks 
 facing programmers, and one which is becoming increasingly important due to the 
@@ -76,13 +74,25 @@ actors in supervision trees be statically typed?
 
 The key claim in this thesis is that actors in supervision trees can be 
 statically typed by parameterizing the actor class with the type of messages it 
-expects to receive.  Type-parameterized actors benefit both users and developers
-of actor-based services. For users, sending ill-typed messages is prevented at 
-compile time.  Because messages are usually transmitted asynchronously, it may 
-be otherwise difficult to trace the source of errors at runtime, especially in 
-distributed environments.  For service developers, since unexpected messages 
-are eliminated from the system, they can focus on the logic of the services 
-rather than worrying about incoming messages of unexpected types.  
+expects to receive.  This research project is motivated by the following benefits of statical typing:
+\begin{enumerate}
+  \item Both users and developers of actor-based services can take advantages 
+of type-parameterized actors.  For users, sending ill-typed messages is 
+prevented at compile time.  Because messages are usually transmitted 
+asynchronously, it may be otherwise difficult to trace the source of errors at 
+runtime, especially in distributed environments.  For service developers, since 
+unexpected messages are eliminated from the system, they can focus on the 
+logic of the services rather than worrying about incoming messages of 
+unexpected types.  Another immediate benefits of typing checking is pattern
+completeness checking for message handlers.
+  \item Static typing enforces disciplined and modular programming \citep{TPL}.
+Opposite to writing programs in dynamically typed languages, programers are often more confident to use complex and deep nested types in statically typed languages.  Using complex types that have a higher level of abstraction improves the readability and maintainability of programs.  On the other side, porting nested types into an untyped system using nested tuples is possible but often results in complex code that is more difficult to understand.
+  \item Static typing often results in shorter code \citep{TPL}.  When a new actor is defined, handlers for ill-typed messages are no longer needed.  When an application is built on top of some actors, which are often black boxes to application developers, there is no need to study how those actors will behave upon receiving unexpected messages and implement handlers for every problematic cases.
+  \item A statically typed program can often be compiled to code that executes more quickly \citep{TPL}.  As the compiler knows the exact data types that are in use at runtime, ad hoc optimizations might be applied to the assembly code or the machine code.
+  \item Statically typed interface is a clear and precise documentation per se \citep{TPL}.  Users of a type-parameterized actor understands its functionality immediately by looking at its type parameter, which denotes the type of permitted messages.  Without the type information, users would be more rely on good documentation, examples, and even small experiments created by themselves\citep{endrikat2014api}.
+
+\end{enumerate}
+
 
 Implementing type-parameterized actors in a statically-typed language, however, 
 requires solving the following three problems:
@@ -114,19 +124,42 @@ type-parameterized actor publish itself as different types when it communicates
 with different parties?
 \end{enumerate}
 
-\paragraph{Contributions}
+\section{Contributions}
 
 The overall goal of the thesis is to develop a framework that makes it possible 
-to construct reliable distributed applications written using and verified by 
-our libraries which merges the advantages of type checking and the supervision 
-principle.  The key contributions of this thesis are:
+to construct reliable distributed applications written using and validated by 
+our library, TAkka, which merges the advantages of type checking and the 
+supervision principle.   
+
+The TAkka library is implemented in the Scala programming language.  It
+expands the existing Akka library for supervised actors by the introduction 
+of typed messaging.  Akka is developed at TypeSafe Inc.  
+As Akka becomes part of the standard library in Scala 2.10 
+and higher versions, it is widely used in many real applications.  Choosing 
+Akka as the base of our design and implementation benefits this project in 
+many aspects.  Firstly, the author checks that main requirements in distributed 
+programming are not unintentionally neglected by rewriting 23 Akka applications 
+written by other professional programmers.  Secondly, improvements made in 
+the TAkka library can benefit existing Akka applications with a low cost because, 
+as presented later, rewriting Akka applications using TAkka involves less than 10\% 
+straightforward code changes.  Finally, despite some deficits in the Akka design, 
+it saves the author a significant amount of work on low-level implementation.  
+In fact, some less carefully designed Akka features have inspired the author to 
+make improvements in the TAkka library.
+
+Source code of the TAkka library, testing and demonstration examples, along with
+other related documentations produced during this research are available at a 
+GitHub repository for this project \citep{takka_repo} and the CD attached to this thesis.
+A condensed version of the material in this thesis is published in a companion paper \citep{TAKKA_paper}.
+
+Generally speaking, the key contributions of this thesis are:
 
 \begin{itemize}
 \begin{comment}
   \item A formal model that captures the essence of the supervision principle.  
   The model (Chapter~\ref{supervision_model}) exhibits key features of the 
   supervision principle used in existing libraries including Erlang, Akka, and 
-  TAkka. It provides a tool to compare the design alternatives of the 
+  TAkka. It provides a tool to compare the design alternatives to the 
   supervision principle.  
 \end{comment}  
   \item The design and implementation of the TAkka library (Chapter~\ref{takka_design}), where supervised 
@@ -171,6 +204,7 @@ actors are parameterized by the type of messages they expect.  The library
 \end{comment}  
 \end{itemize}
 
+\section{Thesis Outline}
 
 The rest of this thesis is structured as the followings.
 
@@ -180,16 +214,14 @@ Supervision principle, together with short explanations of their usages in the E
 language and the Akka library.  Chapter~\ref{background} concludes with features of the
 Scala type system used in the TAkka implementation.   
 
-Chapter~\ref{takka_design} to \ref{takka_evaluation}
-are expanded for a companion paper of this thesis.  The paper \citep{TAKKA_paper} 
+A condensed version of the material in Chapter~\ref{takka_design} to \ref{takka_evaluation}
+appears in a companion paper.  The paper \citep{TAKKA_paper} 
 is written as a brief introduction to the TAkka library.  It
 is structured in a way that make the comparison of TAkka and Akka easy for Scala programmers.
 This thesis elaborates the rational for the TAkka design and implementation.   
 Chapter~\ref{takka_design} presents the design and implementation of the TAkka library. 
 Chapter~\ref{evolution} shows that Akka programs can be rewritten using TAkka incrementally, 
-one module at a time.
-Chapter \ref{takka_evaluation} evaluates the TAkka library.
+one module at a time.  Chapter \ref{takka_evaluation} evaluates the TAkka library.
 
-Chapter~\ref{future_work} suggests topics that can help the construction of reliable
-distributed applications.  Chapter~\ref{summary} concludes.
-
+Chapter~\ref{summary} concludes and suggests future work that can help the construction of reliable
+distributed applications. 

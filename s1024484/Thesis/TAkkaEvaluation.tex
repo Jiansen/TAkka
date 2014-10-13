@@ -2,481 +2,25 @@
 \label{takka_evaluation}
 
 \begin{center}
-(This chapter is expanded from \citep{TAKKA_paper}, Chapter 6, 7 and 8)
+A condensed version of the material in this chapter appears \\ in~\citep[Section 6, 7 and 8]{TAKKA_paper}
 \end{center}
 \vspace{12 pt}
 
 This chapter evaluates the TAkka library with regards to the following three 
-aspects.  Firstly, Section~\ref{type_pollution} shows that the notion of 
-type-parameterized actor in the TAkka library has syntactical advantages to 
-avoid type pollution problem.  Secondly, Sections 
-\ref{expressiveness} to \ref{efficiency} show that rewriting Akka programs 
-using TAkka will {\it not} bring obvious code-size and runtime overheads. 
- Thirdly, Section~\ref{reliability} gives two accessory libraries, ChaosMonkey 
+aspects.  Sections \ref{expressiveness} to \ref{efficiency} show that rewriting 
+Akka programs using TAkka will {\it not} bring obvious code-size and runtime overheads. 
+Moreover, Section~\ref{reliability} gives two accessory libraries, ChaosMonkey 
 and SupervisionView, for testing the reliability and availability of TAkka 
 applications. 
 
 
 
-\section{The Type Pollution Problem}
-\label{type_pollution}
 
-In a system with multiple components, different components may require
-different interfaces; since all messages are received in the same
-mailbox, a naive approach would be to set the type to the union of all
-the interfaces, causing each component to see a type containing
-messages not intended for it---an issue dubbed the Type Pollution
-Problem.
-
-This section illustrates the Type Pollution Problem and its solution on an
-instance of the Model-View-Controller pattern \citep{reenskaug1979original, burbeck87}.  The Model
-and View have separate interfaces to the Controller, and neither
-should see the interface used by the other.  However, the naive
-approach would have the Controller message type contain all the
-messages the Controller receives, from both the Model and the View.
-A similar problem can occur in a multi-tier architecture \citep{fowler2002patterns},
-where an intermediary layer interfaces with both the layer above
-and the layer below.
-
-One solution to the type pollution problem is using separate channels
-for distinct parties.  For instance, in Model-View-Controller, one
-channel would communicate between Model and Controller, and a distinct
-channel communicate between Model and View.  Programming models that
-support this solution includes the join-calculus \citep{full_join} and
-the typed $\pi$-calculus \citep{pi_book}.  Can we gain similar
-advantages for a system based on actors rather than channels?
-
-The TAkka solution is publishing a component as of different types to different 
-parties.  The published type shall be a supertype of the most precise type of 
-the component.  In Java and Scala applications, this solution can be tricky 
-because, as will be briefly discussed in Section~\ref{type_pollution_oo}, a set 
-of supertypes must be defined in advance.  
-Fortunately, if the component is implemented as a type-parameterized actor, 
-the limitation can be avoided straightforwardly.  The demonstration example 
-studied in this section is a Tic-Tac-Toe game with a graphical user interface 
-(GUI) implemented using the MVC pattern.
-
-
-\subsection{Case Study: Tic-Tac-Toe}
-
-
-\subsubsection{The Game}
-
-Tic-Tac-Toe \citep{wiki:tictactoe}, also known as Noughts and Crosses, is a 
-paper-and-pencil game.  A basic version of the Tic-Tac-Toe game is played by 
-two players who mark X and O in turn in a $3\times3$ grid.  A player wins the 
-game if he or she succeeds in placing three respective marks, i.e. three Xs or three Os, in a 
-horizontal, vertical, or diagonal row.  The game is drawn if no player wins when 
-the grid is fully marked.
-
-Figure~\ref{tictactoe_example} gives an example game won by the first player, 
-X.  Figures \ref{fig:t0} to \ref{fig:t7}  are screenshots 
-of the game implemented in the next subsection.  The graphical user interface 
-of the game contains three parts.  The left hand side of the window shows the 
-player with the next move.  The middle of the window shows the current status of 
-the game board.  The right hand side contains control buttons, each of which 
-kills one component of the application and test if that component will be 
-restarted.  Finally, Figure~\ref{fig:t8} announces the winner.
-
-\begin{figure}[p]
-     \begin{center}
-        \subfloat[]{
-            \label{fig:t0}
-            \includegraphics[scale=0.38]{TicTacToeScreenCut/0.png}
-        }
-        \subfloat[]{
-           \label{fig:t1}
-           \includegraphics[scale=0.38]{TicTacToeScreenCut/1.png}
-        }\\
-        \subfloat[]{
-            \label{fig:t2}
-            \includegraphics[scale=0.38]{TicTacToeScreenCut/2.png}
-        }
-        \subfloat[]{
-            \label{fig:t3}
-            \includegraphics[scale=0.38]{TicTacToeScreenCut/3.png}
-        }\\
-        \subfloat[]{
-            \label{fig:t4}
-            \includegraphics[scale=0.38]{TicTacToeScreenCut/4.png}
-        }
-        \subfloat[]{
-           \label{fig:t5}
-           \includegraphics[scale=0.38]{TicTacToeScreenCut/5.png}
-        }\\        
-        \subfloat[]{
-            \label{fig:t6}
-            \includegraphics[scale=0.38]{TicTacToeScreenCut/6.png}
-        }
-        \subfloat[]{
-           \label{fig:t7}
-           \includegraphics[scale=0.38]{TicTacToeScreenCut/7.png}
-        }\\                
-        \subfloat[]{
-           \label{fig:t8}
-           \includegraphics[scale=0.38]{TicTacToeScreenCut/8.png}
-        }\\                        
-    \end{center}
-     \caption{A Game of Tic-Tac-Toe}
-   \label{tictactoe_example}
-\end{figure}
-
-
-\subsubsection{The MVC pattern}
-
-Model-view-controller (MVC) is a software architecture pattern introduced by 
-\citet{reenskaug1979original}.  The pattern separates the data abstraction
-(the model), the representation of data (the view), and the component for 
-manipulating the data and interpreting user inputs (the controller).  
-One key design principle of MVC is that the model and the view {\it never} 
-communicate with each other directly.  Instead, the controller is responsible 
-for coordinating the model and the view, for example,  sending instructions and 
-reacting to messages from the model and the view.  
-
-MVC has been widely used in the design of applications with a graphical user 
-interface (GUI), from early Smalltalk programs written in Xerox Parc 
-\citep{reenskaug1979original, reenskaug2003model}, to modern web application 
-frameworks like the Zend framework \citep{allen2009zend}, to mobile 
-applications including Apple iOS applications \citep{apple:objc}.  This 
-section will follow the MVC pattern to implement a Tic-Tac-Toe Game with a 
-GUI.  The challenge here is using types to prevent the 
-situation where the model sends the controller a message expected from the 
-view, or the view pretends to be the model. 
- 
-
-
-\subsection{A TAkka Implementation}
-
-
-
-
-\begin{figure}[p]
-\begin{lstlisting}[language=scala, escapechar=?]
-package sample.tic_tac_toe.takka
-
-?\textcolor{blue}{sealed trait ControllerMessage}?
-?\textcolor{blue}{sealed trait View2ControllerMessage extends ControllerMessage}?
-final case class ButtonClickedAt(row:Int, col:Int) extends View2ControllerMessage
-
-?\textcolor{blue}{sealed trait Model2ControllerMessage extends ControllerMessage}?
-final case class GridNotEmpty(row:Int, col:Int) extends Model2ControllerMessage
-final case class PlayedCross(row:Int, col:Int) extends Model2ControllerMessage
-final case class PlayedO(row:Int, col:Int) extends Model2ControllerMessage
-final case class NextMove(move:Move) extends Model2ControllerMessage
-final case class Winner(move:Move) extends Model2ControllerMessage
-
-?\textcolor{blue}{sealed trait Controller2ViewMessage}?
-final case class DisplyError(err:String) extends Controller2ViewMessage
-final case class DrawCross(row:Int, col:Int) extends Controller2ViewMessage
-final case class DrawO(row:Int, col:Int) extends Controller2ViewMessage
-final case class DisplayNextMove(move:Move) extends Controller2ViewMessage
-final case class AnnounceWinner(winner:Move) extends Controller2ViewMessage
-
-?\textcolor{blue}{sealed trait Controller2ModelMessage}?
-final case class MoveAt(row:Int, col:Int) extends Controller2ModelMessage
-
-final case class ModelSetController(controller:ActorRef[Model2ControllerMessage]) extends Controller2ModelMessage
-final case class ViewSetController(controller:ActorRef[View2ControllerMessage]) extends Controller2ViewMessage
-
-
-sealed trait Move
-final case object X extends Move
-final case object O extends Move
-\end{lstlisting}
-\caption{TicTacToe: Message}
-\label{TTT_message}
-\end{figure}
-
-\begin{figure}[p]
-
-\begin{lstlisting}[language=scala, escapechar=?]
-package sample.tic_tac_toe.takka
-import takka.actor._
-?\textcolor{blue}{final class Model extends Actor[Controller2ModelMessage]}? {
-  ?\textcolor{blue}{var controller:ActorRef[Model2ControllerMessage]}? = _  
-  def typedReceive = {
-    case ModelSetController(control) => controller = control
-    case MoveAt(row:Int, col:Int) =>   { model.setStatus(row, col)  }
-  }  
-  private object model {
-    sealed trait GridStatus
-    case object Empty extends GridStatus
-    case object XModelMove extends GridStatus
-    case object OModelMove extends GridStatus // Uppercase O
-    
-    var nextXMove:Boolean = true // true->X false->O    
-    val status:Array[Array[GridStatus]] = 
-          Array(Array(Empty, Empty, Empty),
-                 Array(Empty, Empty, Empty),
-                 Array(Empty, Empty, Empty))
-    def setStatus(row:Int, col:Int) = {   
-      if(nextXMove){
-          if (status(row)(col) == Empty) {
-            status(row)(col) = XModelMove
-            controller ! PlayedCross(row, col)
-            nextXMove = false
-            controller ! NextMove(O)
-          }else{  controller ! GridNotEmpty(row, col)          }
-      }else{
-          if (status(row)(col) == Empty) {
-            status(row)(col) = OModelMove
-            controller ! PlayedO(row, col)
-            nextXMove = true
-            controller ! NextMove(X)
-          }else{  controller ! GridNotEmpty(row, col)          }     
-      }
-
-      checkWinner match {
-        case Empty =>
-        case XModelMove =>          controller ! Winner(X)
-        case OModelMove =>          controller ! Winner(O)          
-     }}
-   def checkWinner:GridStatus = {
-     // reuse GridStatus instead of a new set of values
-     // return XModelMove if X wins
-     // return OModelMove if O wins
-     // return Empty if no winner has 
-}}
-\end{lstlisting}
-\caption{TicTacToe: Model}
-\label{TTT_model}
-\end{figure}
-
-\begin{figure}[p]
-\begin{lstlisting}[language=scala, escapechar=?]
-package sample.tic_tac_toe.takka
-
-import takka.actor._
-import scala.swing._
-import scala.swing.event._
-import javax.swing.JOptionPane
-
-?\textcolor{blue}{final class View extends Actor[Controller2ViewMessage]}?{
-  ?\textcolor{blue}{private var controller:ActorRef[View2ControllerMessage]}? = _
-   
-  private var guiApp:GUIApplication = _;
-      
-  def typedReceive = {
-     case ViewSetController(control) =>
-       assert(controller == null, "controller has been set")
-       controller = control
-       guiApp = new GUIApplication(controller)
-       guiApp.main(Array(""))              
-     case DisplyError(err) =>       guiApp.displayError(err)
-     case DrawCross(row, col) =>       guiApp.draw(row, col, true)
-     case DrawO(row, col) =>       guiApp.draw(row, col, false)
-     case DisplayNextMove(move) =>       guiApp.showNextMove(move)
-     case AnnounceWinner(winner:Move) => winner match{
-       case X => guiApp.announceWinner(true)
-       case O => guiApp.announceWinner(false)
-     }
-  }
-}
-
-
-class GUIApplication(controller:ActorRef[View2ControllerMessage]) extends SimpleSwingApplication {
-   def draw(row:Int, col:Int, isCross:Boolean) { 
-     // draw X or O at (row, col)
-   }
-   def showNextMove(move:Move) {
-     // update next player
-   }
-   def displayError(err:String){
-     // show error message
-   }
-   def announceWinner(isCross:Boolean){
-     // announce winner
-   }
-}
-\end{lstlisting}
-\caption{TicTacToe: View}
-\label{TTT_view}
-\end{figure}
-
-
-\begin{figure}[p]
-\begin{lstlisting}[language=scala, escapechar=?]
-package sample.tik_tak_tok.takka
-
-import takka.actor._
-
-?\textcolor{blue}{final class Controller(model:ActorRef[Controller2ModelMessage], view:ActorRef[Controller2ViewMessage]) extends Actor[ControllerMessage]}? {
-  def typedReceive = {
-    case ButtonClickedAt(row, col) =>
-      model ! MoveAt(row, col)
-    case GridNotEmpty(row, col) =>
-      view ! DisplyError("grid "+row+" , "+col+" is not empty")
-    case PlayedCross(row, col) =>
-      view ! DrawCross(row, col)
-    case PlayedO(row, col) =>
-      view ! DrawO(row:Int, col:Int)
-    case NextMove(move) =>
-      view ! DisplayNextMove(move)
-    case Winner(move) =>
-      view ! AnnounceWinner(move)
-  }
-  
-  override def preStart() = {
-    model ! ModelSetController(typedSelf.publishAs[Model2ControllerMessage])
-    view ! ViewSetController(typedSelf.publishAs[View2ControllerMessage])
-  }
-}
-
-package sample.tic_tac_toe.takka
-
-import takka.actor._
-?\textcolor{blue}{object TicTacToeApplication extends App \{}?
-  ?\textcolor{blue}{val system = ActorSystem("LocalTicTacToe")}?
-  ?\textcolor{blue}{val model = system.actorOf(Props[Controller2ModelMessage, Model], "model")}?
-  ?\textcolor{blue}{val view = system.actorOf(Props[Controller2ViewMessage, View], "view")}?
-  ?\textcolor{blue}{val controller = system.actorOf(Props(new Controller(model, view)), "controller")  }?
-?\textcolor{blue}{\}}?
-\end{lstlisting}
-\caption{TicTacToe: Application}
-\label{TTT_controller}
-\end{figure}
-
-TAkka solves the type pollution problem by using subtyping polymorphism.  The code from 
-Figure~\ref{TTT_message} to Figure~\ref{TTT_controller} gives an TAkka 
-application that implements the Tic-Tac-Toe game with a GUI.  The code marked 
-in \textcolor{blue}{blue} may be reused by other applications built 
-using the MVC pattern.
-
-
-Messages used in this implementation are given in Figure~\ref{TTT_message}. 
-Messages sent to the controller are separated into two groups: those expected 
-from the model and those expected from the view.  The {\tt Controller} actor of 
-this application, defined in Figure~\ref{TTT_controller}, reacts to messages 
-sent either from the {\tt Model} actor or the {\tt View} actor.  In its 
-initialization process, however, the controller publishes itself as different 
-types to the view actor and the model actor.  Although the {\tt publishAs} 
-methods in line 22 and line 23 of Figure~\ref{TTT_controller} can be committed 
-because the type of the controller has been refined in the {\tt 
-ModelSetController} message and the {\tt ViewSetController} message, the code
-explicitly expresses the type convention and lets the compiler double check the 
-type.
-
-In the definition of the {\tt Model} actor (Figure~\ref{TTT_model}) and the 
-{\tt View} actor (Figure~\ref{TTT_view}), the {\tt Controller} actor is declared 
-as different types.  As a result, both the view and the model only know the 
-communication interface between the controller and itself.  The {\tt Model} 
-actor internally represents the game board as a two dimensional array.  Each 
-time the model receives a request from the controller, it updates the status of 
-the board and then announce the winner or the next player to the controller.  
-The {\tt View} actor maintains a GUI application that displays the game board 
-and listens to user input.  All user input is forwarded to the controller 
-which sends corresponding requests to the model.  When the view receives 
-requests from the controller, it updates the game board or announce the winner 
-via the GUI.  Detailed GUI implementation is omitted in this thesis for clarity.
-Readers can found the complete code in the public code repository of this project. \citep{takka_repo}
-
-
-Finally, setting up the application is straightforward.  In the code 
-given at the bottom of Figure~\ref{TTT_controller}, a {\tt Model} actor, a 
-{\tt View} actor, and a {\tt Controller} actor are initialized in a local actor 
-system.  In this implementation, the controller actor must be initialized at the 
-end because its initialization requires actor references of the model and the 
-view.  The user interface of this application looks like the one gives in 
-Figure~\ref{tictactoe_example}.  
-
-
-
-\subsection{A Scala Interface}
-\label{type_pollution_oo}
-
-
-
-The type pollution problem is avoided in TAkka by publishing different types of 
-an actor to different users.  This method can be applied to any language that 
-supports polymorphism.  For example, Figure~\ref{TTT_interface} gives an 
-interface of implementing the Tic-Tac-Toe game using the MVC pattern without actors.  The code 
-marked in \textcolor{blue}{blue} can be modified for building other 
-applications using the MVC pattern.
-
-Similar to the TAkka implementation which separates the type of messages sent 
-from a model to a controller and a view to a controller, the interface in Figure 
-\ref{TTT_interface} separates the methods of a controller to be called by a 
-model and those to be called by a view into two distinct traits.  The controller 
-is defined as the subclass of both traits.
-
-The example implementation, however, is difficult to maintain.  Notice that the 
-{\tt ControllerForView} trait and the {\tt ControllerForModel} trait are the 
-supertypes of the {\tt Controller} trait.  As a result, those two traits 
-and their methods should be defined in advance.  Each time a new 
-method shall be added to either of the two traits, 
-the whole program needs to be recompiled and re-deployed.  Where an application 
-is a collaborative project maintained by different groups, attempts at 
-large-scale updates should be avoided whenever possible.  
-
-In contrast, our TAkka implementation avoids the problems suffered by the simple
-Scala solution because new messages can be added easily as a subtype
-of an earlier defined message.   With the benefit of backward compatible behaviour upgrading (Section 
-\ref{hot_swapping}), the controller, the model and the view can be updated 
-separately.
-
-
-
-
-\begin{figure}[p]
-\begin{lstlisting}[language=scala, escapechar=?]
-package sample.tic_tac_toe.mvcobject
-
-?\textcolor{blue}{trait Controller extends ControllerForView with ControllerForModel}?
-class GameController(model:Model, view:View) extends Controller {
-  // implementation
-}
-
-?\textcolor{blue}{trait ControllerForView}? {
-  def buttonClickedAt(row:Int, col:Int):Unit
-}
-?\textcolor{blue}{trait ControllerForModel}? {
-  def gridNotEmpty(row:Int, col:Int):Unit
-  def playedCross(row:Int, col:Int):Unit
-  def playedO(row:Int, col:Int):Unit
-  def nextMove(move:Move):Unit
-  def winner(move:Move):Unit
-}
-
-?\textcolor{blue}{trait Model}? {
-  ?\textcolor{blue}{def setController(controller:ControllerForModel): Unit}?
-  def moveAt(row:Int, col:Int): Unit
-}
-class GameModel extends Model {
-  // implementation
-}
-
-?\textcolor{blue}{trait View}? {
-  ?\textcolor{blue}{def setController(controller:ControllerForView): Unit}?
-  def displyError(err:String): Unit
-  def drawCross(row:Int, col:Int): Unit
-  def drawO(row:Int, col:Int): Unit
-  def displayNextMove(move:Move): Unit
-  def announceWinner(winner:Move): Unit
-}
-class GameView extends View {
-  // implementation
-}
-
-sealed trait Move
-final case object X extends Move
-final case object O extends Move
-
-?\textcolor{blue}{object TicTacToeApplication extends App \{}?
-  ?\textcolor{blue}{val model = new GameModel;}?
-  ?\textcolor{blue}{val view = new GameView;}?
-  ?\textcolor{blue}{val controller = new GameController(model, view)  }?
-?\textcolor{blue}{\}}?
-\end{lstlisting}
-\caption{TicTacToe: MVC Interface}
-\label{TTT_interface}
-\end{figure}
-
-\newpage 
 
 \section{Expressiveness}
 \label{expressiveness}
 
-To assess the expressiveness of the TAkka library.  The author 
+To assess the expressiveness of the TAkka library.  The author  
 selected examples from Erlang QuviQ \citep{quviq}
 and open source Akka projects to ensure that the main requirements for actor 
 programming were not unintentionally neglected.  Section~\ref{examples}
@@ -530,12 +74,11 @@ that models the behaviour of the front-end of the ATM.
 \includegraphics[keepaspectratio=true,height=0.6\paperheight]
 {Pictures/ATM_FSM.png}
     \end{center}
-     \caption{Example: ATM}
+     \caption{Example: ATM -- \citep{quviq}}
    \label{atm}
 \end{figure}
 
 
-\newpage
 \paragraph{Elevator Controller}\ This example contains 7 actor classes.  It 
 simulates a system that monitors and schedules a number of elevators.
 
@@ -651,9 +194,84 @@ forked for the TAkka version \citep{takka_play} so that updating non-core compon
 
 \subsubsection{Code Size}
 
+
+
+
+
+\begin{sidewaystable}[clockwise, p]
+\begin{tabular}{| p{4.5 cm} | p{5.6 cm} | c | c |  c | c | c |}
+\hline
+
+Source & Example & \specialcell{Akka Code \\ Lines} &
+\specialcell{TAkka Code\\ Lines} & 
+\specialcell{Added Lines} & 
+\specialcell{Updated Lines} & 
+\specialcell{Deleted Lines}  \\
+\hline
+Small   & String Processor & 25 & 22 & 0 & 5 & 3 \\
+\cline{2-7}                            
+Examples                            & Supervised Calculator &38 & 32 & 1 & 3 & 7 \\ 
+\cline{2-7}
+                            & Behaviour Upgrade & 38 & 39 & 1 & 9 & 0 \\
+\cline{2-7}                            
+                            & Fib & 74 & 74 & 0 & 11 & 0 \\
+\cline{2-7}                            
+                            & NQueens & 235 & 235 & 0 & 6 & 0 \\
+\cline{2-7}                            
+\hline
+
+BenchErl  & bang & 93 & 94 & 0 & 8 & 0 \\
+\cline{2-7}
+Examples                            & big & 93 & 100 & 0 & 10 & 0 \\
+\cline{2-7}                            
+                            & ehb &201 & 216 & 0 & 23 & 0 \\ 
+\cline{2-7}                            
+                            & genstress &129 & 129 & 0 & 12 & 0 \\ 
+\cline{2-7}                            
+                            & mbrot & 125 & 130 & 0 & 8 & 0 \\
+\cline{2-7}                            
+                            & parallel & 101 & 101 & 0 & 9 & 0 \\ 
+\cline{2-7}                            
+                            & ran & 98 & 101 & 3 & 5 & 0 \\
+\cline{2-7}       
+                            & serialmsg & 146 & 146 & 0 & 20 & 0 \\
+\cline{2-7}       
+
+\hline
+QuviQ   & ATM simulator & 1148 & 1160 & 12 & 187 & 0 \\
+\cline{2-7}
+\citep{quviq}    & Elevator Controller & 2850 & 2878 & 7 & 165 & 0 \\
+\hline
+                     & Ping Pong & 67 & 67 & 0 & 13 & 0 \\
+\cline{2-7}
+Akka Documentation   & Dining Philosophers & 189 & 189 & 0 & 23 & 0  \\
+\cline{2-7}
+\citep{akka_doc}     & Distributed Calculator  & 250 & 250 & 0 & 43 & 0 \\
+\cline{2-7}
+                     & Fault Tolerance & 274 & 274 & 0 & 69 & 0 \\
+\hline
+
+               & Barber Shop \citep{BarberShop}& 754 & 751 & 0 & 101 & 3 \\
+\cline{2-7}
+Other Open Source    & EnMAS \citep{EnMAS} & 1916 & 1909 & 0 & 213 & 7 \\
+\cline{2-7}
+Akka Applications    & Socko Web Server \citep{SOCKO}  & 5024 & 5017  & 0 & 
+227 & 0 \\
+\cline{2-7}
+                     & Gatling \citep{Gatling} & 1635 & 1623 & 0 & 99 & 12 \\
+\cline{2-7}
+              & Play Core \citep{play_doc} & 27095 & 27095 & 0 & 15 & 0 \\
+\hline
+geometric mean                   & & 299.82 & 300.89 & - & - & - \\
+\hline
+\end{tabular}
+\caption{Expressiveness Evaluation}
+\label{express}
+\end{sidewaystable}
+
 This section investigates whether the type discipline enforced by TAkka restricts the 
 expressibility of Akka.  Table~\ref{express} lists the examples used for expressiveness checks.  
-Medium-seized examples are selected from Quviq \citep{quviq}
+Medium-seized examples are selected from QuviQ \citep{quviq}
 and open source Akka projects to ensure that the main requirements for actor 
 programming are not unintentionally neglected.  Examples from 
 Quviq are re-implemented using both Akka and TAkka.  Examples from 
@@ -663,87 +281,22 @@ size by calculating the geometric mean of all examples. The evaluation results
 in Table~\ref{express} show that when porting an Akka program to TAkka, about 
 8.5\% lines of code need to be modified including additional type declarations. 
 Sometimes, the code size can be smaller because TAkka code does not 
-need to handle unexpected messages.  On average, the total program size 
-of Akka and TAkka applications are almost the same.  Figure~\ref{fig:expressiveness}
+need to handle unexpected messages, through many examples neglected the need
+of handling undefined messages.  On average, the total program size 
+of Akka and TAkka applications are almost the same.  In most examples, especially
+in library implementations and some small examples, there is no need to add a new types
+as an actor is usually designed to handle messages of the same type.  In real applications,
+such as the ATM and the Elevator example, the number of new types added is still relatively small.
+Figure~\ref{fig:expressiveness}
 reports the same result in a Scatter chart.
 
-
-
-\begin{sidewaystable}[clockwise, p]
-\begin{tabular}{| p{4.5 cm} | p{5.6 cm} | c | c |  c | c | c |}
-\hline
-
-Source & Example & \specialcell{Akka Code \\ Lines} &
-\specialcell{Modified\\ TAkka Lines} & \specialcell{\% of \\Modified Code} &
-\specialcell{TAkka Code\\ Lines}
-& \specialcell{\% of \\Code Size} \\
-\hline
-Small   & String Processor & 25 & 11 & 44 & 22 & 88 \\
-\cline{2-7}                            
-Examples                            & Supervised Calculator &38 & 11 & 29 & 41 & 108 \\ 
-\cline{2-7}
-                            & Behaviour Upgrade & 38 & 10 & 26 & 39 & 102 \\
-\cline{2-7}                            
-                            & NQueens & 235 & 6 & 3 & 236 & 100 \\
-\cline{2-7}                            
-\hline
-
-BenchErl  & bang & 93 & 8 & 8.6 & 94 & 101 \\
-\cline{2-7}
-Examples                            & big & 93 & 10 & 11 & 100 & 108 \\
-\cline{2-7}                            
-                            & ehb &201 & 23 & 11 & 216 & 107 \\ 
-\cline{2-7}                            
-                            & genstress &129 & 12 & 9.3 & 129 & 100 \\ 
-\cline{2-7}                            
-                            & mbrot & 125 & 8 & 6 & 130 & 104 \\
-\cline{2-7}                            
-                            & parallel &101 & 9 & 8.9 & 101 & 100 \\ 
-\cline{2-7}                            
-                            & ran & 98 & 8 & 2.6 & 101 & 103 \\
-\cline{2-7}       
-                            & serialmsg & 146 & 20 & 14 & 146 & 100 \\
-\cline{2-7}       
-
-\hline
-QuviQ   & ATM simulator & 1148 & 199 & 17.3 & 1160 & 101 \\
-\cline{2-7}
-\citep{quviq}    & Elevator Controller & 2850 & 172 & 9.3 & 2878 & 101 \\
-\hline
-                     & Ping Pong & 67 & 13 & 19.4 & 67 & 100 \\
-\cline{2-7}
-Akka Documentation   & Dining Philosophers & 189 & 23 & 12.1 & 189 & 100  \\
-\cline{2-7}
-\citep{akka_doc}     & Distributed Calculator  & 250 & 43 & 17.2 & 250 & 100 \\
-\cline{2-7}
-                     & Fault Tolerance & 274 & 69 & 25.2 & 274 & 100 \\
-\hline
-
-               & Barber Shop \citep{BarberShop}& 754 & 104 & 13.7 & 751 & 99 \\
-\cline{2-7}
-Other Open Source    & EnMAS \citep{EnMAS} & 1916 & 213 & 11.1 & 1909 & 100 \\
-\cline{2-7}
-Akka Applications    & Socko Web Server \citep{SOCKO}  & 5024 & 227 & 4.5 & 
-5017 & 100 \\
-\cline{2-7}
-                     & Gatling \citep{Gatling} & 1635 & 111 & 6.8 & 1623 & 99 \\
-\cline{2-7}
-              & Play Core \citep{play_doc} & 27095 & 15 & 0.05 & 27095 & 100 \\
-\hline
-geometric mean                   & & 319.5 & 27.4 & 8.6 & 324.4 & 101.5 \\
-\hline
-\end{tabular}
-\caption{Expressiveness Evaluation}
-\label{express}
-\end{sidewaystable}
-
-\begin{figure}[h]
+\begin{figure}[t]
      \begin{center}
-        \subfloat[Code Size: Absolute Lines]{
-            \includegraphics[scale=0.32]{Expressiveness/Expressiveness1.png}
+        \subcaptionbox{Code Size: Absolute Lines}{
+            \includegraphics[scale=0.35]{Expressiveness/Expressiveness1.png}
         }
-        \subfloat[Code Size: Relative Lines]{
-           \includegraphics[scale=0.32]{Expressiveness/Expressiveness2.png}
+        \subcaptionbox{Code Size: Relative Lines}{
+           \includegraphics[scale=0.35]{Expressiveness/Expressiveness2.png}
         }
     \end{center}
     \caption{Code Size Evaluation}
@@ -799,13 +352,11 @@ response, line 7, is the expected JSON message.
 
 \begin{figure}[!h]
 \begin{center}
-  \subfloat[An Example HTTP Request]{%
-  \label{json_request}
+  \subcaptionbox{An Example HTTP Request   \label{json_request} }{%
   \lstinputlisting{code/json_request}%
 }
 \hfill
-  \subfloat[An Example HTTP Response]{%
-  \label{json_response}
+  \subcaptionbox{An Example HTTP Response   \label{json_response} }{%
   \lstinputlisting{code/json_response}%
 }
   \caption{Example: JSON serialization Benchmark}
@@ -847,11 +398,11 @@ the network speed was stable for most of the time during the test with the
 above configurations.
 
 Figure~\ref{fig:throughput} summarises the results of the JSON serialization 
-benchmark.  It shows the average and the standard deviation of the throughput 
+benchmark.  It shows the mean and the standard deviation of the throughput 
 in each test.  The result shows that web servers built using an Akka-based 
 library and a TAkka-based library have similar throughput.  The micro example
 used in this test does not show a good throughput scalability in both Akka
-and TAkka versions.  It will be more interesting if we can benchmark on a real Akka web service
+and TAkka versions.  It would be more interesting if we can benchmark on a real Akka web service
 whose throughput is linear to the number of available servers.
 
 
@@ -861,11 +412,11 @@ whose throughput is linear to the number of available servers.
 
 \begin{figure}[h]
      \begin{center}
-        \subfloat[]{
+        \subcaptionbox{}{
             \label{fig:play_throughput}
             \includegraphics[scale=0.32]{Play_throughput.png}
         }
-        \subfloat[]{
+        \subcaptionbox{}{
            \label{fig:socko_throughput}
            \includegraphics[scale=0.32]{Socko_throughput.png}
         }
@@ -874,7 +425,7 @@ whose throughput is linear to the number of available servers.
    \label{fig:throughput}
 \end{figure}
 
-\newpage
+
 \section{Efficiency and Scalability}
 \label{efficiency}
 
@@ -910,7 +461,7 @@ half as fast as the Akka implementation.
 \end{center}
 \end{figure}
 
-\newpage
+
 
 The cost of transmitting a type descriptor should be close to the cost of 
 transmitting the string representation of its fully qualified type name.  The 
@@ -954,11 +505,6 @@ effects of changes in computational resources rather than specific
 parallelization and scheduling strategies of each example.
 
 
-
-
-
-
-\newpage
 
 \subsection{Benchmark Examples}
 
@@ -1128,9 +674,6 @@ example is not ported.
 
 
 
-\newpage
-
-
 \subsection{Benchmark Methodology}
 \subsubsection{Testing Environment}
 
@@ -1263,18 +806,18 @@ was recorded after a number of dry-runs to warm-up the runtime environment.
 After the warm-up period, the test was run 10 times.  The 
 run time was recorded for later analysis.  Following guidance given by 
 \citet{Fleming} and \citet{HePa06}, the efficiency of each example 
-using a specific number of nodes is reported by giving the average and standard 
+using a specific number of nodes is reported by giving the mean and standard 
 deviation of the 10 runs.  The speed-up of a benchmark example using $n$ nodes 
-is measured as the proportion of the average time with one node and the average 
+is measured as the proportion of the mean time with one node and the mean 
 time with $n$ nodes.  After each test, the runtime environment was cleaned up  
 before changing the number of nodes or switching to another benchmark example.
 
 \subsection{Evaluation Results}
 
 The records of the BenchErl benchmarks are summarised in Figure 
-\ref{runtime_efficiency}.  The efficiency results include both the average 
+\ref{runtime_efficiency}.  The efficiency results include both the mean 
 runtime and the standard deviation.  The scalability results are computed based 
-on the average runtime.  The author observes the following though benchmarking:
+on the mean runtime.  The author observes the following though benchmarking:
 
 \paragraph{Observation 1} In all examples, TAkka and Akka implementations had 
 almost identical run-times and hence have similar scalability.  In Figure 
@@ -1304,27 +847,27 @@ example, and the {\tt SerialMsg} example.
 
 \begin{figure}[p]
      \begin{center}
-        \subfloat[Bang Time]{
+        \subcaptionbox{Bang Time}{
             \label{fig:1a}
             \includegraphics[scale=0.31]{efficiency/Bang_time.png}
         }
-        \subfloat[Bang Scalability]{
+        \subcaptionbox{Bang Scalability}{
            \label{fig:1b}
            \includegraphics[scale=0.31]{efficiency/Bang_speedup.png}
         }\\
-        \subfloat[Big Time]{
+        \subcaptionbox{Big Time}{
             \label{fig:1c}
             \includegraphics[scale=0.31]{efficiency/Big_time.png}
         }
-        \subfloat[Big Scalability]{
+        \subcaptionbox{Big Scalability}{
            \label{fig:1d}
            \includegraphics[scale=0.31]{efficiency/Big_speedup.png}
         }\\
-        \subfloat[EHB Time]{
+        \subcaptionbox{EHB Time}{
             \label{fig:1e}
             \includegraphics[scale=0.31]{efficiency/EHB_time.png}
         }
-        \subfloat[EHB Scalability]{
+        \subcaptionbox{EHB Scalability}{
            \label{fig:1f}
            \includegraphics[scale=0.31]{efficiency/EHB_speedup.png}
         }\\
@@ -1335,27 +878,27 @@ example, and the {\tt SerialMsg} example.
 \begin{figure}[p]
     \ContinuedFloat
      \begin{center}
-        \subfloat[GenStress Time]{
+        \subcaptionbox{GenStress Time}{
            \label{fig:1g}        
             \includegraphics[scale=0.31]{efficiency/GenStress_time.png}
         }
-        \subfloat[GenStress Scalability]{
+        \subcaptionbox{GenStress Scalability}{
            \label{fig:1h}
            \includegraphics[scale=0.31]{efficiency/GenStress_speedup.png}
         }\\
-        \subfloat[MBrot Time]{
+        \subcaptionbox{MBrot Time}{
             \label{fig:1i}
             \includegraphics[scale=0.31]{efficiency/MBrot_time.png}
         }
-        \subfloat[MBrot Scalability]{
+        \subcaptionbox{MBrot Scalability}{
            \label{fig:1j}
            \includegraphics[scale=0.31]{efficiency/MBrot_speedup.png}
         }\\
-        \subfloat[Parallel Time]{
+        \subcaptionbox{Parallel Time}{
             \label{fig:1k}
             \includegraphics[scale=0.31]{efficiency/Parallel_time.png}
         }
-        \subfloat[Parallel Scalability]{
+        \subcaptionbox{Parallel Scalability}{
            \label{fig:1l}
            \includegraphics[scale=0.31]{efficiency/Parallel_speedup.png}
         }\\
@@ -1366,19 +909,19 @@ example, and the {\tt SerialMsg} example.
 \begin{figure}[p]
     \ContinuedFloat
      \begin{center}
-        \subfloat[RAN Time]{
+        \subcaptionbox{RAN Time}{
             \label{fig:1m}
             \includegraphics[scale=0.31]{efficiency/RAN_time.png}
         }
-        \subfloat[RAN Scalability]{
+        \subcaptionbox{RAN Scalability}{
            \label{fig:1n}
            \includegraphics[scale=0.31]{efficiency/RAN_speedup.png}
         }\\
-        \subfloat[SerialMsg Time]{
+        \subcaptionbox{SerialMsg Time}{
             \label{fig:1o}
             \includegraphics[scale=0.31]{efficiency/SerialMsg_time.png}
         }
-        \subfloat[Serial Scalability]{
+        \subcaptionbox{Serial Scalability}{
            \label{fig:1p}
            \includegraphics[scale=0.31]{efficiency/SerialMsg_speedup.png}
         }\\
@@ -1388,7 +931,6 @@ example, and the {\tt SerialMsg} example.
 \end{figure}
 
 
-\newpage
 
 \subsection{Additional Benchmarks}
 \label{bench_fib}
@@ -1430,28 +972,22 @@ is confirmed by the benchmark result reported in Figure~\ref{fib_efficiency}.
 
 \begin{figure}[p]
      \begin{center}
-        \subfloat[Fib20 Time]{
-            \label{fig:1q}
+        \subcaptionbox{Fib20 Time}{
             \includegraphics[scale=0.31]{efficiency/Fib20_time.png}
         }
-        \subfloat[Fib20 Scalability]{
-           \label{fig:1r}
+        \subcaptionbox{Fib20 Scalability}{
            \includegraphics[scale=0.31]{efficiency/Fib20_speedup.png}
         }\\
-        \subfloat[Fib30 Time]{
-            \label{fig:1s}
+        \subcaptionbox{Fib30 Time}{
             \includegraphics[scale=0.31]{efficiency/Fib30_time.png}
         }
-        \subfloat[Fib30 Scalability]{
-           \label{fig:1t}
+        \subcaptionbox{Fib30 Scalability}{
            \includegraphics[scale=0.31]{efficiency/Fib30_speedup.png}
         }\\
-        \subfloat[Fib40 Time]{
-            \label{fig:1u}
+        \subcaptionbox{Fib40 Time}{
             \includegraphics[scale=0.31]{efficiency/Fib40_time.png}
         }
-        \subfloat[Fib40 Scalability]{
-           \label{fig:1v}
+        \subcaptionbox{Fib40 Scalability}{
            \includegraphics[scale=0.31]{efficiency/Fib40_speedup.png}
         }\\
     \end{center}
@@ -1463,28 +999,22 @@ is confirmed by the benchmark result reported in Figure~\ref{fib_efficiency}.
 
 \begin{figure}[p]
      \begin{center}
-        \subfloat[MBrot10 Time]{
-            \label{fig:1q}
+        \subcaptionbox{MBrot10 Time}{
             \includegraphics[scale=0.31]{efficiency/MBrot10_time.png}
         }
-        \subfloat[MBrot10 Scalability]{
-           \label{fig:1r}
+        \subcaptionbox{MBrot10 Scalability}{
            \includegraphics[scale=0.31]{efficiency/MBrot10_speedup.png}
         }\\
-        \subfloat[MBrot1000 Time]{
-            \label{fig:1s}
+        \subcaptionbox{MBrot1000 Time}{
             \includegraphics[scale=0.31]{efficiency/MBrot1000_time.png}
         }
-        \subfloat[MBrot1000 Scalability]{
-           \label{fig:1t}
+        \subcaptionbox{MBrot1000 Scalability}{
            \includegraphics[scale=0.31]{efficiency/MBrot1000_speedup.png}
         }\\
-        \subfloat[MBrot6000 Time]{
-            \label{fig:1u}
+        \subcaptionbox{MBrot6000 Time}{
             \includegraphics[scale=0.31]{efficiency/MBrot_time.png}
         }
-        \subfloat[MBrot6000 Scalability]{
-           \label{fig:1v}
+        \subcaptionbox{MBrot6000 Scalability}{
            \includegraphics[scale=0.31]{efficiency/MBrot_speedup.png}
         }\\
     \end{center}
@@ -1535,12 +1065,10 @@ TAkka implementation have good scalability and similar efficiency.
 
 \begin{figure}[h]
      \begin{center}
-        \subfloat[N-Queens Time]{
-            \label{fig:1q}
+        \subcaptionbox{N-Queens Time}{
             \includegraphics[scale=0.3]{efficiency/NQueens_time.png}
         }
-        \subfloat[N-Queens Scalability]{
-           \label{fig:1r}
+        \subcaptionbox{N-Queens Scalability}{
            \includegraphics[scale=0.3]{efficiency/NQueens_speedup.png}
         }
     \end{center}
@@ -1550,7 +1078,6 @@ TAkka implementation have good scalability and similar efficiency.
 
 
 
-\newpage
 \section{Assessing System Reliability and Availability}
 \label{reliability}
 
@@ -1740,8 +1267,6 @@ actor of the view master records all replies in a hash map from {\tt Date} to
 {\tt TreeSet[NodeRecord]}, and sends the record to an appropriate drawer on 
 request. 
 
-
-
 \begin{figure}[!h]
 
 \begin{lstlisting}
@@ -1761,10 +1286,8 @@ case class NodeRecord(receiveTime:Date, node:ActorPath,
 object ViewMaster{
   def apply(name:String, config: Config, topnodes:List[ActorRef[_]], 
               interval:FiniteDuration):ViewMaster
-  
   def apply(name:String, topnodes:List[ActorRef[_]], 
-              interval:FiniteDuration):ViewMaster
-  
+              interval:FiniteDuration):ViewMaster  
   def apply(topnodes:List[ActorRef[_]], 
               interval:FiniteDuration):ViewMaster
 }
@@ -1775,24 +1298,11 @@ object ViewMaster{
 \label{supervision_view}
 \end{figure}
 
-\begin{figure}[p]
-     \begin{center}
-        \subfloat[]{
-            \label{fig:tree1}
-            \includegraphics[scale=0.6]{Tree1.png}
-        }\\
-        \subfloat[]{
-           \label{fig:tree2}
-           \includegraphics[scale=0.6]{Tree2.png}
-        }\\
-        \subfloat[]{
-            \label{fig:tree3}
-            \includegraphics[scale=0.6]{Tree3.png}
-        }
-    \end{center}
-    \caption{Supervision View Example}
-   \label{fig:supervisionview}
-\end{figure}
+
+
+\newpage 
+
+
 
 \subsection{A Partly Failed Safe Calculator}
 \label{calculator_chaos_test}
@@ -1812,8 +1322,9 @@ S3, stops the child when it fails.  Finally, a Supervision View test was set to
 capture the supervision tree every 15 seconds, and a Chaos Monkey 
 test was set to kill a random child calculator every 3 seconds.
 
-A test result, given in Figure~\ref{fig:supervisionview}, gives the expected
-tree structure at the beginning, 15 seconds and 30 seconds of the test.  Figure 
+Figure~\ref{fig:supervisionview} gives a visual interpretation of the textual
+test result.  The 3 graphs show the
+tree structures at the beginning, 15 seconds and 30 seconds of the test.  Figure 
 \ref{fig:tree1} shows that the application initialized three safe calculators 
 as described.  In Figure~\ref{fig:tree2}, S2 and its child are marked as dashed 
 circles because it takes the view master more than 5 seconds to receive their 
@@ -1827,7 +1338,22 @@ in Figure~\ref{fig:tree3}.  S1 and its child appear in all three Figures
 because either they never fail during the test or they are recovered from 
 failures within a short time.
 
-
+\begin{figure}[p]
+     \begin{center}
+        \subcaptionbox{\label{fig:tree1}}{            
+            \includegraphics[scale=0.6]{Tree1.png}
+        }\\
+        \subcaptionbox{\label{fig:tree2}}{
+           
+           \includegraphics[scale=0.6]{Tree2.png}
+        }\\
+        \subcaptionbox{ \label{fig:tree3} }{
+            \includegraphics[scale=0.6]{Tree3.png}
+        }
+    \end{center}
+    \caption{Supervision View Example}
+   \label{fig:supervisionview}
+\end{figure}
 
 
 \subsection{BenchErl Examples with Different Supervisor Strategies}

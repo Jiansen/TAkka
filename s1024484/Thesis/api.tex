@@ -1,0 +1,131 @@
+\chapter{Akka and TAkka API}
+
+\begin{figure}[!h]
+\label{akka_api}
+
+\begin{lstlisting}[language=scala, escapechar=?]
+package ?\textcolor{blue}{akka}?.actor   
+\end{lstlisting}
+\vspace{-15pt }
+    
+\begin{lstlisting}[language=scala, escapechar=?]
+abstract class ActorRef
+  def !(message: ?\textcolor{blue}{Any}?):Unit
+\end{lstlisting}
+    \vspace{-15pt }
+    
+\begin{lstlisting}[language=scala, escapechar=?]
+?\textcolor{blue}{trait }? Actor
+  def ?\textcolor{blue}{receive:PartialFunction[Any, Unit]}?
+  val ?\textcolor{blue}{self: ActorRef}?
+  private val ?\textcolor{blue}{context: ActorContext}?
+  var supervisorStrategy: SupervisorStrategy
+\end{lstlisting}
+    \vspace{-15pt }
+    
+\begin{lstlisting}[language=scala, escapechar=?]
+?\textcolor{blue}{trait}? ActorContext
+  def actorOf(props: Props): ActorRef
+  def actorOf(props: Props, name: String): ActorRef
+  def actorFor(path: String): ActorRef
+  def setReceiveTimeout(timeout: Duration): Unit
+  def become(behavior: ?\textcolor{blue}{PartialFunction[Any, Unit]}?, 
+  						?\textcolor{blue}{discardOld: Boolean = true): Unit}?
+?\textcolor{blue}{def unbecome(): Unit}?
+    \end{lstlisting}
+    \vspace{-15pt }
+    
+    \begin{lstlisting}[language=scala, escapechar=?]
+?\textcolor{blue}{final case class Props(deploy: Deploy,}? ?\textcolor{blue}{clazz: Class[\_], }?
+                           ?\textcolor{blue}{args: immutable.Seq[Any]) }?
+    \end{lstlisting}
+    \vspace{-15pt }
+        
+    \begin{lstlisting}[language=scala, escapechar=?]
+object Props extends Serializable
+  def apply(creator: =>Actor): Props
+  def apply(actorClass: Class[_ <: Actor]): Props  
+  def apply[T <: Actor]() (implicit arg0: Manifest[T]): Props  
+    \end{lstlisting}
+    \vspace{-15pt }
+    
+    \begin{lstlisting}    
+abstract class SupervisorStrategy
+case class OneForOneStrategy(restart:Int = -1, 
+              time:Duration = Duration.Inf)
+              (decider: Throwable =>  Directive) 
+              extends SupervisorStrategy
+case class OneForAllStrategy(restart:Int = -1, 
+              time:Duration = Duration.Inf)
+              (decider: Throwable =>  Directive) 
+              extends SupervisorStrategy
+    \end{lstlisting}
+    \vspace{-15pt }
+        
+    \caption{Akka API}
+    \vspace{-20pt }
+\end{figure}
+
+
+\begin{figure}[!h]
+\label{takka_api}
+    \begin{lstlisting}[language=scala, escapechar=?]
+package ?\textcolor{blue}{takka}?.actor   
+\end{lstlisting}
+
+    \begin{lstlisting}[language=scala, escapechar=?]
+abstract class ActorRef?\textcolor{blue}{[-M](implicit mt:Manifest[M])}?
+  def !(message: ?\textcolor{blue}{M}?):Unit
+  ?\textcolor{blue}{def publishAs[SubM<:M]}? ?\textcolor{blue}{(implicit smt:Manifest[SubM]):ActorRef[SubM]}?
+    \end{lstlisting}
+    
+    \begin{lstlisting}[language=scala, escapechar=?]
+?\textcolor{blue}{abstract class}? Actor?\textcolor{blue}{[M:Manifest]}?  extends  akka.actor.Actor
+  def ?\textcolor{blue}{typedReceive:M=>Unit}?
+  val ?\textcolor{blue}{typedSelf:ActorRef[M]}?
+  private val ?\textcolor{blue}{typedContext:ActorContext[M]}?
+  var supervisorStrategy: SupervisorStrategy
+\end{lstlisting}
+
+      \begin{lstlisting}[language=scala, escapechar=?]
+?\textcolor{blue}{abstract class}? ActorContext?\textcolor{blue}{[M:Manifest]}?
+  def actorOf ?\textcolor{blue}{[Msg]}? (props:  Props?\textcolor{blue}{[Msg])}?
+  						?\textcolor{blue}{(implicit mt: Manifest[Msg]}?): ActorRef?\textcolor{blue}{[Msg]}?
+  def actorOf ?\textcolor{blue}{[Msg]}? (props: Props?\textcolor{blue}{[Msg]}?, name: String)
+  						?\textcolor{blue}{(implicit mt: 
+Manifest[Msg])}?: ActorRef?\textcolor{blue}{[Msg]}?
+  def actorFor ?\textcolor{blue}{[Msg]}? (path: String)
+       				?\textcolor{blue}{(implicit mt: 
+Manifest[Msg])}?:  ActorRef?\textcolor{blue}{[Msg]}?
+  def setReceiveTimeout(timeout: Duration): Unit
+  def become?\textcolor{blue}{[SupM >: M]}?(behavior: ?\textcolor{blue}{SupM=>Unit}?)
+						?\textcolor{blue}{(implicit smt:Manifest[SupM]):ActorRef[SupM]}?
+
+?\textcolor{blue}{case class BehaviorUpdateException(smt:Manifest[\_],  mt:Manifest[\_]) extends \ 
+Exception(smt + "must be a supertype of "+mt+".")}?
+    \end{lstlisting}
+    
+    \begin{lstlisting}    [language=scala, escapechar=?]
+?\textcolor{blue}{final case class Props[-T] (props: akka.actor.Props)}?
+    \end{lstlisting}
+    \begin{lstlisting}        [language=scala, escapechar=?]
+object Props extends Serializable
+  def apply?\textcolor{blue}{[T]}?(creator: => ?\textcolor{blue}{Actor[T]}?): Props?\textcolor{blue}{[T]}?
+  def apply?\textcolor{blue}{[T]}?(actorClass: Class[_<: Actor?\textcolor{blue}{[T]]}?):Props?\textcolor{blue}{[T]}?
+  def apply?\textcolor{blue}{[T, A<:Actor[T]]}?  (implicit arg0: Manifest[A]): Props?\textcolor{blue}{[T]}
+    \end{lstlisting}
+    
+    \begin{lstlisting}    
+abstract class SupervisorStrategy
+case class OneForOneStrategy(restart:Int = -1, 
+              time:Duration = Duration.Inf)
+              (decider: Throwable =>  Directive) 
+              extends SupervisorStrategy
+case class OneForAllStrategy(restart:Int = -1, 
+              time:Duration = Duration.Inf)
+              (decider: Throwable =>  Directive) 
+              extends SupervisorStrategy
+    \end{lstlisting}
+    
+    \caption{TAkka API}
+\end{figure}

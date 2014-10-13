@@ -1,0 +1,35 @@
+> We recommend that the candidate make the following alterations to the thesis, in consultation with the internal examiner. We discussed these changes with the candidate shortly after the examination itself, and most address issues already mentioned during the viva.
+
+> Chapter 1. Make a clear statement of the “thesis” proposed in the work. List explicitly the specific motivations for the work and the concrete benefits identified.
+
+Done.  
+
+> Chapter 2. Include context for the work, beyond the current minimum, to indicate the other ways that this problem has been approached.
+
+
+Added Join-Calculus and Ambient Calculus in Section 2.6.
+
+> Chapter 3. Give a precise statement of the properties expected of type actors, such as type soundness and pattern matching completeness.
+Add a diagram or diagrams to explain the distribution mechanism, both for standard Akka and for the new TAkka typed name server.
+
+Figure 3.13 shows how TAkka fetches a typed actor reference.  
+Fetching actor reference in Akka is a black box.  The Akka documentation only gives the API, but does not explain the internal mechanism of distribution.
+
+> Chapters 4-7. Restructure these chapters for balance and coherence. As part of this, move §5.1 on using type filters to stop pollution out of Chap. 5; and move the content of Chapters 6 and 7 into a single final chapter in the reverse order.
+
+Done.
+
++ The type pollution problem is moved to Section 3.11
++ Chapter 6 and 7 in the previous version are merged to the final Chapter as suggested.
+
+
+> Chapter 5. In the section on expressiveness, add an evaluation of the different kinds of code lines rewritten during porting to complement the raw quantitative data. Make precise the statements of what this evidence indicates.
+
+Done.
+
+> Appendices. Add an appendix containing the full Akka and TAkka API.
+Done. Appendix A
+
+
+> Finally, we have a list of minor editorial corrections which we shall pass to the student directly.
+Done.
