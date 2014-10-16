@@ -1539,8 +1539,7 @@ class Calculator extends Actor {
       println(m +" * "+ n +" = "+ (m*n))
     case Division(m:Int, n:Int) =>
       println(m +" / "+ n +" = "+ (m/n))
-  }
-}
+} }
 class SafeCalculator extends Actor {
   override val supervisorStrategy =
     OneForOneStrategy(maxNrOfRetries = 2, withinTimeRange = 1 minute) {

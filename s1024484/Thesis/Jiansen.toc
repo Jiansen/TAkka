@@ -1,154 +1,184 @@
 \contentsline {chapter}{Chapter\ \numberline {1}Introduction}{1}{chapter.1}
-\contentsline {paragraph}{Contributions}{3}{section*.3}
-\contentsline {chapter}{Chapter\ \numberline {2}Background and Related Work}{5}{chapter.2}
-\contentsline {section}{\numberline {2.1}The Actor Programming Model}{5}{section.2.1}
-\contentsline {section}{\numberline {2.2}The Supervision Principle}{6}{section.2.2}
-\contentsline {section}{\numberline {2.3}Erlang and OTP Design Principles}{6}{section.2.3}
-\contentsline {subsection}{\numberline {2.3.1}The Behaviour Principle}{7}{subsection.2.3.1}
-\contentsline {subsection}{\numberline {2.3.2}The Application Principle}{8}{subsection.2.3.2}
-\contentsline {subsection}{\numberline {2.3.3}The Release Principle and The Release Handling Principle}{8}{subsection.2.3.3}
-\contentsline {subsection}{\numberline {2.3.4}Applying OTP Design Principles in Java and Scala}{8}{subsection.2.3.4}
-\contentsline {section}{\numberline {2.4}The Akka Library}{9}{section.2.4}
-\contentsline {subsection}{\numberline {2.4.1}Actor Programming in Akka}{10}{subsection.2.4.1}
-\contentsline {subsubsection}{\numberline {2.4.1.1}Actor System}{10}{subsubsection.2.4.1.1}
-\contentsline {subsubsection}{\numberline {2.4.1.2}The Actor Class}{12}{subsubsection.2.4.1.2}
-\contentsline {subsubsection}{\numberline {2.4.1.3}Message Mailbox}{13}{subsubsection.2.4.1.3}
-\contentsline {subsubsection}{\numberline {2.4.1.4}Actor Creation with Props}{14}{subsubsection.2.4.1.4}
-\contentsline {subsubsection}{\numberline {2.4.1.5}Actor Reference and Actor Path}{15}{subsubsection.2.4.1.5}
-\contentsline {subsubsection}{\numberline {2.4.1.6}Actor Context}{16}{subsubsection.2.4.1.6}
-\contentsline {subsubsection}{\numberline {2.4.1.7}Dynamic Behaviour Upgrade}{18}{subsubsection.2.4.1.7}
-\contentsline {subsection}{\numberline {2.4.2}Supervision in Akka}{20}{subsection.2.4.2}
-\contentsline {subsubsection}{\numberline {2.4.2.1}Children}{20}{subsubsection.2.4.2.1}
-\contentsline {subsubsection}{\numberline {2.4.2.2}Supervisor Strategy}{20}{subsubsection.2.4.2.2}
-\contentsline {subsection}{\numberline {2.4.3}Case Study: A Fault-Tolerant Calculator}{21}{subsection.2.4.3}
-\contentsline {section}{\numberline {2.5}The Scala Type System}{23}{section.2.5}
-\contentsline {subsection}{\numberline {2.5.1}Parameterized Types}{23}{subsection.2.5.1}
-\contentsline {subsubsection}{\numberline {2.5.1.1}Generic Programming}{23}{subsubsection.2.5.1.1}
-\contentsline {subsubsection}{\numberline {2.5.1.2}Variance and Type Bounds}{25}{subsubsection.2.5.1.2}
-\contentsline {subsection}{\numberline {2.5.2}Scala Type Descriptors}{28}{subsection.2.5.2}
-\contentsline {section}{\numberline {2.6}Summing Up}{28}{section.2.6}
-\contentsline {chapter}{Chapter\ \numberline {3}TAkka: Design and Implementation}{30}{chapter.3}
-\contentsline {section}{\numberline {3.1}TAkka Example: a String Counter}{30}{section.3.1}
-\contentsline {section}{\numberline {3.2}Type-parameterized Actor}{33}{section.3.2}
-\contentsline {section}{\numberline {3.3}Type-parameterized Actor Reference}{34}{section.3.3}
-\contentsline {section}{\numberline {3.4}Type Parameterized Props}{37}{section.3.4}
-\contentsline {section}{\numberline {3.5}Type Parameterized Actor Context}{38}{section.3.5}
-\contentsline {section}{\numberline {3.6}Backward Compatible Behaviour Upgrade}{41}{section.3.6}
-\contentsline {section}{\numberline {3.7}Typed Name Server}{44}{section.3.7}
-\contentsline {subsection}{\numberline {3.7.1}Typed Name and Typed Value}{44}{subsection.3.7.1}
-\contentsline {subsection}{\numberline {3.7.2}Operations}{46}{subsection.3.7.2}
-\contentsline {subsection}{\numberline {3.7.3}Dynamic Type Comparison}{47}{subsection.3.7.3}
-\contentsline {section}{\numberline {3.8}Look up Typed Actor References via Actor System}{48}{section.3.8}
-\contentsline {section}{\numberline {3.9}Supervisor Strategies}{52}{section.3.9}
-\contentsline {section}{\numberline {3.10}Handling System Messages}{55}{section.3.10}
-\contentsline {paragraph}{Kill}{56}{section*.32}
-\contentsline {paragraph}{PoisonPill}{56}{section*.33}
-\contentsline {paragraph}{ReceiveTimeout}{56}{section*.34}
-\contentsline {paragraph}{ChildTerminated(child: ActorRef[M])}{56}{section*.35}
-\contentsline {paragraph}{Restart}{56}{section*.36}
-\contentsline {paragraph}{Terminated}{56}{section*.37}
-\contentsline {paragraph}{Create}{56}{section*.38}
-\contentsline {paragraph}{Failed}{56}{section*.39}
-\contentsline {paragraph}{Link}{56}{section*.40}
-\contentsline {paragraph}{Unlink}{56}{section*.41}
-\contentsline {paragraph}{Suspend}{56}{section*.42}
-\contentsline {paragraph}{Resume}{56}{section*.43}
-\contentsline {section}{\numberline {3.11}Case Study: A Distributed Calculator}{57}{section.3.11}
-\contentsline {subsection}{\numberline {3.11.1}Actor System Configuration for Distribution}{58}{subsection.3.11.1}
-\contentsline {subsection}{\numberline {3.11.2}A Complete Example}{59}{subsection.3.11.2}
-\contentsline {paragraph}{Operations and Messages}{59}{section*.49}
-\contentsline {paragraph}{Calculators}{59}{section*.50}
-\contentsline {paragraph}{Test Applications}{59}{section*.51}
-\contentsline {section}{\numberline {3.12}Design Alternatives}{64}{section.3.12}
-\contentsline {paragraph}{Akka Typed Actor}{64}{section*.52}
-\contentsline {paragraph}{Actors with or without Internal Mutable States}{64}{section*.54}
-\contentsline {paragraph}{Bi-linked Actors}{66}{section*.55}
-\contentsline {section}{\numberline {3.13}Summing Up}{66}{section.3.13}
-\contentsline {chapter}{Chapter\ \numberline {4}Evolution, Not Revolution }{67}{chapter.4}
-\contentsline {section}{\numberline {4.1}TAkka Service with Akka Client}{67}{section.4.1}
-\contentsline {section}{\numberline {4.2}Akka Service with TAkka Client}{69}{section.4.2}
-\contentsline {chapter}{Chapter\ \numberline {5}TAkka: Evaluation}{70}{chapter.5}
-\contentsline {section}{\numberline {5.1}The Type Pollution Problem}{70}{section.5.1}
-\contentsline {subsection}{\numberline {5.1.1}Case Study: Tic-Tac-Toe}{71}{subsection.5.1.1}
-\contentsline {subsubsection}{\numberline {5.1.1.1}The Game}{71}{subsubsection.5.1.1.1}
-\contentsline {subsubsection}{\numberline {5.1.1.2}The MVC pattern}{71}{subsubsection.5.1.1.2}
-\contentsline {subsection}{\numberline {5.1.2}A TAkka Implementation}{73}{subsection.5.1.2}
-\contentsline {subsection}{\numberline {5.1.3}A Scala Interface}{78}{subsection.5.1.3}
-\contentsline {section}{\numberline {5.2}Expressiveness}{80}{section.5.2}
-\contentsline {subsection}{\numberline {5.2.1}Examples}{80}{subsection.5.2.1}
-\contentsline {subsubsection}{\numberline {5.2.1.1}Examples from the QuviQ Project}{80}{subsubsection.5.2.1.1}
-\contentsline {paragraph}{ATM simulator}{80}{section*.64}
-\contentsline {paragraph}{Elevator Controller}{82}{section*.66}
-\contentsline {subsubsection}{\numberline {5.2.1.2}Examples from the Akka Documentation}{82}{subsubsection.5.2.1.2}
-\contentsline {paragraph}{Ping Pong}{82}{section*.68}
-\contentsline {paragraph}{Dining Philosophers}{82}{section*.69}
-\contentsline {paragraph}{Distributed Calculator}{84}{section*.70}
-\contentsline {paragraph}{Fault Tolerance}{84}{section*.71}
-\contentsline {subsubsection}{\numberline {5.2.1.3}Examples from Other Open Source Projects}{84}{subsubsection.5.2.1.3}
-\contentsline {paragraph}{Barber Shop}{84}{section*.72}
-\contentsline {paragraph}{EnMAS}{84}{section*.73}
-\contentsline {paragraph}{Socko Web Server}{84}{section*.74}
-\contentsline {paragraph}{Gatling}{84}{section*.75}
-\contentsline {paragraph}{Play Core}{85}{section*.76}
-\contentsline {subsection}{\numberline {5.2.2}Evaluation Results}{85}{subsection.5.2.2}
-\contentsline {subsubsection}{\numberline {5.2.2.1}Code Size}{85}{subsubsection.5.2.2.1}
-\contentsline {subsubsection}{\numberline {5.2.2.2}Type Error}{85}{subsubsection.5.2.2.2}
-\contentsline {section}{\numberline {5.3}Throughput}{87}{section.5.3}
-\contentsline {section}{\numberline {5.4}Efficiency and Scalability}{90}{section.5.4}
-\contentsline {subsection}{\numberline {5.4.1}BenchErl Overview}{91}{subsection.5.4.1}
-\contentsline {subsection}{\numberline {5.4.2}Benchmark Examples}{92}{subsection.5.4.2}
-\contentsline {subsubsection}{\numberline {5.4.2.1}Ported BenchErl Examples}{92}{subsubsection.5.4.2.1}
-\contentsline {paragraph}{bang}{92}{section*.81}
-\contentsline {paragraph}{big}{92}{section*.82}
-\contentsline {paragraph}{ehb}{92}{section*.83}
-\contentsline {paragraph}{genstress}{93}{section*.84}
-\contentsline {paragraph}{mbrot}{93}{section*.85}
-\contentsline {paragraph}{parallel}{94}{section*.86}
-\contentsline {paragraph}{ran}{94}{section*.87}
-\contentsline {paragraph}{serialmsg}{94}{section*.88}
-\contentsline {subsubsection}{\numberline {5.4.2.2}BenchErl Examples that are Not Ported}{95}{subsubsection.5.4.2.2}
-\contentsline {paragraph}{ets\_test}{95}{section*.89}
-\contentsline {paragraph}{pcmark}{95}{section*.90}
-\contentsline {paragraph}{timer\_wheel}{95}{section*.91}
-\contentsline {subsection}{\numberline {5.4.3}Benchmark Methodology}{96}{subsection.5.4.3}
-\contentsline {subsubsection}{\numberline {5.4.3.1}Testing Environment}{96}{subsubsection.5.4.3.1}
-\contentsline {subsubsection}{\numberline {5.4.3.2}Determining Parameters}{96}{subsubsection.5.4.3.2}
-\contentsline {paragraph}{bang}{97}{section*.92}
-\contentsline {paragraph}{big}{97}{section*.93}
-\contentsline {paragraph}{ehb}{97}{section*.94}
-\contentsline {paragraph}{genstress}{97}{section*.95}
-\contentsline {paragraph}{mbrot}{98}{section*.96}
-\contentsline {paragraph}{parallel}{98}{section*.97}
-\contentsline {paragraph}{ran}{98}{section*.98}
-\contentsline {paragraph}{serialmsg}{98}{section*.99}
-\contentsline {subsubsection}{\numberline {5.4.3.3}Measurement Methodology}{98}{subsubsection.5.4.3.3}
-\contentsline {subsection}{\numberline {5.4.4}Evaluation Results}{99}{subsection.5.4.4}
-\contentsline {paragraph}{Observation 1}{99}{section*.100}
-\contentsline {paragraph}{Observation 2}{99}{section*.101}
-\contentsline {paragraph}{Observation 3}{99}{section*.102}
-\contentsline {paragraph}{Observation 4}{99}{section*.103}
-\contentsline {subsection}{\numberline {5.4.5}Additional Benchmarks}{103}{subsection.5.4.5}
-\contentsline {subsubsection}{\numberline {5.4.5.1}Fibonacci Numbers}{103}{subsubsection.5.4.5.1}
-\contentsline {subsubsection}{\numberline {5.4.5.2}MBrot with different image sizes}{103}{subsubsection.5.4.5.2}
-\contentsline {subsubsection}{\numberline {5.4.5.3}The N-Queens Problem}{106}{subsubsection.5.4.5.3}
-\contentsline {section}{\numberline {5.5}Assessing System Reliability and Availability}{107}{section.5.5}
-\contentsline {subsection}{\numberline {5.5.1}Chaos Monkey and Supervision View}{107}{subsection.5.5.1}
-\contentsline {paragraph}{Random}{107}{section*.110}
-\contentsline {paragraph}{Exception}{107}{section*.111}
-\contentsline {paragraph}{Kill}{107}{section*.112}
-\contentsline {paragraph}{PoisonKill}{108}{section*.113}
-\contentsline {paragraph}{NonTerminate}{108}{section*.114}
-\contentsline {subsection}{\numberline {5.5.2}Supervision View}{108}{subsection.5.5.2}
-\contentsline {subsection}{\numberline {5.5.3}A Partly Failed Safe Calculator}{110}{subsection.5.5.3}
-\contentsline {subsection}{\numberline {5.5.4}BenchErl Examples with Different Supervisor Strategies}{112}{subsection.5.5.4}
-\contentsline {section}{\numberline {5.6}Summing Up}{113}{section.5.6}
-\contentsline {chapter}{Chapter\ \numberline {6}Future Work}{114}{chapter.6}
-\contentsline {section}{\numberline {6.1}Supervision and Typed Actor in Other Systems}{114}{section.6.1}
-\contentsline {section}{\numberline {6.2}Benchmark Results from Large Real Applications}{115}{section.6.2}
-\contentsline {section}{\numberline {6.3}Supervision Tree that Supports Software Rejuvenation}{115}{section.6.3}
-\contentsline {section}{\numberline {6.4}Measuring and Predicting System Reliability}{115}{section.6.4}
-\contentsline {chapter}{Chapter\ \numberline {7}Thesis Summary}{117}{chapter.7}
-\contentsline {section}{\numberline {7.1}Overview of Contributions}{117}{section.7.1}
-\contentsline {subsection}{\numberline {7.1.1}A library for Type-parameterized Actors and Their Supervision}{117}{subsection.7.1.1}
-\contentsline {subsection}{\numberline {7.1.2}A Library Evaluation Framework}{118}{subsection.7.1.2}
-\contentsline {section}{\numberline {7.2}Conclusion}{119}{section.7.2}
+\contentsline {section}{\numberline {1.1}General Background and Motivation}{1}{section.1.1}
+\contentsline {section}{\numberline {1.2}Contributions}{4}{section.1.2}
+\contentsline {section}{\numberline {1.3}Thesis Outline}{6}{section.1.3}
+\contentsline {chapter}{Chapter\ \numberline {2}Background and Related Work}{7}{chapter.2}
+\contentsline {section}{\numberline {2.1}The Actor Programming Model}{7}{section.2.1}
+\contentsline {section}{\numberline {2.2}The Supervision Principle}{8}{section.2.2}
+\contentsline {section}{\numberline {2.3}Erlang and OTP Design Principles}{8}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}The Behaviour Principle}{9}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}The Application Principle}{10}{subsection.2.3.2}
+\contentsline {subsection}{\numberline {2.3.3}The Release Principle and The Release Handling Principle}{10}{subsection.2.3.3}
+\contentsline {subsection}{\numberline {2.3.4}Applying OTP Design Principles in Java and Scala}{10}{subsection.2.3.4}
+\contentsline {section}{\numberline {2.4}The Akka Library}{11}{section.2.4}
+\contentsline {subsection}{\numberline {2.4.1}Actor Programming in Akka}{12}{subsection.2.4.1}
+\contentsline {subsubsection}{\numberline {2.4.1.1}Actor System}{12}{subsubsection.2.4.1.1}
+\contentsline {subsubsection}{\numberline {2.4.1.2}The Actor Class}{14}{subsubsection.2.4.1.2}
+\contentsline {subsubsection}{\numberline {2.4.1.3}Message Mailbox}{15}{subsubsection.2.4.1.3}
+\contentsline {subsubsection}{\numberline {2.4.1.4}Actor Creation with Props}{16}{subsubsection.2.4.1.4}
+\contentsline {subsubsection}{\numberline {2.4.1.5}Actor Reference and Actor Path}{17}{subsubsection.2.4.1.5}
+\contentsline {subsubsection}{\numberline {2.4.1.6}Actor Context}{18}{subsubsection.2.4.1.6}
+\contentsline {subsubsection}{\numberline {2.4.1.7}Dynamic Behaviour Upgrade}{20}{subsubsection.2.4.1.7}
+\contentsline {subsection}{\numberline {2.4.2}Supervision in Akka}{22}{subsection.2.4.2}
+\contentsline {subsubsection}{\numberline {2.4.2.1}Children}{22}{subsubsection.2.4.2.1}
+\contentsline {subsubsection}{\numberline {2.4.2.2}Supervisor Strategy}{22}{subsubsection.2.4.2.2}
+\contentsline {subsection}{\numberline {2.4.3}Case Study: A Fault-Tolerant Calculator}{23}{subsection.2.4.3}
+\contentsline {section}{\numberline {2.5}Essential Scala Features}{25}{section.2.5}
+\contentsline {subsection}{\numberline {2.5.1}The Scala Language}{25}{subsection.2.5.1}
+\contentsline {subsection}{\numberline {2.5.2}Parameterized Types}{26}{subsection.2.5.2}
+\contentsline {subsubsection}{\numberline {2.5.2.1}Generic Programming}{26}{subsubsection.2.5.2.1}
+\contentsline {subsubsection}{\numberline {2.5.2.2}Variance and Type Bounds}{28}{subsubsection.2.5.2.2}
+\contentsline {subsection}{\numberline {2.5.3}Scala Type Descriptors}{30}{subsection.2.5.3}
+\contentsline {section}{\numberline {2.6}Other Related Work}{31}{section.2.6}
+\contentsline {subsection}{\numberline {2.6.1}The Join-Calculus and the JoCaml Programming Language}{32}{subsection.2.6.1}
+\contentsline {subsubsection}{\numberline {2.6.1.1}The Local Reflexive Chemical Machine (RCHAM)}{32}{subsubsection.2.6.1.1}
+\contentsline {subsubsection}{\numberline {2.6.1.2}Distributed Solutions}{33}{subsubsection.2.6.1.2}
+\contentsline {subsubsection}{\numberline {2.6.1.3}The Failure Model}{34}{subsubsection.2.6.1.3}
+\contentsline {subsubsection}{\numberline {2.6.1.4}The JoCaml Programming Language}{34}{subsubsection.2.6.1.4}
+\contentsline {subsection}{\numberline {2.6.2}The Ambient Calculus and the Obliq Programming Language}{36}{subsection.2.6.2}
+\contentsline {subsubsection}{\numberline {2.6.2.1}The Ambient Calculus}{36}{subsubsection.2.6.2.1}
+\contentsline {subsubsection}{\numberline {2.6.2.2}The Obliq Programming Language}{39}{subsubsection.2.6.2.2}
+\contentsline {section}{\numberline {2.7}Summing Up}{40}{section.2.7}
+\contentsline {chapter}{Chapter\ \numberline {3}TAkka: Design and Implementation}{41}{chapter.3}
+\contentsline {section}{\numberline {3.1}TAkka Example: a String Counter}{42}{section.3.1}
+\contentsline {section}{\numberline {3.2}Type-parameterized Actor}{44}{section.3.2}
+\contentsline {section}{\numberline {3.3}Type-parameterized Actor Reference}{45}{section.3.3}
+\contentsline {section}{\numberline {3.4}Type Parameterized Props}{48}{section.3.4}
+\contentsline {section}{\numberline {3.5}Type Parameterized Actor Context}{49}{section.3.5}
+\contentsline {section}{\numberline {3.6}Backward Compatible Behaviour Upgrade}{52}{section.3.6}
+\contentsline {section}{\numberline {3.7}Typed Name Server}{54}{section.3.7}
+\contentsline {subsection}{\numberline {3.7.1}Typed Name and Typed Value}{57}{subsection.3.7.1}
+\contentsline {subsection}{\numberline {3.7.2}Operations}{57}{subsection.3.7.2}
+\contentsline {subsection}{\numberline {3.7.3}Dynamic Type Comparison}{59}{subsection.3.7.3}
+\contentsline {section}{\numberline {3.8}Look up Typed Actor References via Actor System}{59}{section.3.8}
+\contentsline {section}{\numberline {3.9}Supervisor Strategies}{64}{section.3.9}
+\contentsline {section}{\numberline {3.10}Fixing The Type Pollution Problem}{67}{section.3.10}
+\contentsline {subsection}{\numberline {3.10.1}Case Study: Tic-Tac-Toe}{67}{subsection.3.10.1}
+\contentsline {subsubsection}{\numberline {3.10.1.1}The Game}{67}{subsubsection.3.10.1.1}
+\contentsline {subsubsection}{\numberline {3.10.1.2}The MVC pattern}{68}{subsubsection.3.10.1.2}
+\contentsline {subsection}{\numberline {3.10.2}A TAkka Implementation}{68}{subsection.3.10.2}
+\contentsline {subsection}{\numberline {3.10.3}A Scala Interface}{74}{subsection.3.10.3}
+\contentsline {section}{\numberline {3.11}Handling System Messages}{75}{section.3.11}
+\contentsline {paragraph}{Kill}{77}{section*.46}
+\contentsline {paragraph}{PoisonPill}{77}{section*.47}
+\contentsline {paragraph}{ReceiveTimeout}{77}{section*.48}
+\contentsline {paragraph}{ChildTerminated(child: ActorRef[M])}{77}{section*.49}
+\contentsline {paragraph}{Restart}{77}{section*.50}
+\contentsline {paragraph}{Terminated}{77}{section*.51}
+\contentsline {paragraph}{Create}{77}{section*.52}
+\contentsline {paragraph}{Failed}{78}{section*.53}
+\contentsline {paragraph}{Link}{78}{section*.54}
+\contentsline {paragraph}{Unlink}{78}{section*.55}
+\contentsline {paragraph}{Suspend}{78}{section*.56}
+\contentsline {paragraph}{Resume}{78}{section*.57}
+\contentsline {section}{\numberline {3.12}A Distributed Calculator}{79}{section.3.12}
+\contentsline {subsection}{\numberline {3.12.1}Actor System Configuration for Distribution}{79}{subsection.3.12.1}
+\contentsline {subsection}{\numberline {3.12.2}A Complete Example}{80}{subsection.3.12.2}
+\contentsline {paragraph}{Operations and Messages}{80}{section*.63}
+\contentsline {paragraph}{Calculators}{80}{section*.64}
+\contentsline {paragraph}{Test Applications}{80}{section*.65}
+\contentsline {section}{\numberline {3.13}Design Alternatives}{85}{section.3.13}
+\contentsline {paragraph}{Akka Typed Actor}{85}{section*.66}
+\contentsline {paragraph}{Actors with or without Internal Mutable States}{85}{section*.68}
+\contentsline {paragraph}{Bi-linked Actors}{87}{section*.69}
+\contentsline {section}{\numberline {3.14}Summing Up}{87}{section.3.14}
+\contentsline {chapter}{Chapter\ \numberline {4}Evolution, Not Revolution }{88}{chapter.4}
+\contentsline {section}{\numberline {4.1}TAkka Service with Akka Client}{88}{section.4.1}
+\contentsline {section}{\numberline {4.2}Akka Service with TAkka Client}{90}{section.4.2}
+\contentsline {chapter}{Chapter\ \numberline {5}TAkka: Evaluation}{91}{chapter.5}
+\contentsline {section}{\numberline {5.1}Expressiveness}{91}{section.5.1}
+\contentsline {subsection}{\numberline {5.1.1}Examples}{91}{subsection.5.1.1}
+\contentsline {subsubsection}{\numberline {5.1.1.1}Examples from the QuviQ Project}{91}{subsubsection.5.1.1.1}
+\contentsline {paragraph}{ATM simulator}{92}{section*.72}
+\contentsline {paragraph}{Elevator Controller}{92}{section*.74}
+\contentsline {subsubsection}{\numberline {5.1.1.2}Examples from the Akka Documentation}{92}{subsubsection.5.1.1.2}
+\contentsline {paragraph}{Ping Pong}{95}{section*.76}
+\contentsline {paragraph}{Dining Philosophers}{95}{section*.77}
+\contentsline {paragraph}{Distributed Calculator}{95}{section*.78}
+\contentsline {paragraph}{Fault Tolerance}{95}{section*.79}
+\contentsline {subsubsection}{\numberline {5.1.1.3}Examples from Other Open Source Projects}{95}{subsubsection.5.1.1.3}
+\contentsline {paragraph}{Barber Shop}{95}{section*.80}
+\contentsline {paragraph}{EnMAS}{96}{section*.81}
+\contentsline {paragraph}{Socko Web Server}{96}{section*.82}
+\contentsline {paragraph}{Gatling}{96}{section*.83}
+\contentsline {paragraph}{Play Core}{96}{section*.84}
+\contentsline {subsection}{\numberline {5.1.2}Evaluation Results}{96}{subsection.5.1.2}
+\contentsline {subsubsection}{\numberline {5.1.2.1}Code Size}{96}{subsubsection.5.1.2.1}
+\contentsline {subsubsection}{\numberline {5.1.2.2}Type Error}{98}{subsubsection.5.1.2.2}
+\contentsline {section}{\numberline {5.2}Throughput}{99}{section.5.2}
+\contentsline {section}{\numberline {5.3}Efficiency and Scalability}{101}{section.5.3}
+\contentsline {subsection}{\numberline {5.3.1}BenchErl Overview}{103}{subsection.5.3.1}
+\contentsline {subsection}{\numberline {5.3.2}Benchmark Examples}{103}{subsection.5.3.2}
+\contentsline {subsubsection}{\numberline {5.3.2.1}Ported BenchErl Examples}{103}{subsubsection.5.3.2.1}
+\contentsline {paragraph}{bang}{103}{section*.89}
+\contentsline {paragraph}{big}{104}{section*.90}
+\contentsline {paragraph}{ehb}{104}{section*.91}
+\contentsline {paragraph}{genstress}{105}{section*.92}
+\contentsline {paragraph}{mbrot}{105}{section*.93}
+\contentsline {paragraph}{parallel}{105}{section*.94}
+\contentsline {paragraph}{ran}{106}{section*.95}
+\contentsline {paragraph}{serialmsg}{106}{section*.96}
+\contentsline {subsubsection}{\numberline {5.3.2.2}BenchErl Examples that are Not Ported}{106}{subsubsection.5.3.2.2}
+\contentsline {paragraph}{ets\_test}{106}{section*.97}
+\contentsline {paragraph}{pcmark}{107}{section*.98}
+\contentsline {paragraph}{timer\_wheel}{107}{section*.99}
+\contentsline {subsection}{\numberline {5.3.3}Benchmark Methodology}{107}{subsection.5.3.3}
+\contentsline {subsubsection}{\numberline {5.3.3.1}Testing Environment}{107}{subsubsection.5.3.3.1}
+\contentsline {subsubsection}{\numberline {5.3.3.2}Determining Parameters}{107}{subsubsection.5.3.3.2}
+\contentsline {paragraph}{bang}{108}{section*.100}
+\contentsline {paragraph}{big}{109}{section*.101}
+\contentsline {paragraph}{ehb}{109}{section*.102}
+\contentsline {paragraph}{genstress}{109}{section*.103}
+\contentsline {paragraph}{mbrot}{109}{section*.104}
+\contentsline {paragraph}{parallel}{109}{section*.105}
+\contentsline {paragraph}{ran}{109}{section*.106}
+\contentsline {paragraph}{serialmsg}{109}{section*.107}
+\contentsline {subsubsection}{\numberline {5.3.3.3}Measurement Methodology}{110}{subsubsection.5.3.3.3}
+\contentsline {subsection}{\numberline {5.3.4}Evaluation Results}{110}{subsection.5.3.4}
+\contentsline {paragraph}{Observation 1}{110}{section*.108}
+\contentsline {paragraph}{Observation 2}{110}{section*.109}
+\contentsline {paragraph}{Observation 3}{110}{section*.110}
+\contentsline {paragraph}{Observation 4}{111}{section*.111}
+\contentsline {subsection}{\numberline {5.3.5}Additional Benchmarks}{111}{subsection.5.3.5}
+\contentsline {subsubsection}{\numberline {5.3.5.1}Fibonacci Numbers}{111}{subsubsection.5.3.5.1}
+\contentsline {subsubsection}{\numberline {5.3.5.2}MBrot with different image sizes}{116}{subsubsection.5.3.5.2}
+\contentsline {subsubsection}{\numberline {5.3.5.3}The N-Queens Problem}{116}{subsubsection.5.3.5.3}
+\contentsline {section}{\numberline {5.4}Assessing System Reliability and Availability}{116}{section.5.4}
+\contentsline {subsection}{\numberline {5.4.1}Chaos Monkey and Supervision View}{118}{subsection.5.4.1}
+\contentsline {paragraph}{Random}{118}{section*.118}
+\contentsline {paragraph}{Exception}{119}{section*.119}
+\contentsline {paragraph}{Kill}{119}{section*.120}
+\contentsline {paragraph}{PoisonKill}{119}{section*.121}
+\contentsline {paragraph}{NonTerminate}{119}{section*.122}
+\contentsline {subsection}{\numberline {5.4.2}Supervision View}{119}{subsection.5.4.2}
+\contentsline {subsection}{\numberline {5.4.3}A Partly Failed Safe Calculator}{122}{subsection.5.4.3}
+\contentsline {subsection}{\numberline {5.4.4}BenchErl Examples with Different Supervisor Strategies}{122}{subsection.5.4.4}
+\contentsline {section}{\numberline {5.5}Summing Up}{124}{section.5.5}
+\contentsline {chapter}{Chapter\ \numberline {6}Summary and Future Work}{125}{chapter.6}
+\contentsline {section}{\numberline {6.1}Overview of Contributions}{125}{section.6.1}
+\contentsline {subsection}{\numberline {6.1.1}A library for Type-parameterized Actors and Their Supervision}{125}{subsection.6.1.1}
+\contentsline {subsection}{\numberline {6.1.2}A Library Evaluation Framework}{126}{subsection.6.1.2}
+\contentsline {section}{\numberline {6.2}Future Work}{127}{section.6.2}
+\contentsline {subsection}{\numberline {6.2.1}Supervision and Typed Actor in Other Systems}{127}{subsection.6.2.1}
+\contentsline {subsection}{\numberline {6.2.2}Benchmark Results from Large Real Applications}{127}{subsection.6.2.2}
+\contentsline {subsection}{\numberline {6.2.3}Supervision Tree that Supports Software Rejuvenation}{128}{subsection.6.2.3}
+\contentsline {subsection}{\numberline {6.2.4}Measuring and Predicting System Reliability}{128}{subsection.6.2.4}
+\contentsline {section}{\numberline {6.3}Conclusion}{129}{section.6.3}
+\contentsline {chapter}{Appendix\ \numberline {A}Akka and TAkka API}{130}{appendix.A}
+\contentsline {chapter}{Appendix\ \numberline {B}Scala Join (version 0.3) User Manual}{132}{appendix.B}
+\contentsline {section}{\numberline {B.1}Using the Library}{132}{section.B.1}
+\contentsline {subsection}{\numberline {B.1.1}Sending messages via channels}{132}{subsection.B.1.1}
+\contentsline {subsection}{\numberline {B.1.2}Grouping join patterns}{133}{subsection.B.1.2}
+\contentsline {subsection}{\numberline {B.1.3}Distributed computation}{134}{subsection.B.1.3}
+\contentsline {section}{\numberline {B.2}Implementation Details}{136}{section.B.2}
+\contentsline {subsection}{\numberline {B.2.1}Case Statement, Extractor Objects and Pattern Matching in Scala}{136}{subsection.B.2.1}
+\contentsline {subsection}{\numberline {B.2.2}Implementing local channels}{137}{subsection.B.2.2}
+\contentsline {subsection}{\numberline {B.2.3}Implementing the join pattern using extractor objects}{140}{subsection.B.2.3}
+\contentsline {paragraph}{The unapply method for local synchronous channel}{140}{section*.128}
+\contentsline {subsection}{\numberline {B.2.4}Implementing distributed join calculus}{144}{subsection.B.2.4}
+\contentsline {section}{\numberline {B.3}Limitations and Future Improvements}{147}{section.B.3}
+\contentsline {subsection}{\numberline {B.3.1}Assumption on linear pattern}{147}{subsection.B.3.1}
+\contentsline {subsection}{\numberline {B.3.2}Limited number of patterns in a single join definition}{147}{subsection.B.3.2}
+\contentsline {subsection}{\numberline {B.3.3}Unnatural usages of synchronous channels}{148}{subsection.B.3.3}
+\contentsline {subsection}{\numberline {B.3.4}Straightforward implementation for synchronous channels}{148}{subsection.B.3.4}
+\contentsline {subsection}{\numberline {B.3.5}Type of the join pattern and the unapply methods}{149}{subsection.B.3.5}

@@ -3,10 +3,13 @@
 \bibitem[Agha, 1985]{actor_transition_semantic}
 Agha, G.~A. (1985).
 \newblock Actors: a model of concurrent computation in distributed systems.
+\newblock \url{http://dspace.mit.edu/handle/1721.1/6952}.
+\newblock {MIT: AI Technical Reports (1964 - 2004)}.
 
-\bibitem[Allen et~al., 2009]{allen2009zend}
-Allen, R., Lo, N., and Brown, S. (2009).
-\newblock {\em Zend Framework in action}.
+\bibitem[Allen et~al., 2008]{allen2009zend}
+Allen, R., Lo, N., and Brown, S. (2008).
+\newblock {\em Zend Framework in Action}.
+\newblock Manning Publications Co., Greenwich, CT, USA.
 
 \bibitem[{Amazon.com, Inc.}, 2012]{pitfall}
 {Amazon.com, Inc.} (2012).
@@ -28,7 +31,9 @@ Allen, R., Lo, N., and Brown, S. (2009).
 
 \bibitem[{Apple Inc.}, 2012]{apple:objc}
 {Apple Inc.} (2012).
-\newblock Concepts in objective-c programming.
+\newblock {Concepts in Objective-C Programming:Model-View-Controller}.
+\newblock \url{
+  https://developer.apple.com/library/mac/documentation/general/conceptual/CocoaEncyclopedia/CocoaEncyclopedia.pdf}.
 \newblock [Online; accessed 12-November-2013].
 
 \bibitem[Armstrong, 2002]{ArmstrongAXD}
@@ -63,6 +68,8 @@ Arts, T., Hughes, J., Johansson, J., and Wiger, U. (2006).
 \bibitem[Baker and Hewitt, 1977]{acot_laws}
 Baker, H. and Hewitt, C. (1977).
 \newblock Laws for communicating parallel processes.
+\newblock \url{http://dspace.mit.edu/handle/1721.1/41962}.
+\newblock {MIT: AI Memos (1959 - 2004)}.
 
 \bibitem[Blackburn et~al., 2006]{blackburn2006dacapo}
 Blackburn, S.~M., Garner, R., Hoffman, C., Khan, A.~M., McKinley, K.~S.,
@@ -82,14 +89,26 @@ Boudeville, O., Cesarini, F., Chechina, N., Lundin, K., Papaspyrou, N.,
 
 \bibitem[Burbeck, 1987]{burbeck87}
 Burbeck, S. (1987).
-\newblock Applications programming in smalltalk-80(tm): How to use
-  model-view-controller (mvc).
+\newblock {Applications Programming in Smalltalk-80(TM): How to use
+  Model-View-Controller (MVC)}.
+\newblock \url{http://st-www.cs.uiuc.edu/users/smarch/st-docs/mvc.html}.
+\newblock Accessed on May 2013.
 
 \bibitem[Buschmann et~al., 2007]{buschmann2007pattern}
 Buschmann, F., Henney, K., and Schimdt, D. (2007).
 \newblock {\em Pattern-oriented Software Architecture: On Patterns and Pattern
   Language}, volume~5.
 \newblock John Wiley \& Sons.
+
+\bibitem[Cardelli, 1995]{obliq}
+Cardelli, L. (1995).
+\newblock {Obliq: A Language with Distributed Scope}.
+\newblock {\em Computing Systems}, 8:27--59.
+
+\bibitem[Cardelli and Gordon, 1998]{Cardelli98mobileambients}
+Cardelli, L. and Gordon, A.~D. (1998).
+\newblock Mobile ambients.
+\newblock In {\em In Proceedings of POPL'98}. ACM Press.
 
 \bibitem[Cesarini, 2011]{atmprivate}
 Cesarini, F. (2011).
@@ -98,7 +117,15 @@ Cesarini, F. (2011).
 
 \bibitem[Clinger, 1981]{actor_denotational_semantics}
 Clinger, W.~D. (1981).
-\newblock Foundations of actor semantics.
+\newblock {Foundations of Actor Semantics}.
+\newblock \url{http://dspace.mit.edu/handle/1721.1/6935}.
+\newblock {MIT: AI Technical Reports (1964 - 2004)}.
+
+\bibitem[Cruz and Aguirre, 2005]{VMAmbient}
+Cruz, L. R.~G. and Aguirre, O.~O. (2005).
+\newblock A virtual machine for the ambient calculus.
+\newblock In {\em Electrical and Electronics Engineering, 2005 2nd
+  International Conference on}, pages 56--59.
 
 \bibitem[Dean and Ghemawat, 2008]{dean2008mapreduce}
 Dean, J. and Ghemawat, S. (2008).
@@ -121,6 +148,24 @@ Dohi, T., Goseva-Popstojanova, K., and Trivedi, K.~S. (2000).
 Doyle, C. and Allen, M. (2012).
 \newblock {EnMAS}: A new tool for multi-agent systems research and education.
 \newblock {\em Midwest Instruction and Computing Symposium}.
+
+\bibitem[Emir et~al., 2007]{extractors}
+Emir, B., Odersky, M., and Williams, J. (2007).
+\newblock Matching objects with patterns.
+\newblock In {\em ECOOP 2007 – Object-Oriented Programming, volume 4609 of
+  LNCS}, pages 273--298. Springer.
+
+\bibitem[Endrikat et~al., 2014]{endrikat2014api}
+Endrikat, S., Hanenberg, S., Robbes, R., and Stefik, A. (2014).
+\newblock How do api documentation and static typing affect api usability?
+\newblock In {\em Proceedings of the 36th International Conference on Software
+  Engineering}, ICSE 2014, pages 632--642, New York, NY, USA. ACM.
+
+\bibitem[EPFL, 2014]{scala_web_doc}
+EPFL (2014).
+\newblock Scala online documentation.
+\newblock http://www.scala-lang.org/documentation/.
+\newblock Accessed on May 2014.
 
 \bibitem[Epstein et~al., 2011]{CloudHaskell}
 Epstein, J., Black, A.~P., and Peyton-Jones, S. (2011).
@@ -162,11 +207,30 @@ Fleming, P.~J. and Wallace, J.~J. (1986).
   benchmark results.
 \newblock {\em Commun. ACM}, 29(3):218--221.
 
+\bibitem[Fournet et~al., 2003]{jocaml_lan}
+Fournet, C., Fessant, F.~L., Maranget, L., and Schmitt, A. (2003).
+\newblock Jocaml: A language for concurrent distributed and mobile programming.
+\newblock In {\em In Advanced Functional Programming}, pages 129--158. Springer
+  Verlag.
+
 \bibitem[Fournet and Gonthier, 2000]{full_join}
 Fournet, C. and Gonthier, G. (2000).
 \newblock The join calculus: A language for distributed mobile programming.
 \newblock In {\em In Proceedings of the Applied Semantics Summer School
   (APPSEM), Caminha}, pages 268--332. Springer-Verlag.
+
+\bibitem[Fournet et~al., 1996]{join}
+Fournet, C., Gonthier, G., L\'{e}vy, J.-J., Maranget, L., and R\'{e}my, D.
+  (1996).
+\newblock A calculus of mobile agents.
+\newblock In {\em Proceedings of the 7th International Conference on
+  Concurrency Theory}, CONCUR '96, pages 406--421, London, UK. Springer-Verlag.
+
+\bibitem[Fournet et~al., 1995]{RCHAM}
+Fournet, C., Gonthier, G., and Rocquencourt, I. (1995).
+\newblock The reflexive cham and the join-calculus.
+\newblock In {\em In Proceedings of the 23rd ACM Symposium on Principles of
+  Programming Languages}, pages 372--385. ACM Press.
 
 \bibitem[Fowler, 2002]{fowler2002patterns}
 Fowler, M. (2002).
@@ -182,6 +246,8 @@ Gilbert, S. and Lynch, N. (2002).
 \bibitem[Grief, 1975]{actor_operational_semantics}
 Grief, I. (1975).
 \newblock Semantics of communicating parallel processes.
+\newblock \url{http://dspace.mit.edu/handle/1721.1/57710}.
+\newblock {MIT: AI Working Papers (1971 - 1995)}.
 
 \bibitem[Haller and Odersky, 2006]{actor_1}
 Haller, P. and Odersky, M. (2006).
@@ -196,6 +262,13 @@ Haller, P. and Odersky, M. (2007).
   {I}nternational {C}onference on {C}oordination {M}odels and {L}anguages
   ({COORDINATION})}, Lecture Notes in Computer Science (LNCS), pages 171--190.
   Springer.
+
+\bibitem[Haller and Van~Cutsem, 2008]{scala_joins}
+Haller, P. and Van~Cutsem, T. (2008).
+\newblock Implementing joins using extensible pattern matching.
+\newblock In {\em Proceedings of the 10th international conference on
+  Coordination models and languages}, COORDINATION'08, pages 135--152, Berlin,
+  Heidelberg. Springer-Verlag.
 
 \bibitem[HE, 2013]{freebench}
 HE, J. (2013).
@@ -212,11 +285,12 @@ HE, J. (2014a).
 HE, J. (2014b).
 \newblock {TA}kka {P}lay.
 \newblock \url{https://github.com/Jiansen/TAkka-Play}.
+\newblock Accessed on May 2014.
 
-\bibitem[Hennessy and Patterson, 2006]{HePa06}
-Hennessy, J.~L. and Patterson, D.~A. (2006).
-\newblock {\em Computer Architecture: A Quantitative Approach, 4th Edition}.
-\newblock Morgan Kaufmann, 4 edition.
+\bibitem[He et~al., 2014]{TAKKA_paper}
+He, J., Wadler, P., and Trinder, P. (2014).
+\newblock Typecasting {A}ctors: from {A}kka to {T}akka.
+\newblock {\em Scala 2014}.
 
 \bibitem[Hewitt et~al., 1973]{Hewitt:1973}
 Hewitt, C., Bishop, P., and Steiger, R. (1973).
@@ -256,8 +330,9 @@ Kuhn, R., He, J., Wadler, P., Bon\'{e}r, J., and Trinder, P. (2012).
 
 \bibitem[Lieberman, 1981]{Act1}
 Lieberman, H. (1981).
-\newblock Thinking about lots of things at once without getting confused:
-  Parallelism in act 1.
+\newblock {Thinking About Lots of Things at Once without Getting Confused:
+  Parallelism in Act 1}.
+\newblock {\em {MIT: AI Memos (1959 - 2004)}}.
 
 \bibitem[Lindahl and Sagonas, 2004]{DialyzerDetecting}
 Lindahl, T. and Sagonas, K. (2004).
@@ -308,6 +383,12 @@ Odersky, M., Altherr, P., Cremet, V., Emir, B., Maneth, S., Micheloud, S.,
 \newblock An overview of the scala programming language.
 \newblock Technical report, Citeseer.
 
+\bibitem[Patterson and Hennessy, 2013]{HePa06}
+Patterson, D.~A. and Hennessy, J.~L. (2013).
+\newblock {\em Computer organization and design: the hardware/software
+  interface}.
+\newblock Newnes.
+
 \bibitem[Pierce, 2002]{TPL}
 Pierce, B.~C. (2002).
 \newblock {\em Types and Programming Languages}.
@@ -315,11 +396,12 @@ Pierce, B.~C. (2002).
 
 \bibitem[Reenskaug, 2003]{reenskaug2003model}
 Reenskaug, T. (2003).
-\newblock The {M}odel-{V}iew-{C}ontroller ({MVC}): Its {P}ast and {P}resent.
+\newblock The model-view-controller (mvc) its past and present.
 
 \bibitem[Reenskaug, 1979]{reenskaug1979original}
 Reenskaug, T. M.~H. (1979).
 \newblock The original {MVC} reports.
+\newblock \url{https://www.duo.uio.no/handle/10852/9621}.
 
 \bibitem[Sabelfeld and Mantel, 2002]{sabelfeld2002securing}
 Sabelfeld, A. and Mantel, H. (2002).
@@ -342,6 +424,7 @@ Sangiorgi, D. and Walker, D. (2001).
 {Typelevel {ORG}} (2013).
 \newblock scalaz: {F}unctional programming for {S}cala.
 \newblock \url{http://typelevel.org/projects/scalaz/}.
+\newblock Accessed on May 2013.
 
 \bibitem[{Typesafe Inc. (a)}, 2012]{akka_api}
 {Typesafe Inc. (a)} (2012).
@@ -361,6 +444,13 @@ Sangiorgi, D. and Walker, D. (2001).
 \newblock http://www.playframework.com/documentation/2.2-SNAPSHOT/Home.
 \newblock Accessed on July 2013.
 
+\bibitem[Waldo et~al., 1997]{dis_note}
+Waldo, J., Wyant, G., Wollrath, A., and Kendall, S.~C. (1997).
+\newblock A note on distributed computing.
+\newblock In {\em Selected Presentations and Invited Papers Second
+  International Workshop on Mobile Object Systems - Towards the Programmable
+  Internet}, pages 49--64, London, UK. Springer-Verlag.
+
 \bibitem[Wampler and Payne, 2009]{scala_book}
 Wampler, D. and Payne, A. (2009).
 \newblock {\em {Programming Scala}}.
@@ -368,38 +458,44 @@ Wampler, D. and Payne, A. (2009).
 
 \bibitem[Watson et~al., 2012]{OTPCloudHaskell}
 Watson, T., Epstein, J., Jones, S.~P., and He, J. (2012).
-\newblock Supporting libraries (a la otp) for cloud haskel.
+\newblock {Supporting Libraries (a la OTP) for Cloud Haskel}.
 \newblock private communication.
 
 \bibitem[Wikipedia, 2013a]{wiki:philosophers}
 Wikipedia (2013a).
 \newblock Dining philosophers problem.
+\newblock \url{http://en.wikipedia.org/wiki/Dining_philosophers_problem}.
 \newblock [Online; accessed 12-November-2013].
 
 \bibitem[Wikipedia, 2013b]{wiki:mandelbrot}
 Wikipedia (2013b).
 \newblock Mandelbrot set.
+\newblock \url{ http://en.wikipedia.org/wiki/Mandelbrot_set}.
 \newblock [Online; accessed 12-November-2013].
 
 \bibitem[Wikipedia, 2013c]{wiki:barber}
 Wikipedia (2013c).
 \newblock Sleeping barber problem.
+\newblock \url{http://en.wikipedia.org/wiki/Sleeping_barber_problem}.
 \newblock [Online; accessed 12-November-2013].
 
 \bibitem[Wikipedia, 2013d]{wiki:tictactoe}
 Wikipedia (2013d).
 \newblock Tic-tac-toe.
+\newblock \url{http://en.wikipedia.org/wiki/Tic-tac-toe}.
 \newblock [Online; accessed 12-November-2013].
 
 \bibitem[Wikipedia, 2014]{wiki:nqueens}
 Wikipedia (2014).
 \newblock Eight queens puzzle.
+\newblock \url{http://en.wikipedia.org/wiki/Eight_queens_puzzle}.
 \newblock [Online; accessed 30-March-2014].
 
 \bibitem[{WorldWide Conferencing, LLC}, 2013]{scalaz}
 {WorldWide Conferencing, LLC} (2013).
 \newblock Lift.
 \newblock \url{http://liftweb.net/}.
+\newblock Accessed on May 2013.
 
 \bibitem[Zachrison, 2012]{BarberShop}
 Zachrison, M. (2012).
